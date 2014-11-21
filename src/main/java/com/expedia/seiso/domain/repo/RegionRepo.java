@@ -28,7 +28,7 @@ import com.expedia.seiso.domain.entity.Region;
 /**
  * @author Willie Wheeler (wwheeler@expedia.com)
  */
-@RestResource(path = RepoKeys.INFRASTRUCTURE_PROVIDER_REGIONS)
+@RestResource(path = RepoKeys.REGIONS)
 public interface RegionRepo extends
 		PagingAndSortingRepository<Region, Long> {
 

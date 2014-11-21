@@ -102,11 +102,6 @@ public class Service extends AbstractItem {
 	private Person owner;
 
 	@NonNull
-	@OrderBy("name")
-	@OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<IpAddressRole> ipAddressRoles = new ArrayList<>();
-
-	@NonNull
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("key")
 	private List<ServiceInstance> serviceInstances = new ArrayList<>();

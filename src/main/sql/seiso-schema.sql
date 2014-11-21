@@ -31,7 +31,7 @@ CREATE TABLE `environment` (
   `ukey` varchar(40) NOT NULL,
   `name` varchar(80) NOT NULL,
   `aka` varchar(250) DEFAULT NULL,
-  `description` varchar(250) DEFAULT NULL
+  `description` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ukey` (`ukey`),
   UNIQUE KEY `name` (`name`)
