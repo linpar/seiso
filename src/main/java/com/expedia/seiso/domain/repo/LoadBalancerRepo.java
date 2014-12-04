@@ -30,7 +30,7 @@ import com.expedia.seiso.domain.repo.custom.LoadBalancerRepoCustom;
  */
 @RestResource(path = RepoKeys.LOAD_BALANCERS)
 public interface LoadBalancerRepo extends PagingAndSortingRepository<LoadBalancer, Long>, LoadBalancerRepoCustom {
-
+	
 	@FindByKey
 	LoadBalancer findByName(@Param("name") String name);
 

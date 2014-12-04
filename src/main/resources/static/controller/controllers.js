@@ -42,7 +42,7 @@ var seisoControllers = angular.module('seisoControllers', []);
 // List controllers
 seisoControllers
 	.controller('EnvironmentListController', listController('environments'))
-	.controller('LoadBalancerListController', listController('load-balancers'))
+	.controller('LoadBalancerListController', pagingListController('load-balancers', 'name'))
 	.controller('PersonListController', pagingListController('people', 'lastName,firstName'))
 	.controller('ServiceListController', pagingListController('services', 'name'))
 	.controller('ServiceInstanceListController', pagingListController('service-instances', 'key'))

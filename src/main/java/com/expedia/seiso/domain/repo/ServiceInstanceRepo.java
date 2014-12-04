@@ -34,6 +34,7 @@ public interface ServiceInstanceRepo extends PagingAndSortingRepository<ServiceI
 	ServiceInstance findByKey(@Param("key") String key);
 
 	@RestResource(path = "find-by-environment-and-eos-managed")
-	List<ServiceInstance> findByEnvironmentKeyAndEosManaged(@Param("env") String environmentKey,
+	List<ServiceInstance> findByEnvironmentKeyAndEosManaged(
+			@Param("env") String environmentKey,
 			@Param("eos") Boolean eosManaged);
 }
