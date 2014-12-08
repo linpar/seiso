@@ -3,5 +3,7 @@
 /.project
 /.settings
 /.springBeans
+/.vagrant
 /bin
 /build
+/vagrant.yml

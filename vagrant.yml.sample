@@ -1,0 +1,16 @@
+# http://stackoverflow.com/questions/13065576/override-vagrant-configuration-settings-locally-per-dev/23589414#23589414
+
+db:
+  ip_address: 192.168.4.10
+  artifacts_dir:
+    host: /Users/willie/.seiso/db
+    guest: /opt/seiso-db
+
+bus:
+  ip_address: 192.168.4.20
+
+app:
+  ip_address: 192.168.4.30
+  artifacts_dir:
+    host: /Users/willie/.seiso/app
+    guest: /opt/seiso
