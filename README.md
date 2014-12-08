@@ -7,13 +7,13 @@ Devops data integration repository.
 
 Please see the [Seiso project site](http://expediadotcom.github.io/seiso/) for project information and documentation.
 
-Set up your dev environment
-===========================
+Dev setup
+=========
 
 There are two options available here. The first is a manual setup, where you install Java, MySQL, RabbitMQ and the app yourself. The other is via Vagrant.
 
-Manual setup
-------------
+Approach #1: Manual setup
+-------------------------
 
 **Installation.** You'll need to install the following:
 
@@ -32,22 +32,26 @@ Manual setup
 
 To run Seiso in development mode, you can place them directly in `src/main/resources`.
 
-Vagrant setup
--------------
+Approach #2: Vagrant setup
+--------------------------
+
+Create a copy of `vagrant.yml.sample` called `vagrant.yml` and place it in the same directory. Change the configuration as necessary.
+
+TODO Describe Chef config
+
+Then
+
+    $ vagrant up
 
 TODO
 
 Build Seiso
 ===========
 
-Build Seiso using Gradle:
-
     $ ./gradlew clean build
 
 Run Seiso
 =========
-
-Again we use Gradle:
 
     $ ./gradlew bootRun
 
