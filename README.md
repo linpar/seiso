@@ -35,15 +35,27 @@ To run Seiso in development mode, you can place them directly in `src/main/resou
 Approach #2: Vagrant setup
 --------------------------
 
-Create a copy of `vagrant.yml.sample` called `vagrant.yml` and place it in the same directory. Change the configuration as necessary.
+You can use [Vagrant](https://www.vagrantup.com/) to set up your development environment, which consists of a MySQL database and a RabbitMQ message bus.
 
-TODO Describe Chef config
+As a preliminary, you will need to install the [Omnibus plugin](https://github.com/opscode/vagrant-omnibus), which will install the Chef provisioner on your VMs.
 
-Then
+First create a copy of `vagrant.yml.sample` called `vagrant.yml` and place it in the same directory. Change the configuration as necessary. (The instructions are in `vagrant.yml.sample` itself.)
+
+Then do
 
     $ vagrant up
 
-TODO
+to create your VMs.
+
+Note that it takes a little while to create VMs, so if you want to speed things up, you can open two terminal windows and do
+
+    $ vagrant up db
+
+in one and
+
+    $ vagrant up bus
+
+in the other, just to parallelize the work.
 
 Build Seiso
 ===========
