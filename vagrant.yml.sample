@@ -11,10 +11,9 @@ db:
   # Usually 10.x.x.x, 172.16.x.x or 192.168.x.x.
   ip_address: 192.168.4.10
 
-  # Synced folder for running the database script.
-  # This needs to contain the SQL scripts from src/main/sql.
+  # Synced folder containing SQL scripts to create and initialize database
   artifacts_dir:
-    host: /Users/willie/.seiso/db
+    host: /Users/wwheeler/.seiso/db
     guest: /opt/seiso-db
 
 

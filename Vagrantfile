@@ -1,14 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-require 'yaml'
+require "yaml"
 
 VAGRANTFILE_API_VERSION = "2"
 
-settings = YAML.load_file 'vagrant.yml'
-
-$db_script = <<EOF
-mysql -e "show databases;"
-EOF
+settings = YAML.load_file "vagrant.yml"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -29,16 +25,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.omnibus.chef_version = :latest
   
   config.vm.define "db" do |db|
-    db.vm.network 'private_network', ip: settings['db']['ip_address']
-    db.vm.synced_folder settings['db']['artifacts_dir']['host'], settings['db']['artifacts_dir']['guest']
+    db.vm.network "private_network", ip: settings["db"]["ip_address"]
+    db.vm.synced_folder settings["db"]["artifacts_dir"]["host"], settings["db"]["artifacts_dir"]["guest"]
     db.vm.provision "chef_solo" do |chef|
       configure_chef(chef, "seiso_db")
+      chef.json = {
+        "seiso_db" => {
+          "artifacts_dir" => settings["db"]["artifacts_dir"]["guest"]
+        }
+      }
     end
-#    db.vm.provision "shell", inline: $db_script
   end
   
   config.vm.define "bus" do |bus|
-    bus.vm.network 'private_network', ip: settings['bus']['ip_address']
+    bus.vm.network "private_network", ip: settings["bus"]["ip_address"]
     bus.vm.provision "chef_solo" do |chef|
       configure_chef(chef, "seiso_bus")
     end

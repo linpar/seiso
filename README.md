@@ -19,8 +19,11 @@ Approach #1: Manual setup
 
 * Java 8
 * MySQL 5.6.x
-  * Create the Seiso database schema by running `src/main/sql/seiso-schema.sql`.
-  * For now, you can load sample data by running `src/main/sql/seiso-data-sample.sql`. We may replace this with a non-SQL data importer at some point in the future.
+  * Create the Seiso database: `create database seiso;`
+  * Create a `seiso` user. It needs at least select, update and delete permissions on the `seiso` database.
+  * Create the tables by running `src/main/sql/create-tables.sql`.
+  * Insert the reference data by running `src/main/sql/insert-reference-data.sql`.
+  * If you like, insert the sample data by running `src/main/sql/insert-sample-data.sql`.
 * RabbitMQ
   * For visibility we recommend installing the RabbitMQ management plugin.
 
@@ -45,7 +48,7 @@ Then do
 
     $ vagrant up
 
-to create your VMs.
+to create your VMs. With respect to the database VM, this creates the database and sample user automatically, and it also inserts the reference and sample data automatically.
 
 Note that it takes a little while to create VMs, so if you want to speed things up, you can open two terminal windows and do
 

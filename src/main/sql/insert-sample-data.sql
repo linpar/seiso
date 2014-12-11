@@ -136,26 +136,6 @@ INSERT INTO `region` VALUES (1,'internal-us-west-1','US West (Oregon)','na',2),(
 UNLOCK TABLES;
 
 --
--- Dumping data for table `role`
---
-
-LOCK TABLES `role` WRITE;
-/*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'admin'),(2,'user');
-/*!40000 ALTER TABLE `role` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping data for table `rotation_status`
---
-
-LOCK TABLES `rotation_status` WRITE;
-/*!40000 ALTER TABLE `rotation_status` DISABLE KEYS */;
-INSERT INTO `rotation_status` VALUES (1,'enabled','Enabled',5),(2,'disabled','Disabled',6),(3,'excluded','Excluded',3),(4,'no-endpoints','No Endpoints',3),(5,'partial','Partial',6),(6,'unknown','Unknown',6);
-/*!40000 ALTER TABLE `rotation_status` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Dumping data for table `service`
 --
 
@@ -193,26 +173,6 @@ LOCK TABLES `service_instance_port` WRITE;
 /*!40000 ALTER TABLE `service_instance_port` DISABLE KEYS */;
 INSERT INTO `service_instance_port` VALUES (5,5,8443,'https','REST API'),(6,6,8443,'https','REST API'),(7,7,8443,'https','REST API'),(8,8,8443,'https','REST API'),(9,9,8443,'https','REST API'),(10,10,8443,'https','REST API'),(11,11,8443,'https','REST API'),(12,12,8443,'https','REST API'),(13,13,8443,'https','REST API'),(14,14,8443,'https','REST API'),(15,15,8443,'https','REST API'),(16,16,8443,'https','REST API'),(17,17,8443,'https','REST API'),(18,18,8443,'https','REST API'),(19,19,8443,'https','REST API'),(20,20,8443,'https','REST API'),(21,21,8443,'https','REST API'),(22,22,8443,'https','REST API'),(23,23,8443,'https','REST API'),(24,24,8443,'https','REST API'),(25,25,8443,'https','REST API'),(26,26,8443,'https','REST API'),(27,27,8443,'https','REST API'),(28,28,8443,'https','REST API'),(29,29,8443,'https','REST API'),(30,30,8443,'https','REST API'),(31,31,8443,'https','REST API'),(32,32,8443,'https','REST API'),(33,33,8443,'https','REST API'),(34,34,8443,'https','REST API'),(35,35,8443,'https','REST API'),(36,36,8443,'https','REST API'),(37,37,8443,'https','REST API'),(38,38,8443,'https','REST API'),(39,39,8443,'https','REST API'),(40,40,8443,'https','REST API'),(41,41,8443,'https','REST API'),(42,42,8443,'https','REST API'),(43,43,8443,'https','REST API'),(44,44,8443,'https','REST API'),(45,45,8443,'https','REST API'),(46,46,8443,'https','REST API'),(47,47,8443,'https','REST API'),(48,48,8443,'https','REST API'),(49,49,8443,'https','REST API'),(50,50,8443,'https','REST API'),(51,51,8443,'https','REST API'),(52,52,8443,'https','REST API');
 /*!40000 ALTER TABLE `service_instance_port` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping data for table `service_type`
---
-
-LOCK TABLES `service_type` WRITE;
-/*!40000 ALTER TABLE `service_type` DISABLE KEYS */;
-INSERT INTO `service_type` VALUES (1,'application','User Application'),(2,'web-service','Web Service'),(3,'app-web-service','User Application + Web Service'),(4,'job','Job'),(5,'database','Database'),(6,'agent','Agent'),(7,'service','Service');
-/*!40000 ALTER TABLE `service_type` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping data for table `status_type`
---
-
-LOCK TABLES `status_type` WRITE;
-/*!40000 ALTER TABLE `status_type` DISABLE KEYS */;
-INSERT INTO `status_type` VALUES (1,'danger','Danger'),(2,'default','Default'),(3,'info','Info'),(4,'primary','Primary'),(5,'success','Success'),(6,'warning','Warning');
-/*!40000 ALTER TABLE `status_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

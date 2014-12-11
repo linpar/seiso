@@ -33,5 +33,12 @@ override_attributes(
         ]
       }
     ]
+  },
+  "seiso_db" => {
+    "sql_scripts" => [
+      "create-tables.sql",
+      "insert-reference-data.sql",
+      "insert-sample-data.sql"
+    ]
   }
 )
