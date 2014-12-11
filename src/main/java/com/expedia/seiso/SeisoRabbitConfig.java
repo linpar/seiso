@@ -34,9 +34,7 @@ import com.expedia.seiso.core.util.C;
 // TODO Do we want this?
 //@EnableRabbit
 
-// FIXME Temporarily disabling til we get Kombi deployed to AWS. [WLW]
 //@Configuration
-
 @XSlf4j
 public class SeisoRabbitConfig {
 	@Autowired

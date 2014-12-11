@@ -63,9 +63,6 @@ seisoControllers
 			$http.get('v1/service-types').success(function(data) {
 				$scope.serviceTypes = data;
 			});
-			$http.get('v1/service-dependency-types').success(function(data) {
-				$scope.serviceDependencyTypes = data;
-			});
 		} ])
 	;
 

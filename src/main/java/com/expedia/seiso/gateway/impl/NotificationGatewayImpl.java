@@ -34,16 +34,14 @@ import com.expedia.seiso.gateway.NotificationGateway;
 import com.expedia.seiso.gateway.model.ConfigManagementEvent;
 
 /**
- * Outbound notification gateway implementaion.
+ * Outbound notification gateway implementation.
  * 
  * @author Willie Wheeler (wwheeler@expedia.com)
  */
 @Component
 @XSlf4j
 public class NotificationGatewayImpl implements NotificationGateway {
-
-	// FIXME Temporarily disabling til we deploy Kombi to AWS. [WLW]
-	// @Autowired private AmqpTemplate amqpTemplate;
+//	@Autowired private AmqpTemplate amqpTemplate;
 
 	// Asynchronous because we don't want failures here to impact the core app. For example, if RabbitMQ goes down, we
 	// don't want Seiso to be unable to create/update/delete items.
@@ -53,7 +51,7 @@ public class NotificationGatewayImpl implements NotificationGateway {
 		val routingKey = event.getItemType() + "." + event.getOperation();
 		log.info("Sending notification: itemType={}, itemKey={}, operation={}", event.getItemType(),
 				event.getItemKey(), event.getOperation());
-		// amqpTemplate.convertAndSend(C.AMQP_EXCHANGE_SEISO_NOTIFICATIONS, routingKey, event);
+//		 amqpTemplate.convertAndSend(C.AMQP_EXCHANGE_SEISO_NOTIFICATIONS, routingKey, event);
 	}
 
 	private ConfigManagementEvent buildEvent(Item item, String operation) {
