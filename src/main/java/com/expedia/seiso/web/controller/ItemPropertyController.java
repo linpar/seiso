@@ -60,7 +60,7 @@ public class ItemPropertyController {
 	private ItemService itemService;
 	@Autowired
 	private ItemAssembler itemAssembler;
-
+	
 	@RequestMapping(value = "/{repoKey}/{itemKey}/{propKey}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object getProperty(@PathVariable String repoKey, @PathVariable String itemKey, @PathVariable String propKey) {

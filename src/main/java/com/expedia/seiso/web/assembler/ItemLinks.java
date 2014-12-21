@@ -25,6 +25,7 @@ import org.springframework.data.repository.support.Repositories;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.LinkBuilder;
 import org.springframework.hateoas.core.AbstractEntityLinks;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
@@ -35,10 +36,8 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 public class ItemLinks extends AbstractEntityLinks {
 	private URI baseUri;
 
-	@Autowired
-	private Repositories repositories;
-	@Autowired
-	private ItemMetaLookup itemMetaLookup;
+	@Autowired private Repositories repositories;
+	@Autowired private ItemMetaLookup itemMetaLookup;
 
 	public ItemLinks(@NonNull URI baseUri) {
 		this.baseUri = baseUri;
@@ -81,5 +80,20 @@ public class ItemLinks extends AbstractEntityLinks {
 		// SDR org.springframework.data.rest.webmvc.support.RepositoryEntityLinks uses getSingleResourceRel() here.
 		// FIXME For now, just temporarily affix "-single"
 		return linkFor(type).slash(key).withRel(itemMeta.getRel() + "-single");
+	}
+	
+	// Special
+	public Link selfLinkForCrudRepo(@NonNull String repoKey, @NonNull String projectionName) {
+		val path = new StringBuilder(repoKey).toString();
+
+		// @formatter:off
+		val uriComponents = UriComponentsBuilder
+				.fromUri(baseUri)
+				.path(path)
+				.queryParam("view", projectionName)
+				.build();
+		// @formatter:on
+		
+		return new Link(uriComponents.toString(), Link.REL_SELF);
 	}
 }

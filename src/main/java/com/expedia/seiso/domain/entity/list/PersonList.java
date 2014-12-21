@@ -13,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.repo;
+package com.expedia.seiso.domain.entity.list;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import java.util.ArrayList;
 
-import com.expedia.seiso.core.ann.FindByKey;
-import com.expedia.seiso.core.ann.RestResource;
-import com.expedia.seiso.domain.entity.StatusType;
+import com.expedia.seiso.domain.entity.Person;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * @author Willie Wheeler (wwheeler@expedia.com)
- */
-@RestResource(path = RepoKeys.STATUS_TYPES)
-public interface StatusTypeRepo extends CrudRepository<StatusType, Long> {
-
-	@FindByKey
-	StatusType findByKey(@Param("key") String key);
-
-	StatusType findByName(@Param("name") String name);
+@SuppressWarnings("serial")
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class PersonList extends ArrayList<Person> {
 }

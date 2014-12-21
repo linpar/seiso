@@ -85,7 +85,9 @@ public class Person extends AbstractItem {
 	@OneToMany(mappedBy = "manager")
 	@RestResource(path = "direct-reports")
 	private List<Person> directReports;
-
+	
+	private String source;
+	
 	@Override
 	public ItemKey itemKey() {
 		return new SimpleItemKey(Person.class, username);

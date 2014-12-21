@@ -71,7 +71,8 @@ public class ItemServiceImpl implements ItemService {
 	private ItemDeleter itemDeleter;
 	@Autowired
 	private ItemSaver itemSaver;
-
+	
+	// FIXME This currently assumes at least one element, but it shouldn't.
 	/**
 	 * Using {@link Propagation.NEVER} because we don't want a single error to wreck the entire operation.
 	 */

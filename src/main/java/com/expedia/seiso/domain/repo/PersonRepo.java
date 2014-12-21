@@ -17,6 +17,8 @@ package com.expedia.seiso.domain.repo;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -34,13 +36,15 @@ public interface PersonRepo extends PagingAndSortingRepository<Person, Long> {
 
 	@FindByKey
 	Person findByUsername(@Param("username") String username);
-
+	
 	@RestResource(path = "find-by-first-name")
 	List<Person> findByFirstName(@Param("name") String firstName);
 
 	@RestResource(path = "find-by-last-name")
 	List<Person> findByLastName(@Param("name") String lastName);
-
+	
 	@RestResource(path = "find-by-email")
 	Person findByEmail(@Param("email") String email);
+	
+	Page<Person> findBySource(String source, Pageable pageable);
 }

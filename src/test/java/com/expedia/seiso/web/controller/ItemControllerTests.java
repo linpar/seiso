@@ -36,7 +36,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.LinkBuilder;
 import org.springframework.hateoas.PagedResources;
@@ -63,8 +62,8 @@ import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.gateway.NotificationGateway;
 import com.expedia.seiso.web.assembler.ItemAssembler;
-import com.expedia.seiso.web.assembler.PageLinks;
 import com.expedia.seiso.web.assembler.ProjectionNode;
+import com.expedia.seiso.web.assembler.ResponseHeadersBuilder;
 import com.expedia.seiso.web.dto.MapItemDto;
 import com.expedia.seiso.web.dto.PEItemDto;
 
@@ -74,22 +73,14 @@ import com.expedia.seiso.web.dto.PEItemDto;
 public class ItemControllerTests {
 
 	// Class under test
-	@InjectMocks
-	private ItemController controller;
+	@InjectMocks private ItemController controller;
 
 	// Dependencies
-	@Mock
-	private ItemMetaLookup itemMetaLookup;
-	@Mock
-	private ItemService itemService;
-	@Mock
-	private ItemAssembler itemAssembler;
-	@Mock
-	private EntityLinks entityLinks;
-	@Mock
-	private PageLinks pageLinks;
-	@Mock
-	private NotificationGateway publishGateway;
+	@Mock private ItemMetaLookup itemMetaLookup;
+	@Mock private ItemService itemService;
+	@Mock private ItemAssembler itemAssembler;
+	@Mock private ResponseHeadersBuilder responseHeadersBuilder;
+	@Mock private NotificationGateway publishGateway;
 
 	// Test data
 	private ItemMeta dataCenterRepoMeta;
@@ -221,13 +212,6 @@ public class ItemControllerTests {
 				.thenReturn(dataCenterMapDtoPage);
 
 		when(itemAssembler.toDto(eq(existingDataCenter), (ProjectionNode) anyObject())).thenReturn(dataCenterMapDto);
-
-		when(entityLinks.linkFor((Class) anyObject())).thenReturn(linkBuilder);
-
-		when(pageLinks.firstLink(anyString(), anyString(), (PageMetadata) anyObject())).thenReturn(link);
-		when(pageLinks.prevLink(anyString(), anyString(), (PageMetadata) anyObject())).thenReturn(link);
-		when(pageLinks.nextLink(anyString(), anyString(), (PageMetadata) anyObject())).thenReturn(link);
-		when(pageLinks.lastLink(anyString(), anyString(), (PageMetadata) anyObject())).thenReturn(link);
 	}
 
 	@Test

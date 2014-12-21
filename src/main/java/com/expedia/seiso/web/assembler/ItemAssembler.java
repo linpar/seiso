@@ -51,12 +51,9 @@ import com.expedia.seiso.web.dto.MapItemDto;
  */
 @Component
 public class ItemAssembler {
-	@Autowired
-	private Repositories repositories;
-	@Autowired
-	private EntityLinks links;
-	@Autowired
-	private ItemMetaLookup itemMetaLookup;
+	@Autowired private Repositories repositories;
+	@Autowired private EntityLinks links;
+	@Autowired private ItemMetaLookup itemMetaLookup;
 
 	public MapItemDto toDto(Item item) {
 		return toDto(item, ProjectionNode.FLAT_PROJECTION_NODE);
