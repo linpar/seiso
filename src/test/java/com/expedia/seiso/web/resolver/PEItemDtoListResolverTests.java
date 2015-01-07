@@ -44,16 +44,18 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.dto.PEItemDtoList;
+import com.expedia.seiso.web.controller.PEResourceList;
+import com.expedia.seiso.web.resolver.PEResourceListResolver;
+import com.expedia.seiso.web.resolver.ResolverUtils;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class PEItemDtoListResolverTests {
 
 	// Class under test
 	@InjectMocks
-	private PEItemDtoListResolver resolver;
+	private PEResourceListResolver resolver;
 
 	// Dependencies
 	private List<HttpMessageConverter<?>> messageConverters;
@@ -86,14 +88,14 @@ public class PEItemDtoListResolverTests {
 
 	@Before
 	public void setUp() throws Exception {
-		this.resolver = new PEItemDtoListResolver();
+		this.resolver = new PEResourceListResolver();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();
 	}
 
 	private void initTestData() {
-		when(peItemDtoListParam.getParameterType()).thenReturn((Class) PEItemDtoList.class);
+		when(peItemDtoListParam.getParameterType()).thenReturn((Class) PEResourceList.class);
 		when(dummyParam.getParameterType()).thenReturn((Class) Object.class);
 		when(nativeWebRequest.getNativeRequest(HttpServletRequest.class)).thenReturn(httpServletRequest);
 		when(httpServletRequest.getRequestURI()).thenReturn("/v1/services/some-service");

@@ -16,7 +16,6 @@
 package com.expedia.seiso.web.assembler;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
@@ -29,10 +28,9 @@ import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.BeanWrapper;
 
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.seiso.web.assembler.ItemPropertyHandler;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class ItemPropertyHandlerTests {
 
@@ -40,16 +38,11 @@ public class ItemPropertyHandlerTests {
 	private ItemPropertyHandler handler;
 
 	// Test data
-	@Mock
-	private BeanWrapper<Item> wrapper;
-	@Mock
-	private Map<String, Object> model;
-	@Mock
-	private PersistentProperty<?> idProp;
-	@Mock
-	private PersistentProperty<?> keyProp;
-	@Mock
-	private Object wrappedProp;
+	@Mock private BeanWrapper<Item> wrapper;
+	@Mock private Map<String, Object> model;
+	@Mock private PersistentProperty<?> idProp;
+	@Mock private PersistentProperty<?> keyProp;
+	@Mock private Object wrappedProp;
 
 	@Before
 	public void init() throws Exception {
@@ -76,11 +69,5 @@ public class ItemPropertyHandlerTests {
 	public void doWithPersistentProperty_key() {
 		handler.doWithPersistentProperty(keyProp);
 		verify(model).put("key", wrappedProp);
-	}
-
-	@Test
-	public void doWithPersistentProperty_id() {
-		handler.doWithPersistentProperty(idProp);
-		verifyZeroInteractions(model);
 	}
 }

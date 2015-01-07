@@ -39,7 +39,7 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 /**
  * An environment into which we deploy artifacts. Examples would be trunk, integration, live, hotfix and DR.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Data
 @Accessors(chain = true)

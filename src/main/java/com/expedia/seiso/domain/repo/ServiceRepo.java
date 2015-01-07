@@ -27,7 +27,7 @@ import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.repo.custom.ServiceRepoCustom;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.SERVICES)
 public interface ServiceRepo extends PagingAndSortingRepository<Service, Long>, ServiceRepoCustom {
@@ -51,4 +51,7 @@ public interface ServiceRepo extends PagingAndSortingRepository<Service, Long>, 
 	// "left join fetch s.owner " +
 	// "where s.key = :key")
 	Service findByKey(@Param("key") String key);
+	
+	@RestResource(path = "find-by-name")
+	Service findByName(@Param("name") String name);
 }

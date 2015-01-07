@@ -24,24 +24,26 @@ import lombok.NonNull;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.repository.support.Repositories;
-import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.core.exception.NotFoundException;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * Item metadata lookup.
+ * 
+ * @author Willie Wheeler
  */
-@Component
 @SuppressWarnings("rawtypes")
 @XSlf4j
 public class ItemMetaLookup {
-	@Autowired
-	private Repositories repositories;
-
+	@NonNull private Repositories repositories;
+	
+	public ItemMetaLookup(Repositories repositories) {
+		this.repositories = repositories;
+	}
+	
 	private final Map<String, Class> itemClassesByRepoKey = new HashMap<>();
 	private final Map<Class, ItemMeta> itemMetasByItemClass = new HashMap<>();
 
@@ -73,6 +75,15 @@ public class ItemMetaLookup {
 		itemMetasByItemClass.put(itemClass, new ItemMetaImpl(itemClass, repoInterface, isPagingRepo));
 	}
 
+	/**
+	 * Returns the item class for the given repository key.
+	 * 
+	 * @param repoKey
+	 *            repository key
+	 * @return item class for the given repo key
+	 * @throws NotFoundException
+	 *             if there's no item class for the given repo key
+	 */
 	public Class getItemClass(@NonNull String repoKey) {
 		val itemClass = itemClassesByRepoKey.get(repoKey);
 		if (itemClass == null) {
@@ -80,7 +91,21 @@ public class ItemMetaLookup {
 		}
 		return itemClass;
 	}
-
+	
+	public ItemMeta getItemMeta(@NonNull String repoKey) {
+		val itemClass = getItemClass(repoKey);
+		return getItemMeta(itemClass);
+	}
+	
+	/**
+	 * Returns the metadata object for the given class.
+	 * 
+	 * @param itemClass
+	 *            item class
+	 * @return metadata object for the given class
+	 * @throws NotFoundException
+	 *             if there's no metadata object for the given class
+	 */
 	public ItemMeta getItemMeta(@NonNull Class<?> itemClass) {
 		val meta = itemMetasByItemClass.get(itemClass);
 		if (meta == null) {

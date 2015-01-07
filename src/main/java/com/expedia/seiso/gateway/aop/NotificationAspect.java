@@ -30,13 +30,12 @@ import com.expedia.seiso.gateway.model.ConfigManagementEvent;
 /**
  * Notification aspect. Allows us to avoid polluting the domain code with integration-related concerns.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Aspect
 @Component
 public class NotificationAspect {
-	@Autowired
-	private NotificationGateway notificationGateway;
+	@Autowired private NotificationGateway notificationGateway;
 
 	@Pointcut("execution(* com.expedia.seiso.domain.service.impl.ItemDeleter.delete(com.expedia.seiso.domain.entity.Item))")
 	private void deleteItemOps() {

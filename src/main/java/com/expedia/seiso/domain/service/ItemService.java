@@ -23,13 +23,12 @@ import org.springframework.data.domain.Pageable;
 import com.expedia.seiso.core.exception.ResourceNotFoundException;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.key.ItemKey;
-import com.expedia.seiso.domain.service.response.SaveAllResponse;
 
 /**
  * Essentially a generic item CRUD repository that puts a fixed API in front of repositories that can have differing
  * APIs, especially where finding by key is involved.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public interface ItemService {
 
@@ -59,7 +58,7 @@ public interface ItemService {
 
 	@SuppressWarnings("rawtypes")
 	Page findAll(Class itemClass, Pageable pageable);
-
+	
 	/**
 	 * Finds an item based on an arbitrary key.
 	 * 
@@ -70,7 +69,7 @@ public interface ItemService {
 	 *             if the specified item doesn't exist
 	 */
 	Item find(ItemKey key);
-
+	
 	void delete(Item item);
 
 	void delete(ItemKey key);

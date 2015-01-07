@@ -15,12 +15,9 @@
  */
 package com.expedia.seiso.domain.repo.adapter;
 
-import javax.transaction.Transactional;
-
 import lombok.NonNull;
 import lombok.val;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
@@ -31,14 +28,16 @@ import com.expedia.seiso.domain.repo.ServiceInstancePortRepo;
 /**
  * Service instance port lookup strategy.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Component
-@Transactional
 public class ServiceInstancePortRepoAdapter implements RepoAdapter {
-	@Autowired
 	private ServiceInstancePortRepo serviceInstancePortRepo;
-
+	
+	public ServiceInstancePortRepoAdapter(@NonNull ServiceInstancePortRepo repo) {
+		this.serviceInstancePortRepo = repo;
+	}
+	
 	@Override
 	public boolean supports(@NonNull Class<?> itemClass) {
 		return itemClass == ServiceInstancePort.class;

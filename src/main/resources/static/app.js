@@ -29,6 +29,8 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoControl
 	])
 	.config([ '$httpProvider', '$routeProvider', function($httpProvider, $routeProvider) {
 		$httpProvider.defaults.headers.common = {
+			// TODO Migrate toward application/hal+json
+			'Accept' : 'application/json',
 			'X-User-Agent' : 'Seiso UI'
 		};
 		

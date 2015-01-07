@@ -29,7 +29,7 @@ import org.springframework.amqp.core.AmqpTemplate;
 import com.expedia.seiso.gateway.model.BulkNodeActionRequest;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class ActionGatewayImplTests {
 

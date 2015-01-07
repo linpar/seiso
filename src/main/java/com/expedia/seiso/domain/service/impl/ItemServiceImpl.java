@@ -37,10 +37,10 @@ import com.expedia.seiso.core.util.CollectionsUtils;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.domain.repo.adapter.RepoAdapters;
+import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 import com.expedia.seiso.domain.service.ItemService;
-import com.expedia.seiso.domain.service.response.SaveAllError;
-import com.expedia.seiso.domain.service.response.SaveAllResponse;
+import com.expedia.seiso.domain.service.SaveAllError;
+import com.expedia.seiso.domain.service.SaveAllResponse;
 
 // FIXME Move notification to aspect, since we don't want it to occur before flushing the Hibernate session. [WLW]
 
@@ -53,24 +53,18 @@ import com.expedia.seiso.domain.service.response.SaveAllResponse;
  * {@link com.expedia.seiso.gateway.aop.NotificationAspect} handles those.
  * </p>
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Service
 @Transactional(readOnly = true)
 @XSlf4j
 public class ItemServiceImpl implements ItemService {
-	@Autowired
-	private Repositories repositories;
-	@Autowired
-	private RepoAdapters repoAdapters;
-	@Autowired
-	private ItemMetaLookup itemMetaLookup;
-	@Autowired
-	private ItemMerger itemMerger;
-	@Autowired
-	private ItemDeleter itemDeleter;
-	@Autowired
-	private ItemSaver itemSaver;
+	@Autowired private Repositories repositories;
+	@Autowired private RepoAdapterLookup repoAdapters;
+	@Autowired private ItemMetaLookup itemMetaLookup;
+	@Autowired private ItemMerger itemMerger;
+	@Autowired private ItemDeleter itemDeleter;
+	@Autowired private ItemSaver itemSaver;
 	
 	// FIXME This currently assumes at least one element, but it shouldn't.
 	/**

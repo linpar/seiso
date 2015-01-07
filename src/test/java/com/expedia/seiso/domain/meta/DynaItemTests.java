@@ -31,7 +31,7 @@ import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class DynaItemTests {
 

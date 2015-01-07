@@ -24,61 +24,196 @@ import lombok.NonNull;
 import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.mapping.model.BeanWrapper;
 import org.springframework.data.repository.support.Repositories;
-import org.springframework.hateoas.EntityLinks;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.PagedResources.PageMetadata;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
-import com.expedia.seiso.domain.meta.DynaItem;
-import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.dto.MapItemDto;
+import com.expedia.seiso.domain.entity.Person;
+import com.expedia.seiso.domain.service.SearchResults;
+import com.expedia.seiso.web.Relations;
+import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.ItemLinks;
+import com.expedia.seiso.web.hateoas.Link;
+import com.expedia.seiso.web.hateoas.PageMetadata;
 
-// TODO Need to separate graph initialization from assembly, since graph initialization belongs in the domain layer
-// (and involves transactions) whereas assembly belongs in the web layer. Right now we are mixing the two concerns and
-// the result is that we're creating transactional proxies for controllers, which we don't want to do. [WLW]
+// TODO Rename to BaseResourceAssembler?
 
 /**
- * Projection-aware DTO assembler. We do the work here instead of inside a Jackson serializer because here we can see
- * the projection, whereas there we can't.
+ * Assembles items into base resources, which include links (in support of the REST HATEOAS principle). Subsequent
+ * processing (outside this class) serializes the base resource into special representation formats, such as HAL.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Component
 public class ItemAssembler {
+	private static final MultiValueMap<String, String> EMPTY_PARAMS = new LinkedMultiValueMap<String, String>();
+	
 	@Autowired private Repositories repositories;
-	@Autowired private EntityLinks links;
-	@Autowired private ItemMetaLookup itemMetaLookup;
-
-	public MapItemDto toDto(Item item) {
-		return toDto(item, ProjectionNode.FLAT_PROJECTION_NODE);
+	@Autowired @Qualifier("itemLinksV1") private ItemLinks itemLinksV1;
+	@Autowired @Qualifier("itemLinksV2") private ItemLinks itemLinksV2;
+	
+	
+	// =================================================================================================================
+	// Base resource list
+	// =================================================================================================================
+	
+	public List<BaseResource> toBaseResourceList(List<?> itemList) {
+		return toBaseResourceList(itemList, ProjectionNode.FLAT_PROJECTION_NODE);
 	}
-
-	public MapItemDto toDto(Item item, @NonNull final ProjectionNode projectionNode) {
-		if (item == null) {
-			return null;
+	
+	public List<BaseResource> toBaseResourceList(List<?> itemList, ProjectionNode proj) {
+		if (itemList == null) { return null; }
+		val baseResourceList = new ArrayList<BaseResource>();
+		for (val item : itemList) {
+			// Don't pass params from the collection view to the single view.
+			baseResourceList.add(toBaseResource((Item) item, proj, false));
 		}
-
-		val itemClass = item.getClass();
-		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
-		val persistentEntity = repositories.getPersistentEntity(itemClass);
-		val itemWrapper = BeanWrapper.create(item, null);
-
-		val model = new TreeMap<String, Object>();
-		persistentEntity.doWithProperties(new ItemPropertyHandler(itemWrapper, model));
-		persistentEntity.doWithAssociations(new ItemAssociationHandler(this, projectionNode, itemWrapper, model));
-		doSpecialNonPersistentProperties(item, model);
-
-		val selfUri = (itemMeta.isExported() ? getSelfLinkFor(item).getHref() : null);
-
-		return new MapItemDto(selfUri, item.getId(), model);
+		return baseResourceList;
 	}
-
+	
+	
+	// =================================================================================================================
+	// Base resource page
+	// =================================================================================================================
+	
+	public BaseResourcePage toBaseResourcePage(@NonNull Class<?> itemClass, Page<?> itemPage) {
+		return toBaseResourcePage(itemClass, itemPage, ProjectionNode.FLAT_PROJECTION_NODE);
+	}
+	
+	public BaseResourcePage toBaseResourcePage(@NonNull Class<?> itemClass, Page<?> itemPage, ProjectionNode proj) {
+		return toBaseResourcePage(itemClass, itemPage, proj, EMPTY_PARAMS);
+	}
+	
+	public BaseResourcePage toBaseResourcePage(
+			@NonNull Class<?> itemClass,
+			Page<?> itemPage,
+			ProjectionNode proj,
+			MultiValueMap<String, String> params) {
+		
+		if (itemPage == null) { return null; }
+		val links = buildPageLinks(itemClass, itemPage, params);
+		val pageMeta = buildPageMetadata(itemPage);
+		val items = toBaseResourceList(itemPage.getContent(), proj);
+		return new BaseResourcePage(links, pageMeta, items);
+	}
+	
+	
+	// =================================================================================================================
+	// Base resource
+	// =================================================================================================================
+	
+	public BaseResource toBaseResource(Item item, ProjectionNode proj) { return toBaseResource(item, proj, false); }
+	
+	public BaseResource toBaseResource(Item item, ProjectionNode proj, boolean includeCuries) {
+		if (item == null) { return null; }
+		
+		val itemClass = item.getClass();
+		val baseResource = new BaseResource();
+		val pEntity = repositories.getPersistentEntity(item.getClass());
+		val itemWrapper = BeanWrapper.create(item, null);
+		
+		baseResource.addV1Link(itemLinksV1.itemLink(item));
+		baseResource.addV2Link(itemLinksV2.itemLink(item));
+		baseResource.addV2Link(itemLinksV2.itemRepoLink(Relations.UP, itemClass));
+		pEntity.doWithProperties(new ItemPropertyHandler(itemWrapper, baseResource.getProperties()));
+		pEntity.doWithAssociations(new ItemAssociationHandler(this, itemLinksV2, proj, itemWrapper, baseResource));
+		doSpecialNonPersistentProperties(item, baseResource.getProperties());
+		
+		return baseResource;
+	}
+	
+	public BaseResource toBaseResource(SearchResults results) {
+		if (results == null) { return null; }
+		
+		val resultsResource = new BaseResource();
+		val itemClasses = results.getItemClasses();
+		for (val itemClass : itemClasses) {
+			val propName = StringUtils.uncapitalize(itemClass.getSimpleName());
+			val typedSerp = results.getTypedSerp(itemClass);
+			val typedSerpResourceList = toBaseResourceList(typedSerp.getContent());
+			resultsResource.setProperty(propName, typedSerpResourceList);
+		}
+		return resultsResource;
+	}
+	
+	
+	// =================================================================================================================
+	// Special cases
+	// =================================================================================================================
+	
+	// TODO Generalize
+	@Deprecated
+	public BaseResourcePage toUsernamePage(Page<Person> personPage, MultiValueMap<String, String> params) {
+		if (personPage == null) { return null; }
+		val links = buildPageLinks(Person.class, personPage, params);
+		val pageMeta = buildPageMetadata(personPage);
+		val usernames = toUsernameList(personPage.getContent());
+		return new BaseResourcePage(links, pageMeta, usernames);
+	}
+	
+	// TODO Generalize
+	@Deprecated
+	public List<BaseResource> toUsernameList(List<Person> people) {
+		val usernameResources = new ArrayList<BaseResource>();
+		for (val person : people) {
+			val props = new TreeMap<String, Object>();
+			props.put("username", person.getUsername());
+			val usernameResource = new BaseResource();
+			usernameResource.setProperties(props);
+			usernameResources.add(usernameResource);
+		}
+		return usernameResources;
+	}
+	
+	
+	// =================================================================================================================
+	// Private
+	// =================================================================================================================
+	
+	private List<Link> buildPageLinks(Class<?> itemClass, Page<?> itemPage, MultiValueMap<String, String> params) {
+		
+		// 0-indexed
+		val pageNumber = itemPage.getNumber();
+		val totalPages = itemPage.getTotalPages();
+		val firstPageNumber = 0;
+		val lastPageNumber = totalPages - 1;
+		
+		val links = new ArrayList<Link>();
+		links.add(itemLinksV2.itemRepoLink(itemClass, params));
+		
+		// Pagination links
+		if (totalPages > 0) {
+			links.add(itemLinksV2.itemRepoFirstLink(itemClass, itemPage, params));
+		}
+		if (pageNumber > 0 && pageNumber <= lastPageNumber) {
+			links.add(itemLinksV2.itemRepoPrevLink(itemClass, itemPage, params));
+		}
+		if (pageNumber >= firstPageNumber && pageNumber < lastPageNumber) {
+			links.add(itemLinksV2.itemRepoNextLink(itemClass, itemPage, params));
+		}
+		if (totalPages > 0) {
+			links.add(itemLinksV2.itemRepoLastLink(itemClass, itemPage, params));
+		}
+		
+		links.add(itemLinksV2.itemRepoSearchListLink(Relations.S_SEARCH, itemClass));
+		return links;
+	}
+	
+	private PageMetadata buildPageMetadata(Page<?> itemPage) {
+		val pageSize = itemPage.getSize();
+		val pageNumber = itemPage.getNumber();
+		val totalItems = itemPage.getTotalElements();
+		return new PageMetadata(pageSize, pageNumber, totalItems);
+	}
+	
 	// This is a temporary hack to handle special-case non-persistent properties.
 	// Specifically, we need to be able to map NodeIpAddress.aggregateRotationStatus. [WLW]
 	@Deprecated
@@ -88,51 +223,5 @@ public class ItemAssembler {
 			val nip = (NodeIpAddress) item;
 			model.put("aggregateRotationStatus", nip.getAggregateRotationStatus());
 		}
-	}
-
-	public List<MapItemDto> toDtoList(List<? extends Item> items) {
-		return toDtoList(items, ProjectionNode.FLAT_PROJECTION_NODE);
-	}
-
-	// FIXME Need links on the list, so need a dedicated DTO class
-	public List<MapItemDto> toDtoList(List<? extends Item> items, @NonNull ProjectionNode projectionNode) {
-		if (items == null) {
-			return null;
-		}
-		val itemDtos = new ArrayList<MapItemDto>();
-		for (val item : items) {
-			itemDtos.add(toDto(item, projectionNode));
-		}
-		return itemDtos;
-	}
-
-	public PagedResources<MapItemDto> toDtoPage(Page<? extends Item> items) {
-		return toDtoPage(items, ProjectionNode.FLAT_PROJECTION_NODE);
-	}
-
-	// FIXME Temporary implementation that assumes a single page
-	public PagedResources<MapItemDto> toDtoPage(Page<? extends Item> items, @NonNull ProjectionNode projectionNode) {
-		if (items == null) {
-			return null;
-		}
-
-		val pageNumber = items.getNumber();
-		val pageSize = items.getSize();
-		val totalElems = items.getTotalElements();
-
-		val itemDtos = toDtoList(items.getContent(), projectionNode);
-		val pageMeta = new PageMetadata(pageSize, pageNumber, totalElems);
-		return new PagedResources<MapItemDto>(itemDtos, pageMeta);
-	}
-
-	private Link getSelfLinkFor(Item item) {
-		val itemClass = item.getClass();
-		val itemWrapper = new DynaItem(item);
-		val itemKey = itemWrapper.getMetaKey();
-
-		// TODO Probably want to enforce trim/lowercase in the item itself. [WLW]
-		val cleanItemKey = itemKey.toString().trim().toLowerCase();
-
-		return links.linkForSingleResource(itemClass, cleanItemKey).withSelfRel();
 	}
 }

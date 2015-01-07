@@ -26,7 +26,7 @@ import com.expedia.seiso.domain.entity.Machine;
 import com.expedia.seiso.domain.repo.custom.MachineRepoCustom;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Transactional(readOnly = true)
 @RestResource(path = RepoKeys.MACHINES)
@@ -39,11 +39,11 @@ public interface MachineRepo extends PagingAndSortingRepository<Machine, Long>, 
 	@FindByKey
 	Machine findByName(@Param("name") String name);
 
-	// FIXME This won't work til ItemSearchController can handle single return values. [WLW]
+	// FIXME This won't work til NodeControllerV1 can handle single return values. [WLW]
 	// @RestResource(path = "find-by-fqdn")
 	Machine findByFqdn(@Param("fqdn") String fqdn);
 
-	// FIXME This won't work til ItemSearchController can handle single return values. [WLW]
+	// FIXME This won't work til NodeControllerV1 can handle single return values. [WLW]
 	// @RestResource(path = "find-by-ip-address")
 	Machine findByIpAddress(@Param("ip") String ipAddress);
 

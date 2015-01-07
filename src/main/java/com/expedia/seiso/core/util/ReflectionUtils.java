@@ -18,7 +18,7 @@ package com.expedia.seiso.core.util;
 import lombok.SneakyThrows;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class ReflectionUtils {
 

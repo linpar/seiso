@@ -1,30 +1,69 @@
 <div class="page-header">
-	<ul class="breadcrumb">
-		<li><a ng-href="{{uri()}}">Home</a></li>
-	</ul>
-	<h1>
-		Search
-		<span ng-if="searchResults" ng-show="searchResults.length"><small>({{searchResults.length}})</small></span>
-		<span ng-hide="searchResults"><small><i class="fa fa-spinner fa-spin"></i></small></span>
-	</h1>
+  <ul class="breadcrumb">
+    <li><a ng-href="{{uri()}}">Home</a></li>
+  </ul>
+  <h1>Search Results <span ng-hide="$root.searchResults"><small><i class="fa fa-spinner fa-spin"></i></small></span></h1>
 </div>
 
-<!--
-  TODO 
-  - this view fragment is covering a few loose ends by manually manipulating the search results anchor hrefs so they correctly link to seiso ui instead of api (#/nodes/1234 vs v1/nodes/1234)
-  - improve this by either manipulating the _self attribute every search result should have, or improving the search api to return a ui link in the results
- -->
-<div ng-controller="SearchController">
-	<div class="searchResultsContainer" ng-show="$root.searchResults.value">
-		<div ng-repeat="(resultsType, results) in $root.searchResults.value" class="searchResultsGroup">
-			<h4 ng-show="results.length">{{resultsType}}</h4>
-			<div ng-show="results.length" ng-repeat="result in results" ng-switch on="resultsType">
-				<a ng-switch-when="service" href="{{uri(resultsType+'s',result['key'])}}">{{result['key']}}</a>
-				<a ng-switch-when="loadbalancer" href="#/load-balancers/{{result['name']}}">{{result['name']}}</a>
-				<a ng-switch-default href="{{uri(resultsType+'s',result['name'])}}">{{result['name']}}</a>
-				<a ng-switch-when="vip" onclick="alert( 'not implemented yet' )">{{result['name']}}</a>
-				<!--<a href="{{result['_self']}}">{{result['name']}}</a>-->
-			</div>
-		</div>
-	</div>
+<div ng-show="$root.searchResults">
+  <section>
+    <header>
+      <h2>Services <small>({{$root.searchResults.service.length}})</small></h2>
+    </header>
+    <div ng-show="$root.searchResults.service.length == 0">
+      <p>No results.</p>
+    </div>
+    <div ng-show="$root.searchResults.service.length &gt; 0">
+      <ul class="list-unstyled">
+        <li ng-repeat="service in $root.searchResults.service | orderBy:'name'">
+          <a ng-href="{{uri('services', service.key)}}">{{service.name}} ({{service.key}})</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+  <section>
+    <header>
+      <h2>Nodes <small>({{$root.searchResults.node.length}})</small></h2>
+    </header>
+    <div ng-show="$root.searchResults.node.length == 0">
+      <p>No results.</p>
+    </div>
+    <div ng-show="$root.searchResults.node.length &gt; 0">
+      <ul class="list-unstyled">
+        <li ng-repeat="node in $root.searchResults.node | orderBy:'name'">
+          <a ng-href="{{uri('nodes', node.name)}}">{{node.name}}</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+  <section>
+    <header>
+      <h2>Machines <small>({{$root.searchResults.machine.length}})</small></h2>
+    </header>
+    <div ng-show="$root.searchResults.machine.length == 0">
+      <p>No results.</p>
+    </div>
+    <div ng-show="$root.searchResults.machine.length &gt; 0">
+      <ul class="list-unstyled">
+        <li ng-repeat="machine in $root.searchResults.machine | orderBy:'name'">
+          <a ng-href="{{uri('machines', machine.name)}}">{{machine.name}}</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+  <section>
+    <header>
+      <h2>Load Balancers <small>({{$root.searchResults.loadBalancer.length}})</small></h2>
+    </header>
+    <div ng-show="$root.searchResults.loadBalancer.length == 0">
+      <p>No results.</p>
+    </div>
+    <div ng-show="$root.searchResults.loadBalancer.length &gt; 0">
+      <ul class="list-unstyled">
+        <li ng-repeat="loadBalancer in $root.searchResults.loadBalancer | orderBy:'name'">
+          <a ng-href="{{uri('load-balancers', loadBalancer.name)}}">{{loadBalancer.name}}</a>
+        </li>
+      </ul>
+    </div>
+  </section>
 </div>

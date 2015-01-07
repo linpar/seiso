@@ -26,7 +26,7 @@ import com.expedia.seiso.web.assembler.ProjectionNode;
 /**
  * Item type metamodel.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public interface ItemMeta {
 
@@ -39,7 +39,7 @@ public interface ItemMeta {
 	String getRepoKey();
 
 	Method getRepositoryFindByKeyMethod();
-
+	
 	Method getRepositorySearchMethod(String query);
 
 	ProjectionNode getProjectionNode(Projection.Cardinality cardinality, String projectionKey);

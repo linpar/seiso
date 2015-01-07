@@ -30,7 +30,7 @@ import com.expedia.seiso.gateway.model.ActionRequest;
 /**
  * Action gateway implementation.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Component
 public class ActionGatewayImpl implements ActionGateway {

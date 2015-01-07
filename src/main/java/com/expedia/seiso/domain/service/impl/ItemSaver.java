@@ -19,9 +19,7 @@ import javax.transaction.Transactional;
 
 import lombok.NonNull;
 import lombok.val;
-import lombok.extern.slf4j.XSlf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
@@ -29,25 +27,28 @@ import org.springframework.stereotype.Component;
 import com.expedia.seiso.core.util.ReflectionUtils;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.key.ItemKey;
-import com.expedia.seiso.domain.repo.adapter.RepoAdapters;
-import com.expedia.seiso.gateway.NotificationGateway;
-import com.expedia.seiso.gateway.model.ConfigManagementEvent;
+import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 
 @Component
 @Transactional
-@XSlf4j
 public class ItemSaver {
-	@Autowired
 	private Repositories repositories;
-	@Autowired
-	private RepoAdapters repoAdapters;
-	@Autowired
+	private RepoAdapterLookup repoAdapterLookup;
 	private ItemMerger itemMerger;
 
 	// FIXME Use the NotificationAspect instead of this.
-	@Autowired
-	private NotificationGateway notificationGateway;
-
+//	@Autowired private NotificationGateway notificationGateway;
+	
+	public ItemSaver(
+			@NonNull Repositories repositories,
+			@NonNull RepoAdapterLookup repoAdapterLookup,
+			@NonNull ItemMerger itemMerger) {
+		
+		this.repositories = repositories;
+		this.repoAdapterLookup = repoAdapterLookup;
+		this.itemMerger = itemMerger;
+	}
+	
 	public void save(@NonNull Item itemData) {
 		val itemClass = itemData.getClass();
 
@@ -62,11 +63,11 @@ public class ItemSaver {
 
 		// FIXME Move to NotificationAspect.
 		// FIXME This can probably generate a stack overflow, because there are bidirectional associations, and the
-		// serialization will just follow the cycle. We need to send the notification once we have the MapDto. So
+		// serialization will just follow the cycle. We need to send the notification once we have the BaseResource. So
 		// again push this up. [WLW]
-		log.info("Sending notification");
-		val op = (newItem ? ConfigManagementEvent.OP_CREATE : ConfigManagementEvent.OP_UPDATE);
-		notificationGateway.notify(itemToSave, op);
+//		log.info("Sending notification");
+//		val op = (newItem ? ConfigManagementEvent.OP_CREATE : ConfigManagementEvent.OP_UPDATE);
+//		notificationGateway.notify(itemToSave, op);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -75,6 +76,6 @@ public class ItemSaver {
 	}
 
 	private Item doFind(ItemKey key) {
-		return repoAdapters.getRepoAdapterFor(key.getItemClass()).find(key);
+		return repoAdapterLookup.getRepoAdapterFor(key.getItemClass()).find(key);
 	}
 }

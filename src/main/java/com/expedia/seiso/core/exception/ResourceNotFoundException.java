@@ -22,7 +22,7 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
  * access it. We don't indicate which of the two is the case since revealing existence to unauthorized clients can
  * create security risks (e.g., client trying to guess protected resources).
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @SuppressWarnings("serial")
 public class ResourceNotFoundException extends NotFoundException {

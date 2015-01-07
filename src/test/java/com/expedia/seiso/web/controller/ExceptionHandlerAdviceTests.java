@@ -24,24 +24,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.core.MethodParameter;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
-import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.context.request.WebRequest;
 
-import com.expedia.seiso.core.exception.InvalidRequestException;
 import com.expedia.seiso.core.exception.ResourceNotFoundException;
 import com.expedia.seiso.core.util.C;
-import com.expedia.seiso.web.controller.error.ValidationErrorMap;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class ExceptionHandlerAdviceTests {
 
@@ -49,7 +42,6 @@ public class ExceptionHandlerAdviceTests {
 	private ExceptionHandlerAdvice advice;
 
 	// Test data
-	private InvalidRequestException invalidRequestException;
 	private ResourceNotFoundException resourceNotFoundException;
 	private JsonMappingException jsonMappingException;
 	private RuntimeException runtimeException;
@@ -67,18 +59,9 @@ public class ExceptionHandlerAdviceTests {
 	}
 
 	private void initTestData() {
-		this.invalidRequestException = new InvalidRequestException("my-ire-message", bindingResult);
 		this.resourceNotFoundException = new ResourceNotFoundException("my-rnfe-message");
 		this.jsonMappingException = new JsonMappingException("my-jme-message");
 		this.runtimeException = new RuntimeException("my-re-message");
-	}
-
-	@Test
-	public void handleInvalidRequestException() {
-		val result = advice.handleInvalidRequestException(invalidRequestException, webRequest);
-		assertNotNull(result);
-		assertEquals(C.EC_INVALID_REQUEST, result.getCode());
-		assertEquals(invalidRequestException.getMessage(), result.getMessage());
 	}
 
 	@Test

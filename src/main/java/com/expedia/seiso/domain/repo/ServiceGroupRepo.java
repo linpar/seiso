@@ -26,7 +26,7 @@ import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.ServiceGroup;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.SERVICE_GROUPS)
 public interface ServiceGroupRepo extends CrudRepository<ServiceGroup, Long> {

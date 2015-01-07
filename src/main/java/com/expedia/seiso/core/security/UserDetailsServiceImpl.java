@@ -29,13 +29,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.expedia.seiso.domain.repo.UserRepo;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Service
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
-	@Autowired
-	private UserRepo userRepo;
+	@Autowired private UserRepo userRepo;
 
 	@Override
 	public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {

@@ -32,17 +32,13 @@ import com.expedia.seiso.domain.entity.Item;
 /**
  * {@link Item} wrapper to provide easy access to item metadata and to support metadata-based queries.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class DynaItem {
-	@Getter
-	private final Class<?> itemClass;
-	@Getter
-	private final Item item;
-	@Getter
-	private PropertyDescriptor metaKeyProperty;
-	@Getter
-	private Serializable metaKey;
+	@Getter private final Class<?> itemClass;
+	@Getter private final Item item;
+	@Getter private PropertyDescriptor metaKeyProperty;
+	@Getter private Serializable metaKey;
 
 	public DynaItem(@NonNull Item item) {
 		this.item = item;

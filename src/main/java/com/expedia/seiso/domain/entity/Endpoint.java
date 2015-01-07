@@ -31,7 +31,7 @@ import com.expedia.seiso.domain.entity.key.EndpointKey;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Data
 @Accessors(chain = true)

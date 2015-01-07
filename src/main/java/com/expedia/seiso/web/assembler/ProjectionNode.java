@@ -24,7 +24,7 @@ import lombok.NonNull;
 import lombok.val;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class ProjectionNode {
 	public static final ProjectionNode FLAT_PROJECTION_NODE = new ProjectionNode("flat");

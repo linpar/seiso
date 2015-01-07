@@ -17,12 +17,13 @@ package com.expedia.seiso.domain.entity.key;
 
 import lombok.Data;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import com.expedia.seiso.domain.entity.IpAddressRole;
 
+/**
+ * @author Willie Wheeler
+ */
 @Data
-@RequiredArgsConstructor
 public class IpAddressRoleKey implements ItemKey {
 	@NonNull
 	private String serviceInstanceKey;

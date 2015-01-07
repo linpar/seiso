@@ -15,8 +15,6 @@
  */
 package com.expedia.seiso.domain.repo;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -27,7 +25,7 @@ import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Person;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.PEOPLE)
 public interface PersonRepo extends PagingAndSortingRepository<Person, Long> {
@@ -38,13 +36,14 @@ public interface PersonRepo extends PagingAndSortingRepository<Person, Long> {
 	Person findByUsername(@Param("username") String username);
 	
 	@RestResource(path = "find-by-first-name")
-	List<Person> findByFirstName(@Param("name") String firstName);
+	Page<Person> findByFirstName(@Param("name") String firstName, Pageable pageable);
 
 	@RestResource(path = "find-by-last-name")
-	List<Person> findByLastName(@Param("name") String lastName);
+	Page<Person> findByLastName(@Param("name") String lastName, Pageable pageable);
 	
 	@RestResource(path = "find-by-email")
 	Person findByEmail(@Param("email") String email);
 	
-	Page<Person> findBySource(String source, Pageable pageable);
+	@RestResource(path = "find-by-source")
+	Page<Person> findBySource(@Param("source") String source, Pageable pageable);
 }

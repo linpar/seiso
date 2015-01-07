@@ -32,7 +32,7 @@ import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.repo.custom.ServiceRepoCustom;
 
 /**
- * @author Ken Van Eyk (kvaneyk@expedia.com)
+ * @author Ken Van Eyk
  */
 public class ServiceRepoImpl implements ServiceRepoCustom {
 	private static final String ENTITY_NAME = "Service";

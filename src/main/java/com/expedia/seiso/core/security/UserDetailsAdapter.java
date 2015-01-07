@@ -31,14 +31,13 @@ import com.expedia.seiso.domain.entity.Role;
 import com.expedia.seiso.domain.entity.User;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Data
 @RequiredArgsConstructor
 @SuppressWarnings("serial")
 public class UserDetailsAdapter implements UserDetails {
-	@NonNull
-	private User user;
+	@NonNull private User user;
 
 	@Override
 	public String getUsername() {

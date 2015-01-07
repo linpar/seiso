@@ -3,7 +3,7 @@
 		<li><a ng-href="{{uri()}}">Home</a></li>
 		<li><a ng-href="{{uri('services')}}">Services</a></li>
 	</ul>
-	<div ng-show="service != null">
+	<div ng-show="service">
 		<h1>{{service.name}}</h1>
 		<div class="header-description" ng-if="service.description || service.scmRepository">
 			<div ng-if="service.description != null">
@@ -17,31 +17,31 @@
 		</div>
 	</div>
 </div>
-
-<ul class="field-list">
-	<li>
-		<div>Key:</div>
-		<div>{{service.key}}</div>
-	</li>
-	<li>
-		<div>Group:</div>
-		<div>{{service.group.name || '-'}}</div>
-	</li>
-	<li>
-		<div>Type:</div>
-		<div>{{service.type.name || '-'}}</div>
-	</li>
-	<li>
-		<div>Platform:</div>
-		<div>{{service.platform || '-'}}</div>
-	</li>
-	<li>
-		<div>Owner:</div>
-		<div>
-			<span ng-if="service.owner"><a ng-href="{{uri('people', service.owner.username)}}">{{service.owner.firstName + ' ' + service.owner.lastName}}</a></span>
-			<span ng-if="!service.owner">-</span>
-		</div>
-	</li>
-</ul>
-
+<div ng-show="service">
+	<ul class="field-list">
+		<li>
+			<div>Key:</div>
+			<div>{{service.key}}</div>
+		</li>
+		<li>
+			<div>Group:</div>
+			<div>{{service.group.name || '-'}}</div>
+		</li>
+		<li>
+			<div>Type:</div>
+			<div>{{service.type.name || '-'}}</div>
+		</li>
+		<li>
+			<div>Platform:</div>
+			<div>{{service.platform || '-'}}</div>
+		</li>
+		<li>
+			<div>Owner:</div>
+			<div>
+				<span ng-if="service.owner"><a ng-href="{{uri('people', service.owner.username)}}">{{service.owner.firstName + ' ' + service.owner.lastName}}</a></span>
+				<span ng-if="!service.owner">-</span>
+			</div>
+		</li>
+	</ul>
+</div>
 <div ng-include src="'view/items/service/details/service-instances-pane.html'"></div>

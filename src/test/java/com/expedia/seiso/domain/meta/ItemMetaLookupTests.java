@@ -31,22 +31,20 @@ import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class ItemMetaLookupTests {
 
 	// Class under test
-	@InjectMocks
-	private ItemMetaLookup lookup;
+	@InjectMocks private ItemMetaLookup lookup;
 
 	// Dependencies
-	@Mock
-	private Repositories repositories;
+	@Mock private Repositories repositories;
 
 	@Before
 	public void init() {
-		this.lookup = new ItemMetaLookup();
 		MockitoAnnotations.initMocks(this);
+		this.lookup = new ItemMetaLookup(repositories);
 	}
 
 	// FIXME Ignoring because I'm not yet sure how best to mock Repositories. [WLW]
@@ -58,7 +56,7 @@ public class ItemMetaLookupTests {
 
 	@Test(expected = NullPointerException.class)
 	public void testFindByItemClass_nullClass() {
-		lookup.getItemMeta(null);
+		lookup.getItemMeta((Class<?>) null);
 	}
 
 	@Test(expected = NotFoundException.class)

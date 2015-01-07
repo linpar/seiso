@@ -47,13 +47,13 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.RepoKeys;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class PEItemDtoResolverTests {
 
 	// Class under test
 	@InjectMocks
-	private PEItemDtoResolver resolver;
+	private PEResourceResolver resolver;
 
 	// Dependencies
 	private List<HttpMessageConverter<?>> messageConverters;
@@ -86,7 +86,7 @@ public class PEItemDtoResolverTests {
 
 	@Before
 	public void init() {
-		this.resolver = new PEItemDtoResolver();
+		this.resolver = new PEResourceResolver(new ArrayList<SimplePropertyEntry>());
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();

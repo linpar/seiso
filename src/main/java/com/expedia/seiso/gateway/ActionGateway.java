@@ -20,7 +20,7 @@ import com.expedia.seiso.gateway.model.ActionRequest;
 /**
  * Outbound gateway for publishing user-initiated actions, such as running health checks or bouncing a node.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public interface ActionGateway {
 

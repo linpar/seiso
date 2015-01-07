@@ -25,7 +25,7 @@ import com.expedia.seiso.domain.entity.IpAddressRole;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.IP_ADDRESS_ROLES)
 public interface IpAddressRoleRepo extends PagingAndSortingRepository<IpAddressRole, Long> {

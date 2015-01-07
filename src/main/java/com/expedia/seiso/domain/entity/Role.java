@@ -29,7 +29,7 @@ import lombok.experimental.Accessors;
 // FIXME Have to implement Serializable for now. See User class for details. [WLW]
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @SuppressWarnings("serial")
 @Data

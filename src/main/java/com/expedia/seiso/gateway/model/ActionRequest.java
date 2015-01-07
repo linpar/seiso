@@ -18,7 +18,7 @@ package com.expedia.seiso.gateway.model;
 /**
  * Represents a user-initiated action.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public interface ActionRequest {
 

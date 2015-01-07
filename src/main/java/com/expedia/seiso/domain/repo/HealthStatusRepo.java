@@ -23,7 +23,7 @@ import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.HealthStatus;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.HEALTH_STATUSES)
 public interface HealthStatusRepo extends PagingAndSortingRepository<HealthStatus, Long> {

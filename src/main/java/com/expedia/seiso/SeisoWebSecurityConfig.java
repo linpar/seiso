@@ -16,7 +16,6 @@
 package com.expedia.seiso;
 
 import lombok.val;
-import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,13 +23,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
+
+import com.expedia.seiso.core.security.UserDetailsServiceImpl;
 
 // See http://blog.springsource.org/2013/07/03/spring-security-java-config-preview-web-security/
 // http://stackoverflow.com/questions/8658584/spring-security-salt-for-custom-userdetails
@@ -43,36 +42,18 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 /**
  * Java configuration for Seiso security.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
-//@Configuration
-//@EnableWebSecurity // creates the springSecurityFilterChain bean
-//@EnableWebMvcSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
-@XSlf4j
+@Configuration
 public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
-	
-	@Autowired
-	private UserDetailsService userDetailsService;
 
 	@Override
-	protected UserDetailsService userDetailsService() {
-		return userDetailsService;
-	}
+	protected UserDetailsService userDetailsService() { return userDetailsServiceImpl(); }
 
-	// FIXME Update to @Autowired configureGlobal() per
-	// docs.spring.io/spring-security/site/docs/3.2.x/reference/htmlsingle/#jc-authentication
-	// See StackOverflow question 20651043 as well.
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		log.info("Creating AuthenticationManager with UserService {}", userDetailsService.getClass());
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
 	}
-
-	// @Override
-	// public void configure(AuthenticationManagerBuilder auth) throws Exception {
-	// auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-	// }
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -99,17 +80,17 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.disable();
 		// @formatter:on
 	}
-
+	
 	@Bean
-	public PasswordEncoder passwordEncoder() {
-		log.trace("Creating password encoder");
-		return new BCryptPasswordEncoder();
-	}
+	public UserDetailsService userDetailsServiceImpl() { return new UserDetailsServiceImpl(); }
+	
+	@Bean
+	public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 
 	@Bean
 	public BasicAuthenticationEntryPoint entryPoint() {
-		val basicAuthEntryPoint = new BasicAuthenticationEntryPoint();
-		basicAuthEntryPoint.setRealmName("Seiso");
-		return basicAuthEntryPoint;
+		val entry = new BasicAuthenticationEntryPoint();
+		entry.setRealmName("Seiso");
+		return entry;
 	}
 }

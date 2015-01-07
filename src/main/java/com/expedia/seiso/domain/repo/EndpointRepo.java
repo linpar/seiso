@@ -32,7 +32,7 @@ import com.expedia.seiso.domain.entity.ServiceInstance;
 // TODO Suppress unwanted repo methods. E.g., we don't want findAll(). [WLW]
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.ENDPOINTS)
 public interface EndpointRepo extends PagingAndSortingRepository<Endpoint, Long> {

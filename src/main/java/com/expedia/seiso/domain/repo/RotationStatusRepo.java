@@ -23,7 +23,7 @@ import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.RotationStatus;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.ROTATION_STATUSES)
 public interface RotationStatusRepo extends CrudRepository<RotationStatus, Long> {

@@ -25,7 +25,7 @@ import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.NODE_IP_ADDRESSES)
 public interface NodeIpAddressRepo extends PagingAndSortingRepository<NodeIpAddress, Long> {

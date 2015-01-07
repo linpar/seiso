@@ -38,19 +38,19 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 /**
  * A group of services. A service can be in at most one group.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false, of = "key")
 @ToString(of = { "key", "name" })
 @Entity
-//@formatter:off
+// @formatter:off
 @Projections({
 	@Projection(cardinality = Cardinality.COLLECTION),
 	@Projection(cardinality = Cardinality.SINGLE, paths = { "services.type", "services.owner" })
-	})
-//@formatter:om
+})
+// @formatter:on
 public class ServiceGroup extends AbstractItem {
 
 	@Key

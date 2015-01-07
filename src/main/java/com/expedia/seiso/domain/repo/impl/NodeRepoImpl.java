@@ -30,7 +30,7 @@ import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.repo.custom.NodeRepoCustom;
 
 /**
- * @author Ken Van Eyk (kvaneyk@expedia.com)
+ * @author Ken Van Eyk
  */
 public class NodeRepoImpl implements NodeRepoCustom {
 	private static final String ENTITY_NAME = "Node";

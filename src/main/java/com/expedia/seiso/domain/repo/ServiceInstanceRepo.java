@@ -25,7 +25,7 @@ import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.SERVICE_INSTANCES)
 public interface ServiceInstanceRepo extends PagingAndSortingRepository<ServiceInstance, Long> {

@@ -20,20 +20,19 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
+/**
+ * Data source configuration properties.
+ * 
+ * @author Willie Wheeler
+ */
 @Data
-@Component
 @ConfigurationProperties(prefix = "spring.datasource")
 public class DataSourceProperties {
-	@NotNull
-	private String driverClassName;
-	@NotNull
-	private String url;
-	@NotNull
-	private String username;
-	@NotNull
-	private String password;
+	@NotNull private String driverClassName;
+	@NotNull private String url;
+	@NotNull private String username;
+	@NotNull private String password;
 
 	// TODO Add other data source settings here. [WLW]
 }

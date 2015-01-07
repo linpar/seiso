@@ -20,7 +20,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.expedia.seiso.domain.entity.Role;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public interface RoleRepo extends CrudRepository<Role, Long> {
 

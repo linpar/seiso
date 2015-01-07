@@ -16,11 +16,10 @@
 package com.expedia.seiso.domain.repo.custom;
 
 import com.expedia.seiso.domain.entity.LoadBalancer;
-import com.expedia.seiso.domain.repo.search.SearchableRepository;
 
 /**
- * @author Ken Van Eyk (kvaneyk@expedia.com)
+ * @author Ken Van Eyk
  */
-public interface LoadBalancerRepoCustom extends SearchableRepository<LoadBalancer, Long> {
+public interface LoadBalancerRepoCustom extends SearchableRepository<LoadBalancer> {
 
 }

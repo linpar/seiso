@@ -21,7 +21,7 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
 /**
  * Supports repo access via a uniform {@link ItemKey} identifier.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  * 
  * @param <T>
  *            item type

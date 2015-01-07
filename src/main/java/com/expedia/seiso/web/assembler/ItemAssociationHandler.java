@@ -16,7 +16,6 @@
 package com.expedia.seiso.web.assembler;
 
 import java.util.List;
-import java.util.Map;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,52 +27,48 @@ import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.SimpleAssociationHandler;
 import org.springframework.data.mapping.model.BeanWrapper;
 
-import com.expedia.seiso.core.util.AuditUtils;
+import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.web.hateoas.ItemLinks;
+import com.expedia.seiso.web.hateoas.BaseResource;
 
 /**
- * Implemented as a standalone class (rather than as an anonymous inner class) to faciliate unit testing.
- * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RequiredArgsConstructor
 @XSlf4j
 public class ItemAssociationHandler implements SimpleAssociationHandler {
-	@NonNull
-	private final ItemAssembler assembler;
-	@NonNull
-	private final ProjectionNode projectionNode;
-	@NonNull
-	private final BeanWrapper<Item> wrapper;
-	@NonNull
-	private final Map<String, Object> model;
+	@NonNull private final ItemAssembler assembler;
+	@NonNull private final ItemLinks itemLinksV2;
+	@NonNull private final ProjectionNode projection;
+	@NonNull private final BeanWrapper<? extends Item> wrapper;
+	@NonNull private final BaseResource dto;
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void doWithAssociation(Association<? extends PersistentProperty<?>> assoc) {
-
-		// Hm, val doesn't work here for some reason.
+		val item = wrapper.getBean();
+		
+		// val doesn't work here for some reason.
 		PersistentProperty<?> prop = assoc.getInverse();
-
 		val propName = prop.getName();
-
-		// We handle audit properties elsewhere.
-		if (AuditUtils.isAuditProperty(propName)) {
-			return;
-		}
-
 		val propType = prop.getType();
-		val child = projectionNode.getChild(propName);
-
+		val child = projection.getChild(propName);
+		
+		// Link
+		val restResource = prop.findAnnotation(RestResource.class);
+		val path = (restResource == null ? propName : restResource.path());
+		dto.addV2Link(itemLinksV2.itemPropertyLink(item, path));
+		
+		// Property
 		if (child != null) {
 			if (Item.class.isAssignableFrom(propType)) {
 				val propEntity = (Item) wrapper.getProperty(prop);
-				val propDto = assembler.toDto(propEntity, child);
-				model.put(propName, propDto);
+				val propDto = assembler.toBaseResource(propEntity, child, false);
+				dto.setProperty(propName, propDto);
 			} else if (List.class.isAssignableFrom(propType)) {
-				val propEntityList = (List<? extends Item>) wrapper.getProperty(prop);
-				val dtoList = assembler.toDtoList(propEntityList, child);
-				model.put(propName, dtoList);
+				val propEntityList = (List<?>) wrapper.getProperty(prop);
+				val propDtoList = assembler.toBaseResourceList(propEntityList, child);
+				dto.setProperty(propName, propDtoList);
 			} else {
 				log.warn("Don't know how to handle association type {}", propType);
 			}

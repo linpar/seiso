@@ -16,11 +16,10 @@
 package com.expedia.seiso.domain.repo.custom;
 
 import com.expedia.seiso.domain.entity.Service;
-import com.expedia.seiso.domain.repo.search.SearchableRepository;
 
 /**
- * @author Ken Van Eyk (kvaneyk@expedia.com)
+ * @author Ken Van Eyk
  */
-public interface ServiceRepoCustom extends SearchableRepository<Service, Long> {
+public interface ServiceRepoCustom extends SearchableRepository<Service> {
 
 }

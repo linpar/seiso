@@ -31,7 +31,7 @@ import com.expedia.seiso.domain.entity.User;
 import com.expedia.seiso.domain.repo.UserRepo;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class UserDetailsServiceImplTests {
 

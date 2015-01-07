@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.XSlf4j;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @XSlf4j
 public class LogFilter implements Filter {
@@ -50,10 +50,8 @@ public class LogFilter implements Filter {
 		int statusCode = httpResponse.getStatus();
 		int series = (statusCode / 100) * 100;
 		if (series == 400 || series == 500) {
-			String xUserAgent = httpRequest.getHeader("X-User-Agent");
 			String requestInfo = httpRequest.getMethod() + " " + httpRequest.getRequestURI();
-			log.warn("X-User-Agent '{}' received HTTP status code {} for request {}", xUserAgent, statusCode,
-					requestInfo);
+			log.warn("HTTP status code {} for request {}", statusCode, requestInfo);
 		}
 	}
 

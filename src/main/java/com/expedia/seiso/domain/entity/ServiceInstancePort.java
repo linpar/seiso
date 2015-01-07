@@ -41,7 +41,7 @@ import com.expedia.seiso.domain.entity.key.ServiceInstancePortKey;
 import com.expedia.seiso.domain.entity.listener.ServiceInstancePortListener;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Data
 @Accessors(chain = true)
@@ -78,7 +78,7 @@ public class ServiceInstancePort extends AbstractItem {
 	private String description;
 
 	// FIXME For some reason, this is not cascade deleting endpoints. I get a constraint violation when calling it from
-	// ServiceInstancePortController.deletePort(). [WLW]
+	// ServiceInstancePortControllerV1.deletePort(). [WLW]
 	@NonNull
 	@OneToMany(mappedBy = "port", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Endpoint> endpoints = new ArrayList<>();

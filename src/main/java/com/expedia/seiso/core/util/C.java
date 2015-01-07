@@ -16,19 +16,14 @@
 package com.expedia.seiso.core.util;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class C {
-	public static final String MEDIA_TYPE_TEXT_URI_LIST = "text/uri-list";
-
 	public static final int DEFAULT_PAGE_NUMBER = 0;
 	public static final int DEFAULT_PAGE_SIZE = 100;
 
 	// Error codes
 	public static final String EC_INTERNAL_ERROR = "internal_error";
-
-	/** Syntax fine, but semantics wrong */
-	public static final String EC_INVALID_REQUEST = "invalid_request";
 
 	/** JSON syntax is fine, but semantics wrong (e.g. array passed where we expect a single value) */
 	public static final String EC_INVALID_REQUEST_JSON_PAYLOAD = "invalid_request_json_payload";

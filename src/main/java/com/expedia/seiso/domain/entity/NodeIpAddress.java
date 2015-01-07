@@ -90,8 +90,8 @@ public class NodeIpAddress extends AbstractItem {
 	@JoinColumn(name = "rotation_status_id")
 	private RotationStatus rotationStatus;
 
-	// FIXME Hm this isn't showing up in the DTO because it's not a persistent property. See ItemAssembler and
-	// ItemAssociationHandler.
+	// FIXME Hm this isn't showing up in the DTO because it's not a persistent property. See LegacyItemAssembler and
+	// LegacyItemAssociationHandler.
 	@Transient
 	public RotationStatus getAggregateRotationStatus() {
 

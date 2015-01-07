@@ -45,46 +45,35 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.PersonRepo;
-import com.expedia.seiso.domain.repo.adapter.RepoAdapters;
+import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 import com.expedia.seiso.domain.repo.adapter.SimpleItemRepoAdapter;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @XSlf4j
 public class ItemServiceImplTests {
 
 	// Class under test
-	@InjectMocks
-	private ItemServiceImpl itemService;
+	@InjectMocks private ItemServiceImpl itemService;
 
 	// Dependencies
-	@Mock
-	private ItemMetaLookup itemMetaLookup;
-	@Mock
-	private Repositories repositories;
-	@Mock
-	private PersonRepo personRepo;
-	@Mock
-	private RepoAdapters repoAdapters;
-	@Mock
-	private SimpleItemRepoAdapter simpleItemRepoAdapter;
-	@Mock
-	private ItemDeleter itemDeleter;
-	@Mock
-	private ItemMerger itemMerger;
+	@Mock private ItemMetaLookup itemMetaLookup;
+	@Mock private Repositories repositories;
+	@Mock private PersonRepo personRepo;
+	@Mock private RepoAdapterLookup repoAdapters;
+	@Mock private SimpleItemRepoAdapter simpleItemRepoAdapter;
+	@Mock private ItemDeleter itemDeleter;
+	@Mock private ItemMerger itemMerger;
 
 	// Test data
-	@Mock
-	private ItemMeta personMeta;
-	@Mock
-	private Pageable personPageable;
+	@Mock private ItemMeta personMeta;
+	@Mock private Pageable personPageable;
 	private Method personFindByKeyMethod;
 	private List<Person> people;
 	private Person person;
 	private SimpleItemKey personKey;
-	@Mock
-	private Page<Person> personPage;
+	@Mock private Page<Person> personPage;
 
 	@Before
 	public void init() throws Exception {
@@ -150,7 +139,7 @@ public class ItemServiceImplTests {
 	public void find_nullItemKey() {
 		itemService.find(null);
 	}
-
+	
 	@Test
 	public void delete() {
 		itemService.delete(person);

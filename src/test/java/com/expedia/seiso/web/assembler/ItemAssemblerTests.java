@@ -15,14 +15,15 @@
  */
 package com.expedia.seiso.web.assembler;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import lombok.val;
 
@@ -31,114 +32,113 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mapping.PersistentEntity;
-import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.repository.support.Repositories;
-import org.springframework.hateoas.EntityLinks;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.LinkBuilder;
 
-import com.expedia.seiso.domain.entity.Region;
-import com.expedia.seiso.domain.meta.ItemMeta;
-import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.assembler.ItemAssembler;
-import com.expedia.seiso.web.assembler.ProjectionNode;
+import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.entity.Person;
+import com.expedia.seiso.domain.entity.Service;
+import com.expedia.seiso.web.hateoas.ItemLinks;
+import com.expedia.seiso.web.hateoas.Link;
 
-/*
- * @author Willie Wheeler (wwheeler@expedia.com)
+/**
+ * @author Willie Wheeler
  */
 public class ItemAssemblerTests {
-
+	
 	// Class under test
-	@InjectMocks
-	private ItemAssembler assembler;
-
+	@InjectMocks private ItemAssembler assembler;
+	
 	// Dependencies
-	@Mock
-	private Repositories repositories;
-	@Mock
-	private EntityLinks links;
-	@Mock
-	private ItemMetaLookup itemMetaLookup;
-
+	@Mock private Repositories repositories;
+	@Mock(name = "itemLinksV1") private ItemLinks itemLinksV1;
+	@Mock(name = "itemLinksV2") private ItemLinks itemLinksV2;
+	
 	// Test data
-	private Region region;
-	@Mock
-	private ProjectionNode regionQuery;
-	@Mock
-	private PersistentEntity regionMeta;
-	@Mock
-	private PersistentProperty regionKeyProp;
-	@Mock
-	private LinkBuilder linkBuilder;
-	@Mock
-	private Link link;
-	@Mock
-	private ItemMeta itemTypeMeta;
-
+	private List<Service> itemList;
+	private PageRequest pageRequest;
+	private PageImpl<Service> itemPage;
+	@Mock private PersistentEntity persistentEntity;
+	@Mock private Link link;
+	private Person person;
+	private Service service;
+	private ProjectionNode projectionNode;
+	
 	@Before
-	public void init() throws Exception {
+	public void setUp() {
 		this.assembler = new ItemAssembler();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();
 	}
-
+	
 	private void initTestData() {
-		this.region = new Region().setKey("amazon-us-west").setName("Amazon US West");
-
-		when(regionMeta.getPersistentProperty("key")).thenReturn(regionKeyProp);
-		when(linkBuilder.withSelfRel()).thenReturn(link);
-		when(itemMetaLookup.getItemMeta((Class<Region>) anyObject())).thenReturn(itemTypeMeta);
+		this.pageRequest = new PageRequest(5, 20);
+		this.itemList = Arrays.asList(service);
+		this.itemPage = new PageImpl<Service>(itemList, pageRequest, 8675309);
+		
+		// @formatter:off
+		this.person = new Person()
+				.setUsername("mkozelek")
+				.setFirstName("Mark")
+				.setLastName("Kozelek");
+		this.service = new Service()
+				.setKey("benji")
+				.setName("Benji")
+				.setDescription("My Benji service")
+				.setOwner(person);
+		// @formatter:on
+		this.projectionNode = ProjectionNode.FLAT_PROJECTION_NODE;
 	}
-
+	
 	private void initDependencies() {
-		when((PersistentEntity) repositories.getPersistentEntity(Region.class)).thenReturn(
-				regionMeta);
-		when(links.linkForSingleResource(eq(Region.class), anyString())).thenReturn(linkBuilder);
+		when(repositories.getPersistentEntity((Class<?>) anyObject())).thenReturn(persistentEntity);
+		
+		when(itemLinksV1.itemLink((Item) anyObject())).thenReturn(link);
+		when(itemLinksV2.itemLink((Item) anyObject())).thenReturn(link);
+		when(itemLinksV2.itemRepoLink(anyString(), (Class<?>) anyObject())).thenReturn(link);
 	}
-
+	
 	@Test
-	public void toDto() {
-		val actualDto = assembler.toDto(region, regionQuery);
-		assertNotNull(actualDto);
-
-		// FIXME Want to do this stuff, but need to beef up the regionMeta above. Or else use a real one. [WLW]
-		// val actualDtoMap = actualDto.getContent();
-		// assertEquals(region.getKey(), actualDtoMap.get("key"));
-		// assertEquals(region.getName(), actualDtoMap.get("name"));
+	public void toBaseResourceList() {
+		val result = assembler.toBaseResourceList(itemList, projectionNode);
+		assertNotNull(result);
+		assertEquals(itemList.size(), result.size());
 	}
-
+	
 	@Test
-	public void toDto_nullEntity() {
-		val actualDto = assembler.toDto(null, regionQuery);
-		assertNull(actualDto);
+	public void toBaseResourceList_nullItemList() {
+		val result = assembler.toBaseResourceList(null, projectionNode);
+		assertNull(result);
 	}
-
+	
+	@Test
+	public void toBaseResourcePage() {
+		val result = assembler.toBaseResourcePage(Service.class, itemPage);
+		assertNotNull(result);
+	}
+	
 	@Test(expected = NullPointerException.class)
-	public void toDto_nullQuery() {
-		assembler.toDto(region, null);
+	public void toBaseResourcePage_nullItemClass() {
+		assembler.toBaseResourcePage(null, itemPage);
 	}
-
+	
 	@Test
-	public void toDtoList() {
-		val actualDtos = assembler.toDtoList(Collections.singletonList(region), regionQuery);
-		assertNotNull(actualDtos);
+	public void toBaseResourcePage_nullItemPage() {
+		val result = assembler.toBaseResourcePage(Service.class, null, projectionNode);
+		assertNull(result);
 	}
-
-	@Test
-	public void toDtoList_nullEntities() {
-		val actualDtos = assembler.toDtoList(null, regionQuery);
-		assertNull(actualDtos);
-	}
-
+	
 	@Test(expected = NullPointerException.class)
-	public void toDtoList_nullQuery() {
-		assembler.toDtoList(Collections.singletonList(region), null);
+	public void toBaseResourcePage2_nullItemClass() {
+		assembler.toBaseResourcePage(null, itemPage, projectionNode);
 	}
-
+	
 	@Test
-	public void toDtoPage() {
-		// TODO
+	public void toBaseResource() {
+		val result = assembler.toBaseResource(service, projectionNode);
+		assertNotNull(result);
 	}
 }

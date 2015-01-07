@@ -18,9 +18,10 @@ package com.expedia.seiso.web.resolver;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.stereotype.Component;
 
-@Component
+/**
+ * @author Willie Wheeler
+ */
 public class ResolverUtils {
 
 	// Factory method to allow us to inject ServletServerHttpRequest mocks.

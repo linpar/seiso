@@ -1,60 +1,47 @@
-
 var app = angular.module('seisoControllers');
 
+app.service('SearchService', function($http) {
+  var baseUrl = 'internal/search?q=';
+  var query = {};
+  var results = {};
 
-app.service("SearchService", function($http) {
-    var baseUrl = 'v1/search?query=';
-    var query   = {};
-    var results = {};
+  // TODO replace concat with URI template?
+  this.buildSearchUrl = function() { return baseUrl + query.value; }
 
-    // TODO replace concat with template?
-    this.buildSearchUrl = function() {
-        return baseUrl + query.value;
-    }
+  this.getQuery = function() { return query; };
+  
+  this.setQuery = function(newQuery) { query = { value : newQuery }; };
+  
+  this.getResults = function() { return results; };
+  
+  this.setResults = function(newResults) { results = { value : newResults }; };
 
-    this.setQuery = function(newQuery) {
-        query = { value : newQuery };
+  this.search = function(callback) {
+    this.results = {};
+    var searchRequest = {
+      method: 'GET',
+      url: this.buildSearchUrl(),
+      headers: { 'Accept' : 'application/hal+json' }
     };
-
-    this.getQuery = function() {
-        return query;
-    };
-
-    this.setResults = function(newResults) {
-        results = { value : newResults };
-    };
-
-    this.getResults = function() {
-        return results;
-    };
-
-    this.search = function(callback) {
-        this.results = {};
-        searchUrl = this.buildSearchUrl();
-        $http.get(searchUrl).success( function(data) { 
-                                          results = { value : data }; 
-                                          callback();
-                                       });
-    };
-
+    $http(searchRequest).success(function(data) { 
+      results = { value : data }; 
+      callback();
+     });
+  };
 });
 
 app.controller('SearchController', [ '$rootScope', '$scope', 'SearchService', '$location', 
-
-	function($rootScope, $scope, SearchService, $location) {
-
-        $scope.searchService = SearchService;
-        $scope.searchQuery   = SearchService.getQuery();
-        $scope.searchResults = SearchService.getResults();
-        $scope.search        = function() {
-                                   SearchService.search(function() { 
-                                                            $scope.searchResults = SearchService.getResults();
-                                                            $rootScope.searchResults = SearchService.getResults();
-                                                            $location.path('/search');
-                                                        } );
-                               };
-	} ]);
-
-
-
-
+  function($rootScope, $scope, SearchService, $location) {
+    $scope.searchService = SearchService;
+    $scope.searchQuery = SearchService.getQuery();
+    $scope.searchResults = SearchService.getResults();
+    $scope.search = function() {
+      SearchService.search(function() { 
+        var searchResults = SearchService.getResults()['value']['_embedded'];
+        console.log(searchResults);
+        $rootScope.searchResults = searchResults;
+        $location.path('/search');
+      });
+    };
+  }
+]);

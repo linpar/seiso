@@ -22,7 +22,7 @@ import com.expedia.seiso.core.ann.FindByKey;
 import com.expedia.seiso.domain.entity.User;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public interface UserRepo extends CrudRepository<User, Long> {
 

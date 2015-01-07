@@ -32,7 +32,7 @@ import com.expedia.seiso.domain.entity.LoadBalancer;
 import com.expedia.seiso.domain.repo.custom.LoadBalancerRepoCustom;
 
 /**
- * @author Ken Van Eyk (kvaneyk@expedia.com)
+ * @author Ken Van Eyk
  */
 public class LoadBalancerRepoImpl implements LoadBalancerRepoCustom {
 	private static final String ENTITY_NAME = "LoadBalancer";

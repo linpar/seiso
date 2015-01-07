@@ -30,7 +30,7 @@ import com.expedia.seiso.domain.entity.Role;
 import com.expedia.seiso.domain.entity.User;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class UserDetailsAdapterTests {
 

@@ -28,10 +28,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import com.expedia.seiso.domain.repo.search.query.QueryFactory;
+import com.expedia.seiso.domain.service.search.QueryFactory;
 
 /**
- * @author Ken Van Eyk (kvaneyk@expedia.com)
+ * @author Ken Van Eyk
  */
 public class RepoImplUtils {
 	private static RepoImplUtils SINGLETON = new RepoImplUtils();

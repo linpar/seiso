@@ -23,7 +23,7 @@ import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.StatusType;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.STATUS_TYPES)
 public interface StatusTypeRepo extends CrudRepository<StatusType, Long> {

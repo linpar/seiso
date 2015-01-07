@@ -15,6 +15,9 @@
  */
 package com.expedia.seiso.domain.entity.key;
 
+/**
+ * @author Willie Wheeler
+ */
 public interface ItemKey {
 
 	Class<?> getItemClass();

@@ -19,7 +19,7 @@ package com.expedia.seiso.core.exception;
  * General-purpose exception indicating that something couldn't be found. Prefer appropriate subclasses (e.g.
  * {@link ResourceNotFoundException} when available.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @SuppressWarnings("serial")
 public class NotFoundException extends RuntimeException {

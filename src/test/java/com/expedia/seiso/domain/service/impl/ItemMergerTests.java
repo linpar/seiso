@@ -29,20 +29,17 @@ import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.entity.ServiceGroup;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
-import com.expedia.seiso.domain.repo.adapter.RepoAdapters;
+import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 import com.expedia.seiso.domain.repo.adapter.SimpleItemRepoAdapter;
 
 public class ItemMergerTests {
 
 	// Class under test
-	@InjectMocks
-	private ItemMerger itemMerger;
+	@InjectMocks private ItemMerger itemMerger;
 
 	// Dependencies
-	@Mock
-	private RepoAdapters repoAdapters;
-	@Mock
-	private SimpleItemRepoAdapter simpleItemRepoAdapter;
+	@Mock private RepoAdapterLookup repoAdapterLookup;
+	@Mock private SimpleItemRepoAdapter simpleItemRepoAdapter;
 
 	// Test data
 	private ServiceGroup serviceGroup;
@@ -55,8 +52,8 @@ public class ItemMergerTests {
 
 	@Before
 	public void setUp() throws Exception {
-		this.itemMerger = new ItemMerger();
 		MockitoAnnotations.initMocks(this);
+		this.itemMerger = new ItemMerger(repoAdapterLookup);
 		initTestData();
 		initDependencies();
 	}
@@ -73,7 +70,7 @@ public class ItemMergerTests {
 
 	private void initDependencies() {
 		// @formatter:off
-		when(repoAdapters.getRepoAdapterFor(ServiceGroup.class)).thenReturn(simpleItemRepoAdapter);
+		when(repoAdapterLookup.getRepoAdapterFor(ServiceGroup.class)).thenReturn(simpleItemRepoAdapter);
 		when(simpleItemRepoAdapter.find(new SimpleItemKey(ServiceGroup.class, serviceGroup.getKey()))).thenReturn(
 				serviceGroup);
 		// @formatter:on

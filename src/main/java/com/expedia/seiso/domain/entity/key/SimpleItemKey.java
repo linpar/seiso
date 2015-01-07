@@ -19,15 +19,14 @@ import java.io.Serializable;
 
 import lombok.Data;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
+/**
+ * @author Willie Wheeler
+ */
 @Data
-@RequiredArgsConstructor
 public class SimpleItemKey implements ItemKey {
-	@NonNull
-	private Class<?> itemClass;
-	@NonNull
-	private Serializable value;
+	@NonNull private Class<?> itemClass;
+	@NonNull private Serializable value;
 
 	@Override
 	public Class<?> getItemClass() {

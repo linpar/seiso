@@ -37,7 +37,7 @@ import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.assembler.ProjectionParser;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @XSlf4j
 public class ItemMetaImpl implements ItemMeta {
@@ -63,7 +63,7 @@ public class ItemMetaImpl implements ItemMeta {
 			this.exported = ann.exported();
 			this.repoKey = ann.path();
 
-			// Not sure this is how we want this to work, but ItemLinks.linkToSingleResource() doesn't like null rels.
+			// Not sure this is how we want this to work, but LegacyItemLinks.linkToSingleResource() doesn't like null rels.
 			boolean emptyRel = ("".equals(ann.rel()));
 			this.rel = (emptyRel ? ann.path() : ann.rel());
 
@@ -116,32 +116,22 @@ public class ItemMetaImpl implements ItemMeta {
 			}
 		}
 	}
+	
+	@Override
+	public Class<?> getRepositoryInterface() { return itemRepoInterface; }
 
 	@Override
-	public Class<?> getRepositoryInterface() {
-		return itemRepoInterface;
-	}
+	public boolean isExported() { return exported; }
 
 	@Override
-	public boolean isExported() {
-		return exported;
-	}
+	public String getRel() { return rel; }
 
 	@Override
-	public String getRel() {
-		return rel;
-	}
+	public String getRepoKey() { return repoKey; }
 
 	@Override
-	public String getRepoKey() {
-		return repoKey;
-	}
-
-	@Override
-	public Method getRepositoryFindByKeyMethod() {
-		return findByKeyMethod;
-	}
-
+	public Method getRepositoryFindByKeyMethod() { return findByKeyMethod; }
+	
 	@Override
 	public Method getRepositorySearchMethod(String search) {
 		val methods = itemRepoInterface.getMethods();

@@ -20,7 +20,7 @@ import com.expedia.seiso.domain.entity.Item;
 /**
  * Outbound notification gateway.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public interface NotificationGateway {
 

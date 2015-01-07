@@ -26,31 +26,26 @@ import org.springframework.data.mapping.SimplePropertyHandler;
 import org.springframework.data.mapping.model.BeanWrapper;
 
 import com.expedia.seiso.core.ann.RestResource;
-import com.expedia.seiso.core.util.AuditUtils;
 import com.expedia.seiso.domain.entity.Item;
 
 /**
- * Implemented as a standalone class (rather than as an anonymous inner class) to faciliate unit testing.
+ * Implemented as a standalone class (rather than as an anonymous inner class) to facilitate unit testing.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RequiredArgsConstructor
 public class ItemPropertyHandler implements SimplePropertyHandler {
-	@NonNull
-	private final BeanWrapper<Item> wrapper;
-	@NonNull
-	private final Map<String, Object> model;
+	@NonNull private final BeanWrapper<? extends Item> wrapper;
+	@NonNull private final Map<String, Object> properties;
 
 	@Override
 	public void doWithPersistentProperty(PersistentProperty<?> prop) {
 		val propName = prop.getName();
-
-		// We handle IDs and audit properties separately.
-		if (!(prop.isIdProperty() || AuditUtils.isAuditProperty(propName))) {
-			val restResource = prop.findAnnotation(RestResource.class);
-			if (restResource == null || restResource.exported()) {
-				model.put(propName, wrapper.getProperty(prop));
-			}
+		
+		// Copy the ID over since the V1 schema exposes database IDs. (The V2 HAL schema doesn't, though.)
+		val restResource = prop.findAnnotation(RestResource.class);
+		if (restResource == null || restResource.exported()) {
+			properties.put(propName, wrapper.getProperty(prop));
 		}
 	}
 }

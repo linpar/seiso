@@ -26,7 +26,7 @@ import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.DataCenter;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = "data-centers")
 public interface DataCenterRepo extends CrudRepository<DataCenter, Long> {

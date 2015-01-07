@@ -32,7 +32,7 @@ import com.expedia.seiso.domain.entity.Machine;
 import com.expedia.seiso.domain.repo.custom.MachineRepoCustom;
 
 /**
- * @author Ken Van Eyk (kvaneyk@expedia.com)
+ * @author Ken Van Eyk
  */
 public class MachineRepoImpl implements MachineRepoCustom {
 	private static final String ENTITY_NAME = "Machine";

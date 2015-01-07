@@ -16,7 +16,7 @@
 package com.expedia.seiso.domain.repo;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public interface RepoPackageMarker {
 

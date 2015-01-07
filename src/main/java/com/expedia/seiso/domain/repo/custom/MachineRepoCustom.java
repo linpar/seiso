@@ -16,11 +16,10 @@
 package com.expedia.seiso.domain.repo.custom;
 
 import com.expedia.seiso.domain.entity.Machine;
-import com.expedia.seiso.domain.repo.search.SearchableRepository;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Ken Van Eyk
  */
-public interface MachineRepoCustom extends SearchableRepository<Machine, Long> {
+public interface MachineRepoCustom extends SearchableRepository<Machine> {
 
 }

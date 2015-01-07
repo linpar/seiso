@@ -24,23 +24,24 @@ import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.core.util.AuditUtils;
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.seiso.domain.repo.adapter.RepoAdapters;
+import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 
 /**
  * Merges client-submitted item data into persistent (or to-be-persistent) items.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Component
 @XSlf4j
 public class ItemMerger {
-	@Autowired
-	private RepoAdapters repoAdapters;
+	private RepoAdapterLookup repoAdapterLookup;
+	
+	public ItemMerger(@NonNull RepoAdapterLookup repoAdapterLookup) {
+		this.repoAdapterLookup = repoAdapterLookup;
+	}
 
 	/**
 	 * Merges a source item into a destination item. Thus this method modifies the destination item.
@@ -76,7 +77,7 @@ public class ItemMerger {
 
 	private boolean isMergeable(String propName) {
 		// Reject client-provided IDs and audit data. Seiso sets this.
-		return !("class".equals(propName) || "id".equals(propName) || AuditUtils.isAuditProperty(propName));
+		return !("class".equals(propName) || "id".equals(propName));
 	}
 
 	@SneakyThrows
@@ -122,7 +123,7 @@ public class ItemMerger {
 		Item persistentAssoc = null;
 		if (assocData != null) {
 			val assocKey = assocData.itemKey();
-			persistentAssoc = repoAdapters.getRepoAdapterFor(assocClass).find(assocKey);
+			persistentAssoc = repoAdapterLookup.getRepoAdapterFor(assocClass).find(assocKey);
 		}
 
 		setter.invoke(dest, persistentAssoc);

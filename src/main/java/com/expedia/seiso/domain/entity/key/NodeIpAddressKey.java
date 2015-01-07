@@ -17,12 +17,13 @@ package com.expedia.seiso.domain.entity.key;
 
 import lombok.Data;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 
+/**
+ * @author Willie Wheeler
+ */
 @Data
-@RequiredArgsConstructor
 public class NodeIpAddressKey implements ItemKey {
 
 	// TODO Decide whether we want to do the lookup by IP address, or by role name. I think it's probably the latter.

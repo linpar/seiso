@@ -15,19 +15,15 @@
  */
 package com.expedia.seiso.domain.entity;
 
-import org.springframework.hateoas.Identifiable;
-
 import com.expedia.seiso.domain.entity.key.ItemKey;
 
 /**
- * <p>
- * Implements {@link Identifiable} so we can use Spring HATEOAS' link building capability.
- * </p>
- * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
-public interface Item extends Identifiable<Long> {
-
+public interface Item {
+	
+	Long getId();
+	
 	Item setId(Long id);
 	
 	ItemKey itemKey();

@@ -17,12 +17,9 @@ package com.expedia.seiso.domain.repo.adapter;
 
 import java.lang.reflect.Method;
 
-import javax.transaction.Transactional;
-
 import lombok.NonNull;
 import lombok.val;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
@@ -33,18 +30,23 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 
-// This is a single adapter spanning all "simple repos" (repos for entities with a single key). Maybe this is the right
-// way to do it, but it might be confusing if the developer is expecting to see an adapter instance for each repo
-// instance. [WLW]
 
+/**
+ * Repo adapter for single-key entities. There is a single adapter instance spanning all such repos, as opposed to each
+ * such repo getting its own adapter instance.
+ * 
+ * @author Willie Wheeler
+ */
 @Component
-@Transactional
 public class SimpleItemRepoAdapter implements RepoAdapter {
-	@Autowired
-	private ItemMetaLookup itemMetaLookup;
-	@Autowired
 	private Repositories repositories;
-
+	private ItemMetaLookup itemMetaLookup;
+	
+	public SimpleItemRepoAdapter(@NonNull Repositories repositories, @NonNull ItemMetaLookup itemMetaLookup) {
+		this.repositories = repositories;
+		this.itemMetaLookup = itemMetaLookup;
+	}
+	
 	@Override
 	public boolean supports(@NonNull Class<?> itemClass) {
 		return getFindByKeyMethod(itemClass) != null;

@@ -30,7 +30,7 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.repo.EndpointRepo;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @XSlf4j
 public class ServiceInstancePortListener {

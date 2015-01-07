@@ -18,7 +18,6 @@ package com.expedia.seiso.domain.service.impl;
 import lombok.NonNull;
 import lombok.val;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
@@ -29,13 +28,16 @@ import com.expedia.seiso.gateway.aop.NotificationAspect;
 /**
  * Implemented as a separate component to support {@link NotificationAspect} proxying.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Component
 public class ItemDeleter {
-	@Autowired
 	private Repositories repositories;
-
+	
+	public ItemDeleter(@NonNull Repositories repositories) {
+		this.repositories = repositories;
+	}
+	
 	public void delete(@NonNull Item item) {
 		val repo = (CrudRepository) repositories.getRepositoryFor(item.getClass());
 		repo.delete(item);

@@ -30,7 +30,7 @@ import com.expedia.seiso.Seiso;
 // separate integration test database and then seed it with controlled test data. [WLW]
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@SpringApplicationConfiguration(classes = Seiso.class)

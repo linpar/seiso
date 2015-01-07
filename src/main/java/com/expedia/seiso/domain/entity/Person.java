@@ -37,7 +37,7 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Data
 @Accessors(chain = true)
@@ -87,6 +87,8 @@ public class Person extends AbstractItem {
 	private List<Person> directReports;
 	
 	private String source;
+	
+//	public List<Person> getDirectReports() { return directReports; }
 	
 	@Override
 	public ItemKey itemKey() {

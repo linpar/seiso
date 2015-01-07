@@ -18,7 +18,7 @@ package com.expedia.seiso.web.assembler;
 import lombok.val;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class ProjectionParser {
 	private String[] paths;

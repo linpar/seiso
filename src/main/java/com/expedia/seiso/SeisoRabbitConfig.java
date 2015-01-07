@@ -34,11 +34,10 @@ import com.expedia.seiso.core.util.C;
 // TODO Do we want this?
 //@EnableRabbit
 
-//@Configuration
+@Configuration
 @XSlf4j
 public class SeisoRabbitConfig {
-	@Autowired
-	private CachingConnectionFactory connectionFactory;
+	@Autowired private CachingConnectionFactory connectionFactory;
 
 	@Bean
 	public RabbitAdmin rabbitAdmin() {

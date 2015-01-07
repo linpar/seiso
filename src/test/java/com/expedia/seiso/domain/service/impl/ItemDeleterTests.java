@@ -29,19 +29,16 @@ import org.springframework.data.repository.support.Repositories;
 import com.expedia.seiso.domain.entity.Service;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class ItemDeleterTests {
 
 	// Class under test
-	@InjectMocks
-	private ItemDeleter itemDeleter;
+	@InjectMocks private ItemDeleter itemDeleter;
 
 	// Dependencies
-	@Mock
-	private Repositories repositories;
-	@Mock
-	private CrudRepository serviceRepo;
+	@Mock private Repositories repositories;
+	@Mock private CrudRepository serviceRepo;
 
 	// Test data
 	@Mock
@@ -49,8 +46,8 @@ public class ItemDeleterTests {
 
 	@Before
 	public void setUp() throws Exception {
-		this.itemDeleter = new ItemDeleter();
 		MockitoAnnotations.initMocks(this);
+		this.itemDeleter = new ItemDeleter(repositories);
 		initTestData();
 		initDependencies();
 	}

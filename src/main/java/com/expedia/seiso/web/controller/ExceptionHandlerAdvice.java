@@ -19,7 +19,6 @@ import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,28 +26,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
-import com.expedia.seiso.core.exception.InvalidRequestException;
 import com.expedia.seiso.core.exception.ResourceNotFoundException;
 import com.expedia.seiso.core.util.C;
-import com.expedia.seiso.domain.service.response.ErrorObject;
-import com.expedia.seiso.web.controller.error.ValidationErrorMap;
-import com.expedia.seiso.web.controller.error.ValidationErrorMapFactory;
+import com.expedia.seiso.domain.service.ErrorObject;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @ControllerAdvice
 @XSlf4j
 public class ExceptionHandlerAdvice {
-
-	@ExceptionHandler(InvalidRequestException.class)
-	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-	@ResponseBody
-	public ErrorObject handleInvalidRequestException(InvalidRequestException e, WebRequest request) {
-		// TODO Want to be able to report on the specific invalid fields. [WLW]
-		return new ErrorObject(C.EC_INVALID_REQUEST, e.getMessage());
-	}
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)

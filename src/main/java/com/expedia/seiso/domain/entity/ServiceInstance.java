@@ -46,7 +46,7 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
  * An instance of a service in an environment.
  * </p>
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Data
 @NoArgsConstructor

@@ -26,11 +26,10 @@ import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Region;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.REGIONS)
-public interface RegionRepo extends
-		PagingAndSortingRepository<Region, Long> {
+public interface RegionRepo extends PagingAndSortingRepository<Region, Long> {
 
 	@Query("from Region order by name")
 	List<Region> findAll();

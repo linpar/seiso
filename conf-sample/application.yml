@@ -39,4 +39,5 @@ server:
     key-store-password: seisoapi
 
 custom:
-  api-base-uri: http://localhost:8443/v1
+  # No trailing slash!
+  base-uri: http://localhost:8443

@@ -36,7 +36,7 @@ import com.expedia.seiso.gateway.model.ConfigManagementEvent;
 /**
  * Outbound notification gateway implementation.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Component
 @XSlf4j

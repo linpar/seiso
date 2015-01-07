@@ -23,7 +23,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
@@ -32,13 +31,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.BeanUtils;
 
-import com.expedia.seiso.domain.service.request.MachineSearch;
-
 /**
  * This "test case" (using that term loosely here) is mostly intended to exercise the entity code for coverage purposes.
  * It gets rid of false gaps. Granted we could also simply exclude the entities from the coverage path.
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @XSlf4j
 public class ItemTests {
@@ -67,13 +64,9 @@ public class ItemTests {
 	private Role role;
 	private User user;
 
-	// These are DTOs, but probably I will convert this class to a POJO tests. [WLW]
-	private MachineSearch machineSearch;
-
 	@Before
-	public void init() throws Exception {
-		val now = new Date();
-
+	public void setUp() throws Exception {
+		
 		// @formatter:off
 
 		// Core
@@ -130,10 +123,6 @@ public class ItemTests {
 		this.endpoint = new Endpoint().setIpAddress(nodeIpAddress).setPort(serviceInstancePort)
 				.setRotationStatus(rotationStatus);
 		// @formatter:on
-
-		// DTOs
-		this.machineSearch = new MachineSearch().setFqdn("host.domain.com").setIpAddress("10.10.10.10")
-				.setOs("Apple ][+").setPlatform("6502");
 	}
 
 	@Test
@@ -144,10 +133,7 @@ public class ItemTests {
 				serviceInstance, serviceInstancePort, serviceGroup, serviceType, statusType,
 
 				// Core entities
-				user,
-
-				// DTOs
-				machineSearch);
+				user);
 		// @formatter:on
 
 		exerciseCode(role);

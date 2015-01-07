@@ -40,6 +40,7 @@ import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
+import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 
@@ -48,7 +49,7 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
  * A service.
  * </p>
  * 
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Data
 @NoArgsConstructor
@@ -104,6 +105,7 @@ public class Service extends AbstractItem {
 	@NonNull
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("key")
+	@RestResource(path = "service-instances")
 	private List<ServiceInstance> serviceInstances = new ArrayList<>();
 
 	@Override

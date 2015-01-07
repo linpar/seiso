@@ -17,17 +17,16 @@ package com.expedia.seiso.domain.entity.key;
 
 import lombok.Data;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
 
+/**
+ * @author Willie Wheeler
+ */
 @Data
-@RequiredArgsConstructor
 public class ServiceInstancePortKey implements ItemKey {
-	@NonNull
-	private String serviceInstanceKey;
-	@NonNull
-	private Integer number;
+	@NonNull private String serviceInstanceKey;
+	@NonNull private Integer number;
 
 	@Override
 	public Class<?> getItemClass() {

@@ -26,7 +26,7 @@ import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Environment;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.ENVIRONMENTS)
 public interface EnvironmentRepo extends CrudRepository<Environment, Long> {

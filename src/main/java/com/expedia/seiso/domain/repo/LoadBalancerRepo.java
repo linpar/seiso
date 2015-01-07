@@ -26,7 +26,7 @@ import com.expedia.seiso.domain.entity.LoadBalancer;
 import com.expedia.seiso.domain.repo.custom.LoadBalancerRepoCustom;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.LOAD_BALANCERS)
 public interface LoadBalancerRepo extends PagingAndSortingRepository<LoadBalancer, Long>, LoadBalancerRepoCustom {

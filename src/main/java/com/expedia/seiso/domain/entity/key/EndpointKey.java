@@ -17,17 +17,17 @@ package com.expedia.seiso.domain.entity.key;
 
 import lombok.Data;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import com.expedia.seiso.domain.entity.Endpoint;
 
+/**
+ * @author Willie Wheeler
+ */
 @Data
-@RequiredArgsConstructor
 public class EndpointKey implements ItemKey {
-
-	// FIXME Don't think we really want to expose IDs to the client. [WLW]
-	@NonNull
-	private Long id;
+	
+	// FIXME This is a v1 key. In v2 we don't want to expose the database ID to the client. [WLW]
+	@NonNull private Long id;
 
 	@Override
 	public Class<?> getItemClass() {

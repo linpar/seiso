@@ -22,7 +22,7 @@ import lombok.NonNull;
 import lombok.val;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 public class CollectionsUtils {
 

@@ -15,12 +15,9 @@
  */
 package com.expedia.seiso.domain.repo.adapter;
 
-import javax.transaction.Transactional;
-
 import lombok.NonNull;
 import lombok.val;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.Item;
@@ -30,14 +27,16 @@ import com.expedia.seiso.domain.entity.key.NodeIpAddressKey;
 import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
 
 /**
- * @author Willie Wheeler (wwheeler@expedia.com)
+ * @author Willie Wheeler
  */
 @Component
-@Transactional
 public class NodeIpAddressRepoAdapter implements RepoAdapter {
-	@Autowired
 	private NodeIpAddressRepo nodeIpAddressRepo;
-
+	
+	public NodeIpAddressRepoAdapter(@NonNull NodeIpAddressRepo repo) {
+		this.nodeIpAddressRepo = repo;
+	}
+	
 	@Override
 	public boolean supports(@NonNull Class<?> itemClass) {
 		return itemClass == NodeIpAddress.class;
