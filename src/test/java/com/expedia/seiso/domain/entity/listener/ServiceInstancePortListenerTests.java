@@ -59,7 +59,7 @@ public class ServiceInstancePortListenerTests {
 	private ServiceInstancePort port;
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 		this.listener = new ServiceInstancePortListener();
 		MockitoAnnotations.initMocks(this);
 		initTestData();

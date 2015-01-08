@@ -13,60 +13,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.gateway.impl;
+package com.expedia.seiso.web.controller.internal;
 
-import static org.mockito.Matchers.anyString;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import lombok.val;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.data.domain.Pageable;
 
-import com.expedia.seiso.gateway.model.BulkNodeActionRequest;
+import com.expedia.seiso.domain.service.search.SearchQuery;
+import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
+import com.expedia.seiso.web.hateoas.BaseResource;
 
 /**
  * @author Willie Wheeler
  */
-public class ActionGatewayImplTests {
-
+public class GlobalSearchControllerTests {
+	
 	// Class under test
-	@InjectMocks
-	private ActionGatewayImpl gateway;
-
+	@InjectMocks private GlobalSearchController controller;
+	
 	// Dependencies
-	@Mock
-	private AmqpTemplate amqpTemplate;
-
+	@Mock private GlobalSearchDelegate delegate;
+	
 	// Test data
-	@Mock
-	private BulkNodeActionRequest request;
-
+	@Mock private Pageable pageable;
+	@Mock private BaseResource searchResults;
+	
 	@Before
-	public void init() throws Exception {
-		this.gateway = new ActionGatewayImpl();
+	public void init() {
+		this.controller = new GlobalSearchController();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();
 	}
-
+	
 	private void initTestData() {
 	}
-
+	
 	private void initDependencies() {
+		when(delegate.globalSearch((SearchQuery) anyObject(), eq(pageable))).thenReturn(searchResults);
 	}
-
+	
 	@Test
-	public void publish() {
-		gateway.publish(request);
-		verify(amqpTemplate).convertAndSend(anyString(), anyString(), eq(request));
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void publish_null() {
-		gateway.publish(null);
+	public void globalSearch() {
+		val result = controller.globalSearch("seiso", pageable);
+		assertNotNull(result);
+		assertSame(searchResults, result);
 	}
 }

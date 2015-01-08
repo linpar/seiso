@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.controller;
+package com.expedia.seiso.web.controller.delegate;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -27,7 +27,6 @@ import java.util.List;
 import lombok.val;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -48,30 +47,30 @@ import com.expedia.seiso.domain.repo.PersonRepo;
 import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.web.Relations;
 import com.expedia.seiso.web.assembler.ItemAssembler;
-import com.expedia.seiso.web.hateoas.ItemLinks;
 import com.expedia.seiso.web.hateoas.Link;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.link.ItemLinks;
+import com.expedia.seiso.web.hateoas.link.LinkFactory;
+import com.expedia.seiso.web.hateoas.link.RepoSearchLinks;
 
 /**
  * @author Willie Wheeler
  */
-public class ItemSearchDelegateTests {
-	private static final String NONPAGING_REPO_KEY = "my-nonpaging-repo";
+public class RepoSearchDelegateTests {
 	private static final String PAGING_REPO_KEY = "my-paging-repo";
 	private static final Class<?> PAGING_ITEM_CLASS = Person.class;
-	private static final String QUERY_WITH_RESULT_LIST = "find-by-data-center-key";
 	private static final String QUERY_WITH_RESULT_PAGE = "find-by-last-name";
-	private static final String QUERY_WITH_UNIQUE_RESULT = "find-by-name";
 	
 	// Class under test
-	@InjectMocks private ItemSearchDelegate delegate;
+	@InjectMocks private RepoSearchDelegate delegate;
 	
 	// Dependencies
 	@Mock private Repositories repositories;
 	@Mock private PersonRepo pagingRepo;
 	@Mock private ItemMetaLookup itemMetaLookup;
 	@Mock private ItemAssembler itemAssembler;
+	@Mock private LinkFactory linkFactory;
 	@Mock private ItemLinks itemLinks;
+	@Mock private RepoSearchLinks repoSearchLinks;
 	@Mock private ConversionService conversionService;
 	
 	// Test data
@@ -84,11 +83,10 @@ public class ItemSearchDelegateTests {
 	@Mock private RepositoryInformation repoInfo;
 	@Mock private Link searchListSelfLink, searchListUpLink, searchListFindByNameLink;
 	@Mock private Page<Person> pageSearchResult;
-	@Mock private BaseResourcePage dtoPageSearchResult;
 	
 	@Before
-	public void setUp() {
-		this.delegate = new ItemSearchDelegate();
+	public void init() {
+		this.delegate = new RepoSearchDelegate();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();
@@ -103,8 +101,10 @@ public class ItemSearchDelegateTests {
 		this.queryMethodWithPagingResults = ReflectionUtils
 				.findMethod(PersonRepo.class, "findByLastName", String.class, Pageable.class);
 		assert(queryMethodWithPagingResults != null);
+		
 		this.queryMethodWithUniqueResult = ReflectionUtils.findMethod(ServiceRepo.class, "findByName", String.class);
 		assert(queryMethodWithUniqueResult != null);
+		
 		this.queryMethods = Arrays.asList(queryMethodWithUniqueResult);
 		when(repoInfo.getQueryMethods()).thenReturn(queryMethods);
 		
@@ -120,16 +120,19 @@ public class ItemSearchDelegateTests {
 		
 		when(pagingRepo.findByLastName("Aurelius", pageable)).thenReturn(pageSearchResult);
 		
-		when(itemLinks.itemRepoSearchListLink(Relations.SELF, PAGING_ITEM_CLASS))
-				.thenReturn(searchListSelfLink);
-		when(itemLinks.itemRepoLink(Relations.UP, PAGING_ITEM_CLASS))
+		when(linkFactory.getItemLinks()).thenReturn(itemLinks);
+		when(linkFactory.getRepoSearchLinks()).thenReturn(repoSearchLinks);
+		
+		when(itemLinks.repoLink(Relations.UP, PAGING_ITEM_CLASS))
 				.thenReturn(searchListUpLink);
-		when(itemLinks.itemRepoSearchLink("s:find-by-name", PAGING_ITEM_CLASS, "find-by-name"))
+		when(repoSearchLinks.repoSearchListLink(Relations.SELF, PAGING_ITEM_CLASS))
+				.thenReturn(searchListSelfLink);
+		when(repoSearchLinks.repoSearchLink("s:find-by-name", PAGING_ITEM_CLASS, "find-by-name"))
 				.thenReturn(searchListFindByNameLink);
 	}
 	
 	@Test
-	public void getSearchList() {
+	public void getRepoSearchList() {
 		val result = delegate.getRepoSearchList(PAGING_REPO_KEY);
 		assertNotNull(result);
 		val links = result.getV2Links();
@@ -139,23 +142,15 @@ public class ItemSearchDelegateTests {
 		assertTrue(links.contains(searchListFindByNameLink));
 	}
 	
-	@Test
-	@Ignore
-	public void search_resultList() {
-		val result = delegate.repoSearch(NONPAGING_REPO_KEY, QUERY_WITH_RESULT_LIST);
+	@Test(expected = NullPointerException.class)
+	public void getRepoSearchList_null() {
+		delegate.getRepoSearchList(null);
 	}
 	
 	@Test
-	public void search_resultPage() {
+	public void repoSearch_resultPage() {
+		// FIXME Need to include/require params, as repo searches always involve them.
 		val result = delegate.repoSearch(PAGING_REPO_KEY, QUERY_WITH_RESULT_PAGE, pageable, params);
 		// TODO
-//		assertNotNull(result);
-//		assertSame(dtoPageSearchResult, result);
-	}
-	
-	@Test
-	@Ignore
-	public void search_uniqueResult() {
-		val result = delegate.repoSearch(PAGING_REPO_KEY, QUERY_WITH_UNIQUE_RESULT);
 	}
 }

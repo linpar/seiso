@@ -45,20 +45,24 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.assembler.ItemAssembler;
-import com.expedia.seiso.web.controller.BasicItemDelegate;
 import com.expedia.seiso.web.controller.ExceptionHandlerAdvice;
-import com.expedia.seiso.web.controller.ItemSearchDelegate;
 import com.expedia.seiso.web.controller.RepoConverter;
-import com.expedia.seiso.web.controller.internal.SearchController;
+import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
+import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
+import com.expedia.seiso.web.controller.internal.GlobalSearchController;
 import com.expedia.seiso.web.controller.v1.IpAddressRoleControllerV1;
 import com.expedia.seiso.web.controller.v1.ItemControllerV1;
 import com.expedia.seiso.web.controller.v1.NodeControllerV1;
 import com.expedia.seiso.web.controller.v1.NodeIpAddressControllerV1;
+import com.expedia.seiso.web.controller.v1.RepoSearchControllerV1;
+import com.expedia.seiso.web.controller.v1.ResponseHeadersV1;
 import com.expedia.seiso.web.controller.v1.ServiceInstancePortControllerV1;
 import com.expedia.seiso.web.controller.v2.ItemControllerV2;
 import com.expedia.seiso.web.controller.v2.PersonControllerV2;
-import com.expedia.seiso.web.hateoas.ItemLinks;
-import com.expedia.seiso.web.hateoas.ItemPaths;
+import com.expedia.seiso.web.controller.v2.RepoSearchControllerV2;
+import com.expedia.seiso.web.hateoas.link.ItemPaths;
+import com.expedia.seiso.web.hateoas.link.LinkFactory;
 import com.expedia.seiso.web.jackson.hal.HalMapper;
 import com.expedia.seiso.web.jackson.hal.HalModule;
 import com.expedia.seiso.web.jackson.hal.HalResourceAssembler;
@@ -101,12 +105,6 @@ public class SeisoWebConfigBeans {
 	
 	@Bean
 	public ExceptionHandlerAdvice exceptionHandlerAdvice() { return new ExceptionHandlerAdvice(); }
-	
-	@Bean
-	public BasicItemDelegate basicItemDelegate() { return new BasicItemDelegate(); }
-	
-	@Bean
-	public ItemSearchDelegate itemSearchDelegate() { return new ItemSearchDelegate(); }
 	
 	@Configuration
 	public static class ArgResolverConfig {
@@ -193,16 +191,16 @@ public class SeisoWebConfigBeans {
 		}
 		
 		@Bean
-		public ItemLinks itemLinksV1() throws Exception {
-			return new ItemLinks(getBaseUri("v1"), itemPaths(), itemMetaLookup);
+		public LinkFactory linkFactoryV1() throws Exception {
+			return new LinkFactory(getVersionUri("v1"), itemPaths(), itemMetaLookup);
 		}
 		
 		@Bean
-		public ItemLinks itemLinksV2() throws Exception {
-			return new ItemLinks(getBaseUri("v2"), itemPaths(), itemMetaLookup);
+		public LinkFactory linkFactoryV2() throws Exception {
+			return new LinkFactory(getVersionUri("v2"), itemPaths(), itemMetaLookup);
 		}
 		
-		private URI getBaseUri(String version) throws Exception {
+		private URI getVersionUri(String version) throws Exception {
 			return new URI(slashify(customProperties.getBaseUri()) + version);
 		}
 		
@@ -222,13 +220,28 @@ public class SeisoWebConfigBeans {
 	@Configuration
 	public static class ControllerConfig {
 		
+		@Bean
+		public BasicItemDelegate basicItemDelegate() { return new BasicItemDelegate(); }
+		
+		@Bean
+		public RepoSearchDelegate itemSearchDelegate() { return new RepoSearchDelegate(); }
+		
+		@Bean
+		public GlobalSearchDelegate globalSearchDelegate() { return new GlobalSearchDelegate(); }
+		
 		// v1
+		
+		@Bean
+		public ResponseHeadersV1 responseHeadersV1() { return new ResponseHeadersV1(); }
 		
 		@Bean
 		public ItemControllerV1 itemControllerV1() { return new ItemControllerV1(); }
 		
 		@Bean
-		public NodeControllerV1 itemSearchControllerV1() { return new NodeControllerV1(); }
+		public RepoSearchControllerV1 repoSearchControllerV1() { return new RepoSearchControllerV1(); }
+		
+		@Bean
+		public NodeControllerV1 nodeControllerV1() { return new NodeControllerV1(); }
 		
 		@Bean
 		public IpAddressRoleControllerV1 ipAddressRoleControllerV1() { return new IpAddressRoleControllerV1(); }
@@ -247,11 +260,14 @@ public class SeisoWebConfigBeans {
 		public ItemControllerV2 itemControllerV2() { return new ItemControllerV2(); }
 		
 		@Bean
+		public RepoSearchControllerV2 repoSearchControllerV2() { return new RepoSearchControllerV2(); }
+		
+		@Bean
 		public PersonControllerV2 personControllerV2() { return new PersonControllerV2(); }
 		
 		// Internal
 		
 		@Bean
-		public SearchController searchController() { return new SearchController(); }
+		public GlobalSearchController globalSearchController() { return new GlobalSearchController(); }
 	}
 }

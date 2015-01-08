@@ -13,17 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web;
-
+package com.expedia.seiso.web.hateoas.link;
 
 /**
  * @author Willie Wheeler
  */
-public class ResponseHeadersV1 {
-	public static final String X_PAGINATION_FIRST = "X-Pagination-First";
-	public static final String X_PAGINATION_PREV = "X-Pagination-Prev";
-	public static final String X_PAGINATION_NEXT = "X-Pagination-Next";
-	public static final String X_PAGINATION_LAST = "X-Pagination-Last";
-	public static final String X_PAGINATION_TOTAL_ELEMENTS = "X-Pagination-TotalElements";
-	public static final String X_PAGINATION_TOTAL_PAGES = "X-Pagination-TotalPages";
+public class RepoSearchLinksTests {
+
 }

@@ -15,11 +15,12 @@
  */
 package com.expedia.seiso.web.controller.v2;
 
+import lombok.val;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,32 +28,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.util.C;
+import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.MediaTypes;
-import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.hateoas.BaseResource;
-
-// TODO Support patching. The reason is that due to the recursive relationship between people and their managers, we
-// want to be able to update people in two passes:
-// 1) Create all people (need to do this first so we can resolve managers in pass #2)
-// 2) Link to managers
-// When updating people in pass #1, we don't want to null out their managers.
-
-// TODO Support batch linking of people to managers. But require pagination.
-
-// TODO Support batch deleting of people. But require pagination.
 
 /**
  * @author Willie Wheeler
  */
 @RestController
 @RequestMapping("/v2")
-@Transactional
-public class ItemControllerV2 {
+public class RepoSearchControllerV2 {
 	@Autowired private ItemMetaLookup itemMetaLookup;
-	@Autowired private BasicItemDelegate basicItemDelegate;
+	@Autowired private RepoSearchDelegate delegate;
+	
+	// FIXME This makes "search" a reserved word across all repo types. That's no good. [WLW]
+	@RequestMapping(
+			value = "/{repoKey}/search",
+			method = RequestMethod.GET,
+			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	public BaseResource getRepoSearchList(@PathVariable String repoKey) {
+		return delegate.getRepoSearchList(repoKey);
+	}
 	
 	/**
 	 * @param repoKey
@@ -67,12 +66,12 @@ public class ItemControllerV2 {
 	 * @return {@code List<BaseResource>} or {@code BaseResourcePage} depending on the repo type
 	 */
 	@RequestMapping(
-			value = "/{repoKey}",
+			value = "/{repoKey}/search/{search}",
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public Object getAll(
+	public Object repoSearch(
 			@PathVariable String repoKey,
-			@RequestParam(defaultValue = Projection.DEFAULT) String view,
+			@PathVariable String search,
 			@PageableDefault(
 					page = C.DEFAULT_PAGE_NUMBER,
 					size = C.DEFAULT_PAGE_SIZE,
@@ -80,32 +79,19 @@ public class ItemControllerV2 {
 			Pageable pageable,
 			@RequestParam MultiValueMap<String, String> params) {
 		
-		return basicItemDelegate.getAll(repoKey, view, pageable, params);
-	}
-	
-	@RequestMapping(
-			value = "/{repoKey}/{itemKey}",
-			method = RequestMethod.GET,
-			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public BaseResource getOne(
-			@PathVariable String repoKey,
-			@PathVariable String itemKey,
-			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
+		val itemClass = itemMetaLookup.getItemClass(repoKey);
+		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
+		val searchMethod = itemMeta.getRepositorySearchMethod(search);
+		val resultType = searchMethod.getReturnType();
 		
-		return basicItemDelegate.getOne(repoKey, itemKey, view);
+		if (Item.class.isAssignableFrom(resultType)) {
+//			return delegate.repoSearchUnique(repoKey, search);
+			throw new UnsupportedOperationException("Repo search with unique result not yet supported");
+		} else if (itemMeta.isPagingRepo()) {
+			return delegate.repoSearch(repoKey, search, pageable, params);
+		} else {
+//			return delegate.repoSearch(repoKey, search);
+			throw new UnsupportedOperationException("Repo search with list results not yet supported");
+		}
 	}
-	
-	@RequestMapping(
-			value = "/{repoKey}/{itemKey}/{propKey}",
-			method = RequestMethod.GET,
-			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public Object getProperty(
-			@PathVariable String repoKey,
-			@PathVariable String itemKey,
-			@PathVariable String propKey,
-			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
-		
-		return basicItemDelegate.getProperty(repoKey, itemKey, propKey, view);
-	}
-	
 }

@@ -47,7 +47,7 @@ public class NodeRepoImplTests {
 	private List<Node> mockResultList;
 
 	@Before
-	public void setUp() {
+	public void init() {
 		MockitoAnnotations.initMocks(this);
 
 		this.searchTokens = new HashSet<String>();

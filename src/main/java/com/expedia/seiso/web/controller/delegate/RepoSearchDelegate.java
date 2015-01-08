@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.controller;
+package com.expedia.seiso.web.controller.delegate;
 
 import static org.springframework.util.Assert.notNull;
-
-import java.util.List;
-
 import lombok.NonNull;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
@@ -40,26 +37,29 @@ import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
-import com.expedia.seiso.domain.service.SearchEngine;
-import com.expedia.seiso.domain.service.search.SearchQuery;
 import com.expedia.seiso.web.Relations;
 import com.expedia.seiso.web.assembler.ItemAssembler;
 import com.expedia.seiso.web.hateoas.BaseResource;
 import com.expedia.seiso.web.hateoas.BaseResourcePage;
-import com.expedia.seiso.web.hateoas.ItemLinks;
+import com.expedia.seiso.web.hateoas.link.LinkFactory;
+
+// TODO
+// - Handle list results
+// - Handle unique result
 
 /**
+ * Web component to perform repository searches on behalf of version-specific controllers.
+ * 
  * @author Willie Wheeler
  */
 @Component
 @XSlf4j
-public class ItemSearchDelegate {
+public class RepoSearchDelegate {
 	@Autowired private Repositories repositories;
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private ItemService itemService;
-	@Autowired private SearchEngine searchEngine;
 	@Autowired private ItemAssembler itemAssembler;
-	@Autowired @Qualifier("itemLinksV2") private ItemLinks itemLinksV2;
+	@Autowired @Qualifier("linkFactoryV2") private LinkFactory linkFactoryV2;
 	@Autowired private ConversionService conversionService;
 	
 	/**
@@ -71,11 +71,12 @@ public class ItemSearchDelegate {
 		val repoInfo = repositories.getRepositoryInformationFor(itemClass);
 		val queryMethods = repoInfo.getQueryMethods();
 		
-		// v1 doesn't support this endpoint, so we don't need to add v1 links.
+		val itemLinksV2 = linkFactoryV2.getItemLinks();
+		val repoSearchLinksV2 = linkFactoryV2.getRepoSearchLinks();
 		
 		val resource = new BaseResource();
-		resource.addV2Link(itemLinksV2.itemRepoSearchListLink(Relations.SELF, itemClass));
-		resource.addV2Link(itemLinksV2.itemRepoLink(Relations.UP, itemClass));
+		resource.addV2Link(repoSearchLinksV2.repoSearchListLink(Relations.SELF, itemClass));
+		resource.addV2Link(itemLinksV2.repoLink(Relations.UP, itemClass));
 		
 		// Query method links
 		for (val queryMethod : queryMethods) {
@@ -84,23 +85,10 @@ public class ItemSearchDelegate {
 			val path = restResource.path();
 			if (path.isEmpty()) { continue; }
 			val rel = "s:" + (restResource.rel().isEmpty() ? path : restResource.rel());
-			resource.addV2Link(itemLinksV2.itemRepoSearchLink(rel, itemClass, path));
+			resource.addV2Link(repoSearchLinksV2.repoSearchLink(rel, itemClass, path));
 		}
 		
 		return resource;
-	}
-	
-	/**
-	 * Search with non-paging results.
-	 * 
-	 * @param repoKey
-	 *            repository key
-	 * @param query
-	 *            search query
-	 * @return result list
-	 */
-	public List<BaseResource> repoSearch(@NonNull String repoKey, @NonNull String query) {
-		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	
 	/**
@@ -127,16 +115,9 @@ public class ItemSearchDelegate {
 		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
 		val itemPage = repoSearch(itemClass, query, pageable, params);
 		val proj = itemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, Projection.DEFAULT);
+		
+		// FIXME
 		return itemAssembler.toBaseResourcePage(itemClass, itemPage, proj);
-	}
-	
-	public BaseResource repoSearchUnique(@NonNull String repoKey, @NonNull String query) {
-		throw new UnsupportedOperationException("Not yet implemented");
-	}
-	
-	public BaseResource globalSearch(@NonNull SearchQuery query, @NonNull Pageable pageable) {
-		val results = searchEngine.search(query, pageable);
-		return itemAssembler.toBaseResource(results);
 	}
 	
 	// FIXME Some of this belongs in ItemServiceImpl.

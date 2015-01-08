@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.key.NodeIpAddressKey;
 import com.expedia.seiso.domain.repo.NodeRepo;
-import com.expedia.seiso.web.controller.BasicItemDelegate;
 import com.expedia.seiso.web.controller.PEResource;
+import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.hateoas.BaseResource;
 
 /**

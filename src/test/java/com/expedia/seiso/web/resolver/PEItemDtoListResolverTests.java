@@ -87,7 +87,7 @@ public class PEItemDtoListResolverTests {
 	private HttpHeaders httpHeaders;
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 		this.resolver = new PEResourceListResolver();
 		MockitoAnnotations.initMocks(this);
 		initTestData();

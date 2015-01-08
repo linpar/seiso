@@ -51,7 +51,7 @@ public class ItemMergerTests {
 	private IpAddressRole destIpAddressRole;
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		this.itemMerger = new ItemMerger(repoAdapterLookup);
 		initTestData();

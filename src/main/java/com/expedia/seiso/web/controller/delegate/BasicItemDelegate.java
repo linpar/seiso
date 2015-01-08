@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.controller;
+package com.expedia.seiso.web.controller.delegate;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +37,7 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.assembler.ItemAssembler;
+import com.expedia.seiso.web.controller.PEResourceList;
 import com.expedia.seiso.web.hateoas.BaseResource;
 import com.expedia.seiso.web.hateoas.BaseResourcePage;
 

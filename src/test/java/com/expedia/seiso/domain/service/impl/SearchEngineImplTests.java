@@ -65,7 +65,7 @@ public class SearchEngineImplTests {
 	@Mock private Iterator repoIterator;
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		this.initTestData();
 		this.initDependencies();

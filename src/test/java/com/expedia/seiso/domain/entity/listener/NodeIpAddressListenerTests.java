@@ -56,7 +56,7 @@ public class NodeIpAddressListenerTests {
 	private NodeIpAddress nodeIpAddress;
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 		this.listener = new NodeIpAddressListener();
 		MockitoAnnotations.initMocks(this);
 		initTestData();

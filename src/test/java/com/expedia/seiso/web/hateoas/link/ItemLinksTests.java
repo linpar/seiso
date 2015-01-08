@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas;
+package com.expedia.seiso.web.hateoas.link;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -33,6 +33,7 @@ import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.Relations;
+import com.expedia.seiso.web.hateoas.link.ItemLinks;
 
 /**
  * @author Willie Wheeler
@@ -50,7 +51,7 @@ public class ItemLinksTests {
 	private URI v2BaseUri;
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();
@@ -71,5 +72,25 @@ public class ItemLinksTests {
 		val link = itemLinks.itemLink(service);
 		assertNotNull(link);
 		assertEquals(Relations.SELF, link.getRel());
+	}
+	
+	@Test
+	public void repoFirstLink() {
+		// TODO
+	}
+	
+	@Test
+	public void repoPrevLink() {
+		// TODO
+	}
+	
+	@Test
+	public void repoNextLink() {
+		// TODO
+	}
+	
+	@Test
+	public void repoLastLink() {
+		// TODO
 	}
 }

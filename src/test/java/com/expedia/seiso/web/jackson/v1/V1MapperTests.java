@@ -39,7 +39,7 @@ public class V1MapperTests {
 	@Mock private Version version;
 	
 	@Before
-	public void setUp() {
+	public void init() {
 		MockitoAnnotations.initMocks(this);
 		when(v1Module.getModuleName()).thenReturn("some-name");
 		when(v1Module.version()).thenReturn(version);

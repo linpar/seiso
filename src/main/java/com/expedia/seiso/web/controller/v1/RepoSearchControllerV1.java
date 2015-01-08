@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.controller.internal;
-
-import java.util.HashSet;
-import java.util.Set;
+package com.expedia.seiso.web.controller.v1;
 
 import lombok.val;
 
@@ -24,46 +21,55 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.core.util.C;
-import com.expedia.seiso.domain.service.search.SearchQuery;
-import com.expedia.seiso.web.MediaTypes;
-import com.expedia.seiso.web.controller.ItemSearchDelegate;
+import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.BaseResourcePage;
 
 /**
  * @author Willie Wheeler
  */
 @RestController
-@RequestMapping("/internal/search")
-public class SearchController {
-	@Autowired private ItemSearchDelegate itemSearchDelegate;
+@RequestMapping("/v1")
+public class RepoSearchControllerV1 {
+	@Autowired private RepoSearchDelegate delegate;
+	@Autowired private ResponseHeadersV1 responseHeaders;
+	
+	// FIXME This makes "search" a reserved word across all repo types. That's no good. [WLW]
+	@RequestMapping(
+			value = "/{repoKey}/search",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public BaseResource getRepoSearchList(@PathVariable String repoKey) {
+		return delegate.getRepoSearchList(repoKey);
+	}
 	
 	@RequestMapping(
-			value = "",
+			value = "/{repoKey}/search/{search}",
 			method = RequestMethod.GET,
-			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public BaseResource globalSearch(
-			@RequestParam("q") String keywords,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public HttpEntity<BaseResourcePage> repoSearch(
+			@PathVariable String repoKey,
+			@PathVariable String search,
 			@PageableDefault(
 					page = C.DEFAULT_PAGE_NUMBER,
 					size = C.DEFAULT_PAGE_SIZE,
 					direction = Direction.ASC)
-			Pageable pageable) {
+			Pageable pageable,
+			@RequestParam MultiValueMap<String, String> params) {
 		
-		// TODO Use a handler method arg resolver instead. [WLW]
-		val query = new SearchQuery(keywords, toKeywordSet(keywords));
-		return itemSearchDelegate.globalSearch(query, pageable);
-	}
-	
-	private Set<String> toKeywordSet(String keywords) {
-		val keywordSet = new HashSet<String>();
-		val keywordArr = keywords.split(" ");
-		for (val keyword : keywordArr) { keywordSet.add("%" + keyword + "%"); }
-		return keywordSet;
+		// Is it correct that v1 always returns a page here? [WLW]
+		val baseResourcePage = delegate.repoSearch(repoKey, search, pageable, params);
+		val headers = responseHeaders.buildResponseHeaders(baseResourcePage);
+		return new HttpEntity<>(baseResourcePage, headers);
 	}
 }

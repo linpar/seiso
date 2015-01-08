@@ -20,7 +20,7 @@ public class ValidatorTests {
 	private static @Mock ConstraintValidatorContext constraintValidatorContext;
 
 	@BeforeClass
-	public static void setup() {
+	public static void init() {
 		MockitoAnnotations.initMocks(ValidatorTests.class);
 
 		ValidatorTests.goodQuery = "good query";

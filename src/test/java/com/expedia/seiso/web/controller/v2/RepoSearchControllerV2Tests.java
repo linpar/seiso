@@ -17,6 +17,7 @@ package com.expedia.seiso.web.controller.v2;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import lombok.val;
@@ -28,35 +29,38 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.ReflectionUtils;
 
 import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.seiso.domain.repo.LoadBalancerRepo;
+import com.expedia.seiso.domain.repo.PersonRepo;
+import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.web.assembler.ProjectionNode;
-import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.hateoas.BaseResource;
 import com.expedia.seiso.web.hateoas.BaseResourcePage;
 
 /**
  * @author Willie Wheeler
  */
-public class ItemControllerV2Tests {
+public class RepoSearchControllerV2Tests {
 	private static final String NONPAGING_REPO_KEY = "my-nonpaging-repo";
 	private static final String PAGING_REPO_KEY = "my-paging-repo";
 	private static final Class<?> NONPAGING_ITEM_CLASS = RotationStatus.class;
 	private static final Class<?> PAGING_ITEM_CLASS = Service.class;
 	
-	private static final String ITEM_KEY = "my-item";
-	private static final String PROP_KEY = "my-prop";
-	private static final String VIEW_KEY = "my-view";
+	private static final String SEARCH = "my-search";
+	private static final String SEARCH_WITH_UNIQUE_RESULT = "my-search-with-unique-result";
 	
 	// Class under test
-	@InjectMocks private ItemControllerV2 controller;
+	@InjectMocks RepoSearchControllerV2 controller;
 	
 	// Dependencies
 	@Mock private ItemMetaLookup itemMetaLookup;
-	@Mock private BasicItemDelegate delegate;
+	@Mock private RepoSearchDelegate delegate;
 	
 	// Test data
 	@Mock private ItemMeta nonPagingItemMeta, pagingItemMeta;
@@ -65,10 +69,11 @@ public class ItemControllerV2Tests {
 	@Mock private ProjectionNode projection;
 	@Mock private BaseResourcePage itemResourcePage;
 	@Mock private BaseResource itemResource, propResource, searchListResource;
+	@Mock private BaseResourcePage searchResultResourcePage;
 	
 	@Before
 	public void init() {
-		this.controller = new ItemControllerV2();
+		this.controller = new RepoSearchControllerV2();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();
@@ -77,48 +82,49 @@ public class ItemControllerV2Tests {
 	private void initTestData() {
 		when(nonPagingItemMeta.isPagingRepo()).thenReturn(false);
 		when(pagingItemMeta.isPagingRepo()).thenReturn(true);
+		
+		val searchMethodWithListResult =
+				ReflectionUtils.findMethod(LoadBalancerRepo.class, "findByDataCenterKey", String.class);
+		assert(searchMethodWithListResult != null);
+		when(nonPagingItemMeta.getRepositorySearchMethod(SEARCH)).thenReturn(searchMethodWithListResult);
+		
+		val searchMethodWithPageResult =
+				ReflectionUtils.findMethod(PersonRepo.class, "findByLastName", String.class, Pageable.class);
+		assert(searchMethodWithPageResult != null);
+		when(pagingItemMeta.getRepositorySearchMethod(SEARCH)).thenReturn(searchMethodWithPageResult);
+		
+		val searchMethodWithUniqueResult =
+				ReflectionUtils.findMethod(ServiceRepo.class, "findByName", String.class);
+		assert(searchMethodWithUniqueResult != null);
+		when(pagingItemMeta.getRepositorySearchMethod(SEARCH_WITH_UNIQUE_RESULT))
+				.thenReturn(searchMethodWithUniqueResult);
 	}
 	
 	private void initDependencies() {
 		when(itemMetaLookup.getItemClass(NONPAGING_REPO_KEY)).thenReturn(NONPAGING_ITEM_CLASS);
 		when(itemMetaLookup.getItemMeta(NONPAGING_ITEM_CLASS)).thenReturn(nonPagingItemMeta);
-//		when(delegate.getAll(NONPAGING_REPO_KEY, VIEW_KEY)).thenReturn(itemResourceList);
 		
 		when(itemMetaLookup.getItemClass(PAGING_REPO_KEY)).thenReturn(PAGING_ITEM_CLASS);
 		when(itemMetaLookup.getItemMeta(PAGING_ITEM_CLASS)).thenReturn(pagingItemMeta);
-		when(delegate.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params)).thenReturn(itemResourcePage);
 		
-		when(delegate.getOne(PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY)).thenReturn(itemResource);
-		when(delegate.getProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY)).thenReturn(propResource);
-	}
-	
-//	@Test
-//	public void getAll_nonpaging() {
-//		val result = controller.getAll(NONPAGING_REPO_KEY, VIEW_KEY, null, null);
-//		assertNotNull(result);
-//		assertSame(itemResourceList, result);
-//		verify(delegate).getAll(NONPAGING_REPO_KEY, VIEW_KEY);
-//	}
-	
-	@Test
-	public void getAll_paging() {
-		val result = controller.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
-		assertNotNull(result);
-		assertSame(itemResourcePage, result);
-		verify(delegate).getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
+		when(delegate.getRepoSearchList(PAGING_REPO_KEY)).thenReturn(searchListResource);
+		
+		when(delegate.repoSearch(PAGING_REPO_KEY, SEARCH, pageable, params)).thenReturn(searchResultResourcePage);
 	}
 	
 	@Test
-	public void getOne() {
-		val result = controller.getOne(PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY);
+	public void getRepoSearchList() {
+		val result = controller.getRepoSearchList(PAGING_REPO_KEY);
 		assertNotNull(result);
-		assertSame(itemResource, result);
+		assertSame(searchListResource, result);
 	}
 	
 	@Test
-	public void getProperty() {
-		val result = controller.getProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY);
+	public void repoSearch_paging() {
+		val result = controller.repoSearch(PAGING_REPO_KEY, SEARCH, pageable, params);
 		assertNotNull(result);
-		assertSame(propResource, result);
+		assertTrue(result instanceof BaseResourcePage);
+		assertSame(searchResultResourcePage, result);
+		verify(delegate).repoSearch(PAGING_REPO_KEY, SEARCH, pageable, params);
 	}
 }

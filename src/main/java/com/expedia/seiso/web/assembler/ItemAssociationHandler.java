@@ -29,8 +29,8 @@ import org.springframework.data.mapping.model.BeanWrapper;
 
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.seiso.web.hateoas.ItemLinks;
 import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.link.ItemLinks;
 
 /**
  * @author Willie Wheeler

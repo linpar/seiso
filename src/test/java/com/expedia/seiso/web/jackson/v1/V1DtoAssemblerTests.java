@@ -40,7 +40,7 @@ public class V1DtoAssemblerTests {
 	@Mock private BaseResource mapDto;
 	
 	@Before
-	public void setUp() {
+	public void init() {
 		this.assembler = new V1ResourceAssembler();
 		MockitoAnnotations.initMocks(this);
 	}

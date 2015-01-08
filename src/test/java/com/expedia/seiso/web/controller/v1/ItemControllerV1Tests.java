@@ -15,9 +15,16 @@
  */
 package com.expedia.seiso.web.controller.v1;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import lombok.val;
 
@@ -26,64 +33,53 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Pageable;
+import org.springframework.util.MultiValueMap;
 
-import com.expedia.seiso.domain.entity.DataCenter;
-import com.expedia.seiso.domain.entity.Environment;
-import com.expedia.seiso.domain.entity.Node;
-import com.expedia.seiso.domain.entity.NodeIpAddress;
+import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Service;
-import com.expedia.seiso.domain.entity.ServiceInstance;
-import com.expedia.seiso.domain.entity.ServiceInstancePort;
-import com.expedia.seiso.domain.meta.ItemMeta;
-import com.expedia.seiso.domain.meta.ItemMetaImpl;
+import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.domain.repo.DataCenterRepo;
-import com.expedia.seiso.domain.repo.NodeRepo;
-import com.expedia.seiso.domain.repo.RepoKeys;
-import com.expedia.seiso.web.ResponseHeadersV1;
-import com.expedia.seiso.web.controller.BasicItemDelegate;
-import com.expedia.seiso.web.controller.ItemSearchDelegate;
+import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.controller.PEResource;
+import com.expedia.seiso.web.controller.PEResourceList;
+import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.hateoas.BaseResource;
 import com.expedia.seiso.web.hateoas.BaseResourcePage;
-import com.expedia.seiso.web.hateoas.PageMetadata;
 
 /**
  * @author Willie Wheeler
  */
 public class ItemControllerV1Tests {
+	private static final String CRUD_REPO_KEY = "foo";
+	private static final String PAGING_REPO_KEY = "bar";
+	private static final String ITEM_KEY = "baz";
+	private static final String PROP_KEY = "qux";
+	private static final String VIEW_KEY = "quux";
 
 	// Class under test
 	@InjectMocks private ItemControllerV1 controller;
 
 	// Dependencies
 	@Mock private ItemMetaLookup itemMetaLookup;
-	@Mock private BasicItemDelegate basicItemDelegate;
-	@Mock private ItemSearchDelegate itemSearchDelegate;
+	@Mock private BasicItemDelegate delegate;
 	@Mock private ResponseHeadersV1 responseHeaders;
 
-	// Test data
-	private ItemMeta dataCenterRepoMeta;
-	private ItemMeta nodeRepoMeta;
-
-	private DataCenter existingDataCenter, nonExistingDataCenter;
-	private Environment existingEnvironment;
-	private Node existingNode, nonExistingNode;
-	private Service existingService, nonExistingService;
-
-	@Mock private PEResource existingDataCenterDto, nonExistingDataCenterDto;
-	@Mock private PEResource existingNodeDto, nonExistingNodeDto;
-	@Mock private PEResource existingServiceDto, nonExistingServiceDto;
-	@Mock private PEResource existingServiceInstanceDto, nonExistingServiceInstanceDto;
-
-	private ServiceInstance nonExistingServiceInstance, existingServiceInstance;
-
-	@Mock private BaseResourcePage dataCenterBaseResourcePage;
-	@Mock private PageMetadata dataCenterPageMeta;
-	@Mock private BaseResource dataCenterBaseResource;
-
+	// Test data - requests
+	@Mock private Pageable pageable;
+	@Mock private MultiValueMap<String, String> params;
+	@Mock private PEResourceList peResourceList;
+	@Mock private PEResource peResource;
+	@Mock private Item item;
+	
+	// Test data - responses
+	@Mock private BaseResource baseResource;
+	@Mock private BaseResourcePage baseResourcePage;
+	private List<BaseResource> baseResourceList;
+	@Mock private SaveAllResponse saveAllResponse;
+	
 	@Before
-	public void init() throws Exception {
+	public void init() {
 		this.controller = new ItemControllerV1();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
@@ -91,75 +87,66 @@ public class ItemControllerV1Tests {
 	}
 
 	private void initTestData() {
-
-		// @formatter:off
-		this.dataCenterRepoMeta = new ItemMetaImpl(DataCenter.class, DataCenterRepo.class, false);
-		this.nodeRepoMeta = new ItemMetaImpl(Node.class, NodeRepo.class, true);
-
-		// Existing items
-		this.existingDataCenter = new DataCenter().setKey("existing-data-center");
-		this.existingEnvironment = new Environment().setKey("existing-environment");
-		this.existingService = new Service().setKey("existing-service");
-		this.existingServiceInstance = new ServiceInstance()
-				.setKey("existing-service-instance")
-				.setService(existingService)
-				.setDataCenter(existingDataCenter)
-				.setPorts(new ArrayList<ServiceInstancePort>())
-				.setNodes(new ArrayList<Node>());
-		this.existingNode = new Node().setName("existing-node")
-				.setServiceInstance(existingServiceInstance)
-				.setIpAddresses(new ArrayList<NodeIpAddress>());
-
-		// Non-existing items
-		this.nonExistingDataCenter = new DataCenter().setKey("non-existing-data-center");
-		this.nonExistingService = new Service().setKey("non-existing-service");
-		this.nonExistingServiceInstance = new ServiceInstance()
-				.setKey("non-existing-service-instance")
-				.setService(existingService)
-				.setEnvironment(existingEnvironment)
-				.setDataCenter(existingDataCenter)
-				.setPorts(new ArrayList<ServiceInstancePort>())
-				.setNodes(new ArrayList<Node>());
-		this.nonExistingNode = new Node()
-				.setName("non-existing-node")
-				.setServiceInstance(existingServiceInstance)
-				.setIpAddresses(new ArrayList<NodeIpAddress>());
-		// @formatter:on
-
-		val dataCenterList = new ArrayList<>();
-		dataCenterList.add(nonExistingDataCenter);
-
-		when(existingDataCenterDto.getItem()).thenReturn(existingDataCenter);
-		when(existingNodeDto.getItem()).thenReturn(existingNode);
-		when(existingServiceDto.getItem()).thenReturn(existingService);
-		when(existingServiceInstanceDto.getItem()).thenReturn(existingServiceInstance);
-
-		when(nonExistingDataCenterDto.getItem()).thenReturn(nonExistingDataCenter);
-		when(nonExistingNodeDto.getItem()).thenReturn(nonExistingNode);
-		when(nonExistingServiceDto.getItem()).thenReturn(nonExistingService);
-		when(nonExistingServiceInstanceDto.getItem()).thenReturn(nonExistingServiceInstance);
-
-		when(dataCenterPageMeta.getPageSize()).thenReturn(100L);
-		when(dataCenterPageMeta.getPageNumber()).thenReturn(0L);
-		when(dataCenterPageMeta.getTotalItems()).thenReturn(502L);
-		// PageMetadata returns the total number of *full* pages (i.e., excluding partials), for whatever weird reason.
-		when(dataCenterPageMeta.getTotalPages()).thenReturn(5L);
-
-		when(dataCenterBaseResourcePage.getMetadata()).thenReturn(dataCenterPageMeta);
+		when(peResource.getItem()).thenReturn(item);
+		this.baseResourceList = Arrays.asList(baseResource);
 	}
 
 	private void initDependencies() {
-		when(itemMetaLookup.getItemClass(RepoKeys.DATA_CENTERS)).thenReturn(DataCenter.class);
-		when(itemMetaLookup.getItemClass(RepoKeys.NODES)).thenReturn(Node.class);
-		when(itemMetaLookup.getItemClass(RepoKeys.SERVICES)).thenReturn(Service.class);
-		when(itemMetaLookup.getItemClass(RepoKeys.SERVICE_INSTANCES)).thenReturn(ServiceInstance.class);
-
-		when(itemMetaLookup.getItemMeta(DataCenter.class)).thenReturn(dataCenterRepoMeta);
-		when(itemMetaLookup.getItemMeta(Node.class)).thenReturn(nodeRepoMeta);
+		when(itemMetaLookup.getItemClass(anyString())).thenReturn(Service.class);
+		
+		when(delegate.getAll(eq(CRUD_REPO_KEY), anyString(), eq(pageable), eq(params))).thenReturn(baseResourceList);
+		when(delegate.getAll(eq(PAGING_REPO_KEY), anyString(), eq(pageable), eq(params))).thenReturn(baseResourcePage);
+		when(delegate.getOne(anyString(), anyString(), anyString())).thenReturn(baseResource);
+		when(delegate.getProperty(CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY)).thenReturn(baseResource);
+		when(delegate.postAll(peResourceList)).thenReturn(saveAllResponse);
 	}
-
+	
 	@Test
-	public void deleteExistingService() {
-		controller.delete(RepoKeys.SERVICES, "existing-service");
+	public void getAll_crudRepo() {
+		val result = controller.getAll(CRUD_REPO_KEY, VIEW_KEY, pageable, params);
+		assertNotNull(result);
+		verify(delegate).getAll(CRUD_REPO_KEY, VIEW_KEY, pageable, params);
+	}
+	
+	@Test
+	public void getAll_pagingRepo() {
+		val result = controller.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
+		assertNotNull(result);
+		verify(delegate).getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
+	}
+	
+	@Test
+	public void getOne() {
+		val result = controller.getOne(CRUD_REPO_KEY, ITEM_KEY, VIEW_KEY);
+		assertNotNull(result);
+		assertSame(baseResource, result);
+		verify(delegate).getOne(CRUD_REPO_KEY, ITEM_KEY, VIEW_KEY);
+		
+	}
+	
+	@Test
+	public void getProperty() {
+		val result = controller.getProperty(CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY);
+		assertNotNull(result);
+		verify(delegate).getProperty(CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY);
+	}
+	
+	@Test
+	public void postAll() {
+		val result = controller.postAll(CRUD_REPO_KEY, peResourceList);
+		assertNotNull(result);
+		assertSame(saveAllResponse, result);
+	}
+	
+	@Test
+	public void put() {
+		controller.put(CRUD_REPO_KEY, ITEM_KEY, peResource);
+		verify(delegate).put(item);
+	}
+	
+	@Test
+	public void delete() {
+		controller.delete(CRUD_REPO_KEY, ITEM_KEY);
+		verify(delegate).delete((ItemKey) anyObject());
 	}
 }

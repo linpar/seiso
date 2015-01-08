@@ -36,12 +36,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.repository.support.Repositories;
+import org.springframework.util.MultiValueMap;
 
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.entity.Service;
-import com.expedia.seiso.web.hateoas.ItemLinks;
+import com.expedia.seiso.domain.service.SearchResults;
 import com.expedia.seiso.web.hateoas.Link;
+import com.expedia.seiso.web.hateoas.link.ItemLinks;
+import com.expedia.seiso.web.hateoas.link.LinkFactory;
+import com.expedia.seiso.web.hateoas.link.RepoSearchLinks;
 
 /**
  * @author Willie Wheeler
@@ -53,8 +57,10 @@ public class ItemAssemblerTests {
 	
 	// Dependencies
 	@Mock private Repositories repositories;
-	@Mock(name = "itemLinksV1") private ItemLinks itemLinksV1;
-	@Mock(name = "itemLinksV2") private ItemLinks itemLinksV2;
+	@Mock(name = "linkFactoryV1") private LinkFactory linkFactoryV1;
+	@Mock(name = "linkFactoryV2") private LinkFactory linkFactoryV2;
+	@Mock private ItemLinks itemLinksV1, itemLinksV2;
+	@Mock private RepoSearchLinks repoSearchLinksV1, repoSearchLinksV2;
 	
 	// Test data
 	private List<Service> itemList;
@@ -65,9 +71,10 @@ public class ItemAssemblerTests {
 	private Person person;
 	private Service service;
 	private ProjectionNode projectionNode;
+	@Mock private MultiValueMap<String, String> params;
 	
 	@Before
-	public void setUp() {
+	public void init() {
 		this.assembler = new ItemAssembler();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
@@ -96,9 +103,15 @@ public class ItemAssemblerTests {
 	private void initDependencies() {
 		when(repositories.getPersistentEntity((Class<?>) anyObject())).thenReturn(persistentEntity);
 		
+		when(linkFactoryV1.getItemLinks()).thenReturn(itemLinksV1);
+		when(linkFactoryV1.getRepoSearchLinks()).thenReturn(repoSearchLinksV1);
+		
+		when(linkFactoryV2.getItemLinks()).thenReturn(itemLinksV2);
+		when(linkFactoryV2.getRepoSearchLinks()).thenReturn(repoSearchLinksV2);
+		
 		when(itemLinksV1.itemLink((Item) anyObject())).thenReturn(link);
 		when(itemLinksV2.itemLink((Item) anyObject())).thenReturn(link);
-		when(itemLinksV2.itemRepoLink(anyString(), (Class<?>) anyObject())).thenReturn(link);
+		when(itemLinksV2.repoLink(anyString(), (Class<?>) anyObject())).thenReturn(link);
 	}
 	
 	@Test
@@ -137,8 +150,45 @@ public class ItemAssemblerTests {
 	}
 	
 	@Test
-	public void toBaseResource() {
+	public void toBaseResource_item() {
 		val result = assembler.toBaseResource(service, projectionNode);
 		assertNotNull(result);
+	}
+	
+	@Test
+	public void toBaseResource_searchResults() {
+		// TODO
+	}
+	
+	@Test
+	public void toBaseResource_searchResults_null() {
+		val result = assembler.toBaseResource((SearchResults) null);
+		assertNull(result);
+	}
+	
+	@Deprecated
+	@Test
+	public void toUsernamePage() {
+		// TODO
+	}
+	
+	@Deprecated
+	@Test
+	public void toUsernamePage_nullPersonPage() {
+		val result = assembler.toUsernamePage(null, params);
+		assertNull(result);
+	}
+	
+	@Deprecated
+	@Test
+	public void toUsernameList() {
+		// TODO
+	}
+	
+	@Deprecated
+	@Test
+	public void toUsernameList_nullPersonList() {
+		val result = assembler.toUsernameList(null);
+		assertNull(result);
 	}
 }

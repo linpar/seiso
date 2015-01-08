@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.domain.entity.key.IpAddressRoleKey;
-import com.expedia.seiso.web.controller.BasicItemDelegate;
 import com.expedia.seiso.web.controller.PEResource;
+import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.hateoas.BaseResource;
 
 /**

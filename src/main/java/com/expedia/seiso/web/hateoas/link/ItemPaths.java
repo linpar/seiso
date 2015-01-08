@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas;
+package com.expedia.seiso.web.hateoas.link;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,10 +44,12 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.entity.ServiceType;
 import com.expedia.seiso.domain.entity.StatusType;
 import com.expedia.seiso.domain.repo.RepoKeys;
+import com.expedia.seiso.web.hateoas.ItemPathResolver;
 
 /**
  * Resolves items to their URI paths, relative to the version segment (/v1, /v2, etc.) of the URI. Currently these are
- * the same for /v1 and /v2, so we consolidate the logic here.
+ * <em>mostly</em> the same for /v1 and /v2 ({@link Endpoint} stands out as an exception), so we consolidate the logic
+ * here.
  * 
  * @author Willie Wheeler
  */

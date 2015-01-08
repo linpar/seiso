@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas;
+package com.expedia.seiso.web.hateoas.link;
 
 import java.net.URI;
 
@@ -30,6 +30,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.Relations;
+import com.expedia.seiso.web.hateoas.Link;
 
 /**
  * Various factory methods for creating API links.
@@ -42,80 +43,68 @@ public class ItemLinks {
 	private static final MultiValueMap<String, String> EMPTY_PARAMS = new LinkedMultiValueMap<>();
 	
 	/** Includes version prefix; e.g., /v1, /v2 */
-	@NonNull private URI baseUri;
+	@NonNull private URI versionUri;
 	
 	@NonNull private ItemPaths itemPaths;
 	@NonNull private ItemMetaLookup itemMetaLookup;
 	
-	public Link itemRepoLink(@NonNull Class<?> itemClass, @NonNull MultiValueMap<String, String> params) {
-		return itemRepoLink(Relations.SELF, itemClass, params);
+	
+	// =================================================================================================================
+	// Repo links
+	// =================================================================================================================
+	
+	public Link repoLink(@NonNull Class<?> itemClass, @NonNull MultiValueMap<String, String> params) {
+		return doRepoLink(Relations.SELF, itemClass, params);
 	}
 	
-	public Link itemRepoLink(@NonNull String rel, @NonNull Class<?> itemClass) {
-		return itemRepoLink(rel, itemClass, EMPTY_PARAMS);
+	public Link repoLink(@NonNull String rel, @NonNull Class<?> itemClass) {
+		return doRepoLink(rel, itemClass, EMPTY_PARAMS);
 	}
 	
-	public Link itemRepoSearchListLink(@NonNull String rel, @NonNull Class<?> itemClass) {
-		// @formatter:off
-		val href = UriComponentsBuilder
-				.fromUri(baseUri)
-				.pathSegment(repoPath(itemClass), "search")
-				.build()
-				.toString();
-		// @formatter:on
-		return new Link(rel, href);
-	}
-	
-	public Link itemRepoSearchLink(@NonNull String rel, @NonNull Class<?> itemClass, String path) {
-		// @formatter:off
-		val href = UriComponentsBuilder
-				.fromUri(baseUri)
-				.pathSegment(repoPath(itemClass), "search", path)
-				.build()
-				.toString();
-		// @formatter:on
-		return new Link(rel, href);
-	}
-	
-	public Link itemRepoFirstLink(
+	public Link repoFirstLink(
 			@NonNull Class<?> itemClass,
 			@NonNull Page<?> page,
 			@NonNull MultiValueMap<String, String> params) {
 		
 		val newParams = new LinkedMultiValueMap<String, String>(params);
 		newParams.set("page", "0");
-		return itemRepoLink(Relations.FIRST, itemClass, newParams);
+		return doRepoLink(Relations.FIRST, itemClass, newParams);
 	}
 	
-	public Link itemRepoPrevLink(
+	public Link repoPrevLink(
 			@NonNull Class<?> itemClass,
 			@NonNull Page<?> page,
 			@NonNull MultiValueMap<String, String> params) {
 		
 		val newParams = new LinkedMultiValueMap<String, String>(params);
 		newParams.set("page", String.valueOf(page.getNumber() - 1));
-		return itemRepoLink(Relations.PREVIOUS, itemClass, newParams);
+		return doRepoLink(Relations.PREVIOUS, itemClass, newParams);
 	}
 	
-	public Link itemRepoNextLink(
+	public Link repoNextLink(
 			@NonNull Class<?> itemClass,
 			@NonNull Page<?> page,
 			@NonNull MultiValueMap<String, String> params) {
 		
 		val newParams = new LinkedMultiValueMap<String, String>(params);
 		newParams.set("page", String.valueOf(page.getNumber() + 1));
-		return itemRepoLink(Relations.NEXT, itemClass, newParams);
+		return doRepoLink(Relations.NEXT, itemClass, newParams);
 	}
 	
-	public Link itemRepoLastLink(
+	public Link repoLastLink(
 			@NonNull Class<?> itemClass,
 			@NonNull Page<?> page,
 			@NonNull MultiValueMap<String, String> params) {
 		
 		val newParams = new LinkedMultiValueMap<String, String>(params);
 		newParams.set("page", String.valueOf(page.getTotalPages() - 1));
-		return itemRepoLink(Relations.LAST, itemClass, newParams);
+		return doRepoLink(Relations.LAST, itemClass, newParams);
 	}
+
+	
+	// =================================================================================================================
+	// Item links
+	// =================================================================================================================
 	
 	public Link itemLink(@NonNull Item item) {
 		return itemLink(Relations.SELF, item);
@@ -127,7 +116,7 @@ public class ItemLinks {
 	
 	public Link itemLink(@NonNull String rel, @NonNull Item item, @NonNull MultiValueMap<String, String> params) {
 		// @formatter:off
-		val href = itemRepoUri(item.getClass(), params)
+		val href = repoUri(item.getClass(), params)
 				.pathSegment(itemPathSegment(item))
 				.build()
 				.toString();
@@ -137,7 +126,7 @@ public class ItemLinks {
 	
 	public Link itemPropertyLink(@NonNull Item item, @NonNull String prop) {
 		// @formatter:off
-		val href = itemRepoUri(item.getClass(), EMPTY_PARAMS)
+		val href = repoUri(item.getClass(), EMPTY_PARAMS)
 				.pathSegment(itemPathSegment(item))
 				.pathSegment(prop)
 				.build()
@@ -151,9 +140,9 @@ public class ItemLinks {
 	// Private
 	// =================================================================================================================
 	
-	private Link itemRepoLink(String rel, Class<?> itemClass, MultiValueMap<String, String> params) {
+	private Link doRepoLink(String rel, Class<?> itemClass, MultiValueMap<String, String> params) {
 		// @formatter:off
-		val href = itemRepoUri(itemClass, params)
+		val href = repoUri(itemClass, params)
 				.pathSegment(repoPath(itemClass))
 				.build()
 				.toString();
@@ -161,10 +150,10 @@ public class ItemLinks {
 		return new Link(rel, href);
 	}
 	
-	private UriComponentsBuilder itemRepoUri(Class<?> itemClass, MultiValueMap<String, String> params) {
+	private UriComponentsBuilder repoUri(Class<?> itemClass, MultiValueMap<String, String> params) {
 		// @formatter:off
 		return UriComponentsBuilder
-				.fromUri(baseUri)
+				.fromUri(versionUri)
 				.queryParams(params);
 		// @formatter:on
 	}

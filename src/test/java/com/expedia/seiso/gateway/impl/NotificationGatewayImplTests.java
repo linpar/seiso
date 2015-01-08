@@ -38,7 +38,7 @@ public class NotificationGatewayImplTests {
 	private ConfigManagementEvent cme;
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 		this.gateway = new NotificationGatewayImpl();
 		MockitoAnnotations.initMocks(this);
 		initTestData();

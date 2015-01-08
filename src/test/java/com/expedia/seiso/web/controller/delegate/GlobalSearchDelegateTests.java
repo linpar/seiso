@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.controller.internal;
+package com.expedia.seiso.web.controller.delegate;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 import lombok.val;
 
@@ -29,28 +27,33 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 
+import com.expedia.seiso.domain.service.SearchEngine;
+import com.expedia.seiso.domain.service.SearchResults;
 import com.expedia.seiso.domain.service.search.SearchQuery;
-import com.expedia.seiso.web.controller.ItemSearchDelegate;
+import com.expedia.seiso.web.assembler.ItemAssembler;
 import com.expedia.seiso.web.hateoas.BaseResource;
 
 /**
  * @author Willie Wheeler
  */
-public class SearchControllerTests {
+public class GlobalSearchDelegateTests {
 	
 	// Class under test
-	@InjectMocks private SearchController controller;
+	@InjectMocks private GlobalSearchDelegate delegate;
 	
 	// Dependencies
-	@Mock private ItemSearchDelegate itemSearchDelegate;
+	@Mock private SearchEngine searchEngine;
+	@Mock private ItemAssembler itemAssembler;
 	
 	// Test data
+	@Mock private SearchQuery query;
 	@Mock private Pageable pageable;
-	@Mock private BaseResource searchResults;
+	@Mock private SearchResults searchResults;
+	@Mock private BaseResource searchResultsResource;
 	
 	@Before
-	public void setUp() {
-		this.controller = new SearchController();
+	public void init() {
+		this.delegate = new GlobalSearchDelegate();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();
@@ -60,13 +63,24 @@ public class SearchControllerTests {
 	}
 	
 	private void initDependencies() {
-		when(itemSearchDelegate.globalSearch((SearchQuery) anyObject(), eq(pageable))).thenReturn(searchResults);
+		when(searchEngine.search(query, pageable)).thenReturn(searchResults);
+		when(itemAssembler.toBaseResource(searchResults)).thenReturn(searchResultsResource);
 	}
 	
 	@Test
 	public void globalSearch() {
-		val result = controller.globalSearch("seiso", pageable);
+		val result = delegate.globalSearch(query, pageable);
 		assertNotNull(result);
-		assertSame(searchResults, result);
+		assertSame(searchResultsResource, result);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void globalSearch_nullQuery() {
+		delegate.globalSearch(null, pageable);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void globalSearch_nullPageable() {
+		delegate.globalSearch(query, null);
 	}
 }

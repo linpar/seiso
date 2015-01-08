@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.controller;
+package com.expedia.seiso.web.controller.delegate;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
@@ -43,6 +43,7 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.assembler.ItemAssembler;
 import com.expedia.seiso.web.assembler.ProjectionNode;
+import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.hateoas.BaseResource;
 import com.expedia.seiso.web.hateoas.BaseResourcePage;
 
@@ -85,7 +86,7 @@ public class BasicItemDelegateTests {
 	@Mock private BaseResourcePage itemDtoPage;
 	
 	@Before
-	public void setUp() {
+	public void init() {
 		this.delegate = new BasicItemDelegate();
 		MockitoAnnotations.initMocks(this);
 		initTestData();

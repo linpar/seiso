@@ -60,7 +60,7 @@ public class PersonControllerTests {
 	@Mock private Page<Person> personPage;
 	
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 		this.controller = new ItemControllerV2();
 		MockitoAnnotations.initMocks(this);
 		initTestData();

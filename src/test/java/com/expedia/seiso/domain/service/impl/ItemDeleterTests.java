@@ -45,7 +45,7 @@ public class ItemDeleterTests {
 	private Service service;
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		this.itemDeleter = new ItemDeleter(repositories);
 		initTestData();
