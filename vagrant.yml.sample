@@ -13,7 +13,7 @@ db:
 
   # Synced folder containing SQL scripts to create and initialize database
   artifacts_dir:
-    host: /Users/wwheeler/.seiso/db
+    host: /Users/wwheeler/.seiso/db   # (modify homedir to suit and ensure you create the full path before running vagrant for the first time)
     guest: /opt/seiso-db
 
 
