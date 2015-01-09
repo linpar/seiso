@@ -27,14 +27,6 @@ Approach #1: Manual setup
 * RabbitMQ
   * For visibility we recommend installing the RabbitMQ management plugin.
 
-**Configuration.** Create copies of the following files from `conf-sample` and modify them as appropriate:
-
-* `application.yml`
-* `keystore-dev.jks`
-* `log4j.xml`
-
-To run Seiso in development mode, you can place them directly in `src/main/resources`.
-
 Approach #2: Vagrant setup
 --------------------------
 
@@ -43,6 +35,11 @@ You can use [Vagrant](https://www.vagrantup.com/) to set up your development env
 As a preliminary, you will need to install the [Omnibus plugin](https://github.com/opscode/vagrant-omnibus), which will install the Chef provisioner on your VMs.
 
 First create a copy of `vagrant.yml.sample` called `vagrant.yml` and place it in the same directory. Change the configuration as necessary. (The instructions are in `vagrant.yml.sample` itself.)
+
+Setup ~/.seiso config files:
+
+    $ mkdir -p ~/.seiso/db
+    $ cp src/main/sql/* ~/.seiso/db/
 
 Then do
 
@@ -59,6 +56,24 @@ in one and
     $ vagrant up bus
 
 in the other, just to parallelize the work.
+
+Common Configuration
+-------------
+
+Create copies of the following files from `conf-sample` and modify them as appropriate:
+
+* `application.yml`
+* `keystore-dev.jks`
+
+To run Seiso in development mode, you can place them directly in `src/main/resources`.
+
+Patch the Database
+-------------
+
+* Connect to `localhost:3306/seiso` as `root` user
+* Run `src/main/sql/patch-0.0.2.1.sql`
+* Follow the instructions in that patch sql file (e.g. Run query: `update person set source='ldap-corp'`)
+
 
 Build Seiso
 ===========
