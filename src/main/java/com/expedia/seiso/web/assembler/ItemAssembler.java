@@ -16,6 +16,7 @@
 package com.expedia.seiso.web.assembler;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -62,7 +63,7 @@ public class ItemAssembler {
 	
 	
 	// =================================================================================================================
-	// Base resource list
+	// CRUD repo resources
 	// =================================================================================================================
 	
 	public List<BaseResource> toBaseResourceList(List<?> itemList) {
@@ -81,7 +82,7 @@ public class ItemAssembler {
 	
 	
 	// =================================================================================================================
-	// Base resource page
+	// Paging repo resources
 	// =================================================================================================================
 	
 	public BaseResourcePage toBaseResourcePage(@NonNull Class<?> itemClass, Page<?> itemPage) {
@@ -102,16 +103,16 @@ public class ItemAssembler {
 		
 		// FIXME Don't assume that we're dealing with a top-level repo page here. This could be a repo serach as well.
 		// This is the cause of issue #25 ("Repo searches show wrong links").
-		val links = buildRepoPageLinks(itemClass, itemPage, params);
+		val links = toRepoPageLinksV2(itemClass, itemPage, params);
 		
-		val pageMeta = buildPageMetadata(itemPage);
+		val pageMeta = toPageMetadata(itemPage);
 		val items = toBaseResourceList(itemPage.getContent(), proj);
 		return new BaseResourcePage(links, pageMeta, items);
 	}
 	
 	
 	// =================================================================================================================
-	// Base resource
+	// Single item resources
 	// =================================================================================================================
 	
 	public BaseResource toBaseResource(Item item, ProjectionNode proj) { return toBaseResource(item, proj, false); }
@@ -137,9 +138,55 @@ public class ItemAssembler {
 		return baseResource;
 	}
 	
-	public BaseResource toBaseResource(SearchResults results) {
-		if (results == null) { return null; }
+	
+	// =================================================================================================================
+	// Repo search resources
+	// =================================================================================================================
+	
+	/**
+	 * Assembles a resource page from a repo search result page.
+	 * 
+	 * @param resultPage
+	 *            Search result page
+	 * @param itemClass
+	 *            Item class
+	 * @param path
+	 *            Search path
+	 * @param params
+	 *            Search parameters
+	 * @param proj
+	 *            Projection
+	 * 
+	 * @return Repository search result resource page
+	 */
+	public BaseResourcePage toRepoSearchResource(
+			@NonNull Page resultPage,
+			@NonNull Class itemClass,
+			@NonNull String path,
+			@NonNull MultiValueMap<String, String> params,
+			@NonNull ProjectionNode proj) {
 		
+		val repoSearchLinksV2 = linkFactoryV2.getRepoSearchLinks();
+		val links = toRepoSearchLinksV2(resultPage, itemClass, path, params);
+		val pageMeta = toPageMetadata(resultPage);
+		val itemList = resultPage.getContent();
+		val itemResourceList = toBaseResourceList(itemList, proj);
+		return new BaseResourcePage(links, pageMeta, itemResourceList);
+	}
+	
+	
+	// =================================================================================================================
+	// Global search resources
+	// =================================================================================================================
+	
+	/**
+	 * Assembles a resource from a global search result set.
+	 * 
+	 * @param results
+	 *            Global search result set
+	 * @return Resource for the result set
+	 */
+	public BaseResource toGlobalSearchResource(@NonNull SearchResults results) {
 		val resultsResource = new BaseResource();
 		val itemClasses = results.getItemClasses();
 		for (val itemClass : itemClasses) {
@@ -153,15 +200,15 @@ public class ItemAssembler {
 	
 	
 	// =================================================================================================================
-	// Special cases
+	// Special resources
 	// =================================================================================================================
 	
 	// TODO Generalize
 	@Deprecated
 	public BaseResourcePage toUsernamePage(Page<Person> personPage, MultiValueMap<String, String> params) {
 		if (personPage == null) { return null; }
-		val links = buildRepoPageLinks(Person.class, personPage, params);
-		val pageMeta = buildPageMetadata(personPage);
+		val links = toRepoPageLinksV2(Person.class, personPage, params);
+		val pageMeta = toPageMetadata(personPage);
 		val usernames = toUsernameList(personPage.getContent());
 		return new BaseResourcePage(links, pageMeta, usernames);
 	}
@@ -186,7 +233,10 @@ public class ItemAssembler {
 	// Private
 	// =================================================================================================================
 	
-	private List<Link> buildRepoPageLinks(Class<?> itemClass, Page<?> itemPage, MultiValueMap<String, String> params) {
+	private List<Link> toRepoPageLinksV2(
+			Class<?> itemClass,
+			Page<?> itemPage,
+			MultiValueMap<String, String> params) {
 		
 		// 0-indexed
 		val pageNumber = itemPage.getNumber();
@@ -218,7 +268,30 @@ public class ItemAssembler {
 		return links;
 	}
 	
-	private PageMetadata buildPageMetadata(Page<?> itemPage) {
+	private List<Link> toRepoSearchLinksV2(
+			Page resultPage,
+			Class itemClass,
+			String path,
+			MultiValueMap<String, String> params) {
+		
+		val repoSearchLinks = linkFactoryV2.getRepoSearchLinks();
+		val linkBuilder = repoSearchLinks.toPaginationLinkBuilder(resultPage, itemClass, path, params);
+		val firstLink = linkBuilder.buildFirstLink();
+		val prevLink = linkBuilder.buildPreviousLink();
+		val nextLink = linkBuilder.buildNextLink();
+		val lastLink = linkBuilder.buildLastLink();
+		
+		val links = new LinkedList<Link>();
+		links.add(linkBuilder.buildSelfLink());
+		links.add(repoSearchLinks.repoSearchListLink(Relations.UP, itemClass));
+		if (firstLink != null) { links.add(firstLink); }
+		if (prevLink != null) { links.add(prevLink); }
+		if (nextLink != null) { links.add(nextLink); }
+		if (lastLink != null) { links.add(lastLink); }
+		return links;
+	}
+	
+	private PageMetadata toPageMetadata(Page<?> itemPage) {
 		val pageSize = itemPage.getSize();
 		val pageNumber = itemPage.getNumber();
 		val totalItems = itemPage.getTotalElements();

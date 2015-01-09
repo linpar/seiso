@@ -15,9 +15,76 @@
  */
 package com.expedia.seiso.web.hateoas.link;
 
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.when;
+
+import java.net.URI;
+
+import lombok.val;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.util.MultiValueMap;
+
+import com.expedia.seiso.domain.entity.Service;
+import com.expedia.seiso.domain.meta.ItemMeta;
+import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.seiso.web.Relations;
+
 /**
  * @author Willie Wheeler
  */
 public class RepoSearchLinksTests {
-
+	private static final Class<?> ITEM_CLASS = Service.class;
+	private static final String SEARCH_PATH = "some-search-path";
+	
+	// Class under test
+	private RepoSearchLinks repoSearchLinks;
+	
+	// Dependencies
+	@Mock private ItemPaths itemPaths;
+	@Mock private ItemMetaLookup itemMetaLookup;
+	
+	// Test data
+	private URI versionUri;
+	@Mock private MultiValueMap<String, String> params;
+	@Mock private Page resultPage;
+	@Mock private ItemMeta itemMeta;
+	
+	@Before
+	public void init() throws Exception {
+		MockitoAnnotations.initMocks(this);
+		initTestData();
+		initDependencies();
+		this.repoSearchLinks = new RepoSearchLinks(versionUri, itemPaths, itemMetaLookup);
+	}
+	
+	private void initTestData() throws Exception {
+		this.versionUri = new URI("https://seiso.example.com/v2");
+	}
+	
+	private void initDependencies() {
+		when(itemMetaLookup.getItemMeta((Class<?>) anyObject())).thenReturn(itemMeta);
+	}
+	
+	@Test
+	public void repoSearchListLink() {
+		val result = repoSearchLinks.repoSearchListLink(Relations.SELF, Service.class);
+		assertNotNull(result);
+		// TODO
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoSearchListLink_nullRel()  {
+		repoSearchLinks.repoSearchListLink(null, Service.class);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoSearchListLink_nullItemClass()  {
+		repoSearchLinks.repoSearchListLink(Relations.SELF, null);
+	}
 }

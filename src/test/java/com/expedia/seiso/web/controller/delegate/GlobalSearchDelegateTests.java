@@ -64,7 +64,7 @@ public class GlobalSearchDelegateTests {
 	
 	private void initDependencies() {
 		when(searchEngine.search(query, pageable)).thenReturn(searchResults);
-		when(itemAssembler.toBaseResource(searchResults)).thenReturn(searchResultsResource);
+		when(itemAssembler.toGlobalSearchResource(searchResults)).thenReturn(searchResultsResource);
 	}
 	
 	@Test

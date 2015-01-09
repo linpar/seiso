@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.hateoas.BaseResource;
@@ -60,6 +61,7 @@ public class RepoSearchControllerV1 {
 	public HttpEntity<BaseResourcePage> repoSearch(
 			@PathVariable String repoKey,
 			@PathVariable String search,
+			@RequestParam(defaultValue = Projection.DEFAULT) String view,
 			@PageableDefault(
 					page = C.DEFAULT_PAGE_NUMBER,
 					size = C.DEFAULT_PAGE_SIZE,
@@ -68,7 +70,7 @@ public class RepoSearchControllerV1 {
 			@RequestParam MultiValueMap<String, String> params) {
 		
 		// Is it correct that v1 always returns a page here? [WLW]
-		val baseResourcePage = delegate.repoSearch(repoKey, search, pageable, params);
+		val baseResourcePage = delegate.repoSearch(repoKey, search, view, pageable, params);
 		val headers = responseHeaders.buildResponseHeaders(baseResourcePage);
 		return new HttpEntity<>(baseResourcePage, headers);
 	}

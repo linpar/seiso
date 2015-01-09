@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 
@@ -82,10 +83,23 @@ public class RepoSearchDelegate {
 		for (val queryMethod : queryMethods) {
 			val restResource = AnnotationUtils.getAnnotation(queryMethod, RestResource.class);
 			if (restResource == null) { continue; }
+			
 			val path = restResource.path();
 			if (path.isEmpty()) { continue; }
+			
+			val requestParams = new LinkedMultiValueMap<String, String>();
+			val methodParams = queryMethod.getParameters();
+			for (val methodParam : methodParams) {
+				val paramAnn = methodParam.getAnnotation(Param.class);
+				if (paramAnn != null) {
+					val requestParamName = paramAnn.value();
+					// FIXME Formatting the URI template variables belongs with the xxxLinks objects, not here. [WLW]
+					requestParams.set(requestParamName, "{" + requestParamName + "}"); 
+				}
+			}
+			
 			val rel = "s:" + (restResource.rel().isEmpty() ? path : restResource.rel());
-			resource.addV2Link(repoSearchLinksV2.repoSearchLink(rel, itemClass, path));
+			resource.addV2Link(repoSearchLinksV2.toRepoSearchLinkTemplate(rel, itemClass, path, requestParams));
 		}
 		
 		return resource;
@@ -96,8 +110,8 @@ public class RepoSearchDelegate {
 	 * 
 	 * @param repoKey
 	 *            repository key
-	 * @param query
-	 *            search query
+	 * @param path
+	 *            search path
 	 * @param pageable
 	 *            page request params
 	 * @param params
@@ -107,17 +121,16 @@ public class RepoSearchDelegate {
 	@SuppressWarnings("rawtypes")
 	public BaseResourcePage repoSearch(
 			@NonNull String repoKey,
-			@NonNull String query,
-			Pageable pageable,
-			MultiValueMap<String, String> params) {
+			@NonNull String path,
+			@NonNull String view,
+			@NonNull Pageable pageable,
+			@NonNull MultiValueMap<String, String> params) {
 
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
 		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
-		val itemPage = repoSearch(itemClass, query, pageable, params);
-		val proj = itemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, Projection.DEFAULT);
-		
-		// FIXME
-		return itemAssembler.toBaseResourcePage(itemClass, itemPage, proj);
+		val itemPage = repoSearch(itemClass, path, pageable, params);
+		val proj = itemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
+		return itemAssembler.toRepoSearchResource(itemPage, itemClass, path, params, proj);
 	}
 	
 	// FIXME Some of this belongs in ItemServiceImpl.

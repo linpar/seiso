@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
@@ -72,6 +73,7 @@ public class RepoSearchControllerV2 {
 	public Object repoSearch(
 			@PathVariable String repoKey,
 			@PathVariable String search,
+			@RequestParam(defaultValue = Projection.DEFAULT) String view,
 			@PageableDefault(
 					page = C.DEFAULT_PAGE_NUMBER,
 					size = C.DEFAULT_PAGE_SIZE,
@@ -85,12 +87,10 @@ public class RepoSearchControllerV2 {
 		val resultType = searchMethod.getReturnType();
 		
 		if (Item.class.isAssignableFrom(resultType)) {
-//			return delegate.repoSearchUnique(repoKey, search);
 			throw new UnsupportedOperationException("Repo search with unique result not yet supported");
 		} else if (itemMeta.isPagingRepo()) {
-			return delegate.repoSearch(repoKey, search, pageable, params);
+			return delegate.repoSearch(repoKey, search, view, pageable, params);
 		} else {
-//			return delegate.repoSearch(repoKey, search);
 			throw new UnsupportedOperationException("Repo search with list results not yet supported");
 		}
 	}

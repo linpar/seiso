@@ -31,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 
+import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMeta;
@@ -54,6 +55,7 @@ public class RepoSearchControllerV2Tests {
 	
 	private static final String SEARCH = "my-search";
 	private static final String SEARCH_WITH_UNIQUE_RESULT = "my-search-with-unique-result";
+	private static final String VIEW_KEY = Projection.DEFAULT;
 	
 	// Class under test
 	@InjectMocks RepoSearchControllerV2 controller;
@@ -109,7 +111,8 @@ public class RepoSearchControllerV2Tests {
 		
 		when(delegate.getRepoSearchList(PAGING_REPO_KEY)).thenReturn(searchListResource);
 		
-		when(delegate.repoSearch(PAGING_REPO_KEY, SEARCH, pageable, params)).thenReturn(searchResultResourcePage);
+		when(delegate.repoSearch(PAGING_REPO_KEY, SEARCH, VIEW_KEY, pageable, params))
+				.thenReturn(searchResultResourcePage);
 	}
 	
 	@Test
@@ -121,10 +124,10 @@ public class RepoSearchControllerV2Tests {
 	
 	@Test
 	public void repoSearch_paging() {
-		val result = controller.repoSearch(PAGING_REPO_KEY, SEARCH, pageable, params);
+		val result = controller.repoSearch(PAGING_REPO_KEY, SEARCH, VIEW_KEY, pageable, params);
 		assertNotNull(result);
 		assertTrue(result instanceof BaseResourcePage);
 		assertSame(searchResultResourcePage, result);
-		verify(delegate).repoSearch(PAGING_REPO_KEY, SEARCH, pageable, params);
+		verify(delegate).repoSearch(PAGING_REPO_KEY, SEARCH, VIEW_KEY, pageable, params);
 	}
 }

@@ -37,6 +37,6 @@ public class GlobalSearchDelegate {
 	
 	public BaseResource globalSearch(@NonNull SearchQuery query, @NonNull Pageable pageable) {
 		val results = searchEngine.search(query, pageable);
-		return itemAssembler.toBaseResource(results);
+		return itemAssembler.toGlobalSearchResource(results);
 	}
 }

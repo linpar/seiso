@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -32,8 +33,10 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.util.MultiValueMap;
@@ -45,12 +48,17 @@ import com.expedia.seiso.domain.service.SearchResults;
 import com.expedia.seiso.web.hateoas.Link;
 import com.expedia.seiso.web.hateoas.link.ItemLinks;
 import com.expedia.seiso.web.hateoas.link.LinkFactory;
+import com.expedia.seiso.web.hateoas.link.PaginationLinkBuilder;
 import com.expedia.seiso.web.hateoas.link.RepoSearchLinks;
 
 /**
  * @author Willie Wheeler
  */
 public class ItemAssemblerTests {
+	private static final Class ITEM_CLASS = Service.class;
+	private static final String SEARCH_PATH = "some-search-path";
+	private static final Pageable PAGE_REQUEST = new PageRequest(5, 20);
+	private static final ProjectionNode PROJECTION = ProjectionNode.FLAT_PROJECTION_NODE;
 	
 	// Class under test
 	@InjectMocks private ItemAssembler assembler;
@@ -61,17 +69,18 @@ public class ItemAssemblerTests {
 	@Mock(name = "linkFactoryV2") private LinkFactory linkFactoryV2;
 	@Mock private ItemLinks itemLinksV1, itemLinksV2;
 	@Mock private RepoSearchLinks repoSearchLinksV1, repoSearchLinksV2;
+	@Mock private PaginationLinkBuilder paginationLinkBuilder;
 	
 	// Test data
 	private List<Service> itemList;
-	private PageRequest pageRequest;
 	private PageImpl<Service> itemPage;
-	@Mock private PersistentEntity persistentEntity;
-	@Mock private Link link;
 	private Person person;
 	private Service service;
-	private ProjectionNode projectionNode;
+	
 	@Mock private MultiValueMap<String, String> params;
+	
+	@Mock private Link link;
+	@Mock private PersistentEntity persistentEntity;
 	
 	@Before
 	public void init() {
@@ -82,9 +91,6 @@ public class ItemAssemblerTests {
 	}
 	
 	private void initTestData() {
-		this.pageRequest = new PageRequest(5, 20);
-		this.itemList = Arrays.asList(service);
-		this.itemPage = new PageImpl<Service>(itemList, pageRequest, 8675309);
 		
 		// @formatter:off
 		this.person = new Person()
@@ -97,7 +103,9 @@ public class ItemAssemblerTests {
 				.setDescription("My Benji service")
 				.setOwner(person);
 		// @formatter:on
-		this.projectionNode = ProjectionNode.FLAT_PROJECTION_NODE;
+		
+		this.itemList = Arrays.asList(service);
+		this.itemPage = new PageImpl<Service>(itemList, PAGE_REQUEST, 8675309);
 	}
 	
 	private void initDependencies() {
@@ -112,18 +120,22 @@ public class ItemAssemblerTests {
 		when(itemLinksV1.itemLink((Item) anyObject())).thenReturn(link);
 		when(itemLinksV2.itemLink((Item) anyObject())).thenReturn(link);
 		when(itemLinksV2.repoLink(anyString(), (Class<?>) anyObject())).thenReturn(link);
+		
+		when(repoSearchLinksV2.toPaginationLinkBuilder(
+				(Page) anyObject(), (Class) anyObject(), anyString(), eq(params)))
+						.thenReturn(paginationLinkBuilder);
 	}
 	
 	@Test
 	public void toBaseResourceList() {
-		val result = assembler.toBaseResourceList(itemList, projectionNode);
+		val result = assembler.toBaseResourceList(itemList, PROJECTION);
 		assertNotNull(result);
 		assertEquals(itemList.size(), result.size());
 	}
 	
 	@Test
 	public void toBaseResourceList_nullItemList() {
-		val result = assembler.toBaseResourceList(null, projectionNode);
+		val result = assembler.toBaseResourceList(null, PROJECTION);
 		assertNull(result);
 	}
 	
@@ -140,31 +152,61 @@ public class ItemAssemblerTests {
 	
 	@Test
 	public void toBaseResourcePage_nullItemPage() {
-		val result = assembler.toBaseResourcePage(Service.class, null, projectionNode);
+		val result = assembler.toBaseResourcePage(Service.class, null, PROJECTION);
 		assertNull(result);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void toBaseResourcePage2_nullItemClass() {
-		assembler.toBaseResourcePage(null, itemPage, projectionNode);
+		assembler.toBaseResourcePage(null, itemPage, PROJECTION);
 	}
 	
 	@Test
 	public void toBaseResource_item() {
-		val result = assembler.toBaseResource(service, projectionNode);
+		val result = assembler.toBaseResource(service, PROJECTION);
 		assertNotNull(result);
 	}
 	
+	
+	// =================================================================================================================
+	// Repo search resources
+	// =================================================================================================================
+	
 	@Test
-	public void toBaseResource_searchResults() {
+	public void toRepoSearchResource() {
+		val result = assembler.toRepoSearchResource(itemPage, ITEM_CLASS, SEARCH_PATH, params, PROJECTION);
+		assertNotNull(result);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void toRepoSearchResource_nullItemClass() {
+		assembler.toRepoSearchResource(itemPage, null, SEARCH_PATH, params, PROJECTION);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void toRepoSearchResource_nullItemPage() {
+		assembler.toRepoSearchResource(null, ITEM_CLASS, SEARCH_PATH, params, PROJECTION);
+	}
+	
+	
+	// =================================================================================================================
+	// Global search resources
+	// =================================================================================================================
+	
+	@Test
+	public void toGlobalSearchResource() {
 		// TODO
 	}
 	
-	@Test
-	public void toBaseResource_searchResults_null() {
-		val result = assembler.toBaseResource((SearchResults) null);
-		assertNull(result);
+	@Test(expected = NullPointerException.class)
+	public void toGlobalSearchResource_null() {
+		assembler.toGlobalSearchResource((SearchResults) null);
 	}
+	
+	
+	// =================================================================================================================
+	// Special resources
+	// =================================================================================================================
 	
 	@Deprecated
 	@Test

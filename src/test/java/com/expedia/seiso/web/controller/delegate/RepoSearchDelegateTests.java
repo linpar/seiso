@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.val;
@@ -40,6 +41,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 
+import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
@@ -58,7 +60,8 @@ import com.expedia.seiso.web.hateoas.link.RepoSearchLinks;
 public class RepoSearchDelegateTests {
 	private static final String PAGING_REPO_KEY = "my-paging-repo";
 	private static final Class<?> PAGING_ITEM_CLASS = Person.class;
-	private static final String QUERY_WITH_RESULT_PAGE = "find-by-last-name";
+	private static final String SEARCH_PATH = "find-by-last-name";
+	private static final String VIEW_KEY = Projection.DEFAULT;
 	
 	// Class under test
 	@InjectMocks private RepoSearchDelegate delegate;
@@ -96,7 +99,7 @@ public class RepoSearchDelegateTests {
 		this.params = new LinkedMultiValueMap<>();
 		params.set("name", "Aurelius");
 		
-		when(pagingItemMeta.getRepositorySearchMethod(QUERY_WITH_RESULT_PAGE)).thenReturn(queryMethodWithPagingResults);
+		when(pagingItemMeta.getRepositorySearchMethod(SEARCH_PATH)).thenReturn(queryMethodWithPagingResults);
 		
 		this.queryMethodWithPagingResults = ReflectionUtils
 				.findMethod(PersonRepo.class, "findByLastName", String.class, Pageable.class);
@@ -108,7 +111,7 @@ public class RepoSearchDelegateTests {
 		this.queryMethods = Arrays.asList(queryMethodWithUniqueResult);
 		when(repoInfo.getQueryMethods()).thenReturn(queryMethods);
 		
-		when(pagingItemMeta.getRepositorySearchMethod(QUERY_WITH_RESULT_PAGE)).thenReturn(queryMethodWithPagingResults);
+		when(pagingItemMeta.getRepositorySearchMethod(SEARCH_PATH)).thenReturn(queryMethodWithPagingResults);
 	}
 	
 	private void initDependencies() {
@@ -127,8 +130,11 @@ public class RepoSearchDelegateTests {
 				.thenReturn(searchListUpLink);
 		when(repoSearchLinks.repoSearchListLink(Relations.SELF, PAGING_ITEM_CLASS))
 				.thenReturn(searchListSelfLink);
-		when(repoSearchLinks.repoSearchLink("s:find-by-name", PAGING_ITEM_CLASS, "find-by-name"))
-				.thenReturn(searchListFindByNameLink);
+		
+		val params = new LinkedMultiValueMap<String, String>();
+		params.set("name", "{name}");
+		when(repoSearchLinks.toRepoSearchLinkTemplate("s:find-by-name", PAGING_ITEM_CLASS, "find-by-name", params))
+					.thenReturn(searchListFindByNameLink);
 	}
 	
 	@Test
@@ -150,7 +156,7 @@ public class RepoSearchDelegateTests {
 	@Test
 	public void repoSearch_resultPage() {
 		// FIXME Need to include/require params, as repo searches always involve them.
-		val result = delegate.repoSearch(PAGING_REPO_KEY, QUERY_WITH_RESULT_PAGE, pageable, params);
+		val result = delegate.repoSearch(PAGING_REPO_KEY, SEARCH_PATH, VIEW_KEY, pageable, params);
 		// TODO
 	}
 }

@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 
+import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.hateoas.BaseResource;
 import com.expedia.seiso.web.hateoas.BaseResourcePage;
@@ -40,6 +41,7 @@ import com.expedia.seiso.web.hateoas.BaseResourcePage;
 public class RepoSearchControllerV1Tests {
 	private static final String REPO_KEY = "foo";
 	private static final String SEARCH = "bar";
+	private static final String VIEW_KEY = Projection.DEFAULT;
 	
 	// Class under test
 	@InjectMocks private RepoSearchControllerV1 controller;
@@ -68,7 +70,7 @@ public class RepoSearchControllerV1Tests {
 	
 	private void initDependencies() {
 		when(delegate.getRepoSearchList(REPO_KEY)).thenReturn(repoSearchListResource);
-		when(delegate.repoSearch(REPO_KEY, SEARCH, pageable, params)).thenReturn(repoSearchPageResource);
+		when(delegate.repoSearch(REPO_KEY, SEARCH, VIEW_KEY, pageable, params)).thenReturn(repoSearchPageResource);
 		when(responseHeaders.buildResponseHeaders(repoSearchPageResource)).thenReturn(httpHeaders);
 	}
 	
@@ -82,9 +84,9 @@ public class RepoSearchControllerV1Tests {
 	
 	@Test
 	public void repoSearch() {
-		val result = controller.repoSearch(REPO_KEY, SEARCH, pageable, params);
+		val result = controller.repoSearch(REPO_KEY, SEARCH, VIEW_KEY, pageable, params);
 		assertNotNull(result);
-		verify(delegate).repoSearch(REPO_KEY, SEARCH, pageable, params);
+		verify(delegate).repoSearch(REPO_KEY, SEARCH, VIEW_KEY, pageable, params);
 		verify(responseHeaders).buildResponseHeaders(repoSearchPageResource);
 	}
 }
