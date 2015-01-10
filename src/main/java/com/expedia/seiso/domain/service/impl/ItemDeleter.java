@@ -16,6 +16,7 @@
 package com.expedia.seiso.domain.service.impl;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import org.springframework.data.repository.CrudRepository;
@@ -31,12 +32,9 @@ import com.expedia.seiso.gateway.aop.NotificationAspect;
  * @author Willie Wheeler
  */
 @Component
+@RequiredArgsConstructor
 public class ItemDeleter {
-	private Repositories repositories;
-	
-	public ItemDeleter(@NonNull Repositories repositories) {
-		this.repositories = repositories;
-	}
+	@NonNull private Repositories repositories;
 	
 	public void delete(@NonNull Item item) {
 		val repo = (CrudRepository) repositories.getRepositoryFor(item.getClass());

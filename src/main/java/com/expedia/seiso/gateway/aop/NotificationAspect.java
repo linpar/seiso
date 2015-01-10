@@ -16,16 +16,16 @@
 package com.expedia.seiso.gateway.aop;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.gateway.NotificationGateway;
-import com.expedia.seiso.gateway.model.ConfigManagementEvent;
+import com.expedia.seiso.gateway.model.ItemNotification;
 
 /**
  * Notification aspect. Allows us to avoid polluting the domain code with integration-related concerns.
@@ -34,25 +34,31 @@ import com.expedia.seiso.gateway.model.ConfigManagementEvent;
  */
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class NotificationAspect {
-	@Autowired private NotificationGateway notificationGateway;
-
+	@NonNull private NotificationGateway notificationGateway;
+	
+	@Pointcut("execution(* com.expedia.seiso.domain.service.impl.ItemSaver.create(com.expedia.seiso.domain.entity.Item))")
+	private void createItemOps() { }
+	
+	@Pointcut("execution(* com.expedia.seiso.domain.service.impl.ItemSaver.update(com.expedia.seiso.domain.entity.Item, com.expedia.seiso.domain.entity.Item))")
+	private void updateItemOps() { }
+	
 	@Pointcut("execution(* com.expedia.seiso.domain.service.impl.ItemDeleter.delete(com.expedia.seiso.domain.entity.Item))")
-	private void deleteItemOps() {
-	}
-
-	// TODO
+	private void deleteItemOps() { }
+	
+	@AfterReturning(pointcut = "createItemOps() && args(item)")
 	public void notifyCreate(@NonNull Item item) {
-		notificationGateway.notify(item, ConfigManagementEvent.OP_CREATE);
+		notificationGateway.notify(item, ItemNotification.OP_CREATE);
 	}
-
-	// TODO
-	public void notifyUpdate(@NonNull Item item) {
-		notificationGateway.notify(item, ConfigManagementEvent.OP_UPDATE);
+	
+	@AfterReturning(pointcut = "updateItemOps() && args(itemData, itemToSave)")
+	public void notifyUpdate(@NonNull Item itemData, @NonNull Item itemToSave) {
+		notificationGateway.notify(itemToSave, ItemNotification.OP_UPDATE);
 	}
 
 	@AfterReturning(pointcut = "deleteItemOps() && args(item)")
 	public void notifyDelete(@NonNull Item item) {
-		notificationGateway.notify(item, ConfigManagementEvent.OP_DELETE);
+		notificationGateway.notify(item, ItemNotification.OP_DELETE);
 	}
 }

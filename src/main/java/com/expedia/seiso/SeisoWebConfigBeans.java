@@ -64,10 +64,6 @@ import com.expedia.seiso.web.controller.v2.RepoSearchControllerV2;
 import com.expedia.seiso.web.hateoas.link.ItemPaths;
 import com.expedia.seiso.web.hateoas.link.LinkFactory;
 import com.expedia.seiso.web.jackson.hal.HalMapper;
-import com.expedia.seiso.web.jackson.hal.HalModule;
-import com.expedia.seiso.web.jackson.hal.HalResourceAssembler;
-import com.expedia.seiso.web.jackson.hal.HalResourcePageSerializer;
-import com.expedia.seiso.web.jackson.hal.HalResourceSerializer;
 import com.expedia.seiso.web.jackson.v1.V1Mapper;
 import com.expedia.seiso.web.jackson.v1.V1Module;
 import com.expedia.seiso.web.jackson.v1.V1ResourceAssembler;
@@ -136,6 +132,7 @@ public class SeisoWebConfigBeans {
 	
 	@Configuration
 	public static class HttpMessageConverterConfig {
+		@Autowired private HalMapper halMapper;
 		
 		@Bean
 		public V1Mapper v1Mapper() {
@@ -143,14 +140,6 @@ public class SeisoWebConfigBeans {
 			val dtoSerializer = new V1ResourceSerializer(assembler);
 			val dtoPageSerializer = new V1ResourcePageSerializer(assembler);
 			return new V1Mapper(new V1Module(dtoSerializer, dtoPageSerializer));
-		}
-		
-		@Bean
-		public HalMapper halMapper() {
-			val assembler = new HalResourceAssembler();
-			val dtoSerializer = new HalResourceSerializer(assembler);
-			val dtoPageSerializer = new HalResourcePageSerializer(assembler);
-			return new HalMapper(new HalModule(dtoSerializer, dtoPageSerializer));
 		}
 		
 		@Bean
@@ -174,7 +163,7 @@ public class SeisoWebConfigBeans {
 		
 		@Bean
 		public MappingJackson2HttpMessageConverter halHttpMessageConverter() {
-			val converter = new MappingJackson2HttpMessageConverter(halMapper());
+			val converter = new MappingJackson2HttpMessageConverter(halMapper);
 			converter.setSupportedMediaTypes(Arrays.asList(MediaTypes.APPLICATION_HAL_JSON));
 			return converter;
 		}

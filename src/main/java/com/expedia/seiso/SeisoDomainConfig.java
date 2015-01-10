@@ -26,6 +26,7 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mapping.context.MappingContext;
@@ -56,6 +57,9 @@ import com.expedia.seiso.domain.service.impl.ItemMerger;
 import com.expedia.seiso.domain.service.impl.ItemSaver;
 import com.expedia.seiso.domain.service.impl.ItemServiceImpl;
 import com.expedia.seiso.domain.service.impl.SearchEngineImpl;
+import com.expedia.seiso.gateway.NotificationGateway;
+import com.expedia.seiso.gateway.aop.NotificationAspect;
+import com.expedia.seiso.gateway.impl.NotificationGatewayImpl;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
@@ -120,6 +124,7 @@ public class SeisoDomainConfig {
 	}
 	
 	@Configuration
+	@EnableAspectJAutoProxy
 	@EnableTransactionManagement
 	public static class ServiceConfig {
 		@Autowired private Repositories repositories;
@@ -148,7 +153,7 @@ public class SeisoDomainConfig {
 		public ItemMerger itemMerger() { return new ItemMerger(repoAdapterLookup()); }
 		
 		@Bean
-		public ItemSaver itemSaver() { return new ItemSaver(repositories, repoAdapterLookup(), itemMerger()); }
+		public ItemSaver itemSaver() { return new ItemSaver(repositories, itemMerger()); }
 		
 		@Bean
 		public ItemDeleter itemDeleter() { return new ItemDeleter(repositories); }
@@ -158,5 +163,15 @@ public class SeisoDomainConfig {
 		
 		@Bean
 		public SearchEngine searchEngine() { return new SearchEngineImpl(repositories); }
+		
+		@Bean
+		public NotificationGateway notificationGateway() {
+			return new NotificationGatewayImpl();
+		}
+		
+		@Bean
+		public NotificationAspect notificationAspect() {
+			return new NotificationAspect(notificationGateway());
+		}
 	}
 }

@@ -18,27 +18,33 @@ package com.expedia.seiso;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.expedia.seiso.core.util.C;
+import com.expedia.seiso.web.jackson.hal.HalMapper;
 
 // TODO Do we want this?
 //@EnableRabbit
 
+/**
+ * @author Willie Wheeler
+ */
 @Configuration
 @XSlf4j
 public class SeisoRabbitConfig {
 	@Autowired private CachingConnectionFactory connectionFactory;
-
+	@Autowired private HalMapper halMapper;
+	
 	@Bean
 	public RabbitAdmin rabbitAdmin() {
 		log.trace("connectionFactory.host={}", connectionFactory.getHost());
@@ -61,9 +67,18 @@ public class SeisoRabbitConfig {
 		val exchange = new DirectExchange(C.AMQP_EXCHANGE_SEISO_ACTION_REQUESTS);
 		return exchange;
 	}
-
+	
 	@Bean
-	public MessageConverter jackson2JsonMessageConverter() {
-		return new Jackson2JsonMessageConverter();
+	public Jackson2JsonMessageConverter jsonMessageConverter() {
+		val converter = new Jackson2JsonMessageConverter();
+		converter.setJsonObjectMapper(halMapper);
+		return converter;
+	}
+	
+	@Bean
+	public AmqpTemplate amqpTemplate() {
+		val template = new RabbitTemplate(connectionFactory);
+		template.setMessageConverter(jsonMessageConverter());
+		return template;
 	}
 }

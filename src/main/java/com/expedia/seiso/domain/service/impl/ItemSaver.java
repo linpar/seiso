@@ -18,6 +18,7 @@ package com.expedia.seiso.domain.service.impl;
 import javax.transaction.Transactional;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import org.springframework.data.repository.CrudRepository;
@@ -26,56 +27,28 @@ import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.core.util.ReflectionUtils;
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.seiso.domain.entity.key.ItemKey;
-import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class ItemSaver {
-	private Repositories repositories;
-	private RepoAdapterLookup repoAdapterLookup;
-	private ItemMerger itemMerger;
-
-	// FIXME Use the NotificationAspect instead of this.
-//	@Autowired private NotificationGateway notificationGateway;
+	@NonNull private Repositories repositories;
+	@NonNull private ItemMerger itemMerger;
 	
-	public ItemSaver(
-			@NonNull Repositories repositories,
-			@NonNull RepoAdapterLookup repoAdapterLookup,
-			@NonNull ItemMerger itemMerger) {
-		
-		this.repositories = repositories;
-		this.repoAdapterLookup = repoAdapterLookup;
-		this.itemMerger = itemMerger;
-	}
-	
-	public void save(@NonNull Item itemData) {
+	public void create(@NonNull Item itemData) {
 		val itemClass = itemData.getClass();
-
-		Item itemToSave = doFind(itemData.itemKey());
-		val newItem = (itemToSave == null);
-		if (newItem) {
-			itemToSave = ReflectionUtils.createInstance(itemClass);
-		}
-
+		val itemToSave = ReflectionUtils.createInstance(itemClass);
+		doSave(itemData, itemToSave);
+	}
+	
+	public void update(@NonNull Item itemData, @NonNull Item itemToSave) {
+		doSave(itemData, itemToSave);
+	}
+	
+	private void doSave(Item itemData, Item itemToSave) {
 		itemMerger.merge(itemData, itemToSave);
-		getRepositoryFor(itemClass).save(itemToSave);
-
-		// FIXME Move to NotificationAspect.
-		// FIXME This can probably generate a stack overflow, because there are bidirectional associations, and the
-		// serialization will just follow the cycle. We need to send the notification once we have the BaseResource. So
-		// again push this up. [WLW]
-//		log.info("Sending notification");
-//		val op = (newItem ? ConfigManagementEvent.OP_CREATE : ConfigManagementEvent.OP_UPDATE);
-//		notificationGateway.notify(itemToSave, op);
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private CrudRepository getRepositoryFor(Class<?> itemClass) {
-		return (CrudRepository<?, Long>) repositories.getRepositoryFor(itemClass);
-	}
-
-	private Item doFind(ItemKey key) {
-		return repoAdapterLookup.getRepoAdapterFor(key.getItemClass()).find(key);
+		val itemClass = itemData.getClass();
+		val repo = (CrudRepository) repositories.getRepositoryFor(itemClass);
+		repo.save(itemToSave);
 	}
 }

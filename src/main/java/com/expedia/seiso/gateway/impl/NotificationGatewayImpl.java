@@ -15,8 +15,6 @@
  */
 package com.expedia.seiso.gateway.impl;
 
-import java.io.Serializable;
-
 import lombok.NonNull;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
@@ -28,10 +26,10 @@ import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.seiso.domain.entity.Node;
-import com.expedia.seiso.domain.meta.DynaItem;
 import com.expedia.seiso.gateway.NotificationGateway;
-import com.expedia.seiso.gateway.model.ConfigManagementEvent;
+import com.expedia.seiso.gateway.model.ItemNotification;
+import com.expedia.seiso.web.assembler.ItemAssembler;
+import com.expedia.seiso.web.assembler.ProjectionNode;
 
 /**
  * Outbound notification gateway implementation.
@@ -41,52 +39,18 @@ import com.expedia.seiso.gateway.model.ConfigManagementEvent;
 @Component
 @XSlf4j
 public class NotificationGatewayImpl implements NotificationGateway {
-//	@Autowired private AmqpTemplate amqpTemplate;
-
+	@Autowired private AmqpTemplate amqpTemplate;
+	@Autowired private ItemAssembler itemAssembler;
+	
 	// Asynchronous because we don't want failures here to impact the core app. For example, if RabbitMQ goes down, we
 	// don't want Seiso to be unable to create/update/delete items.
 	@Async
 	public void notify(@NonNull Item item, @NonNull String operation) {
-		val event = buildEvent(item, operation);
-		val routingKey = event.getItemType() + "." + event.getOperation();
-		log.info("Sending notification: itemType={}, itemKey={}, operation={}", event.getItemType(),
-				event.getItemKey(), event.getOperation());
-//		 amqpTemplate.convertAndSend(C.AMQP_EXCHANGE_SEISO_NOTIFICATIONS, routingKey, event);
-	}
-
-	private ConfigManagementEvent buildEvent(Item item, String operation) {
-		val itemClass = item.getClass();
-		val itemClassName = itemClass.getSimpleName();
-		val dynaItem = new DynaItem(item);
-
-		// val itemKey = item.itemKey();
-		// FIXME This assumes a single item key, which isn't right. [WLW]
-		val itemKey = dynaItem.getMetaKey();
-
-		// FIXME Temporary special case for Eos
-		if (item instanceof Node && ConfigManagementEvent.OP_UPDATE.equals(operation)) {
-			return new HackyNodeUpdateEvent(itemClassName, itemKey, operation, item);
-		}
-
-		return new ConfigManagementEvent(itemClassName, itemKey, operation);
-	}
-
-	// FIXME Temporary hack to provide Eos with contextual information about nodes. Will remove once we have proper
-	// update events in place. (The proper event will describe exactly what changed.) [WLW]
-	public static class HackyNodeUpdateEvent extends ConfigManagementEvent {
-		private Item item;
-
-		public HackyNodeUpdateEvent(String itemClassName, Serializable itemKey, String operation, Item item) {
-			super(itemClassName, itemKey, operation);
-			this.item = item;
-		}
-
-		public Item getItem() {
-			return item;
-		}
-
-		public void setItem(Item item) {
-			this.item = item;
-		}
+		val itemType = item.getClass().getSimpleName();
+		val itemResource = itemAssembler.toBaseResource(item, ProjectionNode.FLAT_PROJECTION_NODE);
+		val notification = new ItemNotification(itemType, itemResource, operation);
+		val routingKey = itemType + "." + operation;
+		log.info("Sending notification: itemType={}, itemKey={}, operation={}", itemType, item.itemKey(), operation);
+		amqpTemplate.convertAndSend(C.AMQP_EXCHANGE_SEISO_NOTIFICATIONS, routingKey, notification);
 	}
 }

@@ -19,6 +19,7 @@ import java.beans.PropertyDescriptor;
 import java.util.Collection;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
@@ -35,13 +36,10 @@ import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
  * @author Willie Wheeler
  */
 @Component
+@RequiredArgsConstructor
 @XSlf4j
 public class ItemMerger {
-	private RepoAdapterLookup repoAdapterLookup;
-	
-	public ItemMerger(@NonNull RepoAdapterLookup repoAdapterLookup) {
-		this.repoAdapterLookup = repoAdapterLookup;
-	}
+	@NonNull private RepoAdapterLookup repoAdapterLookup;
 
 	/**
 	 * Merges a source item into a destination item. Thus this method modifies the destination item.

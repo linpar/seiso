@@ -60,7 +60,8 @@ public class DynaItem {
 				}
 			}
 		} while (metaKeyFieldName == null && (currClass = currClass.getSuperclass()) != null);
-
+		
+		// FIXME This doesn't handle compound keys. Use the ItemKey instead! [WLW]
 		// If there's no explicit @Key, then use the ID by default.
 		if (metaKeyFieldName == null) {
 			metaKeyFieldName = "id";

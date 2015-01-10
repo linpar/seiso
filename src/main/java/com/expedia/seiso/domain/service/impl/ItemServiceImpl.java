@@ -60,7 +60,7 @@ import com.expedia.seiso.domain.service.SaveAllResponse;
 @XSlf4j
 public class ItemServiceImpl implements ItemService {
 	@Autowired private Repositories repositories;
-	@Autowired private RepoAdapterLookup repoAdapters;
+	@Autowired private RepoAdapterLookup repoAdapterLookup;
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private ItemMerger itemMerger;
 	@Autowired private ItemDeleter itemDeleter;
@@ -106,7 +106,12 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	@Transactional(readOnly = false)
 	public void save(@NonNull Item itemData) {
-		itemSaver.save(itemData);
+		val itemToSave = doFind(itemData.itemKey());
+		if (itemToSave == null) {
+			itemSaver.create(itemData);
+		} else {
+			itemSaver.update(itemData, itemToSave);
+		}
 	}
 
 	@Override
@@ -153,6 +158,6 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	private Item doFind(ItemKey key) {
-		return repoAdapters.getRepoAdapterFor(key.getItemClass()).find(key);
+		return repoAdapterLookup.getRepoAdapterFor(key.getItemClass()).find(key);
 	}
 }

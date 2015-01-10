@@ -15,28 +15,24 @@
  */
 package com.expedia.seiso.gateway.model;
 
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import com.expedia.seiso.web.hateoas.BaseResource;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConfigManagementEvent {
+public class ItemNotification {
 	public static final String OP_CREATE = "create";
 	public static final String OP_UPDATE = "update";
 	public static final String OP_DELETE = "delete";
-
-	@NonNull
-	private String itemType;
-	@NonNull
-	private Serializable itemKey;
-	@NonNull
-	private String operation;
+	
+	@NonNull private String itemType;
+	@NonNull private BaseResource item;
+	@NonNull private String operation;
 }
