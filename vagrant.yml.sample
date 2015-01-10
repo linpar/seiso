@@ -11,6 +11,12 @@ db:
   # Usually 10.x.x.x, 172.16.x.x or 192.168.x.x.
   ip_address: 192.168.4.10
 
+  # Mysql port forwarding
+  port:
+    # Change host port if host has mysql running on default port (requires similar change to application.yml)
+    host: 3306
+    guest: 3306
+
   # Synced folder containing SQL scripts to create and initialize database
   artifacts_dir:
     host: /Users/wwheeler/.seiso/db   # (modify homedir to suit and ensure you create the full path before running vagrant for the first time)
