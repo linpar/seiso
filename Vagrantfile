@@ -27,7 +27,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "db" do |db|
     db.vm.network "private_network", ip: settings["db"]["ip_address"]
     db.vm.synced_folder settings["db"]["artifacts_dir"]["host"], settings["db"]["artifacts_dir"]["guest"]
-    db.vm.network "forwarded_port", guest: 3306, host: 3306
+    db.vm.network "forwarded_port", guest: settings["db"]["port"]["guest"], host: settings["db"]["port"]["host"]
     db.vm.provision "chef_solo" do |chef|
       configure_chef(chef, "seiso_db")
       chef.json = {
