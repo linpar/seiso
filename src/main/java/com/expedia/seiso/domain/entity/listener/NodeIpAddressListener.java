@@ -33,6 +33,8 @@ import com.expedia.seiso.domain.entity.User;
 import com.expedia.seiso.domain.repo.EndpointRepo;
 
 /**
+ * JPA 2 entity listener to auto-create endpoints after saving a node IP address.
+ * 
  * @author Willie Wheeler
  */
 @XSlf4j
@@ -48,6 +50,8 @@ public class NodeIpAddressListener {
 		if (appContext == null) {
 			this.appContext = ApplicationContextProvider.getApplicationContext();
 		}
+		
+		assert (appContext != null);
 
 		val endpointRepo = appContext.getBean(EndpointRepo.class);
 		val creator = new EndpointCreator(endpointRepo);

@@ -30,6 +30,8 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.repo.EndpointRepo;
 
 /**
+ * JPA 2 entity listener to auto-create endpoints after saving a service instance port.
+ * 
  * @author Willie Wheeler
  */
 @XSlf4j
@@ -45,6 +47,8 @@ public class ServiceInstancePortListener {
 		if (appContext == null) {
 			this.appContext = ApplicationContextProvider.getApplicationContext();
 		}
+		
+		assert (appContext != null);
 
 		val endpointRepo = appContext.getBean(EndpointRepo.class);
 		val creator = new EndpointCreator(endpointRepo);

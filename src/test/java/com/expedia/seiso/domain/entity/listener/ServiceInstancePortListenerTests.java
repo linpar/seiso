@@ -41,18 +41,18 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.entity.listener.ServiceInstancePortListener;
 import com.expedia.seiso.domain.repo.EndpointRepo;
 
+/**
+ * @author Willie Wheeler
+ */
 public class ServiceInstancePortListenerTests {
 	private static final int NUM_IP_ADDRESSES = 2;
 
 	// Class under test
-	@InjectMocks
-	private ServiceInstancePortListener listener;
+	@InjectMocks private ServiceInstancePortListener listener;
 
 	// Dependencies
-	@Mock
-	private ApplicationContext appContext;
-	@Mock
-	private EndpointRepo endpointRepo;
+	@Mock private ApplicationContext appContext;
+	@Mock private EndpointRepo endpointRepo;
 
 	// Test data
 	private List<Node> nodes;

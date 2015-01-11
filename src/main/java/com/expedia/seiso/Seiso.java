@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import com.expedia.seiso.core.config.CustomProperties;
+import com.expedia.seiso.core.util.ApplicationContextProvider;
 import com.expedia.seiso.web.jackson.hal.HalMapper;
 import com.expedia.seiso.web.jackson.hal.HalModule;
 import com.expedia.seiso.web.jackson.hal.HalResourceAssembler;
@@ -57,6 +58,11 @@ public class Seiso {
 	
 	@Bean
 	public CustomProperties customProperties() { return new CustomProperties(); }
+	
+	@Bean
+	public ApplicationContextProvider applicationContextProvider() {
+		return new ApplicationContextProvider();
+	}
 	
 	// Putting this here since both AMQP and REST API need it.
 	@Bean
