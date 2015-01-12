@@ -133,7 +133,7 @@ public class ItemAssembler {
 		baseResource.addV2Link(itemLinksV2.repoLink(Relations.UP, itemClass));
 		pEntity.doWithProperties(new ItemPropertyHandler(itemWrapper, baseResource.getProperties()));
 		pEntity.doWithAssociations(new ItemAssociationHandler(this, itemLinksV2, proj, itemWrapper, baseResource));
-		doSpecialNonPersistentProperties(item, baseResource.getProperties());
+		doSpecialNonPersistentAssociations(item, baseResource.getAssociations());
 		
 		return baseResource;
 	}
@@ -301,7 +301,7 @@ public class ItemAssembler {
 	// This is a temporary hack to handle special-case non-persistent properties.
 	// Specifically, we need to be able to map NodeIpAddress.aggregateRotationStatus. [WLW]
 	@Deprecated
-	private void doSpecialNonPersistentProperties(Item item, Map<String, Object> model) {
+	private void doSpecialNonPersistentAssociations(Item item, Map<String, Object> model) {
 		val itemClass = item.getClass();
 		if (itemClass == NodeIpAddress.class) {
 			val nip = (NodeIpAddress) item;

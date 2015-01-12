@@ -42,7 +42,7 @@ public class ItemAssociationHandler implements SimpleAssociationHandler {
 	@NonNull private final ItemLinks itemLinksV2;
 	@NonNull private final ProjectionNode projection;
 	@NonNull private final BeanWrapper<? extends Item> wrapper;
-	@NonNull private final BaseResource dto;
+	@NonNull private final BaseResource baseResource;
 
 	@Override
 	public void doWithAssociation(Association<? extends PersistentProperty<?>> assoc) {
@@ -57,18 +57,18 @@ public class ItemAssociationHandler implements SimpleAssociationHandler {
 		// Link
 		val restResource = prop.findAnnotation(RestResource.class);
 		val path = (restResource == null ? propName : restResource.path());
-		dto.addV2Link(itemLinksV2.itemPropertyLink(item, path));
+		baseResource.addV2Link(itemLinksV2.itemPropertyLink(item, path));
 		
 		// Property
 		if (child != null) {
 			if (Item.class.isAssignableFrom(propType)) {
 				val propEntity = (Item) wrapper.getProperty(prop);
-				val propDto = assembler.toBaseResource(propEntity, child, false);
-				dto.setProperty(propName, propDto);
+				val propBaseResource = assembler.toBaseResource(propEntity, child, false);
+				baseResource.setAssociation(propName, propBaseResource);
 			} else if (List.class.isAssignableFrom(propType)) {
 				val propEntityList = (List<?>) wrapper.getProperty(prop);
-				val propDtoList = assembler.toBaseResourceList(propEntityList, child);
-				dto.setProperty(propName, propDtoList);
+				val propBaseResourceList = assembler.toBaseResourceList(propEntityList, child);
+				baseResource.setAssociation(propName, propBaseResourceList);
 			} else {
 				log.warn("Don't know how to handle association type {}", propType);
 			}

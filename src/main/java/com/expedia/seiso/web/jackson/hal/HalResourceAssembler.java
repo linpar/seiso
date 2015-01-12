@@ -21,13 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import lombok.NonNull;
 import lombok.val;
 
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.web.hateoas.Link;
 import com.expedia.seiso.web.hateoas.BaseResource;
 import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.Link;
 
 /**
  * @author Willie Wheeler
@@ -57,37 +58,49 @@ public class HalResourceAssembler {
 		return halResourcePage;
 	}
 	
-	public HalResource toHalResource(BaseResource baseResource, boolean topLevel) {
+	public HalResource toHalResource(@NonNull BaseResource baseResource, boolean topLevel) {
 		val halResource = new HalResource();
 		halResource.setLinks(toHalLinks(baseResource.getV2Links(), topLevel));
-		
-		// Embedded and state
-		val embedded = new TreeMap<String, Object>();
+
+		// State
 		val state = new TreeMap<String, Object>();
-		
 		val props = baseResource.getProperties();
 		for (val prop : props.entrySet()) {
 			val propName = prop.getKey();
 			val propValue = prop.getValue();
-			if ("id".equals(propName)) {
-				continue;
-			} else if (propValue instanceof BaseResource) {
-				embedded.put(propName, toHalResource((BaseResource) propValue, false));
-			} else if (propValue instanceof List) {
+
+			// Suppress database ID, as we don't want clients knowing/using it. We want them to use URIs.
+			if (!"id".equals(propName)) { state.put(propName, propValue); }
+		}
+
+		// Embedded
+		val embedded = new TreeMap<String, Object>();
+		val assocs = baseResource.getAssociations();
+		for (val assoc : assocs.entrySet()) {
+			val assocName = assoc.getKey();
+			val assocValue = assoc.getValue();
+			if (assocValue == null) {
+				embedded.put(assocName, null);
+			} else if (assocValue instanceof BaseResource) {
+				embedded.put(assocName, toHalResource((BaseResource) assocValue, false));
+			} else if (assocValue instanceof List) {
 				val halResourceKids = new ArrayList<HalResource>();
-				val baseResourceKids = (List<BaseResource>) propValue;
+				val baseResourceKids = (List<BaseResource>) assocValue;
 				for (val resourceKid : baseResourceKids) {
 					halResourceKids.add(toHalResource(resourceKid, false));
 				}
-				embedded.put(propName,  halResourceKids);
+				embedded.put(assocName, halResourceKids);
 			} else {
-				state.put(propName, propValue);
+				// Failing fast here. Considered simply logging a warning, but
+				// 1) it would generate too many repetitive warnings in the logs and
+				// 2) it would easily go unnoticed by clients
+				throw new IllegalArgumentException("Unsupported association type: " + assocValue.getClass());
 			}
 		}
-		
+
 		halResource.setEmbedded(embedded.isEmpty() ? null : embedded);
 		halResource.setState(state);
-		
+
 		return halResource;
 	}
 	
