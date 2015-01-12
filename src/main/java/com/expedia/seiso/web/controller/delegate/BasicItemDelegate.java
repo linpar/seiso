@@ -22,6 +22,7 @@ import lombok.NonNull;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -146,17 +147,22 @@ public class BasicItemDelegate {
 		val propName = itemMeta.getPropertyName(propKey);
 		val propValue = dynaItem.getPropertyValue(propName);
 		
-		// Do we need to handle paging here?
-		// Usually property lists will be reasonably short. But it is easy to imagine real cases where this isn't true,
-		// such as a service instance with hundreds of nodes.
-		if (propValue instanceof Item) {
+		// Use the metamodel to route processing, as opposed to using `propValue instanceof Item` etc. That way we can
+		// handle null values too. See https://github.com/ExpediaDotCom/seiso/issues/32
+		val propDesc = BeanUtils.getPropertyDescriptor(itemClass, propName);
+		val propClass = propDesc.getPropertyType();
+		if (Item.class.isAssignableFrom(propClass)) {
 			return getItemProperty((Item) propValue, view);
-		} else if (propValue instanceof List) {
+		} else if (List.class.isAssignableFrom(propClass)) {
 			return getListProperty((List<?>) propValue, view);
 		} else {
-			String msg = "DTO assembly for type " + propValue.getClass().getName() + " not supported";
+			String msg = "Resource assembly for type " + propClass.getName() + " not supported";
 			throw new UnsupportedOperationException(msg);
 		}
+		
+		// Do we need to handle paging property lists here?
+		// Usually property lists will be reasonably short. But it is easy to imagine real cases where this isn't true,
+		// such as a service instance with hundreds of nodes.
 	}
 	
 	public SaveAllResponse postAll(@NonNull PEResourceList peResourceList) {
@@ -184,22 +190,24 @@ public class BasicItemDelegate {
 		itemService.delete(itemKey);
 	}
 	
-	private Object getItemProperty(Item itemProp, String view) {
-		val propClass = itemProp.getClass();
+	private Object getItemProperty(Item itemPropValue, String view) {
+		if (itemPropValue == null) { return null; }
+		val propClass = itemPropValue.getClass();
 		val propMeta = itemMetaLookup.getItemMeta(propClass);
 		val proj = propMeta.getProjectionNode(Projection.Cardinality.SINGLE, view);
-		return itemAssembler.toBaseResource(itemProp, proj);
+		return itemAssembler.toBaseResource(itemPropValue, proj);
 	}
 	
-	private Object getListProperty(List<?> listProp, String view) {
+	private Object getListProperty(List<?> listPropValue, String view) {
+		if (listPropValue == null) { return null; }
 
 		// Not sure I'm happy with this approach. Would it make more sense to require collection properties to declare
 		// their type param (e.g. List<NodeIpAddress> instead of List) and then use reflection to grab the type? [WLW]
-		if (listProp.isEmpty()) { return Collections.EMPTY_LIST; }
+		if (listPropValue.isEmpty()) { return Collections.EMPTY_LIST; }
 
-		val elemClass = CollectionUtils.findCommonElementType(listProp);
+		val elemClass = CollectionUtils.findCommonElementType(listPropValue);
 		val elemMeta = itemMetaLookup.getItemMeta(elemClass);
 		val proj = elemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
-		return itemAssembler.toBaseResourceList(listProp, proj);
+		return itemAssembler.toBaseResourceList(listPropValue, proj);
 	}
 }
