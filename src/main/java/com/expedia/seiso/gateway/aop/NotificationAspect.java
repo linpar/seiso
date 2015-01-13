@@ -36,25 +36,37 @@ import com.expedia.seiso.gateway.model.ItemNotification;
 @Component
 @RequiredArgsConstructor
 public class NotificationAspect {
+	private static final String CREATE_ITEM_POINTCUT =
+			"execution(* com.expedia.seiso.domain.service.impl.ItemSaver" +
+			".create(com.expedia.seiso.domain.entity.Item, boolean))";
+	
+	private static final String UPDATE_ITEM_POINTCUT =
+			"execution(* com.expedia.seiso.domain.service.impl.ItemSaver" +
+			".update(com.expedia.seiso.domain.entity.Item, com.expedia.seiso.domain.entity.Item, boolean))";
+	
+	private static final String DELETE_ITEM_POINTCUT =
+			"execution(* com.expedia.seiso.domain.service.impl.ItemDeleter" +
+			".delete(com.expedia.seiso.domain.entity.Item))";
+	
 	@NonNull private NotificationGateway notificationGateway;
 	
-	@Pointcut("execution(* com.expedia.seiso.domain.service.impl.ItemSaver.create(com.expedia.seiso.domain.entity.Item))")
+	@Pointcut(CREATE_ITEM_POINTCUT)
 	private void createItemOps() { }
 	
-	@Pointcut("execution(* com.expedia.seiso.domain.service.impl.ItemSaver.update(com.expedia.seiso.domain.entity.Item, com.expedia.seiso.domain.entity.Item))")
+	@Pointcut(UPDATE_ITEM_POINTCUT)
 	private void updateItemOps() { }
 	
-	@Pointcut("execution(* com.expedia.seiso.domain.service.impl.ItemDeleter.delete(com.expedia.seiso.domain.entity.Item))")
+	@Pointcut(DELETE_ITEM_POINTCUT)
 	private void deleteItemOps() { }
 	
-	@AfterReturning(pointcut = "createItemOps() && args(item)")
-	public void notifyCreate(@NonNull Item item) {
+	@AfterReturning(pointcut = "createItemOps() && args(item, mergeAssociations)")
+	public void notifyCreate(@NonNull Item item, boolean mergeAssociations) {
 		notificationGateway.notify(item, ItemNotification.OP_CREATE);
 	}
 	
-	@AfterReturning(pointcut = "updateItemOps() && args(itemData, itemToSave)")
-	public void notifyUpdate(@NonNull Item itemData, @NonNull Item itemToSave) {
-		notificationGateway.notify(itemToSave, ItemNotification.OP_UPDATE);
+	@AfterReturning(pointcut = "updateItemOps() && args(srcItem, destItem, mergeAssociations)")
+	public void notifyUpdate(@NonNull Item srcItem, @NonNull Item destItem, boolean mergeAssociations) {
+		notificationGateway.notify(destItem, ItemNotification.OP_UPDATE);
 	}
 
 	@AfterReturning(pointcut = "deleteItemOps() && args(item)")

@@ -28,12 +28,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.util.MultiValueMap;
 
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Service;
+import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.hateoas.link.ItemLinks;
 
 /**
  * @author Willie Wheeler
@@ -49,6 +51,9 @@ public class ItemLinksTests {
 
 	// Test data
 	private URI v2BaseUri;
+	@Mock private ItemMeta serviceMeta;
+	@Mock private Page page;
+	@Mock private MultiValueMap<String, String> params;
 
 	@Before
 	public void init() throws Exception {
@@ -63,7 +68,8 @@ public class ItemLinksTests {
 	}
 
 	private void initDependencies() {
-		when(itemPaths.resolve((Item) anyObject())).thenReturn(new String[0]);
+		when(itemMetaLookup.getItemMeta(Service.class)).thenReturn(serviceMeta);
+		when(itemPaths.convert((Item) anyObject())).thenReturn(new String[0]);
 	}
 
 	@Test
@@ -76,21 +82,85 @@ public class ItemLinksTests {
 	
 	@Test
 	public void repoFirstLink() {
-		// TODO
+		val result = itemLinks.repoFirstLink(Service.class, page, params);
+		assertNotNull(result);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoFirstLink_nullItemClass() {
+		itemLinks.repoFirstLink(null, page, params);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoFirstLink_nullPage() {
+		itemLinks.repoFirstLink(Service.class, null, params);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoFirstLink_nullParams() {
+		itemLinks.repoFirstLink(Service.class, page, null);
 	}
 	
 	@Test
 	public void repoPrevLink() {
-		// TODO
+		val result = itemLinks.repoPrevLink(Service.class, page, params);
+		assertNotNull(result);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoPrevLink_nullItemClass() {
+		itemLinks.repoPrevLink(null, page, params);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoPrevLink_nullPage() {
+		itemLinks.repoPrevLink(Service.class, null, params);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoPrevLink_nullParams() {
+		itemLinks.repoPrevLink(Service.class, page, null);
 	}
 	
 	@Test
 	public void repoNextLink() {
-		// TODO
+		val result = itemLinks.repoNextLink(Service.class, page, params);
+		assertNotNull(result);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoNextLink_nullItemClass() {
+		itemLinks.repoNextLink(null, page, params);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoNextLink_nullPage() {
+		itemLinks.repoNextLink(Service.class, null, params);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoNextLink_nullParams() {
+		itemLinks.repoNextLink(Service.class, page, null);
 	}
 	
 	@Test
 	public void repoLastLink() {
-		// TODO
+		val result = itemLinks.repoLastLink(Service.class, page, params);
+		assertNotNull(result);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoLastLink_nullItemClass() {
+		itemLinks.repoLastLink(null, page, params);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoLastLink_nullPage() {
+		itemLinks.repoLastLink(Service.class, null, params);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void repoLastLink_nullParams() {
+		itemLinks.repoLastLink(Service.class, page, null);
 	}
 }

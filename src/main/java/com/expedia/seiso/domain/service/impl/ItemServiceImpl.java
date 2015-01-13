@@ -42,8 +42,6 @@ import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SaveAllError;
 import com.expedia.seiso.domain.service.SaveAllResponse;
 
-// FIXME Move notification to aspect, since we don't want it to occur before flushing the Hibernate session. [WLW]
-
 /**
  * <p>
  * CRUD (create, read, update, delete) service implementation.
@@ -67,25 +65,27 @@ public class ItemServiceImpl implements ItemService {
 	@Autowired private ItemSaver itemSaver;
 	
 	// FIXME This currently assumes at least one element, but it shouldn't.
+	// https://github.com/ExpediaDotCom/seiso/issues/16
+	
 	/**
 	 * Using {@link Propagation.NEVER} because we don't want a single error to wreck the entire operation.
 	 */
 	@Override
 	@Transactional(propagation = Propagation.NEVER)
-	public SaveAllResponse saveAll(@NonNull List<? extends Item> items) {
+	public SaveAllResponse saveAll(@NonNull List<? extends Item> items, boolean mergeAssociations) {
 		val numItems = items.size();
 
 		// We're assuming a homogeneous list here. [WLW]
-		val elemClass = CollectionsUtils.getElementClass(items);
-		val elemClassName = elemClass.getSimpleName();
+		val itemClass = CollectionsUtils.getElementClass(items);
+		val itemClassName = itemClass.getSimpleName();
 
-		log.info("Batch saving {} items ({})", numItems, elemClassName);
+		log.info("Batch saving {} items ({})", numItems, itemClassName);
 
 		val errors = new ArrayList<SaveAllError>();
 
 		for (val item : items) {
 			try {
-				save(item);
+				save(item, mergeAssociations);
 			} catch (RuntimeException e) {
 				e.printStackTrace();
 				val message = e.getClass() + ": " + e.getMessage();
@@ -95,9 +95,9 @@ public class ItemServiceImpl implements ItemService {
 
 		val numErrors = errors.size();
 		if (numErrors == 0) {
-			log.info("Batch saved {} items ({}) with no errors", numItems, elemClassName);
+			log.info("Batch saved {} items ({}) with no errors", numItems, itemClassName);
 		} else {
-			log.warn("Batch saved {} items ({}) with {} errors: {}", numItems, elemClassName, numErrors, errors);
+			log.warn("Batch saved {} items ({}) with {} errors: {}", numItems, itemClassName, numErrors, errors);
 		}
 
 		return new SaveAllResponse(numItems, numErrors, errors);
@@ -105,12 +105,12 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void save(@NonNull Item itemData) {
+	public void save(@NonNull Item itemData, boolean mergeAssociations) {
 		val itemToSave = doFind(itemData.itemKey());
 		if (itemToSave == null) {
-			itemSaver.create(itemData);
+			itemSaver.create(itemData, mergeAssociations);
 		} else {
-			itemSaver.update(itemData, itemToSave);
+			itemSaver.update(itemData, itemToSave, mergeAssociations);
 		}
 	}
 

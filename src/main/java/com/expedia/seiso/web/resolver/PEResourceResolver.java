@@ -21,12 +21,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import lombok.val;
-import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -42,10 +42,12 @@ import com.expedia.seiso.web.controller.PEResource;
  * 
  * @author Willie Wheeler
  */
-@XSlf4j
+@Component
 public class PEResourceResolver implements HandlerMethodArgumentResolver {
-	private static final String SIMPLE_ITEM_FORMAT = "/v1/{repoKey}/{itemKey}";
-	private static final String SIMPLE_PROPERTY_FORMAT = "/v1/{repoKey}/{itemKey}/{propKey}/{propValue}";
+	
+	// FIXME DRY up. We're repeating info in com.expedia.seiso.web.converter.
+	private static final String SIMPLE_ITEM_FORMAT = "/{version}/{repoKey}/{itemKey}";
+	private static final String SIMPLE_PROPERTY_FORMAT = "/{version}/{repoKey}/{itemKey}/{propKey}/{propValue}";
 
 	private List<SimplePropertyEntry> simplePropertyEntries;
 	
@@ -60,13 +62,15 @@ public class PEResourceResolver implements HandlerMethodArgumentResolver {
 	
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		log.trace("Checking whether PEResourceResolver supports parameter");
 		return PEResource.class.isAssignableFrom(parameter.getParameterType());
 	}
 
 	@Override
-	public Object resolveArgument(MethodParameter param, ModelAndViewContainer mavContainer,
-			NativeWebRequest nativeWebRequest, WebDataBinderFactory binderFactory) throws Exception {
+	public Object resolveArgument(
+			MethodParameter param,
+			ModelAndViewContainer mavContainer,
+			NativeWebRequest nativeWebRequest,
+			WebDataBinderFactory binderFactory) throws Exception {
 
 		val nativeRequest = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
 		val path = nativeRequest.getRequestURI();
@@ -85,9 +89,9 @@ public class PEResourceResolver implements HandlerMethodArgumentResolver {
 			throw new RuntimeException("No resolver for requestUri=" + path);
 		}
 
-		val persistentEntity = repositories.getPersistentEntity(itemClass);
+		val pEntity = repositories.getPersistentEntity(itemClass);
 		val item = toItem(itemClass, nativeRequest);
-		return new PEResource(persistentEntity, item);
+		return new PEResource(pEntity, item);
 
 	}
 
@@ -106,6 +110,8 @@ public class PEResourceResolver implements HandlerMethodArgumentResolver {
 		val contentType = wrappedRequest.getHeaders().getContentType();
 
 		for (HttpMessageConverter messageConverter : messageConverters) {
+			
+			// This is how we process application/json separately from application/hal+json.
 			if (messageConverter.canRead(itemClass, contentType)) {
 				return (Item) messageConverter.read(itemClass, wrappedRequest);
 			}

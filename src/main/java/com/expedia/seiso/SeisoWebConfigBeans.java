@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.repository.support.Repositories;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
@@ -46,7 +45,6 @@ import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.assembler.ItemAssembler;
 import com.expedia.seiso.web.controller.ExceptionHandlerAdvice;
-import com.expedia.seiso.web.controller.RepoConverter;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
@@ -61,8 +59,10 @@ import com.expedia.seiso.web.controller.v1.ServiceInstancePortControllerV1;
 import com.expedia.seiso.web.controller.v2.ItemControllerV2;
 import com.expedia.seiso.web.controller.v2.PersonControllerV2;
 import com.expedia.seiso.web.controller.v2.RepoSearchControllerV2;
+import com.expedia.seiso.web.converter.UriToItemKeyConverter;
 import com.expedia.seiso.web.hateoas.link.ItemPaths;
 import com.expedia.seiso.web.hateoas.link.LinkFactory;
+import com.expedia.seiso.web.httpmessageconverter.ItemKeyHttpMessageConverter;
 import com.expedia.seiso.web.jackson.hal.HalMapper;
 import com.expedia.seiso.web.jackson.v1.V1Mapper;
 import com.expedia.seiso.web.jackson.v1.V1Module;
@@ -86,12 +86,14 @@ import com.expedia.seiso.web.resolver.SimplePropertyEntry;
 	ControllerConfig.class
 })
 public class SeisoWebConfigBeans {
+	@Autowired private CustomProperties customProperties;
 	@Autowired private ItemMetaLookup itemMetaLookup;
-	@Autowired private Repositories repositories;
-	@Autowired private ItemAssembler itemAssembler;
 	
 	@Bean
-	public RepoConverter repoConverter() { return new RepoConverter(itemMetaLookup); }
+	public UriToItemKeyConverter uriToItemKeyConverter() {
+		val versionUri = customProperties.getBaseUri() + "/v2";
+		return new UriToItemKeyConverter(versionUri, itemMetaLookup);
+	}
 	
 	@Bean
 	public InternalResourceViewResolver defaultViewResolver() {
@@ -106,7 +108,8 @@ public class SeisoWebConfigBeans {
 	public static class ArgResolverConfig {
 		
 		@Bean
-		public PEResourceResolver peItemDtoResolver() {
+		public PEResourceResolver peResourceResolver() {
+			// FIXME DRY up. See com.expedia.seiso.web.converter, which repeats the same info.
 			// @formatter:off
 			return new PEResourceResolver(Arrays.asList(
 					new SimplePropertyEntry(RepoKeys.NODES, "ip-addresses", NodeIpAddress.class),
@@ -116,7 +119,7 @@ public class SeisoWebConfigBeans {
 		}
 		
 		@Bean
-		public PEResourceListResolver peItemDtoListResolver() { return new PEResourceListResolver(); }
+		public PEResourceListResolver peResourceListResolver() { return new PEResourceListResolver(); }
 		
 		@Bean
 		public PageableHandlerMethodArgumentResolver pageableResolver() {
@@ -133,6 +136,7 @@ public class SeisoWebConfigBeans {
 	@Configuration
 	public static class HttpMessageConverterConfig {
 		@Autowired private HalMapper halMapper;
+		@Autowired private UriToItemKeyConverter uriToItemKeyConverter;
 		
 		@Bean
 		public V1Mapper v1Mapper() {
@@ -166,6 +170,11 @@ public class SeisoWebConfigBeans {
 			val converter = new MappingJackson2HttpMessageConverter(halMapper);
 			converter.setSupportedMediaTypes(Arrays.asList(MediaTypes.APPLICATION_HAL_JSON));
 			return converter;
+		}
+		
+		@Bean
+		public ItemKeyHttpMessageConverter itemKeyHttpMessageConverter() {
+			return new ItemKeyHttpMessageConverter(uriToItemKeyConverter);
 		}
 	}
 	

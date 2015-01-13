@@ -165,7 +165,7 @@ public class BasicItemDelegate {
 		// such as a service instance with hundreds of nodes.
 	}
 	
-	public SaveAllResponse postAll(@NonNull PEResourceList peResourceList) {
+	public SaveAllResponse postAll(@NonNull PEResourceList peResourceList, boolean mergeAssociations) {
 		
 		// FIXME The SaveAllResponse contains a SaveAllError, which in turn contains an Item. If the Item has a cycle,
 		// then JSON serialization results in a stack overflow exception. [WLW]
@@ -177,14 +177,53 @@ public class BasicItemDelegate {
 		// returning ID info. [WLW]
 		//
 		// http://www.cowtowncoder.com/blog/archives/2012/03/entry_466.html [WLW]
-		return itemService.saveAll(peResourceList);
+		return itemService.saveAll(peResourceList, mergeAssociations);
 	}
 	
-	public void put(@NonNull Item item) {
+	public void put(@NonNull Item item, boolean mergeAssociations) {
 		log.trace("Putting item: {}", item.itemKey());
-		itemService.save(item);
+		itemService.save(item, mergeAssociations);
 	}
 	
+	/**
+	 * Assigns an item to a given property.
+	 * 
+	 * @param repoKey
+	 *            Repository key
+	 * @param itemKey
+	 *            Item key
+	 * @param propKey
+	 *            Property key
+	 * @param itemUri
+	 *            Item URI, or null to null out the property
+	 */
+	public void putProperty(
+			@NonNull String repoKey,
+			@NonNull String itemKey,
+			@NonNull String propKey,
+			ItemKey propItemKey) {
+		
+		log.trace("propItemKey={}", propItemKey);
+		
+		// Metamodel
+		val itemClass = itemMetaLookup.getItemClass(repoKey);
+		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
+		val propName = itemMeta.getPropertyName(propKey);
+		
+		// Update and save
+		val item = itemService.find(new SimpleItemKey(itemClass, itemKey));
+		val dynaItem = new DynaItem(item);
+		val propItem = (propItemKey == null ? null : itemService.find(propItemKey));
+		dynaItem.setPropertyValue(propName, propItem);
+		itemService.save(item, true);
+	}
+	
+	/**
+	 * Deletes the specified item.
+	 * 
+	 * @param itemKey
+	 *            Item key
+	 */
 	public void delete(@NonNull ItemKey itemKey) {
 		log.trace("Deleting item: {}", itemKey);
 		itemService.delete(itemKey);

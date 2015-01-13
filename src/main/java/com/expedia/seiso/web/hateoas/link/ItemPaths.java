@@ -44,7 +44,9 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.entity.ServiceType;
 import com.expedia.seiso.domain.entity.StatusType;
 import com.expedia.seiso.domain.repo.RepoKeys;
-import com.expedia.seiso.web.hateoas.ItemPathResolver;
+
+// This isn't a converter per se, but I moved this class to this package to start consolidating the URI mapping code.
+// Really need to DRY it up. [WLW]
 
 /**
  * Resolves items to their URI paths, relative to the version segment (/v1, /v2, etc.) of the URI. Currently these are
@@ -55,23 +57,23 @@ import com.expedia.seiso.web.hateoas.ItemPathResolver;
  */
 @Component
 public class ItemPaths {
-	private final Map<Class<?>, ItemPathResolver> resolvers = new HashMap<>();
+	private final Map<Class<?>, ItemPathConverter> converters = new HashMap<>();
 	
 	public ItemPaths() {
-		resolvers.put(DataCenter.class,
+		converters.put(DataCenter.class,
 				(Item item) -> new String[] { RepoKeys.DATA_CENTERS, ((DataCenter) item).getKey() });
 		
 		// FIXME This is the v1 path, but we don't want to use the database ID in the v2 path.
-		resolvers.put(Endpoint.class,
+		converters.put(Endpoint.class,
 				(Item item) -> new String[] { RepoKeys.ENDPOINTS, String.valueOf(((Endpoint) item).getId()) });
 		
-		resolvers.put(Environment.class,
+		converters.put(Environment.class,
 				(Item item) -> new String[] { RepoKeys.ENVIRONMENTS, ((Environment) item).getKey() });
-		resolvers.put(HealthStatus.class,
+		converters.put(HealthStatus.class,
 				(Item item) -> new String[] { RepoKeys.HEALTH_STATUSES, ((HealthStatus) item).getKey() });
-		resolvers.put(InfrastructureProvider.class,
+		converters.put(InfrastructureProvider.class,
 				(Item item) -> new String[] { RepoKeys.INFRASTRUCTURE_PROVIDERS, ((InfrastructureProvider) item).getKey() });
-		resolvers.put(IpAddressRole.class,
+		converters.put(IpAddressRole.class,
 				(Item item) -> {
 					IpAddressRole role = (IpAddressRole) item;
 					return new String[] {
@@ -81,13 +83,13 @@ public class ItemPaths {
 							role.getName()
 					};
 				});
-		resolvers.put(LoadBalancer.class,
+		converters.put(LoadBalancer.class,
 				(Item item) -> new String[] { RepoKeys.LOAD_BALANCERS, ((LoadBalancer) item).getName() });
-		resolvers.put(Machine.class,
+		converters.put(Machine.class,
 				(Item item) -> new String[] { RepoKeys.MACHINES, ((Machine) item).getName() });
-		resolvers.put(Node.class,
+		converters.put(Node.class,
 				(Item item) -> new String[] { RepoKeys.NODES, ((Node) item).getName() });
-		resolvers.put(NodeIpAddress.class,
+		converters.put(NodeIpAddress.class,
 				(Item item) -> {
 					NodeIpAddress nip = (NodeIpAddress) item;
 					return new String[] {
@@ -97,19 +99,19 @@ public class ItemPaths {
 							nip.getIpAddress()
 					};
 				});
-		resolvers.put(Person.class,
+		converters.put(Person.class,
 				(Item item) -> new String[] { RepoKeys.PEOPLE, ((Person) item).getUsername() });
-		resolvers.put(Region.class,
+		converters.put(Region.class,
 				(Item item) -> new String[] { RepoKeys.REGIONS, ((Region) item).getKey() });
-		resolvers.put(RotationStatus.class,
+		converters.put(RotationStatus.class,
 				(Item item) -> new String[] { RepoKeys.ROTATION_STATUSES, ((RotationStatus) item).getKey() });
-		resolvers.put(Service.class,
+		converters.put(Service.class,
 				(Item item) -> new String[] { RepoKeys.SERVICES, ((Service) item).getKey() });
-		resolvers.put(ServiceGroup.class,
+		converters.put(ServiceGroup.class,
 				(Item item) -> new String[] { RepoKeys.SERVICE_GROUPS, ((ServiceGroup) item).getKey() });
-		resolvers.put(ServiceInstance.class,
+		converters.put(ServiceInstance.class,
 				(Item item) -> new String[] { RepoKeys.SERVICE_INSTANCES, ((ServiceInstance) item).getKey() });
-		resolvers.put(ServiceInstancePort.class,
+		converters.put(ServiceInstancePort.class,
 				(Item item) -> {
 					ServiceInstancePort port = (ServiceInstancePort) item;
 					return new String[] {
@@ -119,18 +121,18 @@ public class ItemPaths {
 							String.valueOf(port.getNumber())
 					};
 				});
-		resolvers.put(ServiceType.class,
+		converters.put(ServiceType.class,
 				(Item item) -> new String[] { RepoKeys.SERVICE_TYPES, ((ServiceType) item).getKey() });
-		resolvers.put(StatusType.class,
+		converters.put(StatusType.class,
 				(Item item) -> new String[] { RepoKeys.STATUS_TYPES, ((StatusType) item).getKey() });
 	}
 	
-	public String[] resolve(@NonNull Item item) {
+	public String[] convert(@NonNull Item item) {
 		val itemClass = item.getClass();
-		val resolver = resolvers.get(itemClass);
-		if (resolver == null) {
-			throw new IllegalArgumentException("No resolver for itemClass=" + itemClass.getName());
+		val converter = converters.get(itemClass);
+		if (converter == null) {
+			throw new IllegalArgumentException("No converter for itemClass=" + itemClass.getName());
 		}
-		return resolver.resolve(item);
+		return converter.convert(item);
 	}
 }

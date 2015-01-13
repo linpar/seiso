@@ -25,6 +25,16 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
+ * <p>
+ * Base resource data transfer object. Downstream processors serialize this into acceptable formats (e.g., HAL).
+ * </p>
+ * <p>
+ * We separate associations from properties to make it easier to do the same in representations that require it, such
+ * as HAL. This is especially useful in cases involving <code>null</code> values. See
+ * <a href="https://github.com/ExpediaDotCom/seiso/issues/31">https://github.com/ExpediaDotCom/seiso/issues/31</a> for
+ * more information.
+ * </p>
+ * 
  * @author Willie Wheeler
  */
 @Data

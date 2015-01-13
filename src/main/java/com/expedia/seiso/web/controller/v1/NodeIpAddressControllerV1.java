@@ -69,7 +69,7 @@ public class NodeIpAddressControllerV1 {
 		nipData.setNode(node);
 		nipData.setIpAddress(ipAddress);
 		nipData.getIpAddressRole().setServiceInstance(serviceInstance);
-		basicItemDelegate.put(nipData);
+		basicItemDelegate.put(nipData, true);
 	}
 
 	@RequestMapping(value = NODE_IP_ADDRESS_URI_TEMPLATE, method = RequestMethod.DELETE)

@@ -16,7 +16,6 @@
 package com.expedia.seiso.domain.service.impl;
 
 import java.beans.PropertyDescriptor;
-import java.util.Collection;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -40,17 +39,18 @@ import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 @XSlf4j
 public class ItemMerger {
 	@NonNull private RepoAdapterLookup repoAdapterLookup;
-
+	
 	/**
-	 * Merges a source item into a destination item. Thus this method modifies the destination item.
+	 * Merges a source item into a destination item so we can write the destination item to the database.
 	 * 
 	 * @param src
-	 *            source item
+	 *            Source item
 	 * @param dest
-	 *            destination item
-	 * @return merged destination item
+	 *            Destination item
+	 * @param mergeAssociations
+	 *            Flag indicating whether to merge the associations.
 	 */
-	public void merge(@NonNull Item src, @NonNull Item dest) {
+	public void merge(Item src, Item dest, boolean mergeAssociations) {
 		val itemClass = src.getClass();
 		val propDescs = BeanUtils.getPropertyDescriptors(itemClass);
 		for (val propDesc : propDescs) {
@@ -60,12 +60,9 @@ public class ItemMerger {
 				if (BeanUtils.isSimpleProperty(propClass)) {
 					mergeSimpleProperty(src, dest, propDesc);
 				} else if (Item.class.isAssignableFrom(propClass)) {
-					mergeSingleAssociation(src, dest, propClass, propName);
-				} else if (Collection.class.isAssignableFrom(propClass)) {
-					// FIXME I think we need to do this to avoid nulling out many-many associations. But we need to
-					// resolve the association data to persistent associations. Currently, including this leads to
-					// "detached entity passed to persist" exceptions. [WLW]
-					// mergeCollectionProperty(src, dest, propClass, propName);
+					if (mergeAssociations) {
+						mergeSingleAssociation(src, dest, propClass, propName);
+					}
 				} else {
 					log.warn("Property '{}' has unrecognized class {}; skipping", propName, propClass.getSimpleName());
 				}
@@ -74,7 +71,7 @@ public class ItemMerger {
 	}
 
 	private boolean isMergeable(String propName) {
-		// Reject client-provided IDs and audit data. Seiso sets this.
+		// Prevent clients from supplying IDs.
 		return !("class".equals(propName) || "id".equals(propName));
 	}
 
@@ -125,21 +122,5 @@ public class ItemMerger {
 		}
 
 		setter.invoke(dest, persistentAssoc);
-	}
-
-	/**
-	 * @param src
-	 *            non-persistent data we want to merge into the persistent entity
-	 * @param dest
-	 *            persistent entity
-	 * @param assocClass
-	 * @param assocName
-	 */
-	@SneakyThrows
-	@SuppressWarnings("rawtypes")
-	private void mergeCollection(Item src, Item dest, Class assocClass, String assocName) {
-		val itemDesc = BeanUtils.getPropertyDescriptor(src.getClass(), assocName);
-		val collection = itemDesc.getReadMethod().invoke(src);
-		itemDesc.getWriteMethod().invoke(dest, collection);
 	}
 }

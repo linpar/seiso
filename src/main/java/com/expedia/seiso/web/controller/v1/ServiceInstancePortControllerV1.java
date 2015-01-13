@@ -56,7 +56,7 @@ public class ServiceInstancePortControllerV1 {
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void put(@PathVariable String serviceInstanceKey, @PathVariable Integer number, PEResource sipResource) {
-		basicItemDelegate.put(sipResource.getItem());
+		basicItemDelegate.put(sipResource.getItem(), true);
 	}
 
 	// FIXME Cascade deletion of endpoints isn't working here for some reason. [WLW]

@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -42,6 +43,7 @@ import com.expedia.seiso.web.controller.PEResourceList;
  * 
  * @author Willie Wheeler
  */
+@Component
 public class PEResourceListResolver implements HandlerMethodArgumentResolver {
 	@Autowired private Repositories repositories;
 	@Autowired private ItemMetaLookup itemMetaLookup;
@@ -54,8 +56,11 @@ public class PEResourceListResolver implements HandlerMethodArgumentResolver {
 	}
 
 	@Override
-	public Object resolveArgument(MethodParameter param, ModelAndViewContainer mavContainer,
-			NativeWebRequest nativeWebRequest, WebDataBinderFactory binderFactory) throws Exception {
+	public Object resolveArgument(
+			MethodParameter param,
+			ModelAndViewContainer mavContainer,
+			NativeWebRequest nativeWebRequest,
+			WebDataBinderFactory binderFactory) throws Exception {
 
 		val nativeRequest = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
 		return toItems(nativeRequest);
@@ -75,13 +80,15 @@ public class PEResourceListResolver implements HandlerMethodArgumentResolver {
 		val contentType = request.getHeaders().getContentType();
 
 		for (HttpMessageConverter messageConverter : messageConverters) {
+			
+			// This is how we process application/json separately from application/hal+json.
 			if (messageConverter.canRead(PEResourceList.class, contentType)) {
 				val itemList = (List<Item>) messageConverter.read(itemListClass, request);
-				val peItemDtoList = new PEResourceList(pEntity);
+				val peResourceList = new PEResourceList(pEntity);
 				for (val item : itemList) {
-					peItemDtoList.add(item);
+					peResourceList.add(item);
 				}
-				return peItemDtoList;
+				return peResourceList;
 			}
 		}
 

@@ -49,6 +49,8 @@ import com.expedia.seiso.web.hateoas.BaseResource;
 import com.expedia.seiso.web.hateoas.BaseResourcePage;
 
 /**
+ * Thin wrapper around the {@link BasicItemDelegate} to handle v1 API requests.
+ * 
  * @author Willie Wheeler
  */
 @RestController
@@ -120,7 +122,7 @@ public class ItemControllerV1 {
 	@Transactional(propagation = Propagation.NEVER)
 	public SaveAllResponse postAll(@PathVariable String repoKey, PEResourceList peResourceList) {
 		log.trace("Batch saving {} items: repoKey={}", peResourceList.size(), repoKey);
-		return delegate.postAll(peResourceList);
+		return delegate.postAll(peResourceList, true);
 	}
 
 	/**
@@ -142,15 +144,13 @@ public class ItemControllerV1 {
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void put(@PathVariable String repoKey, @PathVariable String itemKey, PEResource peResource) {
-		log.trace("Putting item: repoKey={}, itemKey={}", repoKey, itemKey);
-		delegate.put(peResource.getItem());
+		delegate.put(peResource.getItem(), true);
 	}
 
 	@RequestMapping(value = "/{repoKey}/{itemKey}", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@SuppressWarnings("rawtypes")
 	public void delete(@PathVariable String repoKey, @PathVariable String itemKey) {
-		log.info("Deleting item: /{}/{}", repoKey, itemKey);
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
 		delegate.delete(new SimpleItemKey(itemClass, itemKey));
 	}

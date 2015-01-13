@@ -163,6 +163,6 @@ public class ItemLinks {
 	}
 	
 	private String[] itemPathSegment(Item item) {
-		return itemPaths.resolve(item);
+		return itemPaths.convert(item);
 	}
 }

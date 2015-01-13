@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas;
+package com.expedia.seiso.web.hateoas.link;
+
+import org.springframework.core.convert.converter.Converter;
 
 import com.expedia.seiso.domain.entity.Item;
 
@@ -23,7 +25,4 @@ import com.expedia.seiso.domain.entity.Item;
  * @author Willie Wheeler
  */
 @FunctionalInterface
-public interface ItemPathResolver {
-	
-	String[] resolve(Item item);
-}
+public interface ItemPathConverter extends Converter<Item, String[]> { }

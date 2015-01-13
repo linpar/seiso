@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.web.resolver;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -25,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.val;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -41,42 +42,43 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import com.expedia.seiso.domain.entity.Node;
-import com.expedia.seiso.domain.meta.ItemMeta;
+import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.domain.repo.RepoKeys;
+import com.expedia.seiso.web.controller.PEResourceList;
+import com.expedia.seiso.web.resolver.PEResourceListResolver;
+import com.expedia.seiso.web.resolver.ResolverUtils;
 
 /**
  * @author Willie Wheeler
  */
-public class PEItemDtoResolverTests {
+public class PEItemResourceListResolverTests {
 
 	// Class under test
 	@InjectMocks
-	private PEResourceResolver resolver;
+	private PEResourceListResolver resolver;
 
 	// Dependencies
 	private List<HttpMessageConverter<?>> messageConverters;
+	@Mock
+	private HttpMessageConverter<?> messageConverter;
 	@Mock
 	private ItemMetaLookup itemMetaLookup;
 	@Mock
 	private Repositories repositories;
 	@Mock
-	private HttpMessageConverter<?> messageConverter;
-	@Mock
 	private ResolverUtils resolverUtils;
 
 	// Test data
 	@Mock
-	private MethodParameter param;
+	private MethodParameter peItemDtoListParam;
+	@Mock
+	private MethodParameter dummyParam;
 	@Mock
 	private ModelAndViewContainer mavContainer;
 	@Mock
 	private NativeWebRequest nativeWebRequest;
 	@Mock
 	private WebDataBinderFactory binderFactory;
-	@Mock
-	private ItemMeta nodeRepoMeta;
 	@Mock
 	private HttpServletRequest httpServletRequest;
 	@Mock
@@ -85,40 +87,45 @@ public class PEItemDtoResolverTests {
 	private HttpHeaders httpHeaders;
 
 	@Before
-	public void init() {
-		this.resolver = new PEResourceResolver(new ArrayList<SimplePropertyEntry>());
+	public void init() throws Exception {
+		this.resolver = new PEResourceListResolver();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();
 	}
 
 	private void initTestData() {
-		// this.httpServletRequest = new MockHttpServletRequest();
-		// httpServletRequest.addHeader("Accept", "application/json");
-		// httpServletRequest.addHeader("Content-Type", "application/json");
-		//
+		when(peItemDtoListParam.getParameterType()).thenReturn((Class) PEResourceList.class);
+		when(dummyParam.getParameterType()).thenReturn((Class) Object.class);
 		when(nativeWebRequest.getNativeRequest(HttpServletRequest.class)).thenReturn(httpServletRequest);
+		when(httpServletRequest.getRequestURI()).thenReturn("/v1/services/some-service");
 		when(servletServerHttpRequest.getHeaders()).thenReturn(httpHeaders);
 		when(httpHeaders.getContentType()).thenReturn(MediaType.APPLICATION_JSON);
 	}
 
 	private void initDependencies() {
-		when(itemMetaLookup.getItemClass(RepoKeys.NODES)).thenReturn(Node.class);
-
-		this.messageConverters = new ArrayList<HttpMessageConverter<?>>();
+		this.messageConverters = new ArrayList<>();
 		messageConverters.add(messageConverter);
 		ReflectionTestUtils.setField(resolver, "messageConverters", messageConverters);
 
+		when(itemMetaLookup.getItemClass("services")).thenReturn(Service.class);
 		when(resolverUtils.wrapRequest(httpServletRequest)).thenReturn(servletServerHttpRequest);
 	}
 
-	// TODO
 	@Test
-	@Ignore
-	public void resolveArgument() throws Exception {
-		val result = resolver.resolveArgument(param, mavContainer, nativeWebRequest, binderFactory);
+	public void supportsParameter_matching() {
+		val result = resolver.supportsParameter(peItemDtoListParam);
+		assertTrue(result);
+	}
 
-		// Need to set the converter up to make this work.
-		// assertNotNull(result);
+	@Test
+	public void supportsParameter_no_match() {
+		val result = resolver.supportsParameter(dummyParam);
+		assertFalse(result);
+	}
+
+	@Test
+	public void resolveArgument() throws Exception {
+		val result = resolver.resolveArgument(peItemDtoListParam, mavContainer, nativeWebRequest, binderFactory);
 	}
 }

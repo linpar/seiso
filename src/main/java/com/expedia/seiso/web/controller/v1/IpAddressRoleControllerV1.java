@@ -60,7 +60,7 @@ public class IpAddressRoleControllerV1 {
 			@PathVariable String name,
 			PEResource ipAddressRoleResource) {
 
-		basicItemDelegate.put(ipAddressRoleResource.getItem());
+		basicItemDelegate.put(ipAddressRoleResource.getItem(), true);
 	}
 
 	@RequestMapping(value = SINGLE_URI_TEMPLATE, method = RequestMethod.DELETE)

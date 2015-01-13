@@ -22,6 +22,8 @@ import org.springframework.http.MediaType;
  */
 public class MediaTypes {
 	public static final String APPLICATION_HAL_JSON_VALUE = "application/hal+json";
+	public static final String TEXT_URI_LIST_VALUE = "text/uri-list";
 	
 	public static final MediaType APPLICATION_HAL_JSON = new MediaType("application", "hal+json");
+	public static final MediaType TEXT_URI_LIST = new MediaType("text", "uri-list");
 }

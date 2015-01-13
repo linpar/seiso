@@ -24,14 +24,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.expedia.seiso.domain.entity.IpAddressRole;
-import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.entity.ServiceGroup;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 import com.expedia.seiso.domain.repo.adapter.SimpleItemRepoAdapter;
 
+/**
+ * @author Willie Wheeler
+ */
 public class ItemMergerTests {
 
 	// Class under test
@@ -45,10 +46,6 @@ public class ItemMergerTests {
 	private ServiceGroup serviceGroup;
 	private Service srcService;
 	private Service destService;
-	private Node srcNode;
-	private Node destNode;
-	private IpAddressRole srcIpAddressRole;
-	private IpAddressRole destIpAddressRole;
 
 	@Before
 	public void init() throws Exception {
@@ -60,9 +57,16 @@ public class ItemMergerTests {
 
 	private void initTestData() {
 		// @formatter:off
-		this.serviceGroup = new ServiceGroup().setKey("my-service-group").setName("My Service Group");
-		this.srcService = new Service().setKey("my-service").setName("My Service").setGroup(serviceGroup);
-		this.destService = new Service().setKey("my-service").setName("My Old Name")
+		this.serviceGroup = new ServiceGroup()
+				.setKey("my-service-group")
+				.setName("My Service Group");
+		this.srcService = new Service()
+				.setKey("my-service")
+				.setName("My Service")
+				.setGroup(serviceGroup);
+		this.destService = new Service()
+				.setKey("my-service")
+				.setName("My Old Name")
 				.setDescription("Some old description");
 		destService.setId(14L);
 		// @formatter:off
@@ -77,20 +81,10 @@ public class ItemMergerTests {
 	}
 
 	@Test
-	public void mergeService() {
-		itemMerger.merge(srcService, destService);
+	public void merge_service_mergeAssociations() {
+		itemMerger.merge(srcService, destService, true);
 		assertEquals(srcService.getKey(), destService.getKey());
 		assertEquals(srcService.getName(), destService.getName());
 		assertEquals(srcService.getDescription(), destService.getDescription());
-	}
-
-	@Test
-	public void mergeNode() {
-
-	}
-
-	@Test
-	public void mergeIpAddressRole() {
-
 	}
 }

@@ -17,6 +17,7 @@ package com.expedia.seiso.web.controller.v2;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import lombok.val;
@@ -31,9 +32,11 @@ import org.springframework.util.MultiValueMap;
 
 import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.entity.Service;
+import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.assembler.ProjectionNode;
+import com.expedia.seiso.web.controller.PEResource;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.hateoas.BaseResource;
 import com.expedia.seiso.web.hateoas.BaseResourcePage;
@@ -63,8 +66,11 @@ public class ItemControllerV2Tests {
 	@Mock private Pageable pageable;
 	@Mock private MultiValueMap<String, String> params;
 	@Mock private ProjectionNode projection;
-	@Mock private BaseResourcePage itemResourcePage;
-	@Mock private BaseResource itemResource, propResource, searchListResource;
+	@Mock private BaseResourcePage itemBaseResourcePage;
+	@Mock private BaseResource itemBaseResource, propBaseResource, searchListBaseResource;
+	@Mock private PEResource itemPEResource;
+	@Mock private Service service;
+	@Mock private ItemKey itemKey;
 	
 	@Before
 	public void init() {
@@ -86,10 +92,12 @@ public class ItemControllerV2Tests {
 		
 		when(itemMetaLookup.getItemClass(PAGING_REPO_KEY)).thenReturn(PAGING_ITEM_CLASS);
 		when(itemMetaLookup.getItemMeta(PAGING_ITEM_CLASS)).thenReturn(pagingItemMeta);
-		when(delegate.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params)).thenReturn(itemResourcePage);
+		when(delegate.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params)).thenReturn(itemBaseResourcePage);
 		
-		when(delegate.getOne(PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY)).thenReturn(itemResource);
-		when(delegate.getProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY)).thenReturn(propResource);
+		when(delegate.getOne(PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY)).thenReturn(itemBaseResource);
+		when(delegate.getProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY)).thenReturn(propBaseResource);
+		
+		when(itemPEResource.getItem()).thenReturn(service);
 	}
 	
 //	@Test
@@ -104,7 +112,7 @@ public class ItemControllerV2Tests {
 	public void getAll_paging() {
 		val result = controller.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
 		assertNotNull(result);
-		assertSame(itemResourcePage, result);
+		assertSame(itemBaseResourcePage, result);
 		verify(delegate).getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
 	}
 	
@@ -112,13 +120,37 @@ public class ItemControllerV2Tests {
 	public void getOne() {
 		val result = controller.getOne(PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY);
 		assertNotNull(result);
-		assertSame(itemResource, result);
+		assertSame(itemBaseResource, result);
 	}
 	
 	@Test
 	public void getProperty() {
 		val result = controller.getProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY);
 		assertNotNull(result);
-		assertSame(propResource, result);
+		assertSame(propBaseResource, result);
+	}
+	
+	@Test
+	public void put() {
+		controller.put(PAGING_REPO_KEY, ITEM_KEY, itemPEResource);
+		verify(delegate).put(service, false);
+	}
+	
+	@Test
+	public void putProperty() {
+		controller.putProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, itemKey);
+		verify(delegate).putProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, itemKey);
+	}
+	
+	@Test
+	public void putProperty_null() {
+		controller.putProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, null);
+		verify(delegate).putProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, null);
+	}
+	
+	@Test
+	public void delete() {
+		controller.delete(PAGING_REPO_KEY, ITEM_KEY);
+		verify(delegate).delete((ItemKey) anyObject());
 	}
 }

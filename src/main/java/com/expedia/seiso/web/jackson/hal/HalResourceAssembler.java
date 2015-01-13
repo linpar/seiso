@@ -31,12 +31,14 @@ import com.expedia.seiso.web.hateoas.BaseResourcePage;
 import com.expedia.seiso.web.hateoas.Link;
 
 /**
+ * Maps base resources to a HAL-specific representation to support HAL serialization.
+ * 
  * @author Willie Wheeler
  */
 @Component
 public class HalResourceAssembler {
 	
-	public HalResource toHalResourcePage(BaseResourcePage baseResourcePage) {
+	public HalResource toHalResourcePage(@NonNull BaseResourcePage baseResourcePage) {
 		val halResourcePage = new HalResource();
 		halResourcePage.setLinks(toHalLinks(baseResourcePage.getLinks(), true));
 		
@@ -61,18 +63,18 @@ public class HalResourceAssembler {
 	public HalResource toHalResource(@NonNull BaseResource baseResource, boolean topLevel) {
 		val halResource = new HalResource();
 		halResource.setLinks(toHalLinks(baseResource.getV2Links(), topLevel));
-
+		
 		// State
 		val state = new TreeMap<String, Object>();
 		val props = baseResource.getProperties();
 		for (val prop : props.entrySet()) {
 			val propName = prop.getKey();
 			val propValue = prop.getValue();
-
+			
 			// Suppress database ID, as we don't want clients knowing/using it. We want them to use URIs.
 			if (!"id".equals(propName)) { state.put(propName, propValue); }
 		}
-
+		
 		// Embedded
 		val embedded = new TreeMap<String, Object>();
 		val assocs = baseResource.getAssociations();

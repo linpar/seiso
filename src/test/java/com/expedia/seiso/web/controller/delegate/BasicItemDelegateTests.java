@@ -18,6 +18,7 @@ package com.expedia.seiso.web.controller.delegate;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -37,13 +38,14 @@ import org.springframework.util.MultiValueMap;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.entity.RotationStatus;
+import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.assembler.ItemAssembler;
 import com.expedia.seiso.web.assembler.ProjectionNode;
-import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.seiso.web.controller.PEResourceList;
 import com.expedia.seiso.web.hateoas.BaseResource;
 import com.expedia.seiso.web.hateoas.BaseResourcePage;
 
@@ -81,9 +83,11 @@ public class BasicItemDelegateTests {
 	private Person socrates, plato, aristotle;
 	@Mock private List<?> itemList;
 	@Mock private Page<?> itemPage;
-	@Mock private BaseResource itemDto;
-	@Mock private List<BaseResource> itemDtoList;
-	@Mock private BaseResourcePage itemDtoPage;
+	@Mock private BaseResource baseResource;
+	@Mock private List<BaseResource> baseResourceList;
+	@Mock private BaseResourcePage baseResourcePage;
+	@Mock private PEResourceList peResourceList;
+	@Mock private ItemKey itemKey;
 	
 	@Before
 	public void init() {
@@ -125,16 +129,17 @@ public class BasicItemDelegateTests {
 		when(itemService.findAll(PAGING_ITEM_CLASS, pageable)).thenReturn(itemPage);
 		when(itemService.find((SimpleItemKey) anyObject())).thenReturn(plato);
 		
-		when(itemAssembler.toBaseResourcePage(PAGING_ITEM_CLASS, itemPage, projection, params)).thenReturn(itemDtoPage);
-		when(itemAssembler.toBaseResourceList(itemList, projection)).thenReturn(itemDtoList);
-		when(itemAssembler.toBaseResource(plato, projection, true)).thenReturn(itemDto);
+		when(itemAssembler.toBaseResourcePage(PAGING_ITEM_CLASS, itemPage, projection, params)).thenReturn(baseResourcePage);
+		when(itemAssembler.toBaseResourceList(itemList, projection)).thenReturn(baseResourceList);
+		when(itemAssembler.toBaseResource(socrates, projection)).thenReturn(baseResource);
+		when(itemAssembler.toBaseResource(plato, projection, true)).thenReturn(baseResource);
 	}
 	
 	@Test
 	public void getAll_pageable() {
 		val result = delegate.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
 		assertNotNull(result);
-		assertSame(itemDtoPage, result);
+		assertSame(baseResourcePage, result);
 	}
 	
 	@Test(expected = NullPointerException.class)
@@ -151,7 +156,7 @@ public class BasicItemDelegateTests {
 	public void getOne() {
 		val result = delegate.getOne(PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY);
 		assertNotNull(result);
-		assertSame(itemDto, result);
+		assertSame(baseResource, result);
 	}
 	
 	@Test(expected = NullPointerException.class)
@@ -167,10 +172,41 @@ public class BasicItemDelegateTests {
 	@Test
 	public void getProperty_item() {
 		val result = delegate.getProperty(PAGING_REPO_KEY, ITEM_KEY, PAGING_ITEM_PROPERTY_KEY, VIEW_KEY);
+		assertNotNull(result);
 	}
 	
 	@Test
 	public void getProperty_list() {
 		val result = delegate.getProperty(PAGING_REPO_KEY, ITEM_KEY, PAGING_LIST_PROPERTY_KEY, VIEW_KEY);
+		assertNotNull(result);
+	}
+	
+	@Test
+	public void postAll() {
+		delegate.postAll(peResourceList, false);
+		verify(itemService).saveAll(peResourceList, false);
+	}
+	
+	@Test
+	public void put() {
+		delegate.put(aristotle, false);
+		verify(itemService).save(aristotle, false);
+	}
+	
+	@Test
+	public void putProperty() {
+		delegate.putProperty(PAGING_REPO_KEY, ITEM_KEY, PAGING_ITEM_PROPERTY_KEY, itemKey);
+		// TODO
+	}
+	
+	@Test
+	public void delete() {
+		delegate.delete(itemKey);
+		verify(itemService).delete(itemKey);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void delete_null() {
+		delegate.delete(null);
 	}
 }

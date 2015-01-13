@@ -33,26 +33,33 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
 public interface ItemService {
 
 	/**
-	 * <p>
 	 * Saves a list of items.
-	 * </p>
 	 * 
 	 * @param items
 	 *            items to save
+	 * @param mergeAssociations
+	 *            Flag indicating whether we merge the item's associations, or simply ignore them
 	 */
-	SaveAllResponse saveAll(List<? extends Item> items);
+	SaveAllResponse saveAll(List<? extends Item> items, boolean mergeAssociations);
 
 	/**
-	 * <p>
 	 * Saves the given item to the database, either creating or updating as necessary. In the case of updates, this
 	 * method merges the given item into the existing item before saving.
-	 * </p>
 	 * 
 	 * @param item
-	 *            item to save
+	 *            Item to save
+	 * @param mergeAssociations
+	 *            Flag indicating whether we merge the item's associations, or simply ignore them
 	 */
-	void save(Item item);
-
+	void save(Item item, boolean mergeAssociations);
+	
+	/**
+	 * Finds all items of the given type.
+	 * 
+	 * @param itemClass
+	 *            item class
+	 * @return all items of the given type
+	 */
 	@SuppressWarnings("rawtypes")
 	List findAll(Class itemClass);
 

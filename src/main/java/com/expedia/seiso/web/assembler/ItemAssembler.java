@@ -101,10 +101,7 @@ public class ItemAssembler {
 		
 		if (itemPage == null) { return null; }
 		
-		// FIXME Don't assume that we're dealing with a top-level repo page here. This could be a repo serach as well.
-		// This is the cause of issue #25 ("Repo searches show wrong links").
 		val links = toRepoPageLinksV2(itemClass, itemPage, params);
-		
 		val pageMeta = toPageMetadata(itemPage);
 		val items = toBaseResourceList(itemPage.getContent(), proj);
 		return new BaseResourcePage(links, pageMeta, items);

@@ -21,8 +21,6 @@ import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -33,9 +31,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.MediaTypes;
-import com.expedia.seiso.web.controller.RepoConverter;
-import com.expedia.seiso.web.resolver.PEResourceListResolver;
-import com.expedia.seiso.web.resolver.PEResourceResolver;
 
 // Don't use @EnableWebMvc here since we are using WebMvcConfigurationSupport directly. [WLW]
 
@@ -47,22 +42,12 @@ import com.expedia.seiso.web.resolver.PEResourceResolver;
 @Configuration
 public class SeisoWebConfig extends WebMvcConfigurationSupport {
 	@Autowired private ItemMetaLookup itemMetaLookup;
-	@Autowired private PEResourceResolver peItemDtoResolver;
-	@Autowired private PEResourceListResolver peItemDtoListResolver;
-	@Autowired private PageableHandlerMethodArgumentResolver pageableResolver;
-	@Autowired private RepoConverter repoConverter;
+	@Autowired private List<HandlerMethodArgumentResolver> argumentResolvers;
 	@Autowired private List<HttpMessageConverter<?>> httpMessageConverters;
 	
 	@Override
-	protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-		argumentResolvers.add(peItemDtoResolver);
-		argumentResolvers.add(peItemDtoListResolver);
-		argumentResolvers.add(pageableResolver);
-	}
-
-	@Override
-	protected void addFormatters(FormatterRegistry registry) {
-		registry.addConverter(repoConverter);
+	protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+		resolvers.addAll(argumentResolvers);
 	}
 
 	@Override

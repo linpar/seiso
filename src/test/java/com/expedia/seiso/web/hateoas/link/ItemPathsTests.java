@@ -80,116 +80,116 @@ public class ItemPathsTests {
 	@Test
 	public void resolveDataCenter() {
 		val item = new DataCenter().setKey(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
 	public void resolveEndpoint() {
 		val item = new Endpoint().setId(1L);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
 	public void resolveEnvironment() {
 		val item = new Environment().setKey(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
 	public void resolveHealthStatus() {
 		val item = new HealthStatus().setKey(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
 	public void resolveInfrastructureProvider() {
 		val item = new InfrastructureProvider().setKey(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
-	public void resolveIpAddressRole() { assertNotNull(itemPaths.resolve(ipAddressRole)); }
+	public void resolveIpAddressRole() { assertNotNull(itemPaths.convert(ipAddressRole)); }
 
 	@Test
 	public void resolveLoadBalancer() {
 		val item = new LoadBalancer().setName(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
 	public void resolveMachine() {
 		val item = new Machine().setName(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
-	public void resolveNode() { assertNotNull(itemPaths.resolve(node)); }
+	public void resolveNode() { assertNotNull(itemPaths.convert(node)); }
 	
 	@Test
-	public void resolveNodeIpAddress() { assertNotNull(itemPaths.resolve(nodeIpAddress)); }
+	public void resolveNodeIpAddress() { assertNotNull(itemPaths.convert(nodeIpAddress)); }
 	
 	@Test
 	public void resolvePerson() {
 		val item = new Person().setUsername(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
 	public void resolveRegion() {
 		val item = new Region().setKey(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
 	public void resolveRotationStatus() {
 		val item = new RotationStatus().setKey(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
 	public void resolveService() {
 		val item = new Service().setKey(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
 	public void resolveServiceGroup() {
 		val item = new ServiceGroup().setKey(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
-	public void resolveServiceInstance() { assertNotNull(itemPaths.resolve(serviceInstance)); }
+	public void resolveServiceInstance() { assertNotNull(itemPaths.convert(serviceInstance)); }
 	
 	@Test
-	public void resolveServiceInstancePort() { assertNotNull(itemPaths.resolve(serviceInstancePort)); }
+	public void resolveServiceInstancePort() { assertNotNull(itemPaths.convert(serviceInstancePort)); }
 	
 	@Test
 	public void resolveServiceType() {
 		val item = new ServiceType().setKey(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test
 	public void resolveStatusType() {
 		val item = new StatusType().setKey(KEY);
-		val path = itemPaths.resolve(item);
+		val path = itemPaths.convert(item);
 		assertNotNull(path);
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void resolve_null() { itemPaths.resolve(null); }
+	public void resolve_null() { itemPaths.convert(null); }
 }

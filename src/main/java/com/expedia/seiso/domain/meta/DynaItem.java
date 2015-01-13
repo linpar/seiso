@@ -30,7 +30,7 @@ import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.domain.entity.Item;
 
 /**
- * {@link Item} wrapper to provide easy access to item metadata and to support metadata-based queries.
+ * {@link Item} wrapper to support dynamic access to a given item's properties and metamodel.
  * 
  * @author Willie Wheeler
  */
@@ -79,10 +79,32 @@ public class DynaItem {
 		// log.trace("Using key {}={} for itemClass={}", metaKeyFieldName, metaKey, itemClass.getSimpleName());
 	}
 
+	/**
+	 * Returns the specified property value for the underlying item.
+	 * 
+	 * @param propertyName
+	 *            Property name
+	 * @return Property value
+	 */
 	@SneakyThrows
 	public Object getPropertyValue(@NonNull String propertyName) {
 		val desc = BeanUtils.getPropertyDescriptor(itemClass, propertyName);
 		val getter = desc.getReadMethod();
 		return getter.invoke(item);
+	}
+	
+	/**
+	 * Sets the specified property value on the underlying item.
+	 * 
+	 * @param propertyName
+	 *            Property name
+	 * @param propertyValue
+	 *            Property value
+	 */
+	@SneakyThrows
+	public void setPropertyValue(@NonNull String propertyName, Object propertyValue) {
+		val desc = BeanUtils.getPropertyDescriptor(itemClass, propertyName);
+		val setter = desc.getWriteMethod();
+		setter.invoke(item, propertyValue);
 	}
 }

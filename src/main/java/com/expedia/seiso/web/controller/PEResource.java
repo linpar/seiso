@@ -25,14 +25,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * <p>
- * DTO that holds a reference to the entity's {@link PersistentEntity} metadata.
+ * Resource that holds a reference to the entity's {@link PersistentEntity} metadata.
  * </p>
  * <p>
  * We use this class as the binding for incoming representations. We can use this as a handler method parameter since
  * it's a concrete class.
  * </p>
  * 
- * @see LegacyResource
  * @author Willie Wheeler
  */
 @ToString

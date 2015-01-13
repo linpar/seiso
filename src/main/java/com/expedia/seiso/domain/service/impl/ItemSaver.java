@@ -28,6 +28,11 @@ import org.springframework.stereotype.Component;
 import com.expedia.seiso.core.util.ReflectionUtils;
 import com.expedia.seiso.domain.entity.Item;
 
+/**
+ * Service delegate to save items to the database.
+ * 
+ * @author Willie Wheeler
+ */
 @Component
 @Transactional
 @RequiredArgsConstructor
@@ -35,18 +40,18 @@ public class ItemSaver {
 	@NonNull private Repositories repositories;
 	@NonNull private ItemMerger itemMerger;
 	
-	public void create(@NonNull Item itemData) {
-		val itemClass = itemData.getClass();
+	public void create(@NonNull Item item, boolean mergeAssociations) {
+		val itemClass = item.getClass();
 		val itemToSave = ReflectionUtils.createInstance(itemClass);
-		doSave(itemData, itemToSave);
+		doSave(item, itemToSave, mergeAssociations);
 	}
 	
-	public void update(@NonNull Item itemData, @NonNull Item itemToSave) {
-		doSave(itemData, itemToSave);
+	public void update(@NonNull Item srcItem, @NonNull Item destItem, boolean mergeAssociations) {
+		doSave(srcItem, destItem, mergeAssociations);
 	}
 	
-	private void doSave(Item itemData, Item itemToSave) {
-		itemMerger.merge(itemData, itemToSave);
+	private void doSave(Item itemData, Item itemToSave, boolean mergeAssociations) {
+		itemMerger.merge(itemData, itemToSave, mergeAssociations);
 		val itemClass = itemData.getClass();
 		val repo = (CrudRepository) repositories.getRepositoryFor(itemClass);
 		repo.save(itemToSave);

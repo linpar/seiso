@@ -30,7 +30,7 @@ import com.expedia.seiso.web.hateoas.BaseResourcePage;
 /**
  * @author Willie Wheeler
  */
-public class V1DtoAssemblerTests {
+public class V1ResourceAssemblerTests {
 	
 	// Class under test
 	@InjectMocks private V1ResourceAssembler assembler;
