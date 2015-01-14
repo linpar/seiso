@@ -64,23 +64,20 @@ public class ItemServiceImpl implements ItemService {
 	@Autowired private ItemDeleter itemDeleter;
 	@Autowired private ItemSaver itemSaver;
 	
-	// FIXME This currently assumes at least one element, but it shouldn't.
-	// https://github.com/ExpediaDotCom/seiso/issues/16
-	
 	/**
 	 * Using {@link Propagation.NEVER} because we don't want a single error to wreck the entire operation.
 	 */
 	@Override
 	@Transactional(propagation = Propagation.NEVER)
-	public SaveAllResponse saveAll(@NonNull List<? extends Item> items, boolean mergeAssociations) {
+	public SaveAllResponse saveAll(
+			@NonNull Class itemClass,
+			@NonNull List<? extends Item> items,
+			boolean mergeAssociations) {
+		
 		val numItems = items.size();
-
-		// We're assuming a homogeneous list here. [WLW]
-		val itemClass = CollectionsUtils.getElementClass(items);
 		val itemClassName = itemClass.getSimpleName();
-
-		log.info("Batch saving {} items ({})", numItems, itemClassName);
-
+		log.info("Batch saving {} items ({})", numItems, itemClass.getSimpleName());
+		
 		val errors = new ArrayList<SaveAllError>();
 
 		for (val item : items) {

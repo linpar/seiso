@@ -35,12 +35,14 @@ public interface ItemService {
 	/**
 	 * Saves a list of items.
 	 * 
+	 * @param itemClass
+	 *            Item class
 	 * @param items
-	 *            items to save
+	 *            Items to save
 	 * @param mergeAssociations
 	 *            Flag indicating whether we merge the item's associations, or simply ignore them
 	 */
-	SaveAllResponse saveAll(List<? extends Item> items, boolean mergeAssociations);
+	SaveAllResponse saveAll(Class itemClass, List<? extends Item> items, boolean mergeAssociations);
 
 	/**
 	 * Saves the given item to the database, either creating or updating as necessary. In the case of updates, this

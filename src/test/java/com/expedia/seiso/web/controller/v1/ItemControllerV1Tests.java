@@ -98,7 +98,7 @@ public class ItemControllerV1Tests {
 		when(delegate.getAll(eq(PAGING_REPO_KEY), anyString(), eq(pageable), eq(params))).thenReturn(baseResourcePage);
 		when(delegate.getOne(anyString(), anyString(), anyString())).thenReturn(baseResource);
 		when(delegate.getProperty(CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY)).thenReturn(baseResource);
-		when(delegate.postAll(peResourceList, true)).thenReturn(saveAllResponse);
+		when(delegate.postAll(Service.class, peResourceList, true)).thenReturn(saveAllResponse);
 	}
 	
 	@Test

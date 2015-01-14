@@ -183,8 +183,8 @@ public class BasicItemDelegateTests {
 	
 	@Test
 	public void postAll() {
-		delegate.postAll(peResourceList, false);
-		verify(itemService).saveAll(peResourceList, false);
+		delegate.postAll(Person.class, peResourceList, false);
+		verify(itemService).saveAll(Person.class, peResourceList, false);
 	}
 	
 	@Test

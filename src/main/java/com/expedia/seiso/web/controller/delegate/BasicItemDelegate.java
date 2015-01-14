@@ -165,7 +165,10 @@ public class BasicItemDelegate {
 		// such as a service instance with hundreds of nodes.
 	}
 	
-	public SaveAllResponse postAll(@NonNull PEResourceList peResourceList, boolean mergeAssociations) {
+	public SaveAllResponse postAll(
+			@NonNull Class<?> itemClass,
+			@NonNull PEResourceList peResourceList,
+			boolean mergeAssociations) {
 		
 		// FIXME The SaveAllResponse contains a SaveAllError, which in turn contains an Item. If the Item has a cycle,
 		// then JSON serialization results in a stack overflow exception. [WLW]
@@ -177,7 +180,7 @@ public class BasicItemDelegate {
 		// returning ID info. [WLW]
 		//
 		// http://www.cowtowncoder.com/blog/archives/2012/03/entry_466.html [WLW]
-		return itemService.saveAll(peResourceList, mergeAssociations);
+		return itemService.saveAll(itemClass, peResourceList, mergeAssociations);
 	}
 	
 	public void put(@NonNull Item item, boolean mergeAssociations) {

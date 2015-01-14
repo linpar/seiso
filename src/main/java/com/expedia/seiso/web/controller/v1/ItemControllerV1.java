@@ -122,7 +122,8 @@ public class ItemControllerV1 {
 	@Transactional(propagation = Propagation.NEVER)
 	public SaveAllResponse postAll(@PathVariable String repoKey, PEResourceList peResourceList) {
 		log.trace("Batch saving {} items: repoKey={}", peResourceList.size(), repoKey);
-		return delegate.postAll(peResourceList, true);
+		val itemClass = itemMetaLookup.getItemClass(repoKey);
+		return delegate.postAll(itemClass, peResourceList, true);
 	}
 
 	/**
