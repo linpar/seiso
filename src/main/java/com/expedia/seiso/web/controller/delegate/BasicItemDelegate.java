@@ -37,10 +37,10 @@ import com.expedia.seiso.domain.meta.DynaItem;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SaveAllResponse;
-import com.expedia.seiso.web.assembler.ItemAssembler;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.controller.PEResourceList;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * Handles basic REST requests, such as getting, putting and deleting items. This exists as a delegate object so we can
@@ -53,10 +53,10 @@ import com.expedia.seiso.web.hateoas.BaseResourcePage;
 public class BasicItemDelegate {
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private ItemService itemService;
-	@Autowired private ItemAssembler itemAssembler;
+	@Autowired private ResourceAssembler itemAssembler;
 	
 	/**
-	 * Returns a {@link BaseResourcePage} (page) of items of the requested type.
+	 * Returns a {@link Resources} or {@link PagedResources}, depending on the repo type.
 	 * 
 	 * @param repoKey
 	 *            repository key
@@ -79,10 +79,10 @@ public class BasicItemDelegate {
 		val proj = itemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
 		if (itemMeta.isPagingRepo()) {
 			val itemPage = itemService.findAll(itemClass, pageable);
-			return itemAssembler.toBaseResourcePage(itemClass, itemPage, proj, params);
+			return itemAssembler.toPagedResources(itemClass, itemPage, proj, params);
 		} else {
 			val itemList = itemService.findAll(itemClass);
-			return itemAssembler.toBaseResourceList(itemList, proj);
+			return itemAssembler.toResources(itemClass, itemList, proj);
 		}
 	}
 	
@@ -99,7 +99,7 @@ public class BasicItemDelegate {
 	 *            all HTTP parameters
 	 * @return a single item
 	 */
-	public BaseResource getOne(
+	public Resource getOne(
 			@NonNull String repoKey,
 			@NonNull String itemKey,
 			String view) {
@@ -108,15 +108,15 @@ public class BasicItemDelegate {
 		return getOne(new SimpleItemKey(itemClass, itemKey), view);
 	}
 	
-	public BaseResource getOne(@NonNull ItemKey itemKey) {
+	public Resource getOne(@NonNull ItemKey itemKey) {
 		return getOne(itemKey, Projection.DEFAULT);
 	}
 	
-	public BaseResource getOne(@NonNull ItemKey itemKey, String view) {
+	public Resource getOne(@NonNull ItemKey itemKey, String view) {
 		val item = itemService.find(itemKey);
 		val itemMeta = itemMetaLookup.getItemMeta(item.getClass());
 		val proj = itemMeta.getProjectionNode(Projection.Cardinality.SINGLE, view);
-		return itemAssembler.toBaseResource(item, proj, true);
+		return itemAssembler.toResource(item, proj, true);
 	}
 	
 	/**
@@ -237,7 +237,7 @@ public class BasicItemDelegate {
 		val propClass = itemPropValue.getClass();
 		val propMeta = itemMetaLookup.getItemMeta(propClass);
 		val proj = propMeta.getProjectionNode(Projection.Cardinality.SINGLE, view);
-		return itemAssembler.toBaseResource(itemPropValue, proj);
+		return itemAssembler.toResource(itemPropValue, proj);
 	}
 	
 	private Object getListProperty(List<?> listPropValue, String view) {
@@ -250,6 +250,6 @@ public class BasicItemDelegate {
 		val elemClass = CollectionUtils.findCommonElementType(listPropValue);
 		val elemMeta = itemMetaLookup.getItemMeta(elemClass);
 		val proj = elemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
-		return itemAssembler.toBaseResourceList(listPropValue, proj);
+		return itemAssembler.toResourceList(listPropValue, proj);
 	}
 }

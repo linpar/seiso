@@ -33,7 +33,7 @@ import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.service.search.SearchQuery;
 import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Ken Van Eyk
@@ -48,7 +48,7 @@ public class GlobalSearchController {
 			value = "",
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public BaseResource globalSearch(
+	public Resource globalSearch(
 			@RequestParam("q") String keywords,
 			@PageableDefault(
 					page = C.DEFAULT_PAGE_NUMBER,

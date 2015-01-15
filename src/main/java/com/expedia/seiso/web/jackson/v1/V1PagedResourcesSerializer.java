@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.jackson.hal;
+package com.expedia.seiso.web.jackson.v1;
 
 import java.io.IOException;
 
@@ -21,7 +21,7 @@ import lombok.NonNull;
 
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.PagedResources;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -31,18 +31,18 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  * @author Willie Wheeler
  */
 @Component
-public class HalResourcePageSerializer extends StdSerializer<BaseResourcePage> {
-	private HalResourceAssembler assembler;
+public class V1PagedResourcesSerializer extends StdSerializer<PagedResources> {
+	private V1ResourceAssembler assembler;
 	
-	public HalResourcePageSerializer(@NonNull HalResourceAssembler assembler) {
-		super(BaseResourcePage.class, false);
+	public V1PagedResourcesSerializer(@NonNull V1ResourceAssembler assembler) {
+		super(PagedResources.class, false);
 		this.assembler = assembler;
 	}
-
+	
 	@Override
-	public void serialize(@NonNull BaseResourcePage baseResourcePage, JsonGenerator jgen, SerializerProvider provider)
+	public void serialize(PagedResources pagedResources, JsonGenerator jgen, SerializerProvider provider)
 			throws IOException, JsonGenerationException {
 		
-		jgen.writeObject(assembler.toHalResourcePage(baseResourcePage));
+		jgen.writeObject(assembler.toV1PagedResources(pagedResources));
 	}
 }

@@ -21,28 +21,28 @@ import lombok.NonNull;
 
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
- * Serializes {@link BaseResource} instances to their HAL representations.
+ * Serializes {@link Resource} instances to their HAL representations.
  * 
  * @author Willie Wheeler
  */
 @Component
-public class HalResourceSerializer extends StdSerializer<BaseResource> {
+public class HalResourceSerializer extends StdSerializer<Resource> {
 	private HalResourceAssembler assembler;
 	
 	public HalResourceSerializer(@NonNull HalResourceAssembler assembler) {
-		super(BaseResource.class, false);
+		super(Resource.class, false);
 		this.assembler = assembler;
 	}
 	
 	@Override
-	public void serialize(BaseResource baseResource, JsonGenerator jgen, SerializerProvider provider)
+	public void serialize(Resource baseResource, JsonGenerator jgen, SerializerProvider provider)
 			throws IOException, JsonGenerationException {
 		
 		// I don't think this is the most sophisticated way to do the serialization. (I think that we're supposed to

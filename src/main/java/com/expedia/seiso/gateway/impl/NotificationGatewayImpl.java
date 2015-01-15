@@ -28,7 +28,7 @@ import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.gateway.NotificationGateway;
 import com.expedia.seiso.gateway.model.ItemNotification;
-import com.expedia.seiso.web.assembler.ItemAssembler;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 
 /**
@@ -40,14 +40,14 @@ import com.expedia.seiso.web.assembler.ProjectionNode;
 @XSlf4j
 public class NotificationGatewayImpl implements NotificationGateway {
 	@Autowired private AmqpTemplate amqpTemplate;
-	@Autowired private ItemAssembler itemAssembler;
+	@Autowired private ResourceAssembler itemAssembler;
 	
 	// Asynchronous because we don't want failures here to impact the core app. For example, if RabbitMQ goes down, we
 	// don't want Seiso to be unable to create/update/delete items.
 	@Async
 	public void notify(@NonNull Item item, @NonNull String operation) {
 		val itemType = item.getClass().getSimpleName();
-		val itemResource = itemAssembler.toBaseResource(item, ProjectionNode.FLAT_PROJECTION_NODE);
+		val itemResource = itemAssembler.toResource(item, ProjectionNode.FLAT_PROJECTION_NODE);
 		val notification = new ItemNotification(itemType, itemResource, operation);
 		val routingKey = itemType + "." + operation;
 		log.info("Sending notification: itemType={}, itemKey={}, operation={}", itemType, item.itemKey(), operation);

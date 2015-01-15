@@ -43,7 +43,7 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.seiso.web.MediaTypes;
-import com.expedia.seiso.web.assembler.ItemAssembler;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.controller.ExceptionHandlerAdvice;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
@@ -66,9 +66,10 @@ import com.expedia.seiso.web.httpmessageconverter.ItemKeyHttpMessageConverter;
 import com.expedia.seiso.web.jackson.hal.HalMapper;
 import com.expedia.seiso.web.jackson.v1.V1Mapper;
 import com.expedia.seiso.web.jackson.v1.V1Module;
+import com.expedia.seiso.web.jackson.v1.V1PagedResourcesSerializer;
 import com.expedia.seiso.web.jackson.v1.V1ResourceAssembler;
-import com.expedia.seiso.web.jackson.v1.V1ResourcePageSerializer;
 import com.expedia.seiso.web.jackson.v1.V1ResourceSerializer;
+import com.expedia.seiso.web.jackson.v1.V1ResourcesSerializer;
 import com.expedia.seiso.web.resolver.PEResourceListResolver;
 import com.expedia.seiso.web.resolver.PEResourceResolver;
 import com.expedia.seiso.web.resolver.ResolverUtils;
@@ -141,9 +142,12 @@ public class SeisoWebConfigBeans {
 		@Bean
 		public V1Mapper v1Mapper() {
 			val assembler = new V1ResourceAssembler();
-			val dtoSerializer = new V1ResourceSerializer(assembler);
-			val dtoPageSerializer = new V1ResourcePageSerializer(assembler);
-			return new V1Mapper(new V1Module(dtoSerializer, dtoPageSerializer));
+			// @formatter:off
+			return new V1Mapper(new V1Module(
+					new V1ResourceSerializer(assembler),
+					new V1ResourcesSerializer(assembler),
+					new V1PagedResourcesSerializer(assembler)));
+			// @formatter:on
 		}
 		
 		@Bean
@@ -212,7 +216,7 @@ public class SeisoWebConfigBeans {
 	public static class AssemblyConfig {
 		
 		@Bean
-		public ItemAssembler itemAssembler() { return new ItemAssembler(); }
+		public ResourceAssembler itemAssembler() { return new ResourceAssembler(); }
 	}
 	
 	@Configuration

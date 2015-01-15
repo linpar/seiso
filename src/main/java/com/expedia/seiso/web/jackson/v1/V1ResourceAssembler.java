@@ -26,8 +26,9 @@ import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.web.Relations;
 import com.expedia.seiso.web.hateoas.Link;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 
 /**
  * @author Willie Wheeler
@@ -35,25 +36,26 @@ import com.expedia.seiso.web.hateoas.BaseResourcePage;
 @Component
 public class V1ResourceAssembler {
 	
-	public List<V1Resource> toV1ResourceList(@NonNull List<BaseResource> baseResourceList) {
+	public List<V1Resource> toV1Resources(@NonNull Resources resources) {
 		val v1ResourceList = new ArrayList<V1Resource>();
-		for (val baseResource : baseResourceList) { v1ResourceList.add(toV1Resource(baseResource)); }
+		val resourceList = resources.getItems();
+		for (val resource : resourceList) { v1ResourceList.add(toV1Resource(resource)); }
 		return v1ResourceList;
 	}
 	
-	public List<V1Resource> toV1ResourcePage(@NonNull BaseResourcePage baseResourcePage) {
+	public List<V1Resource> toV1PagedResources(@NonNull PagedResources pagedResources) {
 		val v1ResourceList = new ArrayList<V1Resource>();
-		val baseResourceList = baseResourcePage.getItems();
-		for (val baseResource : baseResourceList) { v1ResourceList.add(toV1Resource(baseResource)); }
+		val resourceList = pagedResources.getItems();
+		for (val resource : resourceList) { v1ResourceList.add(toV1Resource(resource)); }
 		return v1ResourceList;
 	}
 	
-	public V1Resource toV1Resource(@NonNull BaseResource baseResource) {
-		val srcProps = baseResource.getProperties();
+	public V1Resource toV1Resource(@NonNull Resource resource) {
+		val srcProps = resource.getProperties();
 		val destProps = new TreeMap<String, Object>();
 		
 		// Links
-		val selfLink = findSelfLink(baseResource.getV1Links());
+		val selfLink = findSelfLink(resource.getV1Links());
 		if (selfLink != null) {
 			destProps.put("_self", selfLink.getHref());
 		}
@@ -65,9 +67,9 @@ public class V1ResourceAssembler {
 			destProps.put(propKey, propVal);
 		}
 		
-		val v1Dto = new V1Resource();
-		v1Dto.setProperties(destProps);
-		return v1Dto;
+		val v1Resource = new V1Resource();
+		v1Resource.setProperties(destProps);
+		return v1Resource;
 	}
 	
 	private Link findSelfLink(List<Link> links) {

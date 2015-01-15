@@ -26,10 +26,12 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 public class HalModule extends SimpleModule {
 	
 	public HalModule(
-			@NonNull HalResourceSerializer dtoSerializer,
-			@NonNull HalResourcePageSerializer dtoPageSerializer) {
+			@NonNull HalResourceSerializer halResourceSerializer,
+			@NonNull HalResourcesSerializer halResourcesSerializer,
+			@NonNull HalPagedResourcesSerializer halPagedResourcesSerializer) {
 		
-		addSerializer(dtoSerializer);
-		addSerializer(dtoPageSerializer);
+		addSerializer(halResourceSerializer);
+		addSerializer(halResourcesSerializer);
+		addSerializer(halPagedResourcesSerializer);
 	}
 }

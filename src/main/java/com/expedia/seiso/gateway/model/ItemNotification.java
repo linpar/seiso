@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
@@ -33,6 +33,6 @@ public class ItemNotification {
 	public static final String OP_DELETE = "delete";
 	
 	@NonNull private String itemType;
-	@NonNull private BaseResource item;
+	@NonNull private Resource item;
 	@NonNull private String operation;
 }

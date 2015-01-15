@@ -30,8 +30,8 @@ import org.springframework.data.domain.Pageable;
 import com.expedia.seiso.domain.service.SearchEngine;
 import com.expedia.seiso.domain.service.SearchResults;
 import com.expedia.seiso.domain.service.search.SearchQuery;
-import com.expedia.seiso.web.assembler.ItemAssembler;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler
@@ -43,13 +43,13 @@ public class GlobalSearchDelegateTests {
 	
 	// Dependencies
 	@Mock private SearchEngine searchEngine;
-	@Mock private ItemAssembler itemAssembler;
+	@Mock private ResourceAssembler itemAssembler;
 	
 	// Test data
 	@Mock private SearchQuery query;
 	@Mock private Pageable pageable;
 	@Mock private SearchResults searchResults;
-	@Mock private BaseResource searchResultsResource;
+	@Mock private Resource searchResultsResource;
 	
 	@Before
 	public void init() {

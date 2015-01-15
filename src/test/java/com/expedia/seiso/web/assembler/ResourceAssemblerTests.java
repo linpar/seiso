@@ -54,14 +54,14 @@ import com.expedia.seiso.web.hateoas.link.RepoSearchLinks;
 /**
  * @author Willie Wheeler
  */
-public class ItemAssemblerTests {
+public class ResourceAssemblerTests {
 	private static final Class ITEM_CLASS = Service.class;
 	private static final String SEARCH_PATH = "some-search-path";
 	private static final Pageable PAGE_REQUEST = new PageRequest(5, 20);
 	private static final ProjectionNode PROJECTION = ProjectionNode.FLAT_PROJECTION_NODE;
 	
 	// Class under test
-	@InjectMocks private ItemAssembler assembler;
+	@InjectMocks private ResourceAssembler assembler;
 	
 	// Dependencies
 	@Mock private Repositories repositories;
@@ -84,7 +84,7 @@ public class ItemAssemblerTests {
 	
 	@Before
 	public void init() {
-		this.assembler = new ItemAssembler();
+		this.assembler = new ResourceAssembler();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();
@@ -127,43 +127,45 @@ public class ItemAssemblerTests {
 	}
 	
 	@Test
-	public void toBaseResourceList() {
-		val result = assembler.toBaseResourceList(itemList, PROJECTION);
+	public void toResources() {
+		val result = assembler.toResources(Service.class, itemList, PROJECTION);
 		assertNotNull(result);
-		assertEquals(itemList.size(), result.size());
+		
+		val resultLinks = result.getLinks();
+		assertNotNull(resultLinks);
+		// TODO Need more link assertions
+		
+		val resultItems = result.getItems();
+		assertNotNull(resultItems);
+		assertEquals(itemList.size(), resultItems.size());
 	}
 	
 	@Test
-	public void toBaseResourceList_nullItemList() {
-		val result = assembler.toBaseResourceList(null, PROJECTION);
+	public void toResources_nullItemList() {
+		val result = assembler.toResources(Service.class, null, PROJECTION);
 		assertNull(result);
 	}
 	
 	@Test
-	public void toBaseResourcePage() {
-		val result = assembler.toBaseResourcePage(Service.class, itemPage);
+	public void toPagedResources() {
+		val result = assembler.toPagedResources(Service.class, itemPage, PROJECTION);
 		assertNotNull(result);
 	}
 	
-	@Test(expected = NullPointerException.class)
-	public void toBaseResourcePage_nullItemClass() {
-		assembler.toBaseResourcePage(null, itemPage);
-	}
-	
 	@Test
-	public void toBaseResourcePage_nullItemPage() {
-		val result = assembler.toBaseResourcePage(Service.class, null, PROJECTION);
+	public void toPagedResources_nullItemPage() {
+		val result = assembler.toPagedResources(Service.class, null, PROJECTION);
 		assertNull(result);
 	}
 	
 	@Test(expected = NullPointerException.class)
-	public void toBaseResourcePage2_nullItemClass() {
-		assembler.toBaseResourcePage(null, itemPage, PROJECTION);
+	public void toPagedResources_nullItemClass() {
+		assembler.toPagedResources(null, itemPage, PROJECTION);
 	}
 	
 	@Test
-	public void toBaseResource_item() {
-		val result = assembler.toBaseResource(service, PROJECTION);
+	public void toResource_item() {
+		val result = assembler.toResource(service, PROJECTION);
 		assertNotNull(result);
 	}
 	

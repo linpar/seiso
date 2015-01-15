@@ -31,7 +31,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.expedia.seiso.domain.service.search.SearchQuery;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler
@@ -46,7 +46,7 @@ public class GlobalSearchControllerTests {
 	
 	// Test data
 	@Mock private Pageable pageable;
-	@Mock private BaseResource searchResults;
+	@Mock private Resource searchResults;
 	
 	@Before
 	public void init() {

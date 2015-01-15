@@ -39,22 +39,21 @@ import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.service.SearchResults;
 import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
 import com.expedia.seiso.web.hateoas.Link;
 import com.expedia.seiso.web.hateoas.PageMetadata;
+import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 import com.expedia.seiso.web.hateoas.link.LinkFactory;
 
-// TODO Rename to BaseResourceAssembler?
-
 /**
- * Assembles items into base resources, which include links (in support of the REST HATEOAS principle). Subsequent
- * processing (outside this class) serializes the base resource into special representation formats, such as HAL.
+ * Assembles items into resources, which include links (in support of the REST HATEOAS principle). Subsequent
+ * processing (outside this class) serializes the resource into special representation formats, such as HAL.
  * 
  * @author Willie Wheeler
  */
 @Component
-public class ItemAssembler {
+public class ResourceAssembler {
 	private static final MultiValueMap<String, String> EMPTY_PARAMS = new LinkedMultiValueMap<String, String>();
 	
 	@Autowired private Repositories repositories;
@@ -66,18 +65,21 @@ public class ItemAssembler {
 	// CRUD repo resources
 	// =================================================================================================================
 	
-	public List<BaseResource> toBaseResourceList(List<?> itemList) {
-		return toBaseResourceList(itemList, ProjectionNode.FLAT_PROJECTION_NODE);
-	}
-	
-	public List<BaseResource> toBaseResourceList(List<?> itemList, ProjectionNode proj) {
+	public Resources toResources(
+			@NonNull Class<?> itemClass,
+			List<?> itemList,
+			ProjectionNode proj) {
+		
 		if (itemList == null) { return null; }
-		val baseResourceList = new ArrayList<BaseResource>();
+		
+		val links = toRepoListLinksV2(itemClass, itemList);
+		val resourceList = new ArrayList<Resource>();
 		for (val item : itemList) {
 			// Don't pass params from the collection view to the single view.
-			baseResourceList.add(toBaseResource((Item) item, proj, false));
+			resourceList.add(toResource((Item) item, proj, false));
 		}
-		return baseResourceList;
+		
+		return new Resources(links, resourceList);
 	}
 	
 	
@@ -85,15 +87,11 @@ public class ItemAssembler {
 	// Paging repo resources
 	// =================================================================================================================
 	
-	public BaseResourcePage toBaseResourcePage(@NonNull Class<?> itemClass, Page<?> itemPage) {
-		return toBaseResourcePage(itemClass, itemPage, ProjectionNode.FLAT_PROJECTION_NODE);
+	public PagedResources toPagedResources(@NonNull Class<?> itemClass, Page<?> itemPage, ProjectionNode proj) {
+		return toPagedResources(itemClass, itemPage, proj, EMPTY_PARAMS);
 	}
 	
-	public BaseResourcePage toBaseResourcePage(@NonNull Class<?> itemClass, Page<?> itemPage, ProjectionNode proj) {
-		return toBaseResourcePage(itemClass, itemPage, proj, EMPTY_PARAMS);
-	}
-	
-	public BaseResourcePage toBaseResourcePage(
+	public PagedResources toPagedResources(
 			@NonNull Class<?> itemClass,
 			Page<?> itemPage,
 			ProjectionNode proj,
@@ -103,36 +101,46 @@ public class ItemAssembler {
 		
 		val links = toRepoPageLinksV2(itemClass, itemPage, params);
 		val pageMeta = toPageMetadata(itemPage);
-		val items = toBaseResourceList(itemPage.getContent(), proj);
-		return new BaseResourcePage(links, pageMeta, items);
+		val items = toResourceList(itemPage.getContent(), proj);
+		return new PagedResources(links, pageMeta, items);
 	}
 	
 	
 	// =================================================================================================================
-	// Single item resources
+	// Bare resources
 	// =================================================================================================================
 	
-	public BaseResource toBaseResource(Item item, ProjectionNode proj) { return toBaseResource(item, proj, false); }
+	public List<Resource> toResourceList(List<?> itemList, ProjectionNode proj) {
+		if (itemList == null) { return null; }
+		val resourceList = new ArrayList<Resource>();
+		for (val item : itemList) {
+			// Don't pass params from the collection view to the single view.
+			resourceList.add(toResource((Item) item, proj, false));
+		}
+		return resourceList;
+	}
 	
-	public BaseResource toBaseResource(Item item, ProjectionNode proj, boolean includeCuries) {
+	public Resource toResource(Item item, ProjectionNode proj) { return toResource(item, proj, false); }
+	
+	public Resource toResource(Item item, ProjectionNode proj, boolean includeCuries) {
 		if (item == null) { return null; }
 		
 		val itemClass = item.getClass();
-		val baseResource = new BaseResource();
+		val resource = new Resource();
 		val pEntity = repositories.getPersistentEntity(item.getClass());
 		val itemWrapper = BeanWrapper.create(item, null);
 		
 		val itemLinksV1 = linkFactoryV1.getItemLinks();
 		val itemLinksV2 = linkFactoryV2.getItemLinks();
 		
-		baseResource.addV1Link(itemLinksV1.itemLink(item));
-		baseResource.addV2Link(itemLinksV2.itemLink(item));
-		baseResource.addV2Link(itemLinksV2.repoLink(Relations.UP, itemClass));
-		pEntity.doWithProperties(new ItemPropertyHandler(itemWrapper, baseResource.getProperties()));
-		pEntity.doWithAssociations(new ItemAssociationHandler(this, itemLinksV2, proj, itemWrapper, baseResource));
-		doSpecialNonPersistentAssociations(item, baseResource.getAssociations());
+		resource.addV1Link(itemLinksV1.itemLink(item));
+		resource.addV2Link(itemLinksV2.itemLink(item));
+		resource.addV2Link(itemLinksV2.repoLink(Relations.UP, itemClass));
+		pEntity.doWithProperties(new ItemPropertyHandler(itemWrapper, resource.getProperties()));
+		pEntity.doWithAssociations(new ItemAssociationHandler(this, itemLinksV2, proj, itemWrapper, resource));
+		doSpecialNonPersistentAssociations(item, resource.getAssociations());
 		
-		return baseResource;
+		return resource;
 	}
 	
 	
@@ -156,7 +164,7 @@ public class ItemAssembler {
 	 * 
 	 * @return Repository search result resource page
 	 */
-	public BaseResourcePage toRepoSearchResource(
+	public PagedResources toRepoSearchResource(
 			@NonNull Page resultPage,
 			@NonNull Class itemClass,
 			@NonNull String path,
@@ -167,8 +175,8 @@ public class ItemAssembler {
 		val links = toRepoSearchLinksV2(resultPage, itemClass, path, params);
 		val pageMeta = toPageMetadata(resultPage);
 		val itemList = resultPage.getContent();
-		val itemResourceList = toBaseResourceList(itemList, proj);
-		return new BaseResourcePage(links, pageMeta, itemResourceList);
+		val itemResourceList = toResourceList(itemList, proj);
+		return new PagedResources(links, pageMeta, itemResourceList);
 	}
 	
 	
@@ -183,13 +191,16 @@ public class ItemAssembler {
 	 *            Global search result set
 	 * @return Resource for the result set
 	 */
-	public BaseResource toGlobalSearchResource(@NonNull SearchResults results) {
-		val resultsResource = new BaseResource();
+	public Resource toGlobalSearchResource(@NonNull SearchResults results) {
+		val resultsResource = new Resource();
 		val itemClasses = results.getItemClasses();
 		for (val itemClass : itemClasses) {
 			val propName = StringUtils.uncapitalize(itemClass.getSimpleName());
 			val typedSerp = results.getTypedSerp(itemClass);
-			val typedSerpResourceList = toBaseResourceList(typedSerp.getContent());
+			
+			// TODO Not sure we want flat projection here. Shouldn't we do the default collection projection?
+			val typedSerpResourceList = toResourceList(typedSerp.getContent(), ProjectionNode.FLAT_PROJECTION_NODE);
+			
 			resultsResource.setProperty(propName, typedSerpResourceList);
 		}
 		return resultsResource;
@@ -202,23 +213,23 @@ public class ItemAssembler {
 	
 	// TODO Generalize
 	@Deprecated
-	public BaseResourcePage toUsernamePage(Page<Person> personPage, MultiValueMap<String, String> params) {
+	public PagedResources toUsernamePage(Page<Person> personPage, MultiValueMap<String, String> params) {
 		if (personPage == null) { return null; }
 		val links = toRepoPageLinksV2(Person.class, personPage, params);
 		val pageMeta = toPageMetadata(personPage);
 		val usernames = toUsernameList(personPage.getContent());
-		return new BaseResourcePage(links, pageMeta, usernames);
+		return new PagedResources(links, pageMeta, usernames);
 	}
 	
 	// TODO Generalize
 	@Deprecated
-	public List<BaseResource> toUsernameList(List<Person> people) {
+	public List<Resource> toUsernameList(List<Person> people) {
 		if (people == null) { return null; }
-		val usernameResources = new ArrayList<BaseResource>();
+		val usernameResources = new ArrayList<Resource>();
 		for (val person : people) {
 			val props = new TreeMap<String, Object>();
 			props.put("username", person.getUsername());
-			val usernameResource = new BaseResource();
+			val usernameResource = new Resource();
 			usernameResource.setProperties(props);
 			usernameResources.add(usernameResource);
 		}
@@ -229,6 +240,16 @@ public class ItemAssembler {
 	// =================================================================================================================
 	// Private
 	// =================================================================================================================
+	
+	private List<Link> toRepoListLinksV2(Class<?> itemClass, List<?> itemList) {
+		val itemLinksV2 = linkFactoryV2.getItemLinks();
+		val repoSearchLinksV2 = linkFactoryV2.getRepoSearchLinks();
+		
+		val links = new ArrayList<Link>();
+		links.add(itemLinksV2.repoLink(itemClass, EMPTY_PARAMS));
+		links.add(repoSearchLinksV2.repoSearchListLink(Relations.S_SEARCH, itemClass));
+		return links;
+	}
 	
 	private List<Link> toRepoPageLinksV2(
 			Class<?> itemClass,

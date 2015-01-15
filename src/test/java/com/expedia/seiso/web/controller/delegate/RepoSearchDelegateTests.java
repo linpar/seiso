@@ -48,7 +48,7 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.PersonRepo;
 import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.assembler.ItemAssembler;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.hateoas.Link;
 import com.expedia.seiso.web.hateoas.link.ItemLinks;
 import com.expedia.seiso.web.hateoas.link.LinkFactory;
@@ -70,7 +70,7 @@ public class RepoSearchDelegateTests {
 	@Mock private Repositories repositories;
 	@Mock private PersonRepo pagingRepo;
 	@Mock private ItemMetaLookup itemMetaLookup;
-	@Mock private ItemAssembler itemAssembler;
+	@Mock private ResourceAssembler itemAssembler;
 	@Mock private LinkFactory linkFactory;
 	@Mock private ItemLinks itemLinks;
 	@Mock private RepoSearchLinks repoSearchLinks;

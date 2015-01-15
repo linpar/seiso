@@ -41,8 +41,8 @@ import com.expedia.seiso.domain.repo.PersonRepo;
 import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.PagedResources;
 
 /**
  * @author Willie Wheeler
@@ -69,9 +69,9 @@ public class RepoSearchControllerV2Tests {
 	@Mock private Pageable pageable;
 	@Mock private MultiValueMap<String, String> params;
 	@Mock private ProjectionNode projection;
-	@Mock private BaseResourcePage itemResourcePage;
-	@Mock private BaseResource itemResource, propResource, searchListResource;
-	@Mock private BaseResourcePage searchResultResourcePage;
+	@Mock private PagedResources itemResourcePage;
+	@Mock private Resource itemResource, propResource, searchListResource;
+	@Mock private PagedResources searchResultResourcePage;
 	
 	@Before
 	public void init() {
@@ -126,7 +126,7 @@ public class RepoSearchControllerV2Tests {
 	public void repoSearch_paging() {
 		val result = controller.repoSearch(PAGING_REPO_KEY, SEARCH, VIEW_KEY, pageable, params);
 		assertNotNull(result);
-		assertTrue(result instanceof BaseResourcePage);
+		assertTrue(result instanceof PagedResources);
 		assertSame(searchResultResourcePage, result);
 		verify(delegate).repoSearch(PAGING_REPO_KEY, SEARCH, VIEW_KEY, pageable, params);
 	}

@@ -15,9 +15,19 @@
  */
 package com.expedia.seiso.web.hateoas;
 
+import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * @author Willie Wheeler
  */
-public class BaseResourcePageTests {
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Resources {
+	private List<Link> links;
+	private List<Resource> items;
 }

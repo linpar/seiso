@@ -34,7 +34,7 @@ import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler
@@ -50,7 +50,7 @@ public class RepoSearchControllerV2 {
 			value = "/{repoKey}/search",
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public BaseResource getRepoSearchList(@PathVariable String repoKey) {
+	public Resource getRepoSearchList(@PathVariable String repoKey) {
 		return delegate.getRepoSearchList(repoKey);
 	}
 	
@@ -64,7 +64,7 @@ public class RepoSearchControllerV2 {
 	 *            in question returns a single search result.
 	 * @param params
 	 *            all HTTP params
-	 * @return {@code List<BaseResource>} or {@code BaseResourcePage} depending on the repo type
+	 * @return {@code List<Resource>} or {@code PagedResources} depending on the repo type
 	 */
 	@RequestMapping(
 			value = "/{repoKey}/search/{search}",

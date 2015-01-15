@@ -19,9 +19,7 @@ import java.io.IOException;
 
 import lombok.NonNull;
 
-import org.springframework.stereotype.Component;
-
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.Resources;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -30,19 +28,18 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 /**
  * @author Willie Wheeler
  */
-@Component
-public class V1ResourcePageSerializer extends StdSerializer<BaseResourcePage> {
+public class V1ResourcesSerializer extends StdSerializer<Resources> {
 	private V1ResourceAssembler assembler;
 	
-	public V1ResourcePageSerializer(@NonNull V1ResourceAssembler assembler) {
-		super(BaseResourcePage.class, false);
+	public V1ResourcesSerializer(@NonNull V1ResourceAssembler assembler) {
+		super(Resources.class, false);
 		this.assembler = assembler;
 	}
 	
 	@Override
-	public void serialize(BaseResourcePage baseResourcePage, JsonGenerator jgen, SerializerProvider provider)
+	public void serialize(Resources resources, JsonGenerator jgen, SerializerProvider provider)
 			throws IOException, JsonGenerationException {
 		
-		jgen.writeObject(assembler.toV1ResourcePage(baseResourcePage));
+		jgen.writeObject(assembler.toV1Resources(resources));
 	}
 }

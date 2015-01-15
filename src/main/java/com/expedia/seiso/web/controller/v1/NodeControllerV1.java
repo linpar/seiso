@@ -30,8 +30,8 @@ import com.expedia.seiso.core.exception.ResourceNotFoundException;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.NodeRepo;
-import com.expedia.seiso.web.assembler.ItemAssembler;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler
@@ -42,7 +42,7 @@ import com.expedia.seiso.web.hateoas.BaseResource;
 public class NodeControllerV1 {
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private NodeRepo nodeRepo;
-	@Autowired private ItemAssembler itemAssembler;
+	@Autowired private ResourceAssembler itemAssembler;
 	
 	// Hand-coding this one because we don't want to return a page anymore, and don't want camel-case params, but also
 	// don't want to break existing code. Make this one the way we want it to be and then convert the other one over in
@@ -51,7 +51,7 @@ public class NodeControllerV1 {
 			value = "/nodes/search/find-by-ip-address-and-port",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public BaseResource findNodeByIpAddressAndPort(@RequestParam("ip-address") String ipAddress,
+	public Resource findNodeByIpAddressAndPort(@RequestParam("ip-address") String ipAddress,
 			@RequestParam("port") Integer port) {
 
 		val nodes = nodeRepo.findByIpAddressAndPort(ipAddress, port);
@@ -65,6 +65,6 @@ public class NodeControllerV1 {
 		val node = nodes.get(0);
 		val nodeMeta = itemMetaLookup.getItemMeta(Node.class);
 		val projectionNode = nodeMeta.getProjectionNode(Projection.Cardinality.SINGLE, Projection.DEFAULT);
-		return itemAssembler.toBaseResource(node, projectionNode);
+		return itemAssembler.toResource(node, projectionNode);
 	}
 }

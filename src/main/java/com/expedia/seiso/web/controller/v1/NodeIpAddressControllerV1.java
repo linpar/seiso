@@ -33,7 +33,7 @@ import com.expedia.seiso.domain.entity.key.NodeIpAddressKey;
 import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.web.controller.PEResource;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler
@@ -50,7 +50,7 @@ public class NodeIpAddressControllerV1 {
 	@RequestMapping(
 			value = NODE_IP_ADDRESS_URI_TEMPLATE,
 			method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public BaseResource get(@PathVariable String nodeName, @PathVariable String ipAddress) {
+	public Resource get(@PathVariable String nodeName, @PathVariable String ipAddress) {
 		val itemKey = new NodeIpAddressKey(nodeName, ipAddress);
 		return basicItemDelegate.getOne(itemKey);
 	}

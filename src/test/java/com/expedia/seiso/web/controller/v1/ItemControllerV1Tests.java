@@ -22,10 +22,6 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.List;
-
 import lombok.val;
 
 import org.junit.Before;
@@ -44,8 +40,9 @@ import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.controller.PEResource;
 import com.expedia.seiso.web.controller.PEResourceList;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 
 /**
  * @author Willie Wheeler
@@ -73,9 +70,9 @@ public class ItemControllerV1Tests {
 	@Mock private Item item;
 	
 	// Test data - responses
-	@Mock private BaseResource baseResource;
-	@Mock private BaseResourcePage baseResourcePage;
-	private List<BaseResource> baseResourceList;
+	@Mock private Resources resources;
+	@Mock private PagedResources pagedResources;
+	@Mock private Resource resource;
 	@Mock private SaveAllResponse saveAllResponse;
 	
 	@Before
@@ -88,16 +85,15 @@ public class ItemControllerV1Tests {
 
 	private void initTestData() {
 		when(peResource.getItem()).thenReturn(item);
-		this.baseResourceList = Arrays.asList(baseResource);
 	}
 
 	private void initDependencies() {
 		when(itemMetaLookup.getItemClass(anyString())).thenReturn(Service.class);
 		
-		when(delegate.getAll(eq(CRUD_REPO_KEY), anyString(), eq(pageable), eq(params))).thenReturn(baseResourceList);
-		when(delegate.getAll(eq(PAGING_REPO_KEY), anyString(), eq(pageable), eq(params))).thenReturn(baseResourcePage);
-		when(delegate.getOne(anyString(), anyString(), anyString())).thenReturn(baseResource);
-		when(delegate.getProperty(CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY)).thenReturn(baseResource);
+		when(delegate.getAll(eq(CRUD_REPO_KEY), anyString(), eq(pageable), eq(params))).thenReturn(resources);
+		when(delegate.getAll(eq(PAGING_REPO_KEY), anyString(), eq(pageable), eq(params))).thenReturn(pagedResources);
+		when(delegate.getOne(anyString(), anyString(), anyString())).thenReturn(resource);
+		when(delegate.getProperty(CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY)).thenReturn(resource);
 		when(delegate.postAll(Service.class, peResourceList, true)).thenReturn(saveAllResponse);
 	}
 	
@@ -119,7 +115,7 @@ public class ItemControllerV1Tests {
 	public void getOne() {
 		val result = controller.getOne(CRUD_REPO_KEY, ITEM_KEY, VIEW_KEY);
 		assertNotNull(result);
-		assertSame(baseResource, result);
+		assertSame(resource, result);
 		verify(delegate).getOne(CRUD_REPO_KEY, ITEM_KEY, VIEW_KEY);
 		
 	}

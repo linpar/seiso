@@ -34,6 +34,7 @@ import lombok.experimental.Accessors;
 import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projections;
+import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
@@ -52,7 +53,7 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 @Projections({
 	@Projection(cardinality = Cardinality.COLLECTION, paths = { "statusType" }),
 	@Projection(cardinality = Cardinality.SINGLE, paths = { "statusType" })
-	})
+})
 //@formatter:on
 public class RotationStatus extends AbstractItem {
 
@@ -74,6 +75,7 @@ public class RotationStatus extends AbstractItem {
 
 	@ManyToOne
 	@JoinColumn(name = "status_type_id")
+	@RestResource(path = "status-type")
 	private StatusType statusType;
 
 	@Override

@@ -30,9 +30,9 @@ import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.gateway.model.ItemNotification;
-import com.expedia.seiso.web.assembler.ItemAssembler;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.assembler.ProjectionNode;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 
 public class NotificationGatewayImplTests {
 
@@ -41,12 +41,12 @@ public class NotificationGatewayImplTests {
 
 	// Dependencies
 	@Mock private AmqpTemplate amqpTemplate;
-	@Mock private ItemAssembler itemAssembler;
+	@Mock private ResourceAssembler itemAssembler;
 
 	// Test data
 	private Service service;
 	private NodeIpAddress nip;
-	@Mock private BaseResource itemResource;
+	@Mock private Resource itemResource;
 
 	@Before
 	public void init() throws Exception {
@@ -68,7 +68,7 @@ public class NotificationGatewayImplTests {
 	}
 	
 	private void initDependencies() {
-		when(itemAssembler.toBaseResource((Item) anyObject(), (ProjectionNode) anyObject())).thenReturn(itemResource);
+		when(itemAssembler.toResource((Item) anyObject(), (ProjectionNode) anyObject())).thenReturn(itemResource);
 	}
 
 	@Test

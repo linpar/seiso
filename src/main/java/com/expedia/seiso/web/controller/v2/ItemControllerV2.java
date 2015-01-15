@@ -40,7 +40,7 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.controller.PEResource;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 
 // TODO Support patching. The reason is that due to the recursive relationship between people and their managers, we
 // want to be able to update people in two passes:
@@ -74,7 +74,7 @@ public class ItemControllerV2 {
 	 *            in question returns a single search result.
 	 * @param params
 	 *            all HTTP params
-	 * @return {@code List<BaseResource>} or {@code BaseResourcePage} depending on the repo type
+	 * @return {@link Resources} or {@link PagedResources} depending on the repo type
 	 */
 	@RequestMapping(
 			value = "/{repoKey}",
@@ -97,7 +97,7 @@ public class ItemControllerV2 {
 			value = "/{repoKey}/{itemKey}",
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public BaseResource getOne(
+	public Resource getOne(
 			@PathVariable String repoKey,
 			@PathVariable String itemKey,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view) {

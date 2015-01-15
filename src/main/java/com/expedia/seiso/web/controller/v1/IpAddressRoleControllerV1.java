@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expedia.seiso.domain.entity.key.IpAddressRoleKey;
 import com.expedia.seiso.web.controller.PEResource;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler
@@ -45,7 +45,7 @@ public class IpAddressRoleControllerV1 {
 			value = SINGLE_URI_TEMPLATE,
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public BaseResource get(@PathVariable String serviceInstanceKey, @PathVariable String name) {
+	public Resource get(@PathVariable String serviceInstanceKey, @PathVariable String name) {
 		val itemKey = new IpAddressRoleKey(serviceInstanceKey, name);
 		return basicItemDelegate.getOne(itemKey);
 	}

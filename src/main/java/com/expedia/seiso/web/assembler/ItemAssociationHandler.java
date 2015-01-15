@@ -29,7 +29,7 @@ import org.springframework.data.mapping.model.BeanWrapper;
 
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.link.ItemLinks;
 
 /**
@@ -38,11 +38,11 @@ import com.expedia.seiso.web.hateoas.link.ItemLinks;
 @RequiredArgsConstructor
 @XSlf4j
 public class ItemAssociationHandler implements SimpleAssociationHandler {
-	@NonNull private final ItemAssembler assembler;
+	@NonNull private final ResourceAssembler assembler;
 	@NonNull private final ItemLinks itemLinksV2;
 	@NonNull private final ProjectionNode projection;
 	@NonNull private final BeanWrapper<? extends Item> wrapper;
-	@NonNull private final BaseResource baseResource;
+	@NonNull private final Resource resource;
 
 	@Override
 	public void doWithAssociation(Association<? extends PersistentProperty<?>> assoc) {
@@ -57,18 +57,18 @@ public class ItemAssociationHandler implements SimpleAssociationHandler {
 		// Link
 		val restResource = prop.findAnnotation(RestResource.class);
 		val path = (restResource == null ? propName : restResource.path());
-		baseResource.addV2Link(itemLinksV2.itemPropertyLink(item, path));
+		resource.addV2Link(itemLinksV2.itemPropertyLink(item, path));
 		
 		// Property
 		if (child != null) {
 			if (Item.class.isAssignableFrom(propType)) {
 				val propEntity = (Item) wrapper.getProperty(prop);
-				val propBaseResource = assembler.toBaseResource(propEntity, child, false);
-				baseResource.setAssociation(propName, propBaseResource);
+				val propBaseResource = assembler.toResource(propEntity, child, false);
+				resource.setAssociation(propName, propBaseResource);
 			} else if (List.class.isAssignableFrom(propType)) {
 				val propEntityList = (List<?>) wrapper.getProperty(prop);
-				val propBaseResourceList = assembler.toBaseResourceList(propEntityList, child);
-				baseResource.setAssociation(propName, propBaseResourceList);
+				val propResourceList = assembler.toResourceList(propEntityList, child);
+				resource.setAssociation(propName, propResourceList);
 			} else {
 				log.warn("Don't know how to handle association type {}", propType);
 			}

@@ -15,8 +15,6 @@
  */
 package com.expedia.seiso.web.controller.v1;
 
-import java.util.List;
-
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
@@ -45,8 +43,9 @@ import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.controller.PEResource;
 import com.expedia.seiso.web.controller.PEResourceList;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 
 /**
  * Thin wrapper around the {@link BasicItemDelegate} to handle v1 API requests.
@@ -62,6 +61,13 @@ public class ItemControllerV1 {
 	@Autowired private BasicItemDelegate delegate;
 	@Autowired private ResponseHeadersV1 responseHeaders;
 	
+	/**
+	 * @param repoKey
+	 * @param view
+	 * @param pageable
+	 * @param params
+	 * @return either {@link Resources} or {@link PagedResources} depending on the repo type
+	 */
 	@RequestMapping(
 			value = "/{repoKey}",
 			method = RequestMethod.GET,
@@ -77,14 +83,16 @@ public class ItemControllerV1 {
 			@RequestParam MultiValueMap<String, String> params) {
 		
 		val result = delegate.getAll(repoKey, view, pageable, params);
+		val resultClass = result.getClass();
 		
-		if (BaseResourcePage.class.isAssignableFrom(result.getClass())) {
-			val baseResourcePage = (BaseResourcePage) result;
+		if (PagedResources.class.isAssignableFrom(resultClass)) {
+			val baseResourcePage = (PagedResources) result;
 			val headers = responseHeaders.buildResponseHeaders(baseResourcePage);
-			return new HttpEntity<BaseResourcePage>(baseResourcePage, headers);
+			return new HttpEntity<PagedResources>(baseResourcePage, headers);
+		} else if (Resources.class.isAssignableFrom(resultClass)) {
+			return new HttpEntity<Resources>((Resources) result);
 		} else {
-			val baseResourceList = (List<BaseResource>) result;
-			return new HttpEntity<List<BaseResource>>(baseResourceList);
+			throw new RuntimeException("Unknown result type: " + resultClass);
 		}
 	}
 	
@@ -92,7 +100,7 @@ public class ItemControllerV1 {
 			value = "/{repoKey}/{itemKey}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public BaseResource getOne(
+	public Resource getOne(
 			@PathVariable String repoKey,
 			@PathVariable String itemKey,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view) {

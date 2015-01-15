@@ -30,9 +30,11 @@ public class V1Module extends SimpleModule {
 	
 	public V1Module(
 			@NonNull V1ResourceSerializer resourceSerializer,
-			@NonNull V1ResourcePageSerializer resourcePageSerializer) {
+			@NonNull V1ResourcesSerializer resourcesSerializer,
+			@NonNull V1PagedResourcesSerializer pagedResourcesSerializer) {
 		
 		addSerializer(resourceSerializer);
-		addSerializer(resourcePageSerializer);
+		addSerializer(resourcesSerializer);
+		addSerializer(pagedResourcesSerializer);
 	}
 }

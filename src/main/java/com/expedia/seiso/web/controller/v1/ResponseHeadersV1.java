@@ -23,7 +23,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.PagedResources;
 
 /**
  * @author Willie Wheeler
@@ -37,7 +37,7 @@ public class ResponseHeadersV1 {
 	static final String X_PAGINATION_TOTAL_ELEMENTS = "X-Pagination-TotalElements";
 	static final String X_PAGINATION_TOTAL_PAGES = "X-Pagination-TotalPages";
 	
-	public HttpHeaders buildResponseHeaders(@NonNull BaseResourcePage page) {
+	public HttpHeaders buildResponseHeaders(@NonNull PagedResources page) {
 		val links = page.getLinks();
 		val meta = page.getMetadata();
 		

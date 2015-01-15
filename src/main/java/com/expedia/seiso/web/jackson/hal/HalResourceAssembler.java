@@ -26,9 +26,10 @@ import lombok.val;
 
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
 import com.expedia.seiso.web.hateoas.Link;
+import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 
 /**
  * Maps base resources to a HAL-specific representation to support HAL serialization.
@@ -38,35 +39,33 @@ import com.expedia.seiso.web.hateoas.Link;
 @Component
 public class HalResourceAssembler {
 	
-	public HalResource toHalResourcePage(@NonNull BaseResourcePage baseResourcePage) {
-		val halResourcePage = new HalResource();
-		halResourcePage.setLinks(toHalLinks(baseResourcePage.getLinks(), true));
-		
-		// Embedded
-		val embedded = new TreeMap<String, Object>();
-		val halResourceItems = new ArrayList<HalResource>();
-		val baseResourceItems = (List<BaseResource>) baseResourcePage.getItems();
-		for (val baseResourceItem : baseResourceItems) {
-			halResourceItems.add(toHalResource(baseResourceItem, false));
-		}
-		embedded.put("items", halResourceItems);
-		halResourcePage.setEmbedded(embedded);
+	public HalResource toHalResources(@NonNull Resources resources) {
+		val halResources = new HalResource();
+		halResources.setLinks(toHalLinks(resources.getLinks(), true));
+		halResources.setEmbedded(toHalEmbeddedItems(resources.getItems()));
+		return halResources;
+	}
+	
+	public HalResource toHalPagedResources(@NonNull PagedResources pagedResources) {
+		val halPagedResources = new HalResource();
+		halPagedResources.setLinks(toHalLinks(pagedResources.getLinks(), true));
+		halPagedResources.setEmbedded(toHalEmbeddedItems(pagedResources.getItems()));
 		
 		// State (page metadata)
 		val state = new TreeMap<String, Object>();
-		state.put("metadata", baseResourcePage.getMetadata());
-		halResourcePage.setState(state);
+		state.put("metadata", pagedResources.getMetadata());
+		halPagedResources.setState(state);
 		
-		return halResourcePage;
+		return halPagedResources;
 	}
 	
-	public HalResource toHalResource(@NonNull BaseResource baseResource, boolean topLevel) {
+	public HalResource toHalResource(@NonNull Resource resource, boolean topLevel) {
 		val halResource = new HalResource();
-		halResource.setLinks(toHalLinks(baseResource.getV2Links(), topLevel));
+		halResource.setLinks(toHalLinks(resource.getV2Links(), topLevel));
 		
 		// State
 		val state = new TreeMap<String, Object>();
-		val props = baseResource.getProperties();
+		val props = resource.getProperties();
 		for (val prop : props.entrySet()) {
 			val propName = prop.getKey();
 			val propValue = prop.getValue();
@@ -77,18 +76,18 @@ public class HalResourceAssembler {
 		
 		// Embedded
 		val embedded = new TreeMap<String, Object>();
-		val assocs = baseResource.getAssociations();
+		val assocs = resource.getAssociations();
 		for (val assoc : assocs.entrySet()) {
 			val assocName = assoc.getKey();
 			val assocValue = assoc.getValue();
 			if (assocValue == null) {
 				embedded.put(assocName, null);
-			} else if (assocValue instanceof BaseResource) {
-				embedded.put(assocName, toHalResource((BaseResource) assocValue, false));
+			} else if (assocValue instanceof Resource) {
+				embedded.put(assocName, toHalResource((Resource) assocValue, false));
 			} else if (assocValue instanceof List) {
 				val halResourceKids = new ArrayList<HalResource>();
-				val baseResourceKids = (List<BaseResource>) assocValue;
-				for (val resourceKid : baseResourceKids) {
+				val resourceKids = (List<Resource>) assocValue;
+				for (val resourceKid : resourceKids) {
 					halResourceKids.add(toHalResource(resourceKid, false));
 				}
 				embedded.put(assocName, halResourceKids);
@@ -133,5 +132,15 @@ public class HalResourceAssembler {
 		if (includeCuries) { halLinks.put("curies", Curie.SEISO_CURIES); }
 		
 		return halLinks;
+	}
+	
+	private Map<String, Object> toHalEmbeddedItems(List<Resource> resourceList) {
+		val embedded = new TreeMap<String, Object>();
+		val halResourceList = new ArrayList<HalResource>();
+		for (val resource : resourceList) {
+			halResourceList.add(toHalResource(resource, false));
+		}
+		embedded.put("items", halResourceList);
+		return embedded;
 	}
 }

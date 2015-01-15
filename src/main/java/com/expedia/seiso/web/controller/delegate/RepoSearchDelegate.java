@@ -39,9 +39,9 @@ import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.assembler.ItemAssembler;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.link.LinkFactory;
 
 // TODO
@@ -59,7 +59,7 @@ public class RepoSearchDelegate {
 	@Autowired private Repositories repositories;
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private ItemService itemService;
-	@Autowired private ItemAssembler itemAssembler;
+	@Autowired private ResourceAssembler itemAssembler;
 	@Autowired @Qualifier("linkFactoryV2") private LinkFactory linkFactoryV2;
 	@Autowired private ConversionService conversionService;
 	
@@ -67,7 +67,7 @@ public class RepoSearchDelegate {
 	 * @param repoKey
 	 * @return
 	 */
-	public BaseResource getRepoSearchList(@NonNull String repoKey) {
+	public Resource getRepoSearchList(@NonNull String repoKey) {
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
 		val repoInfo = repositories.getRepositoryInformationFor(itemClass);
 		val queryMethods = repoInfo.getQueryMethods();
@@ -75,7 +75,7 @@ public class RepoSearchDelegate {
 		val itemLinksV2 = linkFactoryV2.getItemLinks();
 		val repoSearchLinksV2 = linkFactoryV2.getRepoSearchLinks();
 		
-		val resource = new BaseResource();
+		val resource = new Resource();
 		resource.addV2Link(repoSearchLinksV2.repoSearchListLink(Relations.SELF, itemClass));
 		resource.addV2Link(itemLinksV2.repoLink(Relations.UP, itemClass));
 		
@@ -119,7 +119,7 @@ public class RepoSearchDelegate {
 	 * @return result page
 	 */
 	@SuppressWarnings("rawtypes")
-	public BaseResourcePage repoSearch(
+	public PagedResources repoSearch(
 			@NonNull String repoKey,
 			@NonNull String path,
 			@NonNull String view,

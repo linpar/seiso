@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expedia.seiso.domain.entity.key.ServiceInstancePortKey;
 import com.expedia.seiso.web.controller.PEResource;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler
@@ -45,7 +45,7 @@ public class ServiceInstancePortControllerV1 {
 			value = SINGLE_URI_TEMPLATE,
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public BaseResource get(@PathVariable String serviceInstanceKey, @PathVariable Integer number) {
+	public Resource get(@PathVariable String serviceInstanceKey, @PathVariable Integer number) {
 		val itemKey = new ServiceInstancePortKey(serviceInstanceKey, number);
 		return basicItemDelegate.getOne(itemKey);
 	}

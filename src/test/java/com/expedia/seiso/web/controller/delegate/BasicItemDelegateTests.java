@@ -43,11 +43,12 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
-import com.expedia.seiso.web.assembler.ItemAssembler;
 import com.expedia.seiso.web.assembler.ProjectionNode;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.controller.PEResourceList;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 
 /**
  * @author Willie Wheeler
@@ -72,7 +73,7 @@ public class BasicItemDelegateTests {
 	// Dependencies
 	@Mock private ItemMetaLookup itemMetaLookup;
 	@Mock private ItemService itemService;
-	@Mock private ItemAssembler itemAssembler;
+	@Mock private ResourceAssembler itemAssembler;
 	
 	// Test data
 	@Mock private Pageable pageable;
@@ -83,9 +84,9 @@ public class BasicItemDelegateTests {
 	private Person socrates, plato, aristotle;
 	@Mock private List<?> itemList;
 	@Mock private Page<?> itemPage;
-	@Mock private BaseResource baseResource;
-	@Mock private List<BaseResource> baseResourceList;
-	@Mock private BaseResourcePage baseResourcePage;
+	@Mock private Resource resource;
+	@Mock private Resources resources;
+	@Mock private PagedResources pagedResources;
 	@Mock private PEResourceList peResourceList;
 	@Mock private ItemKey itemKey;
 	
@@ -129,17 +130,17 @@ public class BasicItemDelegateTests {
 		when(itemService.findAll(PAGING_ITEM_CLASS, pageable)).thenReturn(itemPage);
 		when(itemService.find((SimpleItemKey) anyObject())).thenReturn(plato);
 		
-		when(itemAssembler.toBaseResourcePage(PAGING_ITEM_CLASS, itemPage, projection, params)).thenReturn(baseResourcePage);
-		when(itemAssembler.toBaseResourceList(itemList, projection)).thenReturn(baseResourceList);
-		when(itemAssembler.toBaseResource(socrates, projection)).thenReturn(baseResource);
-		when(itemAssembler.toBaseResource(plato, projection, true)).thenReturn(baseResource);
+		when(itemAssembler.toResources(NONPAGING_ITEM_CLASS, itemList, projection)).thenReturn(resources);
+		when(itemAssembler.toPagedResources(PAGING_ITEM_CLASS, itemPage, projection, params)).thenReturn(pagedResources);
+		when(itemAssembler.toResource(socrates, projection)).thenReturn(resource);
+		when(itemAssembler.toResource(plato, projection, true)).thenReturn(resource);
 	}
 	
 	@Test
 	public void getAll_pageable() {
 		val result = delegate.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
 		assertNotNull(result);
-		assertSame(baseResourcePage, result);
+		assertSame(pagedResources, result);
 	}
 	
 	@Test(expected = NullPointerException.class)
@@ -156,7 +157,7 @@ public class BasicItemDelegateTests {
 	public void getOne() {
 		val result = delegate.getOne(PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY);
 		assertNotNull(result);
-		assertSame(baseResource, result);
+		assertSame(resource, result);
 	}
 	
 	@Test(expected = NullPointerException.class)

@@ -33,8 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.PagedResources;
 
 /**
  * @author Willie Wheeler
@@ -50,7 +50,7 @@ public class RepoSearchControllerV1 {
 			value = "/{repoKey}/search",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public BaseResource getRepoSearchList(@PathVariable String repoKey) {
+	public Resource getRepoSearchList(@PathVariable String repoKey) {
 		return delegate.getRepoSearchList(repoKey);
 	}
 	
@@ -58,7 +58,7 @@ public class RepoSearchControllerV1 {
 			value = "/{repoKey}/search/{search}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public HttpEntity<BaseResourcePage> repoSearch(
+	public HttpEntity<PagedResources> repoSearch(
 			@PathVariable String repoKey,
 			@PathVariable String search,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view,

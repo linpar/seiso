@@ -38,7 +38,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.repo.PersonRepo;
-import com.expedia.seiso.web.assembler.ItemAssembler;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.controller.v2.ItemControllerV2;
 
 /**
@@ -52,7 +52,7 @@ public class PersonControllerTests {
 	
 	// Dependencies
 	@Mock private PersonRepo personRepo;
-	@Mock private ItemAssembler personAssembler;
+	@Mock private ResourceAssembler personAssembler;
 	
 	// Test data
 	private List<Person> people;

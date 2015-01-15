@@ -26,8 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Link;
 import com.expedia.seiso.web.hateoas.PageMetadata;
 
@@ -48,8 +48,8 @@ public class ResponseHeadersV1Tests {
 	// Test data
 	private List<Link> links;
 	private PageMetadata pageMeta;
-	private List<BaseResource> items;
-	private BaseResourcePage baseResourcePage;
+	private List<Resource> items;
+	private PagedResources baseResourcePage;
 	
 	@Before
 	public void init() {
@@ -65,8 +65,8 @@ public class ResponseHeadersV1Tests {
 		links.add(new Link(Relations.LAST, LAST_HREF));
 		
 		this.pageMeta = new PageMetadata(PAGE_SIZE, 2, TOTAL_ITEMS);
-		this.items = new ArrayList<BaseResource>();
-		this.baseResourcePage = new BaseResourcePage(links, pageMeta, items);
+		this.items = new ArrayList<Resource>();
+		this.baseResourcePage = new PagedResources(links, pageMeta, items);
 	}
 	
 	@Test

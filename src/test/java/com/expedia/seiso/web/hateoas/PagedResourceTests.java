@@ -13,21 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.jackson.v1;
-
-import java.util.List;
-
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+package com.expedia.seiso.web.hateoas;
 
 /**
  * @author Willie Wheeler
  */
-@Data
-@RequiredArgsConstructor
-public class V1ResourcePage {
-	
-	@NonNull
-	private List<V1Resource> items;
+public class PagedResourceTests {
+
 }

@@ -35,8 +35,8 @@ import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.PersonRepo;
 import com.expedia.seiso.web.MediaTypes;
-import com.expedia.seiso.web.assembler.ItemAssembler;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.seiso.web.hateoas.PagedResources;
 
 // This class is a temporary experiment
 
@@ -68,7 +68,7 @@ import com.expedia.seiso.web.hateoas.BaseResourcePage;
 public class PersonControllerV2 {
 	@Autowired private Repositories repositories;
 	@Autowired private ItemMetaLookup itemMetaLookup;
-	@Autowired private ItemAssembler itemAssembler;
+	@Autowired private ResourceAssembler itemAssembler;
 	
 	// Supports cleanup of stale person data
 	@RequestMapping(
@@ -76,7 +76,7 @@ public class PersonControllerV2 {
 			method = RequestMethod.GET,
 			params = "view=keys",
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public BaseResourcePage getUsernamesBySourcePage(
+	public PagedResources getUsernamesBySourcePage(
 			@RequestParam @NonNull String source,
 			@PageableDefault(
 					page = C.DEFAULT_PAGE_NUMBER,

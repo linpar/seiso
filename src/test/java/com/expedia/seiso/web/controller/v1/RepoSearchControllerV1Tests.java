@@ -32,8 +32,8 @@ import org.springframework.util.MultiValueMap;
 
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.PagedResources;
 
 /**
  * @author Willie Wheeler
@@ -53,8 +53,8 @@ public class RepoSearchControllerV1Tests {
 	// Test data
 	@Mock private Pageable pageable;
 	@Mock private MultiValueMap<String, String> params;
-	@Mock private BaseResource repoSearchListResource;
-	@Mock private BaseResourcePage repoSearchPageResource;
+	@Mock private Resource repoSearchListResource;
+	@Mock private PagedResources repoSearchPageResource;
 	@Mock private HttpHeaders httpHeaders;
 	
 	@Before

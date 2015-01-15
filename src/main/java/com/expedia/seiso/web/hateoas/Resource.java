@@ -39,7 +39,7 @@ import lombok.NonNull;
  */
 @Data
 @NoArgsConstructor
-public class BaseResource {
+public class Resource {
 	private final List<Link> v1Links = new ArrayList<>();
 	private final List<Link> v2Links = new ArrayList<>();
 	private Map<String, Object> properties = new TreeMap<>();

@@ -24,8 +24,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Link;
 import com.expedia.seiso.web.hateoas.PageMetadata;
 
@@ -38,8 +38,8 @@ public class HalResourceAssemblerTests {
 	private HalResourceAssembler assembler;
 	
 	// Test data
-	private BaseResource baseResource;
-	private BaseResourcePage baseResourcePage;
+	private Resource baseResource;
+	private PagedResources baseResourcePage;
 	@Mock private Link link;
 	@Mock private PageMetadata pageMeta;
 	
@@ -51,27 +51,27 @@ public class HalResourceAssemblerTests {
 	}
 	
 	private void initTestData() {
-		this.baseResource = new BaseResource();
+		this.baseResource = new Resource();
 		baseResource.addV1Link(link);
 		baseResource.addV2Link(link);
 		baseResource.setProperty("someProperty", "someValue");
 		baseResource.setProperty("someOtherProperty", null);
-		baseResource.setAssociation("someSingleAssociation", new BaseResource());
-		baseResource.setAssociation("someListAssociation", Arrays.asList(new BaseResource()));
+		baseResource.setAssociation("someSingleAssociation", new Resource());
+		baseResource.setAssociation("someListAssociation", Arrays.asList(new Resource()));
 		baseResource.setAssociation("someOtherAssociation", null);
 		
-		this.baseResourcePage = new BaseResourcePage(Arrays.asList(link), pageMeta, Arrays.asList(baseResource));
+		this.baseResourcePage = new PagedResources(Arrays.asList(link), pageMeta, Arrays.asList(baseResource));
 	}
 	
 	@Test
 	public void toHalResourcePage() {
-		val result = assembler.toHalResourcePage(baseResourcePage);
+		val result = assembler.toHalPagedResources(baseResourcePage);
 		// TODO
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void toHalResourcePage_null() {
-		assembler.toHalResourcePage(null);
+		assembler.toHalPagedResources(null);
 	}
 	
 	@Test

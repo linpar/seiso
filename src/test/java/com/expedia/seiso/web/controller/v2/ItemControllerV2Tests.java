@@ -38,8 +38,8 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.controller.PEResource;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.BaseResource;
-import com.expedia.seiso.web.hateoas.BaseResourcePage;
+import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.PagedResources;
 
 /**
  * @author Willie Wheeler
@@ -66,8 +66,8 @@ public class ItemControllerV2Tests {
 	@Mock private Pageable pageable;
 	@Mock private MultiValueMap<String, String> params;
 	@Mock private ProjectionNode projection;
-	@Mock private BaseResourcePage itemBaseResourcePage;
-	@Mock private BaseResource itemBaseResource, propBaseResource, searchListBaseResource;
+	@Mock private PagedResources itemBaseResourcePage;
+	@Mock private Resource itemBaseResource, propBaseResource, searchListBaseResource;
 	@Mock private PEResource itemPEResource;
 	@Mock private Service service;
 	@Mock private ItemKey itemKey;

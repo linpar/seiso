@@ -29,9 +29,10 @@ import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.core.util.ApplicationContextProvider;
 import com.expedia.seiso.web.jackson.hal.HalMapper;
 import com.expedia.seiso.web.jackson.hal.HalModule;
+import com.expedia.seiso.web.jackson.hal.HalPagedResourcesSerializer;
 import com.expedia.seiso.web.jackson.hal.HalResourceAssembler;
-import com.expedia.seiso.web.jackson.hal.HalResourcePageSerializer;
 import com.expedia.seiso.web.jackson.hal.HalResourceSerializer;
+import com.expedia.seiso.web.jackson.hal.HalResourcesSerializer;
 
 /**
  * @author Willie Wheeler
@@ -68,8 +69,11 @@ public class Seiso {
 	@Bean
 	public HalMapper halMapper() {
 		val assembler = new HalResourceAssembler();
-		val dtoSerializer = new HalResourceSerializer(assembler);
-		val dtoPageSerializer = new HalResourcePageSerializer(assembler);
-		return new HalMapper(new HalModule(dtoSerializer, dtoPageSerializer));
+		// @formatter:off
+		return new HalMapper(new HalModule(
+				new HalResourceSerializer(assembler),
+				new HalResourcesSerializer(assembler),
+				new HalPagedResourcesSerializer(assembler)));
+		// @formatter:on
 	}
 }
