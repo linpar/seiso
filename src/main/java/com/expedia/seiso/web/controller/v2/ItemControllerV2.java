@@ -37,10 +37,13 @@ import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.MediaTypes;
-import com.expedia.seiso.web.controller.PEResource;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.seiso.web.hateoas.PEResource;
+import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 
 // TODO Support patching. The reason is that due to the recursive relationship between people and their managers, we
 // want to be able to update people in two passes:
@@ -90,7 +93,7 @@ public class ItemControllerV2 {
 			Pageable pageable,
 			@RequestParam MultiValueMap<String, String> params) {
 		
-		return delegate.getAll(repoKey, view, pageable, params);
+		return delegate.getAll(ApiVersion.V2, repoKey, view, pageable, params);
 	}
 	
 	@RequestMapping(
@@ -102,7 +105,7 @@ public class ItemControllerV2 {
 			@PathVariable String itemKey,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
 		
-		return delegate.getOne(repoKey, itemKey, view);
+		return delegate.getOne(ApiVersion.V2, repoKey, itemKey, view);
 	}
 	
 	@RequestMapping(
@@ -115,7 +118,7 @@ public class ItemControllerV2 {
 			@PathVariable String propKey,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
 		
-		return delegate.getProperty(repoKey, itemKey, propKey, view);
+		return delegate.getProperty(ApiVersion.V2, repoKey, itemKey, propKey, view);
 	}
 
 	/**

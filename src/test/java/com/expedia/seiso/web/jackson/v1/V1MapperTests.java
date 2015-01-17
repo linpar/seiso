@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.expedia.seiso.web.jackson.orig.OrigMapper;
+import com.expedia.seiso.web.jackson.orig.OrigModule;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -33,7 +35,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class V1MapperTests {
 	
 	// Dependencies
-	@Mock private V1Module v1Module;
+	@Mock private OrigModule v1Module;
 	
 	// Test data
 	@Mock private Version version;
@@ -47,12 +49,12 @@ public class V1MapperTests {
 	
 	@Test
 	public void newMapper() {
-		val mapper = new V1Mapper(v1Module);
+		val mapper = new OrigMapper(v1Module);
 		assertTrue(mapper.isEnabled(SerializationFeature.INDENT_OUTPUT));
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void newMapper_nullModule() {
-		new V1Mapper(null);
+		new OrigMapper(null);
 	}
 }

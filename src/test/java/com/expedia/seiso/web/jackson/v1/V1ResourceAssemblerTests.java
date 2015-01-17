@@ -26,6 +26,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.jackson.orig.OrigResourceAssembler;
 
 /**
  * @author Willie Wheeler
@@ -33,7 +34,7 @@ import com.expedia.seiso.web.hateoas.PagedResources;
 public class V1ResourceAssemblerTests {
 	
 	// Class under test
-	@InjectMocks private V1ResourceAssembler assembler;
+	@InjectMocks private OrigResourceAssembler assembler;
 	
 	// Test data
 	@Mock private PagedResources mapDtoPage;
@@ -41,29 +42,29 @@ public class V1ResourceAssemblerTests {
 	
 	@Before
 	public void init() {
-		this.assembler = new V1ResourceAssembler();
+		this.assembler = new OrigResourceAssembler();
 		MockitoAnnotations.initMocks(this);
 	}
 	
 	@Test
 	public void toV1DtoPage() {
-		val result = assembler.toV1PagedResources(mapDtoPage);
+		val result = assembler.toOrigPagedResources(mapDtoPage);
 		assertNotNull(result);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void toV1DtoPage_nullMapDtoPage() {
-		assembler.toV1PagedResources(null);
+		assembler.toOrigPagedResources(null);
 	}
 	
 	@Test
 	public void toV1Dto() {
-		val result = assembler.toV1Resource(mapDto);
+		val result = assembler.toOrigResource(mapDto);
 		assertNotNull(result);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void toV1Dto_nullMapDto() {
-		assembler.toV1Resource(null);
+		assembler.toOrigResource(null);
 	}
 }

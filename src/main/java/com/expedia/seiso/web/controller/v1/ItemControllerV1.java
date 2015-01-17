@@ -40,9 +40,10 @@ import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.SaveAllResponse;
-import com.expedia.seiso.web.controller.PEResource;
-import com.expedia.seiso.web.controller.PEResourceList;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.seiso.web.hateoas.PEResource;
+import com.expedia.seiso.web.hateoas.PEResources;
 import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.Resources;
@@ -82,7 +83,8 @@ public class ItemControllerV1 {
 			Pageable pageable,
 			@RequestParam MultiValueMap<String, String> params) {
 		
-		val result = delegate.getAll(repoKey, view, pageable, params);
+		log.trace("Getting all items: repoKey={}", repoKey);
+		val result = delegate.getAll(ApiVersion.V1, repoKey, view, pageable, params);
 		val resultClass = result.getClass();
 		
 		if (PagedResources.class.isAssignableFrom(resultClass)) {
@@ -105,7 +107,7 @@ public class ItemControllerV1 {
 			@PathVariable String itemKey,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
 		
-		return delegate.getOne(repoKey, itemKey, view);
+		return delegate.getOne(ApiVersion.V1, repoKey, itemKey, view);
 	}
 	
 	@RequestMapping(
@@ -118,7 +120,7 @@ public class ItemControllerV1 {
 			@PathVariable String propKey,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
 		
-		return delegate.getProperty(repoKey, itemKey, propKey, view);
+		return delegate.getProperty(ApiVersion.V1, repoKey, itemKey, propKey, view);
 	}
 	
 	@RequestMapping(
@@ -128,7 +130,7 @@ public class ItemControllerV1 {
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	@Transactional(propagation = Propagation.NEVER)
-	public SaveAllResponse postAll(@PathVariable String repoKey, PEResourceList peResourceList) {
+	public SaveAllResponse postAll(@PathVariable String repoKey, PEResources peResourceList) {
 		log.trace("Batch saving {} items: repoKey={}", peResourceList.size(), repoKey);
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
 		return delegate.postAll(itemClass, peResourceList, true);

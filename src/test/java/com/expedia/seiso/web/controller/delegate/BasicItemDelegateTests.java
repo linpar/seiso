@@ -28,7 +28,6 @@ import lombok.val;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
@@ -43,9 +42,10 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.seiso.web.controller.PEResourceList;
+import com.expedia.seiso.web.hateoas.PEResources;
 import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.Resources;
@@ -68,12 +68,12 @@ public class BasicItemDelegateTests {
 	private static final String VIEW_KEY = "my-view";
 	
 	// Class under test
-	@InjectMocks private BasicItemDelegate delegate;
+	private BasicItemDelegate delegate;
 	
 	// Dependencies
 	@Mock private ItemMetaLookup itemMetaLookup;
 	@Mock private ItemService itemService;
-	@Mock private ResourceAssembler itemAssembler;
+	@Mock private ResourceAssembler resourceAssembler;
 	
 	// Test data
 	@Mock private Pageable pageable;
@@ -87,15 +87,18 @@ public class BasicItemDelegateTests {
 	@Mock private Resource resource;
 	@Mock private Resources resources;
 	@Mock private PagedResources pagedResources;
-	@Mock private PEResourceList peResourceList;
+	@Mock private PEResources peResources;
 	@Mock private ItemKey itemKey;
 	
 	@Before
 	public void init() {
-		this.delegate = new BasicItemDelegate();
 		MockitoAnnotations.initMocks(this);
 		initTestData();
 		initDependencies();
+		this.delegate = new BasicItemDelegate(resourceAssembler);
+		delegate.setItemMetaLookup(itemMetaLookup);
+		delegate.setItemService(itemService);
+		
 	}
 	
 	private void initTestData() {
@@ -130,62 +133,64 @@ public class BasicItemDelegateTests {
 		when(itemService.findAll(PAGING_ITEM_CLASS, pageable)).thenReturn(itemPage);
 		when(itemService.find((SimpleItemKey) anyObject())).thenReturn(plato);
 		
-		when(itemAssembler.toResources(NONPAGING_ITEM_CLASS, itemList, projection)).thenReturn(resources);
-		when(itemAssembler.toPagedResources(PAGING_ITEM_CLASS, itemPage, projection, params)).thenReturn(pagedResources);
-		when(itemAssembler.toResource(socrates, projection)).thenReturn(resource);
-		when(itemAssembler.toResource(plato, projection, true)).thenReturn(resource);
+		when(resourceAssembler.toResources(ApiVersion.V2, NONPAGING_ITEM_CLASS, itemList, projection))
+				.thenReturn(resources);
+		when(resourceAssembler.toPagedResources(ApiVersion.V2, PAGING_ITEM_CLASS, itemPage, projection, params))
+				.thenReturn(pagedResources);
+		when(resourceAssembler.toResource(ApiVersion.V2, socrates, projection)).thenReturn(resource);
+		when(resourceAssembler.toResource(ApiVersion.V2, plato, projection, true)).thenReturn(resource);
 	}
 	
 	@Test
 	public void getAll_pageable() {
-		val result = delegate.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
+		val result = delegate.getAll(ApiVersion.V2, PAGING_REPO_KEY, VIEW_KEY, pageable, params);
 		assertNotNull(result);
 		assertSame(pagedResources, result);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void getAll_pageable_nullRepo() {
-		delegate.getAll(null, VIEW_KEY, pageable, params);
+		delegate.getAll(ApiVersion.V2, null, VIEW_KEY, pageable, params);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void getAll_pageable_nullView() {
-		delegate.getAll(PAGING_REPO_KEY, null, pageable, params);
+		delegate.getAll(ApiVersion.V2, PAGING_REPO_KEY, null, pageable, params);
 	}
 	
 	@Test
 	public void getOne() {
-		val result = delegate.getOne(PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY);
+		val result = delegate.getOne(ApiVersion.V2, PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY);
 		assertNotNull(result);
 		assertSame(resource, result);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void getOne_nullRepo() {
-		delegate.getOne(null, ITEM_KEY, VIEW_KEY);
+		delegate.getOne(ApiVersion.V2, null, ITEM_KEY, VIEW_KEY);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void getOne_nullView() {
-		delegate.getOne(PAGING_REPO_KEY, null, VIEW_KEY);
+		delegate.getOne(ApiVersion.V2, PAGING_REPO_KEY, null, VIEW_KEY);
 	}
 	
 	@Test
 	public void getProperty_item() {
-		val result = delegate.getProperty(PAGING_REPO_KEY, ITEM_KEY, PAGING_ITEM_PROPERTY_KEY, VIEW_KEY);
+		val result = delegate.getProperty(ApiVersion.V2, PAGING_REPO_KEY, ITEM_KEY, PAGING_ITEM_PROPERTY_KEY, VIEW_KEY);
 		assertNotNull(result);
 	}
 	
 	@Test
 	public void getProperty_list() {
-		val result = delegate.getProperty(PAGING_REPO_KEY, ITEM_KEY, PAGING_LIST_PROPERTY_KEY, VIEW_KEY);
+		val result = delegate.getProperty(ApiVersion.V2, PAGING_REPO_KEY, ITEM_KEY, PAGING_LIST_PROPERTY_KEY, VIEW_KEY);
 		assertNotNull(result);
 	}
 	
 	@Test
 	public void postAll() {
-		delegate.postAll(Person.class, peResourceList, false);
-		verify(itemService).saveAll(Person.class, peResourceList, false);
+		delegate.postAll(Person.class, peResources, false);
+		verify(itemService).saveAll(Person.class, peResources, false);
 	}
 	
 	@Test

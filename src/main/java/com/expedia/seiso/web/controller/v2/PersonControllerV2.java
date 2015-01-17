@@ -34,6 +34,7 @@ import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.PersonRepo;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.hateoas.PagedResources;
@@ -68,7 +69,7 @@ import com.expedia.seiso.web.hateoas.PagedResources;
 public class PersonControllerV2 {
 	@Autowired private Repositories repositories;
 	@Autowired private ItemMetaLookup itemMetaLookup;
-	@Autowired private ResourceAssembler itemAssembler;
+	@Autowired private ResourceAssembler resourceAssembler;
 	
 	// Supports cleanup of stale person data
 	@RequestMapping(
@@ -88,6 +89,6 @@ public class PersonControllerV2 {
 		
 		val repo = (PersonRepo) repositories.getRepositoryFor(Person.class);
 		val personPage = repo.findBySource(source, pageable);
-		return itemAssembler.toUsernamePage(personPage, params);
+		return resourceAssembler.toUsernamePage(ApiVersion.V2, personPage, params);
 	}
 }

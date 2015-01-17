@@ -13,31 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.controller;
-
-import java.util.ArrayList;
-
-import lombok.ToString;
-
-import org.springframework.data.mapping.PersistentEntity;
-
-import com.expedia.seiso.domain.entity.Item;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package com.expedia.seiso.web.controller.internal;
 
 /**
  * @author Willie Wheeler
  */
-@ToString
-@SuppressWarnings("serial")
-public class PEResourceList extends ArrayList<Item> {
-	private final PersistentEntity<?, ?> persistentEntity;
+public interface ControllerInternalMarker {
 
-	public PEResourceList(PersistentEntity<?, ?> persistentEntity) {
-		this.persistentEntity = persistentEntity;
-	}
-
-	@JsonIgnore
-	public PersistentEntity<?, ?> getPersistentEntity() {
-		return persistentEntity;
-	}
 }

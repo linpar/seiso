@@ -17,32 +17,29 @@ package com.expedia.seiso.web.controller.delegate;
 
 import static org.springframework.util.Assert.notNull;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
-import com.expedia.seiso.web.Relations;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.PagedResources;
-import com.expedia.seiso.web.hateoas.link.LinkFactory;
+import com.expedia.seiso.web.hateoas.Resource;
 
 // TODO
 // - Handle list results
@@ -54,60 +51,24 @@ import com.expedia.seiso.web.hateoas.link.LinkFactory;
  * @author Willie Wheeler
  */
 @Component
+@RequiredArgsConstructor
 @XSlf4j
 public class RepoSearchDelegate {
-	@Autowired private Repositories repositories;
-	@Autowired private ItemMetaLookup itemMetaLookup;
-	@Autowired private ItemService itemService;
-	@Autowired private ResourceAssembler itemAssembler;
-	@Autowired @Qualifier("linkFactoryV2") private LinkFactory linkFactoryV2;
-	@Autowired private ConversionService conversionService;
+	@NonNull private ResourceAssembler resourceAssembler;
+	@Autowired @Setter private ItemMetaLookup itemMetaLookup;
+	@Autowired @Setter private Repositories repositories;
+	@Autowired @Setter private ItemService itemService;
+	@Autowired @Setter private ConversionService conversionService;
 	
-	/**
-	 * @param repoKey
-	 * @return
-	 */
-	public Resource getRepoSearchList(@NonNull String repoKey) {
-		val itemClass = itemMetaLookup.getItemClass(repoKey);
-		val repoInfo = repositories.getRepositoryInformationFor(itemClass);
-		val queryMethods = repoInfo.getQueryMethods();
-		
-		val itemLinksV2 = linkFactoryV2.getItemLinks();
-		val repoSearchLinksV2 = linkFactoryV2.getRepoSearchLinks();
-		
-		val resource = new Resource();
-		resource.addV2Link(repoSearchLinksV2.repoSearchListLink(Relations.SELF, itemClass));
-		resource.addV2Link(itemLinksV2.repoLink(Relations.UP, itemClass));
-		
-		// Query method links
-		for (val queryMethod : queryMethods) {
-			val restResource = AnnotationUtils.getAnnotation(queryMethod, RestResource.class);
-			if (restResource == null) { continue; }
-			
-			val path = restResource.path();
-			if (path.isEmpty()) { continue; }
-			
-			val requestParams = new LinkedMultiValueMap<String, String>();
-			val methodParams = queryMethod.getParameters();
-			for (val methodParam : methodParams) {
-				val paramAnn = methodParam.getAnnotation(Param.class);
-				if (paramAnn != null) {
-					val requestParamName = paramAnn.value();
-					// FIXME Formatting the URI template variables belongs with the xxxLinks objects, not here. [WLW]
-					requestParams.set(requestParamName, "{" + requestParamName + "}"); 
-				}
-			}
-			
-			val rel = "s:" + (restResource.rel().isEmpty() ? path : restResource.rel());
-			resource.addV2Link(repoSearchLinksV2.toRepoSearchLinkTemplate(rel, itemClass, path, requestParams));
-		}
-		
-		return resource;
+	public Resource getRepoSearchList(@NonNull ApiVersion apiVersion, @NonNull String repoKey) {
+		return resourceAssembler.toRepoSearchList(apiVersion, repoKey);
 	}
 	
 	/**
 	 * Search with paging results.
 	 * 
+	 * @param apiVersion
+	 *            API version
 	 * @param repoKey
 	 *            repository key
 	 * @param path
@@ -120,6 +81,7 @@ public class RepoSearchDelegate {
 	 */
 	@SuppressWarnings("rawtypes")
 	public PagedResources repoSearch(
+			@NonNull ApiVersion apiVersion,
 			@NonNull String repoKey,
 			@NonNull String path,
 			@NonNull String view,
@@ -130,7 +92,7 @@ public class RepoSearchDelegate {
 		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
 		val itemPage = repoSearch(itemClass, path, pageable, params);
 		val proj = itemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
-		return itemAssembler.toRepoSearchResource(itemPage, itemClass, path, params, proj);
+		return resourceAssembler.toRepoSearchResource(apiVersion, itemPage, itemClass, path, params, proj);
 	}
 	
 	// FIXME Some of this belongs in ItemServiceImpl.

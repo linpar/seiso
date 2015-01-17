@@ -37,9 +37,10 @@ import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.SaveAllResponse;
-import com.expedia.seiso.web.controller.PEResource;
-import com.expedia.seiso.web.controller.PEResourceList;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.seiso.web.hateoas.PEResource;
+import com.expedia.seiso.web.hateoas.PEResources;
 import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.Resources;
@@ -65,7 +66,7 @@ public class ItemControllerV1Tests {
 	// Test data - requests
 	@Mock private Pageable pageable;
 	@Mock private MultiValueMap<String, String> params;
-	@Mock private PEResourceList peResourceList;
+	@Mock private PEResources peResourceList;
 	@Mock private PEResource peResource;
 	@Mock private Item item;
 	
@@ -90,10 +91,14 @@ public class ItemControllerV1Tests {
 	private void initDependencies() {
 		when(itemMetaLookup.getItemClass(anyString())).thenReturn(Service.class);
 		
-		when(delegate.getAll(eq(CRUD_REPO_KEY), anyString(), eq(pageable), eq(params))).thenReturn(resources);
-		when(delegate.getAll(eq(PAGING_REPO_KEY), anyString(), eq(pageable), eq(params))).thenReturn(pagedResources);
-		when(delegate.getOne(anyString(), anyString(), anyString())).thenReturn(resource);
-		when(delegate.getProperty(CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY)).thenReturn(resource);
+		when(delegate.getAll(eq(ApiVersion.V1), eq(CRUD_REPO_KEY), anyString(), eq(pageable), eq(params)))
+				.thenReturn(resources);
+		when(delegate.getAll(eq(ApiVersion.V1), eq(PAGING_REPO_KEY), anyString(), eq(pageable), eq(params)))
+				.thenReturn(pagedResources);
+		when(delegate.getOne(eq(ApiVersion.V1), anyString(), anyString(), anyString()))
+				.thenReturn(resource);
+		when(delegate.getProperty(ApiVersion.V1, CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY))
+				.thenReturn(resource);
 		when(delegate.postAll(Service.class, peResourceList, true)).thenReturn(saveAllResponse);
 	}
 	
@@ -101,14 +106,14 @@ public class ItemControllerV1Tests {
 	public void getAll_crudRepo() {
 		val result = controller.getAll(CRUD_REPO_KEY, VIEW_KEY, pageable, params);
 		assertNotNull(result);
-		verify(delegate).getAll(CRUD_REPO_KEY, VIEW_KEY, pageable, params);
+		verify(delegate).getAll(ApiVersion.V1, CRUD_REPO_KEY, VIEW_KEY, pageable, params);
 	}
 	
 	@Test
 	public void getAll_pagingRepo() {
 		val result = controller.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
 		assertNotNull(result);
-		verify(delegate).getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
+		verify(delegate).getAll(ApiVersion.V1, PAGING_REPO_KEY, VIEW_KEY, pageable, params);
 	}
 	
 	@Test
@@ -116,7 +121,7 @@ public class ItemControllerV1Tests {
 		val result = controller.getOne(CRUD_REPO_KEY, ITEM_KEY, VIEW_KEY);
 		assertNotNull(result);
 		assertSame(resource, result);
-		verify(delegate).getOne(CRUD_REPO_KEY, ITEM_KEY, VIEW_KEY);
+		verify(delegate).getOne(ApiVersion.V1, CRUD_REPO_KEY, ITEM_KEY, VIEW_KEY);
 		
 	}
 	
@@ -124,7 +129,7 @@ public class ItemControllerV1Tests {
 	public void getProperty() {
 		val result = controller.getProperty(CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY);
 		assertNotNull(result);
-		verify(delegate).getProperty(CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY);
+		verify(delegate).getProperty(ApiVersion.V1, CRUD_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY);
 	}
 	
 	@Test

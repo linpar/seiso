@@ -29,6 +29,7 @@ import org.springframework.data.mapping.model.BeanWrapper;
 
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.link.ItemLinks;
 
@@ -39,7 +40,8 @@ import com.expedia.seiso.web.hateoas.link.ItemLinks;
 @XSlf4j
 public class ItemAssociationHandler implements SimpleAssociationHandler {
 	@NonNull private final ResourceAssembler assembler;
-	@NonNull private final ItemLinks itemLinksV2;
+	@NonNull private final ItemLinks itemLinks;
+	@NonNull private final ApiVersion apiVersion;
 	@NonNull private final ProjectionNode projection;
 	@NonNull private final BeanWrapper<? extends Item> wrapper;
 	@NonNull private final Resource resource;
@@ -57,17 +59,17 @@ public class ItemAssociationHandler implements SimpleAssociationHandler {
 		// Link
 		val restResource = prop.findAnnotation(RestResource.class);
 		val path = (restResource == null ? propName : restResource.path());
-		resource.addV2Link(itemLinksV2.itemPropertyLink(item, path));
+		resource.addLink(itemLinks.itemPropertyLink(item, path));
 		
 		// Property
 		if (child != null) {
 			if (Item.class.isAssignableFrom(propType)) {
 				val propEntity = (Item) wrapper.getProperty(prop);
-				val propBaseResource = assembler.toResource(propEntity, child, false);
+				val propBaseResource = assembler.toResource(apiVersion, propEntity, child, false);
 				resource.setAssociation(propName, propBaseResource);
 			} else if (List.class.isAssignableFrom(propType)) {
 				val propEntityList = (List<?>) wrapper.getProperty(prop);
-				val propResourceList = assembler.toResourceList(propEntityList, child);
+				val propResourceList = assembler.toResourceList(apiVersion, propEntityList, child);
 				resource.setAssociation(propName, propResourceList);
 			} else {
 				log.warn("Don't know how to handle association type {}", propType);

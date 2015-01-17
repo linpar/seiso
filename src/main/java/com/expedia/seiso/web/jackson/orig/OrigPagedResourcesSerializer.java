@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.jackson.v1;
+package com.expedia.seiso.web.jackson.orig;
 
 import java.io.IOException;
 
@@ -31,10 +31,10 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  * @author Willie Wheeler
  */
 @Component
-public class V1PagedResourcesSerializer extends StdSerializer<PagedResources> {
-	private V1ResourceAssembler assembler;
+public class OrigPagedResourcesSerializer extends StdSerializer<PagedResources> {
+	private OrigResourceAssembler assembler;
 	
-	public V1PagedResourcesSerializer(@NonNull V1ResourceAssembler assembler) {
+	public OrigPagedResourcesSerializer(@NonNull OrigResourceAssembler assembler) {
 		super(PagedResources.class, false);
 		this.assembler = assembler;
 	}
@@ -43,6 +43,6 @@ public class V1PagedResourcesSerializer extends StdSerializer<PagedResources> {
 	public void serialize(PagedResources pagedResources, JsonGenerator jgen, SerializerProvider provider)
 			throws IOException, JsonGenerationException {
 		
-		jgen.writeObject(assembler.toV1PagedResources(pagedResources));
+		jgen.writeObject(assembler.toOrigPagedResources(pagedResources));
 	}
 }

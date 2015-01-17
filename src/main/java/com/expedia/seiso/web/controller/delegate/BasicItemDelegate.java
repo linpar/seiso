@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
@@ -37,10 +39,12 @@ import com.expedia.seiso.domain.meta.DynaItem;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SaveAllResponse;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.seiso.web.controller.PEResourceList;
+import com.expedia.seiso.web.hateoas.PEResources;
 import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 
 /**
  * Handles basic REST requests, such as getting, putting and deleting items. This exists as a delegate object so we can
@@ -49,11 +53,12 @@ import com.expedia.seiso.web.hateoas.Resource;
  * @author Willie Wheeler
  */
 @Component
+@RequiredArgsConstructor
 @XSlf4j
 public class BasicItemDelegate {
-	@Autowired private ItemMetaLookup itemMetaLookup;
-	@Autowired private ItemService itemService;
-	@Autowired private ResourceAssembler itemAssembler;
+	@NonNull private ResourceAssembler resourceAssembler;
+	@Autowired @Setter private ItemMetaLookup itemMetaLookup;
+	@Autowired @Setter private ItemService itemService;
 	
 	/**
 	 * Returns a {@link Resources} or {@link PagedResources}, depending on the repo type.
@@ -66,9 +71,10 @@ public class BasicItemDelegate {
 	 *            page request parameters
 	 * @param params
 	 *            all HTTP parameters
-	 * @return page of items
+	 * @return {@link Resources} or {@link PagedResources}, depending on the repo type
 	 */
 	public Object getAll(
+			@NonNull ApiVersion apiVersion,
 			@NonNull String repoKey,
 			@NonNull String view,
 			Pageable pageable,
@@ -79,16 +85,18 @@ public class BasicItemDelegate {
 		val proj = itemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
 		if (itemMeta.isPagingRepo()) {
 			val itemPage = itemService.findAll(itemClass, pageable);
-			return itemAssembler.toPagedResources(itemClass, itemPage, proj, params);
+			return resourceAssembler.toPagedResources(apiVersion, itemClass, itemPage, proj, params);
 		} else {
 			val itemList = itemService.findAll(itemClass);
-			return itemAssembler.toResources(itemClass, itemList, proj);
+			return resourceAssembler.toResources(apiVersion, itemClass, itemList, proj);
 		}
 	}
 	
 	/**
 	 * Returns a single item.
 	 * 
+	 * @param apiVersion
+	 *            API version
 	 * @param repoKey
 	 *            repository key
 	 * @param itemKey
@@ -100,28 +108,31 @@ public class BasicItemDelegate {
 	 * @return a single item
 	 */
 	public Resource getOne(
+			@NonNull ApiVersion apiVersion,
 			@NonNull String repoKey,
 			@NonNull String itemKey,
 			String view) {
 		
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
-		return getOne(new SimpleItemKey(itemClass, itemKey), view);
+		return getOne(apiVersion, new SimpleItemKey(itemClass, itemKey), view);
 	}
 	
-	public Resource getOne(@NonNull ItemKey itemKey) {
-		return getOne(itemKey, Projection.DEFAULT);
+	public Resource getOne(@NonNull ApiVersion apiVersion, @NonNull ItemKey itemKey) {
+		return getOne(apiVersion, itemKey, Projection.DEFAULT);
 	}
 	
-	public Resource getOne(@NonNull ItemKey itemKey, String view) {
+	public Resource getOne(@NonNull ApiVersion apiVersion, @NonNull ItemKey itemKey, String view) {
 		val item = itemService.find(itemKey);
 		val itemMeta = itemMetaLookup.getItemMeta(item.getClass());
 		val proj = itemMeta.getProjectionNode(Projection.Cardinality.SINGLE, view);
-		return itemAssembler.toResource(item, proj, true);
+		return resourceAssembler.toResource(apiVersion, item, proj, true);
 	}
 	
 	/**
 	 * Returns an item property value.
 	 * 
+	 * @param apiVersion
+	 *            API version
 	 * @param repoKey
 	 *            repository key
 	 * @param itemKey
@@ -134,6 +145,7 @@ public class BasicItemDelegate {
 	 *         property value type
 	 */
 	public Object getProperty(
+			@NonNull ApiVersion apiVersion,
 			@NonNull String repoKey,
 			@NonNull String itemKey,
 			@NonNull String propKey,
@@ -152,9 +164,9 @@ public class BasicItemDelegate {
 		val propDesc = BeanUtils.getPropertyDescriptor(itemClass, propName);
 		val propClass = propDesc.getPropertyType();
 		if (Item.class.isAssignableFrom(propClass)) {
-			return getItemProperty((Item) propValue, view);
+			return getItemProperty(apiVersion, (Item) propValue, view);
 		} else if (List.class.isAssignableFrom(propClass)) {
-			return getListProperty((List<?>) propValue, view);
+			return getListProperty(apiVersion, (List<?>) propValue, view);
 		} else {
 			String msg = "Resource assembly for type " + propClass.getName() + " not supported";
 			throw new UnsupportedOperationException(msg);
@@ -167,7 +179,7 @@ public class BasicItemDelegate {
 	
 	public SaveAllResponse postAll(
 			@NonNull Class<?> itemClass,
-			@NonNull PEResourceList peResourceList,
+			@NonNull PEResources peResourceList,
 			boolean mergeAssociations) {
 		
 		// FIXME The SaveAllResponse contains a SaveAllError, which in turn contains an Item. If the Item has a cycle,
@@ -232,15 +244,15 @@ public class BasicItemDelegate {
 		itemService.delete(itemKey);
 	}
 	
-	private Object getItemProperty(Item itemPropValue, String view) {
+	private Object getItemProperty(ApiVersion apiVersion, Item itemPropValue, String view) {
 		if (itemPropValue == null) { return null; }
 		val propClass = itemPropValue.getClass();
 		val propMeta = itemMetaLookup.getItemMeta(propClass);
 		val proj = propMeta.getProjectionNode(Projection.Cardinality.SINGLE, view);
-		return itemAssembler.toResource(itemPropValue, proj);
+		return resourceAssembler.toResource(apiVersion, itemPropValue, proj);
 	}
 	
-	private Object getListProperty(List<?> listPropValue, String view) {
+	private Object getListProperty(ApiVersion apiVersion, List<?> listPropValue, String view) {
 		if (listPropValue == null) { return null; }
 
 		// Not sure I'm happy with this approach. Would it make more sense to require collection properties to declare
@@ -250,6 +262,6 @@ public class BasicItemDelegate {
 		val elemClass = CollectionUtils.findCommonElementType(listPropValue);
 		val elemMeta = itemMetaLookup.getItemMeta(elemClass);
 		val proj = elemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
-		return itemAssembler.toResourceList(listPropValue, proj);
+		return resourceAssembler.toResourceList(apiVersion, listPropValue, proj);
 	}
 }

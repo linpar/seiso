@@ -22,29 +22,37 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.mapping.model.BeanWrapper;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
+import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.Person;
+import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.SearchResults;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.Relations;
 import com.expedia.seiso.web.hateoas.Link;
 import com.expedia.seiso.web.hateoas.PageMetadata;
 import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.Resources;
+import com.expedia.seiso.web.hateoas.link.ItemLinks;
 import com.expedia.seiso.web.hateoas.link.LinkFactory;
+import com.expedia.seiso.web.hateoas.link.RepoSearchLinks;
 
 /**
  * Assembles items into resources, which include links (in support of the REST HATEOAS principle). Subsequent
@@ -53,9 +61,11 @@ import com.expedia.seiso.web.hateoas.link.LinkFactory;
  * @author Willie Wheeler
  */
 @Component
+@RequiredArgsConstructor
 public class ResourceAssembler {
 	private static final MultiValueMap<String, String> EMPTY_PARAMS = new LinkedMultiValueMap<String, String>();
 	
+	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private Repositories repositories;
 	@Autowired @Qualifier("linkFactoryV1") private LinkFactory linkFactoryV1;
 	@Autowired @Qualifier("linkFactoryV2") private LinkFactory linkFactoryV2;
@@ -65,18 +75,27 @@ public class ResourceAssembler {
 	// CRUD repo resources
 	// =================================================================================================================
 	
+	/**
+	 * @param apiVersion
+	 * @param itemClass
+	 * @param itemList
+	 * @param proj
+	 * @return
+	 */
 	public Resources toResources(
+			@NonNull ApiVersion apiVersion,
 			@NonNull Class<?> itemClass,
 			List<?> itemList,
 			ProjectionNode proj) {
 		
 		if (itemList == null) { return null; }
 		
-		val links = toRepoListLinksV2(itemClass, itemList);
+		val links = toRepoListLinks(apiVersion, itemClass, itemList);
+		
 		val resourceList = new ArrayList<Resource>();
 		for (val item : itemList) {
 			// Don't pass params from the collection view to the single view.
-			resourceList.add(toResource((Item) item, proj, false));
+			resourceList.add(toResource(apiVersion, (Item) item, proj, false));
 		}
 		
 		return new Resources(links, resourceList);
@@ -87,11 +106,32 @@ public class ResourceAssembler {
 	// Paging repo resources
 	// =================================================================================================================
 	
-	public PagedResources toPagedResources(@NonNull Class<?> itemClass, Page<?> itemPage, ProjectionNode proj) {
-		return toPagedResources(itemClass, itemPage, proj, EMPTY_PARAMS);
+	/**
+	 * @param apiVersion
+	 * @param itemClass
+	 * @param itemPage
+	 * @param proj
+	 * @return
+	 */
+	public PagedResources toPagedResources(
+			@NonNull ApiVersion apiVersion,
+			@NonNull Class<?> itemClass,
+			Page<?> itemPage,
+			ProjectionNode proj) {
+		
+		return toPagedResources(apiVersion, itemClass, itemPage, proj, EMPTY_PARAMS);
 	}
 	
+	/**
+	 * @param apiVersion
+	 * @param itemClass
+	 * @param itemPage
+	 * @param proj
+	 * @param params
+	 * @return
+	 */
 	public PagedResources toPagedResources(
+			@NonNull ApiVersion apiVersion,
 			@NonNull Class<?> itemClass,
 			Page<?> itemPage,
 			ProjectionNode proj,
@@ -99,9 +139,9 @@ public class ResourceAssembler {
 		
 		if (itemPage == null) { return null; }
 		
-		val links = toRepoPageLinksV2(itemClass, itemPage, params);
+		val links = toRepoPageLinks(apiVersion, itemClass, itemPage, params);
 		val pageMeta = toPageMetadata(itemPage);
-		val items = toResourceList(itemPage.getContent(), proj);
+		val items = toResourceList(apiVersion, itemPage.getContent(), proj);
 		return new PagedResources(links, pageMeta, items);
 	}
 	
@@ -110,19 +150,40 @@ public class ResourceAssembler {
 	// Bare resources
 	// =================================================================================================================
 	
-	public List<Resource> toResourceList(List<?> itemList, ProjectionNode proj) {
+	/**
+	 * @param apiVersion
+	 * @param itemList
+	 * @param proj
+	 * @return
+	 */
+	public List<Resource> toResourceList(@NonNull ApiVersion apiVersion, List<?> itemList, ProjectionNode proj) {
 		if (itemList == null) { return null; }
 		val resourceList = new ArrayList<Resource>();
 		for (val item : itemList) {
 			// Don't pass params from the collection view to the single view.
-			resourceList.add(toResource((Item) item, proj, false));
+			resourceList.add(toResource(apiVersion, (Item) item, proj, false));
 		}
 		return resourceList;
 	}
 	
-	public Resource toResource(Item item, ProjectionNode proj) { return toResource(item, proj, false); }
+	/**
+	 * @param apiVersion
+	 * @param item
+	 * @param proj
+	 * @return
+	 */
+	public Resource toResource(@NonNull ApiVersion apiVersion, Item item, ProjectionNode proj) {
+		return toResource(apiVersion, item, proj, false);
+	}
 	
-	public Resource toResource(Item item, ProjectionNode proj, boolean includeCuries) {
+	/**
+	 * @param apiVersion
+	 * @param item
+	 * @param proj
+	 * @param includeCuries
+	 * @return
+	 */
+	public Resource toResource(@NonNull ApiVersion apiVersion, Item item, ProjectionNode proj, boolean includeCuries) {
 		if (item == null) { return null; }
 		
 		val itemClass = item.getClass();
@@ -130,14 +191,15 @@ public class ResourceAssembler {
 		val pEntity = repositories.getPersistentEntity(item.getClass());
 		val itemWrapper = BeanWrapper.create(item, null);
 		
-		val itemLinksV1 = linkFactoryV1.getItemLinks();
-		val itemLinksV2 = linkFactoryV2.getItemLinks();
+		resource.addLink(itemLinks(apiVersion).itemLink(item));
+		resource.addLink(itemLinks(apiVersion).repoLink(Relations.UP, itemClass));
 		
-		resource.addV1Link(itemLinksV1.itemLink(item));
-		resource.addV2Link(itemLinksV2.itemLink(item));
-		resource.addV2Link(itemLinksV2.repoLink(Relations.UP, itemClass));
-		pEntity.doWithProperties(new ItemPropertyHandler(itemWrapper, resource.getProperties()));
-		pEntity.doWithAssociations(new ItemAssociationHandler(this, itemLinksV2, proj, itemWrapper, resource));
+		val propHandler = new ItemPropertyHandler(itemWrapper, resource.getProperties());
+		val assocHandler =
+				new ItemAssociationHandler(this, itemLinks(apiVersion), apiVersion, proj, itemWrapper, resource);
+		
+		pEntity.doWithProperties(propHandler);
+		pEntity.doWithAssociations(assocHandler);
 		doSpecialNonPersistentAssociations(item, resource.getAssociations());
 		
 		return resource;
@@ -149,8 +211,52 @@ public class ResourceAssembler {
 	// =================================================================================================================
 	
 	/**
+	 * @param apiVersion
+	 *            API version
+	 * @param repoKey
+	 * @return
+	 */
+	public Resource toRepoSearchList(@NonNull ApiVersion apiVersion, @NonNull String repoKey) {
+		val itemClass = itemMetaLookup.getItemClass(repoKey);
+		val repoInfo = repositories.getRepositoryInformationFor(itemClass);
+		val queryMethods = repoInfo.getQueryMethods();
+		
+		val resource = new Resource();
+		resource.addLink(repoSearchLinks(apiVersion).repoSearchListLink(Relations.SELF, itemClass));
+		resource.addLink(itemLinks(apiVersion).repoLink(Relations.UP, itemClass));
+		
+		// Query method links
+		for (val queryMethod : queryMethods) {
+			val restResource = AnnotationUtils.getAnnotation(queryMethod, RestResource.class);
+			if (restResource == null) { continue; }
+			
+			val path = restResource.path();
+			if (path.isEmpty()) { continue; }
+			
+			val requestParams = new LinkedMultiValueMap<String, String>();
+			val methodParams = queryMethod.getParameters();
+			for (val methodParam : methodParams) {
+				val paramAnn = methodParam.getAnnotation(Param.class);
+				if (paramAnn != null) {
+					val requestParamName = paramAnn.value();
+					// FIXME Formatting the URI template variables belongs with the xxxLinks objects, not here. [WLW]
+					requestParams.set(requestParamName, "{" + requestParamName + "}"); 
+				}
+			}
+			
+			val rel = "s:" + (restResource.rel().isEmpty() ? path : restResource.rel());
+			val link = repoSearchLinks(apiVersion).toRepoSearchLinkTemplate(rel, itemClass, path, requestParams);
+			resource.addLink(link);
+		}
+		
+		return resource;
+	}
+	
+	/**
 	 * Assembles a resource page from a repo search result page.
 	 * 
+	 * @param apiVersion
+	 *            API version
 	 * @param resultPage
 	 *            Search result page
 	 * @param itemClass
@@ -165,17 +271,17 @@ public class ResourceAssembler {
 	 * @return Repository search result resource page
 	 */
 	public PagedResources toRepoSearchResource(
+			@NonNull ApiVersion apiVersion,
 			@NonNull Page resultPage,
 			@NonNull Class itemClass,
 			@NonNull String path,
 			@NonNull MultiValueMap<String, String> params,
 			@NonNull ProjectionNode proj) {
 		
-		val repoSearchLinksV2 = linkFactoryV2.getRepoSearchLinks();
-		val links = toRepoSearchLinksV2(resultPage, itemClass, path, params);
+		val links = toRepoSearchLinks(apiVersion, resultPage, itemClass, path, params);
 		val pageMeta = toPageMetadata(resultPage);
 		val itemList = resultPage.getContent();
-		val itemResourceList = toResourceList(itemList, proj);
+		val itemResourceList = toResourceList(apiVersion, itemList, proj);
 		return new PagedResources(links, pageMeta, itemResourceList);
 	}
 	
@@ -187,11 +293,13 @@ public class ResourceAssembler {
 	/**
 	 * Assembles a resource from a global search result set.
 	 * 
+	 * @param apiVersion
+	 *            API version
 	 * @param results
 	 *            Global search result set
 	 * @return Resource for the result set
 	 */
-	public Resource toGlobalSearchResource(@NonNull SearchResults results) {
+	public Resource toGlobalSearchResource(@NonNull ApiVersion apiVersion, @NonNull SearchResults results) {
 		val resultsResource = new Resource();
 		val itemClasses = results.getItemClasses();
 		for (val itemClass : itemClasses) {
@@ -199,7 +307,8 @@ public class ResourceAssembler {
 			val typedSerp = results.getTypedSerp(itemClass);
 			
 			// TODO Not sure we want flat projection here. Shouldn't we do the default collection projection?
-			val typedSerpResourceList = toResourceList(typedSerp.getContent(), ProjectionNode.FLAT_PROJECTION_NODE);
+			val typedSerpResourceList =
+					toResourceList(apiVersion, typedSerp.getContent(), ProjectionNode.FLAT_PROJECTION_NODE);
 			
 			resultsResource.setProperty(propName, typedSerpResourceList);
 		}
@@ -213,9 +322,13 @@ public class ResourceAssembler {
 	
 	// TODO Generalize
 	@Deprecated
-	public PagedResources toUsernamePage(Page<Person> personPage, MultiValueMap<String, String> params) {
+	public PagedResources toUsernamePage(
+			ApiVersion apiVersion,
+			Page<Person> personPage,
+			MultiValueMap<String, String> params) {
+		
 		if (personPage == null) { return null; }
-		val links = toRepoPageLinksV2(Person.class, personPage, params);
+		val links = toRepoPageLinks(apiVersion, Person.class, personPage, params);
 		val pageMeta = toPageMetadata(personPage);
 		val usernames = toUsernameList(personPage.getContent());
 		return new PagedResources(links, pageMeta, usernames);
@@ -241,17 +354,37 @@ public class ResourceAssembler {
 	// Private
 	// =================================================================================================================
 	
-	private List<Link> toRepoListLinksV2(Class<?> itemClass, List<?> itemList) {
-		val itemLinksV2 = linkFactoryV2.getItemLinks();
-		val repoSearchLinksV2 = linkFactoryV2.getRepoSearchLinks();
-		
+	private ItemLinks itemLinks(ApiVersion apiVersion) {
+		switch (apiVersion) {
+		case V1:
+			return linkFactoryV1.getItemLinks();
+		case V2:
+			return linkFactoryV2.getItemLinks();
+		default:
+			throw new IllegalArgumentException("Illegal API version: " + apiVersion);
+		}
+	}
+	
+	private RepoSearchLinks repoSearchLinks(ApiVersion apiVersion) {
+		switch (apiVersion) {
+		case V1:
+			return linkFactoryV1.getRepoSearchLinks();
+		case V2:
+			return linkFactoryV2.getRepoSearchLinks();
+		default:
+			throw new IllegalArgumentException("Illegal API version: " + apiVersion);
+		}
+	}
+	
+	private List<Link> toRepoListLinks(ApiVersion apiVersion, Class<?> itemClass, List<?> itemList) {
 		val links = new ArrayList<Link>();
-		links.add(itemLinksV2.repoLink(itemClass, EMPTY_PARAMS));
-		links.add(repoSearchLinksV2.repoSearchListLink(Relations.S_SEARCH, itemClass));
+		links.add(itemLinks(apiVersion).repoLink(itemClass, EMPTY_PARAMS));
+		links.add(repoSearchLinks(apiVersion).repoSearchListLink(Relations.S_SEARCH, itemClass));
 		return links;
 	}
 	
-	private List<Link> toRepoPageLinksV2(
+	private List<Link> toRepoPageLinks(
+			ApiVersion apiVersion,
 			Class<?> itemClass,
 			Page<?> itemPage,
 			MultiValueMap<String, String> params) {
@@ -262,38 +395,35 @@ public class ResourceAssembler {
 		val firstPageNumber = 0;
 		val lastPageNumber = totalPages - 1;
 		
-		val itemLinksV2 = linkFactoryV2.getItemLinks();
-		val repoSearchLinksV2 = linkFactoryV2.getRepoSearchLinks();
-		
 		val links = new ArrayList<Link>();
-		links.add(itemLinksV2.repoLink(itemClass, params));
+		links.add(itemLinks(apiVersion).repoLink(itemClass, params));
 		
 		// Pagination links
 		if (totalPages > 0) {
-			links.add(itemLinksV2.repoFirstLink(itemClass, itemPage, params));
+			links.add(itemLinks(apiVersion).repoFirstLink(itemClass, itemPage, params));
 		}
 		if (pageNumber > 0 && pageNumber <= lastPageNumber) {
-			links.add(itemLinksV2.repoPrevLink(itemClass, itemPage, params));
+			links.add(itemLinks(apiVersion).repoPrevLink(itemClass, itemPage, params));
 		}
 		if (pageNumber >= firstPageNumber && pageNumber < lastPageNumber) {
-			links.add(itemLinksV2.repoNextLink(itemClass, itemPage, params));
+			links.add(itemLinks(apiVersion).repoNextLink(itemClass, itemPage, params));
 		}
 		if (totalPages > 0) {
-			links.add(itemLinksV2.repoLastLink(itemClass, itemPage, params));
+			links.add(itemLinks(apiVersion).repoLastLink(itemClass, itemPage, params));
 		}
 		
-		links.add(repoSearchLinksV2.repoSearchListLink(Relations.S_SEARCH, itemClass));
+		links.add(repoSearchLinks(apiVersion).repoSearchListLink(Relations.S_SEARCH, itemClass));
 		return links;
 	}
 	
-	private List<Link> toRepoSearchLinksV2(
+	private List<Link> toRepoSearchLinks(
+			ApiVersion apiVersion,
 			Page resultPage,
 			Class itemClass,
 			String path,
 			MultiValueMap<String, String> params) {
 		
-		val repoSearchLinks = linkFactoryV2.getRepoSearchLinks();
-		val linkBuilder = repoSearchLinks.toPaginationLinkBuilder(resultPage, itemClass, path, params);
+		val linkBuilder = repoSearchLinks(apiVersion).toPaginationLinkBuilder(resultPage, itemClass, path, params);
 		val firstLink = linkBuilder.buildFirstLink();
 		val prevLink = linkBuilder.buildPreviousLink();
 		val nextLink = linkBuilder.buildNextLink();
@@ -301,7 +431,7 @@ public class ResourceAssembler {
 		
 		val links = new LinkedList<Link>();
 		links.add(linkBuilder.buildSelfLink());
-		links.add(repoSearchLinks.repoSearchListLink(Relations.UP, itemClass));
+		links.add(repoSearchLinks(apiVersion).repoSearchListLink(Relations.UP, itemClass));
 		if (firstLink != null) { links.add(firstLink); }
 		if (prevLink != null) { links.add(prevLink); }
 		if (nextLink != null) { links.add(nextLink); }

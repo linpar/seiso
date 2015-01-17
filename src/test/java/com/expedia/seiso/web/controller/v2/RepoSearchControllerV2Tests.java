@@ -39,6 +39,7 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.LoadBalancerRepo;
 import com.expedia.seiso.domain.repo.PersonRepo;
 import com.expedia.seiso.domain.repo.ServiceRepo;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.hateoas.Resource;
@@ -109,9 +110,10 @@ public class RepoSearchControllerV2Tests {
 		when(itemMetaLookup.getItemClass(PAGING_REPO_KEY)).thenReturn(PAGING_ITEM_CLASS);
 		when(itemMetaLookup.getItemMeta(PAGING_ITEM_CLASS)).thenReturn(pagingItemMeta);
 		
-		when(delegate.getRepoSearchList(PAGING_REPO_KEY)).thenReturn(searchListResource);
+		when(delegate.getRepoSearchList(ApiVersion.V2, PAGING_REPO_KEY))
+				.thenReturn(searchListResource);
 		
-		when(delegate.repoSearch(PAGING_REPO_KEY, SEARCH, VIEW_KEY, pageable, params))
+		when(delegate.repoSearch(ApiVersion.V2, PAGING_REPO_KEY, SEARCH, VIEW_KEY, pageable, params))
 				.thenReturn(searchResultResourcePage);
 	}
 	
@@ -128,6 +130,6 @@ public class RepoSearchControllerV2Tests {
 		assertNotNull(result);
 		assertTrue(result instanceof PagedResources);
 		assertSame(searchResultResourcePage, result);
-		verify(delegate).repoSearch(PAGING_REPO_KEY, SEARCH, VIEW_KEY, pageable, params);
+		verify(delegate).repoSearch(ApiVersion.V2, PAGING_REPO_KEY, SEARCH, VIEW_KEY, pageable, params);
 	}
 }

@@ -61,7 +61,7 @@ public class HalResourceAssembler {
 	
 	public HalResource toHalResource(@NonNull Resource resource, boolean topLevel) {
 		val halResource = new HalResource();
-		halResource.setLinks(toHalLinks(resource.getV2Links(), topLevel));
+		halResource.setLinks(toHalLinks(resource.getLinks(), topLevel));
 		
 		// State
 		val state = new TreeMap<String, Object>();

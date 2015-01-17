@@ -32,6 +32,7 @@ import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.hateoas.Resource;
@@ -51,7 +52,7 @@ public class RepoSearchControllerV2 {
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	public Resource getRepoSearchList(@PathVariable String repoKey) {
-		return delegate.getRepoSearchList(repoKey);
+		return delegate.getRepoSearchList(ApiVersion.V2, repoKey);
 	}
 	
 	/**
@@ -89,7 +90,7 @@ public class RepoSearchControllerV2 {
 		if (Item.class.isAssignableFrom(resultType)) {
 			throw new UnsupportedOperationException("Repo search with unique result not yet supported");
 		} else if (itemMeta.isPagingRepo()) {
-			return delegate.repoSearch(repoKey, search, view, pageable, params);
+			return delegate.repoSearch(ApiVersion.V2, repoKey, search, view, pageable, params);
 		} else {
 			throw new UnsupportedOperationException("Repo search with list results not yet supported");
 		}

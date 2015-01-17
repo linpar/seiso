@@ -16,260 +16,136 @@
 package com.expedia.seiso;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.expedia.seiso.SeisoWebConfigBeans.ArgResolverConfig;
-import com.expedia.seiso.SeisoWebConfigBeans.AssemblyConfig;
-import com.expedia.seiso.SeisoWebConfigBeans.ControllerConfig;
-import com.expedia.seiso.SeisoWebConfigBeans.HateoasConfig;
-import com.expedia.seiso.SeisoWebConfigBeans.HttpMessageConverterConfig;
 import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.entity.IpAddressRole;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.RepoKeys;
-import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.controller.ExceptionHandlerAdvice;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
-import com.expedia.seiso.web.controller.internal.GlobalSearchController;
-import com.expedia.seiso.web.controller.v1.IpAddressRoleControllerV1;
-import com.expedia.seiso.web.controller.v1.ItemControllerV1;
-import com.expedia.seiso.web.controller.v1.NodeControllerV1;
-import com.expedia.seiso.web.controller.v1.NodeIpAddressControllerV1;
-import com.expedia.seiso.web.controller.v1.RepoSearchControllerV1;
-import com.expedia.seiso.web.controller.v1.ResponseHeadersV1;
-import com.expedia.seiso.web.controller.v1.ServiceInstancePortControllerV1;
-import com.expedia.seiso.web.controller.v2.ItemControllerV2;
-import com.expedia.seiso.web.controller.v2.PersonControllerV2;
-import com.expedia.seiso.web.controller.v2.RepoSearchControllerV2;
-import com.expedia.seiso.web.converter.UriToItemKeyConverter;
+import com.expedia.seiso.web.controller.internal.ControllerInternalMarker;
 import com.expedia.seiso.web.hateoas.link.ItemPaths;
 import com.expedia.seiso.web.hateoas.link.LinkFactory;
-import com.expedia.seiso.web.httpmessageconverter.ItemKeyHttpMessageConverter;
-import com.expedia.seiso.web.jackson.hal.HalMapper;
-import com.expedia.seiso.web.jackson.v1.V1Mapper;
-import com.expedia.seiso.web.jackson.v1.V1Module;
-import com.expedia.seiso.web.jackson.v1.V1PagedResourcesSerializer;
-import com.expedia.seiso.web.jackson.v1.V1ResourceAssembler;
-import com.expedia.seiso.web.jackson.v1.V1ResourceSerializer;
-import com.expedia.seiso.web.jackson.v1.V1ResourcesSerializer;
-import com.expedia.seiso.web.resolver.PEResourceListResolver;
 import com.expedia.seiso.web.resolver.PEResourceResolver;
+import com.expedia.seiso.web.resolver.PEResourcesResolver;
 import com.expedia.seiso.web.resolver.ResolverUtils;
 import com.expedia.seiso.web.resolver.SimplePropertyEntry;
 
 /**
+ * Web configuration beans common to both v1 and v2.
+ * 
  * @author Willie Wheeler
  */
 @Configuration
-@Import({
-	ArgResolverConfig.class,
-	HttpMessageConverterConfig.class,
-	HateoasConfig.class,
-	AssemblyConfig.class,
-	ControllerConfig.class
-})
+@ComponentScan(basePackageClasses = ControllerInternalMarker.class)
 public class SeisoWebConfigBeans {
 	@Autowired private CustomProperties customProperties;
 	@Autowired private ItemMetaLookup itemMetaLookup;
+	@Autowired private Repositories repositories;
 	
 	@Bean
-	public UriToItemKeyConverter uriToItemKeyConverter() {
-		val versionUri = customProperties.getBaseUri() + "/v2";
-		return new UriToItemKeyConverter(versionUri, itemMetaLookup);
+	public PEResourceResolver peResourceResolver() {
+		// FIXME DRY up. See com.expedia.seiso.web.converter, which repeats the same info.
+		// @formatter:off
+		return new PEResourceResolver(Arrays.asList(
+				new SimplePropertyEntry(RepoKeys.NODES, "ip-addresses", NodeIpAddress.class),
+				new SimplePropertyEntry(RepoKeys.SERVICE_INSTANCES, "ip-address-roles", IpAddressRole.class),
+				new SimplePropertyEntry(RepoKeys.SERVICE_INSTANCES, "ports", ServiceInstancePort.class)));
+		// @formatter:on
 	}
 	
 	@Bean
-	public InternalResourceViewResolver defaultViewResolver() {
-		// Need this so we can forward to index.html.
-		return new InternalResourceViewResolver();
+	public PEResourcesResolver peResourcesResolver() { return new PEResourcesResolver(); }
+	
+	@Bean
+	public PageableHandlerMethodArgumentResolver pageableResolver() {
+		val resolver = new PageableHandlerMethodArgumentResolver();
+		resolver.setMaxPageSize(500);
+		resolver.setOneIndexedParameters(false);
+		return resolver;
 	}
+	
+	@Bean
+	public ResolverUtils resolverUtils() { return new ResolverUtils(); }
+	
+	@Bean
+	public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
+		return new ByteArrayHttpMessageConverter();
+	}
+	
+	@Bean
+	public StringHttpMessageConverter stringHttpMessageConverter() {
+		val converter = new StringHttpMessageConverter();
+		converter.setWriteAcceptCharset(false);
+		return converter;
+	}
+	
+	@Bean
+	public ItemPaths itemPaths() { return new ItemPaths(); }
+	
+	@Bean
+	public LinkFactory linkFactoryV1() {
+		return new LinkFactory(getVersionUri("v1"), itemPaths(), itemMetaLookup);
+	}
+	
+	@Bean
+	public LinkFactory linkFactoryV2() {
+		return new LinkFactory(getVersionUri("v2"), itemPaths(), itemMetaLookup);
+	}
+	
+	@Bean
+	public ResourceAssembler resourceAssembler() { return new ResourceAssembler(); }
+	
+	@Bean
+	public BasicItemDelegate basicItemDelegate() {
+		return new BasicItemDelegate(resourceAssembler());
+	}
+	
+	@Bean
+	public RepoSearchDelegate itemSearchDelegate() {
+		return new RepoSearchDelegate(resourceAssembler());
+	}
+	
+	@Bean
+	public GlobalSearchDelegate globalSearchDelegate() {
+		return new GlobalSearchDelegate();
+	}
+	
+	/** Allows us to forward to index.html. */
+	@Bean
+	public InternalResourceViewResolver defaultViewResolver() { return new InternalResourceViewResolver(); }
 	
 	@Bean
 	public ExceptionHandlerAdvice exceptionHandlerAdvice() { return new ExceptionHandlerAdvice(); }
-	
-	@Configuration
-	public static class ArgResolverConfig {
-		
-		@Bean
-		public PEResourceResolver peResourceResolver() {
-			// FIXME DRY up. See com.expedia.seiso.web.converter, which repeats the same info.
-			// @formatter:off
-			return new PEResourceResolver(Arrays.asList(
-					new SimplePropertyEntry(RepoKeys.NODES, "ip-addresses", NodeIpAddress.class),
-					new SimplePropertyEntry(RepoKeys.SERVICE_INSTANCES, "ip-address-roles", IpAddressRole.class),
-					new SimplePropertyEntry(RepoKeys.SERVICE_INSTANCES, "ports", ServiceInstancePort.class)));
-			// @formatter:on
-		}
-		
-		@Bean
-		public PEResourceListResolver peResourceListResolver() { return new PEResourceListResolver(); }
-		
-		@Bean
-		public PageableHandlerMethodArgumentResolver pageableResolver() {
-			val resolver = new PageableHandlerMethodArgumentResolver();
-			resolver.setMaxPageSize(500);
-			resolver.setOneIndexedParameters(false);
-			return resolver;
-		}
-		
-		@Bean
-		public ResolverUtils resolverUtils() { return new ResolverUtils(); }
-	}
-	
-	@Configuration
-	public static class HttpMessageConverterConfig {
-		@Autowired private HalMapper halMapper;
-		@Autowired private UriToItemKeyConverter uriToItemKeyConverter;
-		
-		@Bean
-		public V1Mapper v1Mapper() {
-			val assembler = new V1ResourceAssembler();
-			// @formatter:off
-			return new V1Mapper(new V1Module(
-					new V1ResourceSerializer(assembler),
-					new V1ResourcesSerializer(assembler),
-					new V1PagedResourcesSerializer(assembler)));
-			// @formatter:on
-		}
-		
-		@Bean
-		public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
-			return new ByteArrayHttpMessageConverter();
-		}
-		
-		@Bean
-		public StringHttpMessageConverter stringHttpMessageConverter() {
-			val converter = new StringHttpMessageConverter();
-			converter.setWriteAcceptCharset(false);
-			return converter;
-		}
-		
-		@Bean
-		public MappingJackson2HttpMessageConverter v1HttpMessageConverter() {
-			val converter = new MappingJackson2HttpMessageConverter(v1Mapper());
-			converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON));
-			return converter;
-		}
-		
-		@Bean
-		public MappingJackson2HttpMessageConverter halHttpMessageConverter() {
-			val converter = new MappingJackson2HttpMessageConverter(halMapper);
-			converter.setSupportedMediaTypes(Arrays.asList(MediaTypes.APPLICATION_HAL_JSON));
-			return converter;
-		}
-		
-		@Bean
-		public ItemKeyHttpMessageConverter itemKeyHttpMessageConverter() {
-			return new ItemKeyHttpMessageConverter(uriToItemKeyConverter);
-		}
-	}
-	
-	@Configuration
-	public static class HateoasConfig {
-		@Autowired private CustomProperties customProperties;
-		@Autowired private ItemMetaLookup itemMetaLookup;
-		
-		@Bean
-		public ItemPaths itemPaths() {
-			return new ItemPaths();
-		}
-		
-		@Bean
-		public LinkFactory linkFactoryV1() throws Exception {
-			return new LinkFactory(getVersionUri("v1"), itemPaths(), itemMetaLookup);
-		}
-		
-		@Bean
-		public LinkFactory linkFactoryV2() throws Exception {
-			return new LinkFactory(getVersionUri("v2"), itemPaths(), itemMetaLookup);
-		}
-		
-		private URI getVersionUri(String version) throws Exception {
+
+	private URI getVersionUri(String version) {
+		try {
 			return new URI(slashify(customProperties.getBaseUri()) + version);
-		}
-		
-		private String slashify(String s) {
-			return s.endsWith("/") ? s : s + "/";
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
 		}
 	}
-	
-	// TODO Move this into HateoasConfig
-	@Configuration
-	public static class AssemblyConfig {
-		
-		@Bean
-		public ResourceAssembler itemAssembler() { return new ResourceAssembler(); }
-	}
-	
-	@Configuration
-	public static class ControllerConfig {
-		
-		@Bean
-		public BasicItemDelegate basicItemDelegate() { return new BasicItemDelegate(); }
-		
-		@Bean
-		public RepoSearchDelegate itemSearchDelegate() { return new RepoSearchDelegate(); }
-		
-		@Bean
-		public GlobalSearchDelegate globalSearchDelegate() { return new GlobalSearchDelegate(); }
-		
-		// v1
-		
-		@Bean
-		public ResponseHeadersV1 responseHeadersV1() { return new ResponseHeadersV1(); }
-		
-		@Bean
-		public ItemControllerV1 itemControllerV1() { return new ItemControllerV1(); }
-		
-		@Bean
-		public RepoSearchControllerV1 repoSearchControllerV1() { return new RepoSearchControllerV1(); }
-		
-		@Bean
-		public NodeControllerV1 nodeControllerV1() { return new NodeControllerV1(); }
-		
-		@Bean
-		public IpAddressRoleControllerV1 ipAddressRoleControllerV1() { return new IpAddressRoleControllerV1(); }
-		
-		@Bean
-		public NodeIpAddressControllerV1 nodeIpAddressControllerV1() { return new NodeIpAddressControllerV1(); }
-		
-		@Bean
-		public ServiceInstancePortControllerV1 serviceInstancePortControllerV1() {
-			return new ServiceInstancePortControllerV1();
-		}
-		
-		// v2
-		
-		@Bean
-		public ItemControllerV2 itemControllerV2() { return new ItemControllerV2(); }
-		
-		@Bean
-		public RepoSearchControllerV2 repoSearchControllerV2() { return new RepoSearchControllerV2(); }
-		
-		@Bean
-		public PersonControllerV2 personControllerV2() { return new PersonControllerV2(); }
-		
-		// Internal
-		
-		@Bean
-		public GlobalSearchController globalSearchController() { return new GlobalSearchController(); }
+
+	private String slashify(String s) {
+		return s.endsWith("/") ? s : s + "/";
 	}
 }

@@ -42,6 +42,8 @@ import com.expedia.seiso.web.jackson.hal.HalResourcesSerializer;
 	SeisoRabbitConfig.class,
 	SeisoDomainConfig.class,
 	SeisoWebConfigBeans.class,
+	SeisoWebConfigBeansV1.class,
+	SeisoWebConfigBeansV2.class,
 	SeisoWebConfig.class,
 	SeisoWebSecurityConfig.class
 })
@@ -66,6 +68,7 @@ public class Seiso {
 	}
 	
 	// Putting this here since both AMQP and REST API need it.
+	// Actually the NotificationGatewayImpl uses the ResourceAssembler too, so we may need to move that here.
 	@Bean
 	public HalMapper halMapper() {
 		val assembler = new HalResourceAssembler();

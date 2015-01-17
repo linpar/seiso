@@ -13,20 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.jackson.v1;
-
-import java.util.Map;
-
-import lombok.Setter;
-
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
+package com.expedia.seiso.web;
 
 /**
  * @author Willie Wheeler
  */
-public class V1Resource {
-	@Setter private Map<String, Object> properties;
-	
-	@JsonAnyGetter
-	public Map<String, Object> getProperties() { return properties; }
-}
+public enum ApiVersion { V1, V2; }

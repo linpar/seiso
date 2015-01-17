@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import com.expedia.seiso.domain.service.SearchEngine;
 import com.expedia.seiso.domain.service.SearchResults;
 import com.expedia.seiso.domain.service.search.SearchQuery;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.hateoas.Resource;
 
@@ -43,7 +44,7 @@ public class GlobalSearchDelegateTests {
 	
 	// Dependencies
 	@Mock private SearchEngine searchEngine;
-	@Mock private ResourceAssembler itemAssembler;
+	@Mock private ResourceAssembler resourceAssembler;
 	
 	// Test data
 	@Mock private SearchQuery query;
@@ -64,23 +65,23 @@ public class GlobalSearchDelegateTests {
 	
 	private void initDependencies() {
 		when(searchEngine.search(query, pageable)).thenReturn(searchResults);
-		when(itemAssembler.toGlobalSearchResource(searchResults)).thenReturn(searchResultsResource);
+		when(resourceAssembler.toGlobalSearchResource(ApiVersion.V2, searchResults)).thenReturn(searchResultsResource);
 	}
 	
 	@Test
 	public void globalSearch() {
-		val result = delegate.globalSearch(query, pageable);
+		val result = delegate.globalSearch(ApiVersion.V2, query, pageable);
 		assertNotNull(result);
 		assertSame(searchResultsResource, result);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void globalSearch_nullQuery() {
-		delegate.globalSearch(null, pageable);
+		delegate.globalSearch(ApiVersion.V2, null, pageable);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void globalSearch_nullPageable() {
-		delegate.globalSearch(query, null);
+		delegate.globalSearch(ApiVersion.V2, query, null);
 	}
 }

@@ -38,8 +38,8 @@ public class HalResourceAssemblerTests {
 	private HalResourceAssembler assembler;
 	
 	// Test data
-	private Resource baseResource;
-	private PagedResources baseResourcePage;
+	private Resource resource;
+	private PagedResources pagedResources;
 	@Mock private Link link;
 	@Mock private PageMetadata pageMeta;
 	
@@ -51,21 +51,20 @@ public class HalResourceAssemblerTests {
 	}
 	
 	private void initTestData() {
-		this.baseResource = new Resource();
-		baseResource.addV1Link(link);
-		baseResource.addV2Link(link);
-		baseResource.setProperty("someProperty", "someValue");
-		baseResource.setProperty("someOtherProperty", null);
-		baseResource.setAssociation("someSingleAssociation", new Resource());
-		baseResource.setAssociation("someListAssociation", Arrays.asList(new Resource()));
-		baseResource.setAssociation("someOtherAssociation", null);
+		this.resource = new Resource();
+		resource.addLink(link);
+		resource.setProperty("someProperty", "someValue");
+		resource.setProperty("someOtherProperty", null);
+		resource.setAssociation("someSingleAssociation", new Resource());
+		resource.setAssociation("someListAssociation", Arrays.asList(new Resource()));
+		resource.setAssociation("someOtherAssociation", null);
 		
-		this.baseResourcePage = new PagedResources(Arrays.asList(link), pageMeta, Arrays.asList(baseResource));
+		this.pagedResources = new PagedResources(Arrays.asList(link), pageMeta, Arrays.asList(resource));
 	}
 	
 	@Test
 	public void toHalResourcePage() {
-		val result = assembler.toHalPagedResources(baseResourcePage);
+		val result = assembler.toHalPagedResources(pagedResources);
 		// TODO
 	}
 	
@@ -76,7 +75,7 @@ public class HalResourceAssemblerTests {
 	
 	@Test
 	public void toHalResource() {
-		val result = assembler.toHalResource(baseResource, true);
+		val result = assembler.toHalResource(resource, true);
 		// TODO
 	}
 	

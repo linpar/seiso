@@ -36,7 +36,7 @@ import com.expedia.seiso.core.util.ReflectionUtils;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.list.EntityListPackageMarker;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.controller.PEResourceList;
+import com.expedia.seiso.web.hateoas.PEResources;
 
 /**
  * Reads a resource off the request, binds it to the relevant item metadata, and returns the result.
@@ -44,7 +44,7 @@ import com.expedia.seiso.web.controller.PEResourceList;
  * @author Willie Wheeler
  */
 @Component
-public class PEResourceListResolver implements HandlerMethodArgumentResolver {
+public class PEResourcesResolver implements HandlerMethodArgumentResolver {
 	@Autowired private Repositories repositories;
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private ResolverUtils resolverUtils;
@@ -52,7 +52,7 @@ public class PEResourceListResolver implements HandlerMethodArgumentResolver {
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		return PEResourceList.class.isAssignableFrom(parameter.getParameterType());
+		return PEResources.class.isAssignableFrom(parameter.getParameterType());
 	}
 
 	@Override
@@ -82,9 +82,9 @@ public class PEResourceListResolver implements HandlerMethodArgumentResolver {
 		for (HttpMessageConverter messageConverter : messageConverters) {
 			
 			// This is how we process application/json separately from application/hal+json.
-			if (messageConverter.canRead(PEResourceList.class, contentType)) {
+			if (messageConverter.canRead(PEResources.class, contentType)) {
 				val itemList = (List<Item>) messageConverter.read(itemListClass, request);
-				val peResourceList = new PEResourceList(pEntity);
+				val peResourceList = new PEResources(pEntity);
 				for (val item : itemList) {
 					peResourceList.add(item);
 				}

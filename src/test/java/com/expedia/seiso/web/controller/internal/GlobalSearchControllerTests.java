@@ -30,6 +30,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 
 import com.expedia.seiso.domain.service.search.SearchQuery;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
 import com.expedia.seiso.web.hateoas.Resource;
 
@@ -60,7 +61,8 @@ public class GlobalSearchControllerTests {
 	}
 	
 	private void initDependencies() {
-		when(delegate.globalSearch((SearchQuery) anyObject(), eq(pageable))).thenReturn(searchResults);
+		when(delegate.globalSearch(eq(ApiVersion.V2), (SearchQuery) anyObject(), eq(pageable)))
+				.thenReturn(searchResults);
 	}
 	
 	@Test

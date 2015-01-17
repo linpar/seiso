@@ -27,8 +27,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.domain.entity.key.IpAddressRoleKey;
-import com.expedia.seiso.web.controller.PEResource;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.seiso.web.hateoas.PEResource;
 import com.expedia.seiso.web.hateoas.Resource;
 
 /**
@@ -47,7 +48,7 @@ public class IpAddressRoleControllerV1 {
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public Resource get(@PathVariable String serviceInstanceKey, @PathVariable String name) {
 		val itemKey = new IpAddressRoleKey(serviceInstanceKey, name);
-		return basicItemDelegate.getOne(itemKey);
+		return basicItemDelegate.getOne(ApiVersion.V1, itemKey);
 	}
 
 	@RequestMapping(

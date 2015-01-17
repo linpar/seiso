@@ -26,14 +26,11 @@ import org.springframework.core.env.Environment;
 public class SeisoTests {
 
 	// Class under test
-	@InjectMocks
-	private Seiso config;
+	@InjectMocks private Seiso config;
 
 	// Dependencies
-	@Mock
-	private ListableBeanFactory beanFactory;
-	@Mock
-	private Environment env;
+	@Mock private ListableBeanFactory beanFactory;
+	@Mock private Environment env;
 
 	@Before
 	public void init() throws Exception {

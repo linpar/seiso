@@ -32,9 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.util.C;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
-import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler
@@ -51,7 +52,7 @@ public class RepoSearchControllerV1 {
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public Resource getRepoSearchList(@PathVariable String repoKey) {
-		return delegate.getRepoSearchList(repoKey);
+		return delegate.getRepoSearchList(ApiVersion.V1, repoKey);
 	}
 	
 	@RequestMapping(
@@ -70,7 +71,7 @@ public class RepoSearchControllerV1 {
 			@RequestParam MultiValueMap<String, String> params) {
 		
 		// Is it correct that v1 always returns a page here? [WLW]
-		val baseResourcePage = delegate.repoSearch(repoKey, search, view, pageable, params);
+		val baseResourcePage = delegate.repoSearch(ApiVersion.V1, repoKey, search, view, pageable, params);
 		val headers = responseHeaders.buildResponseHeaders(baseResourcePage);
 		return new HttpEntity<>(baseResourcePage, headers);
 	}

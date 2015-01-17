@@ -13,28 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.jackson.v1;
-
-import lombok.NonNull;
-
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.module.SimpleModule;
+package com.expedia.seiso.web.controller.v2;
 
 /**
  * @author Willie Wheeler
  */
-@Component
-@SuppressWarnings("serial")
-public class V1Module extends SimpleModule {
-	
-	public V1Module(
-			@NonNull V1ResourceSerializer resourceSerializer,
-			@NonNull V1ResourcesSerializer resourcesSerializer,
-			@NonNull V1PagedResourcesSerializer pagedResourcesSerializer) {
-		
-		addSerializer(resourceSerializer);
-		addSerializer(resourcesSerializer);
-		addSerializer(pagedResourcesSerializer);
-	}
+public interface ControllerV2Marker {
+
 }

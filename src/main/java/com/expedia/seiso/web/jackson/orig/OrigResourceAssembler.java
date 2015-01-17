@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.jackson.v1;
+package com.expedia.seiso.web.jackson.orig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ import java.util.TreeMap;
 
 import lombok.NonNull;
 import lombok.val;
+import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.stereotype.Component;
 
@@ -34,28 +35,34 @@ import com.expedia.seiso.web.hateoas.Resources;
  * @author Willie Wheeler
  */
 @Component
-public class V1ResourceAssembler {
+@XSlf4j
+public class OrigResourceAssembler {
 	
-	public List<V1Resource> toV1Resources(@NonNull Resources resources) {
-		val v1ResourceList = new ArrayList<V1Resource>();
-		val resourceList = resources.getItems();
-		for (val resource : resourceList) { v1ResourceList.add(toV1Resource(resource)); }
-		return v1ResourceList;
+	public List<OrigResource> toOrigResources(@NonNull Resources resources) {
+		return toOrigResourceList(resources.getItems());
 	}
 	
-	public List<V1Resource> toV1PagedResources(@NonNull PagedResources pagedResources) {
-		val v1ResourceList = new ArrayList<V1Resource>();
+	public List<OrigResource> toOrigResourceList(List<Resource> resourceList) {
+		if (resourceList == null) { return null; }
+		val origResourceList = new ArrayList<OrigResource>();
+		for (val resource : resourceList) { origResourceList.add(toOrigResource(resource)); }
+		return origResourceList;
+	}
+	
+	public List<OrigResource> toOrigPagedResources(@NonNull PagedResources pagedResources) {
+		val origResourceList = new ArrayList<OrigResource>();
 		val resourceList = pagedResources.getItems();
-		for (val resource : resourceList) { v1ResourceList.add(toV1Resource(resource)); }
-		return v1ResourceList;
+		for (val resource : resourceList) { origResourceList.add(toOrigResource(resource)); }
+		return origResourceList;
 	}
 	
-	public V1Resource toV1Resource(@NonNull Resource resource) {
+	public OrigResource toOrigResource(@NonNull Resource resource) {
 		val srcProps = resource.getProperties();
+		val srcAssocs = resource.getAssociations();
 		val destProps = new TreeMap<String, Object>();
 		
 		// Links
-		val selfLink = findSelfLink(resource.getV1Links());
+		val selfLink = findSelfLink(resource.getLinks());
 		if (selfLink != null) {
 			destProps.put("_self", selfLink.getHref());
 		}
@@ -66,10 +73,27 @@ public class V1ResourceAssembler {
 			val propVal = srcProp.getValue();
 			destProps.put(propKey, propVal);
 		}
+		for (val srcAssoc : srcAssocs.entrySet()) {
+			val assocKey = srcAssoc.getKey();
+			val assocVal = srcAssoc.getValue();
+			
+			if (assocVal == null) {
+				destProps.put(assocKey, null);
+			} else {
+				val assocValClass = assocVal.getClass();
+				if (Resource.class.isAssignableFrom(assocValClass)) {
+					destProps.put(assocKey, toOrigResource((Resource) assocVal));
+				} else if (List.class.isAssignableFrom(assocValClass)) {
+					destProps.put(assocKey, toOrigResourceList((List) assocVal));
+				} else {
+					log.warn("Skipping unknown association type: {}", assocValClass.getName());
+				}
+			}
+		}
 		
-		val v1Resource = new V1Resource();
-		v1Resource.setProperties(destProps);
-		return v1Resource;
+		val origResource = new OrigResource();
+		origResource.setProperties(destProps);
+		return origResource;
 	}
 	
 	private Link findSelfLink(List<Link> links) {

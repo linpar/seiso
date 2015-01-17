@@ -23,6 +23,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,13 +39,18 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mapping.PersistentEntity;
+import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.ReflectionUtils;
 
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.entity.Service;
+import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.domain.service.SearchResults;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.hateoas.Link;
 import com.expedia.seiso.web.hateoas.link.ItemLinks;
 import com.expedia.seiso.web.hateoas.link.LinkFactory;
@@ -64,11 +70,12 @@ public class ResourceAssemblerTests {
 	@InjectMocks private ResourceAssembler assembler;
 	
 	// Dependencies
+	@Mock private ItemMetaLookup itemMetaLookup;
 	@Mock private Repositories repositories;
-	@Mock(name = "linkFactoryV1") private LinkFactory linkFactoryV1;
-	@Mock(name = "linkFactoryV2") private LinkFactory linkFactoryV2;
-	@Mock private ItemLinks itemLinksV1, itemLinksV2;
-	@Mock private RepoSearchLinks repoSearchLinksV1, repoSearchLinksV2;
+	@Mock private LinkFactory linkFactoryV1;
+	@Mock private LinkFactory linkFactoryV2;
+	@Mock private ItemLinks itemLinks;
+	@Mock private RepoSearchLinks repoSearchLinks;
 	@Mock private PaginationLinkBuilder paginationLinkBuilder;
 	
 	// Test data
@@ -76,11 +83,13 @@ public class ResourceAssemblerTests {
 	private PageImpl<Service> itemPage;
 	private Person person;
 	private Service service;
-	
+	private Method queryMethod;
+	private Iterable<Method> queryMethods;
+	@Mock private RepositoryInformation repoInfo;
 	@Mock private MultiValueMap<String, String> params;
-	
-	@Mock private Link link;
 	@Mock private PersistentEntity persistentEntity;
+	@Mock private Link link;
+	@Mock private SearchResults searchResults;
 	
 	@Before
 	public void init() {
@@ -91,6 +100,10 @@ public class ResourceAssemblerTests {
 	}
 	
 	private void initTestData() {
+		this.queryMethod = ReflectionUtils.findMethod(ServiceRepo.class, "findByName", String.class);
+		this.queryMethods = Arrays.asList(queryMethod);
+		
+		when(repoInfo.getQueryMethods()).thenReturn(queryMethods);
 		
 		// @formatter:off
 		this.person = new Person()
@@ -109,26 +122,31 @@ public class ResourceAssemblerTests {
 	}
 	
 	private void initDependencies() {
+		when(itemMetaLookup.getItemClass("services")).thenReturn(Service.class);
+		
+		when(repositories.getRepositoryInformationFor(Service.class)).thenReturn(repoInfo);
 		when(repositories.getPersistentEntity((Class<?>) anyObject())).thenReturn(persistentEntity);
 		
-		when(linkFactoryV1.getItemLinks()).thenReturn(itemLinksV1);
-		when(linkFactoryV1.getRepoSearchLinks()).thenReturn(repoSearchLinksV1);
+		when(linkFactoryV1.getItemLinks()).thenReturn(itemLinks);
+		when(linkFactoryV1.getRepoSearchLinks()).thenReturn(repoSearchLinks);
 		
-		when(linkFactoryV2.getItemLinks()).thenReturn(itemLinksV2);
-		when(linkFactoryV2.getRepoSearchLinks()).thenReturn(repoSearchLinksV2);
+		when(linkFactoryV2.getItemLinks()).thenReturn(itemLinks);
+		when(linkFactoryV2.getRepoSearchLinks()).thenReturn(repoSearchLinks);
 		
-		when(itemLinksV1.itemLink((Item) anyObject())).thenReturn(link);
-		when(itemLinksV2.itemLink((Item) anyObject())).thenReturn(link);
-		when(itemLinksV2.repoLink(anyString(), (Class<?>) anyObject())).thenReturn(link);
+		when(itemLinks.itemLink((Item) anyObject())).thenReturn(link);
+		when(itemLinks.repoLink(anyString(), (Class<?>) anyObject())).thenReturn(link);
 		
-		when(repoSearchLinksV2.toPaginationLinkBuilder(
-				(Page) anyObject(), (Class) anyObject(), anyString(), eq(params)))
-						.thenReturn(paginationLinkBuilder);
+		when(repoSearchLinks.repoSearchListLink(anyString(), (Class) anyObject()))
+				.thenReturn(link);
+		when(repoSearchLinks.toRepoSearchLinkTemplate(anyString(), (Class) anyObject(), anyString(), (MultiValueMap) anyObject()))
+				.thenReturn(link);
+		when(repoSearchLinks.toPaginationLinkBuilder((Page) anyObject(), (Class) anyObject(), anyString(), eq(params)))
+				.thenReturn(paginationLinkBuilder);
 	}
 	
 	@Test
 	public void toResources() {
-		val result = assembler.toResources(Service.class, itemList, PROJECTION);
+		val result = assembler.toResources(ApiVersion.V2, Service.class, itemList, PROJECTION);
 		assertNotNull(result);
 		
 		val resultLinks = result.getLinks();
@@ -142,30 +160,35 @@ public class ResourceAssemblerTests {
 	
 	@Test
 	public void toResources_nullItemList() {
-		val result = assembler.toResources(Service.class, null, PROJECTION);
+		val result = assembler.toResources(ApiVersion.V2, Service.class, null, PROJECTION);
 		assertNull(result);
 	}
 	
 	@Test
 	public void toPagedResources() {
-		val result = assembler.toPagedResources(Service.class, itemPage, PROJECTION);
+		val result = assembler.toPagedResources(ApiVersion.V2, Service.class, itemPage, PROJECTION);
 		assertNotNull(result);
 	}
 	
 	@Test
 	public void toPagedResources_nullItemPage() {
-		val result = assembler.toPagedResources(Service.class, null, PROJECTION);
+		val result = assembler.toPagedResources(ApiVersion.V2, Service.class, null, PROJECTION);
 		assertNull(result);
 	}
 	
 	@Test(expected = NullPointerException.class)
+	public void toPagedResources_nullApiVersion() {
+		assembler.toPagedResources(null, Service.class, itemPage, PROJECTION);
+	}
+	
+	@Test(expected = NullPointerException.class)
 	public void toPagedResources_nullItemClass() {
-		assembler.toPagedResources(null, itemPage, PROJECTION);
+		assembler.toPagedResources(ApiVersion.V2, null, itemPage, PROJECTION);
 	}
 	
 	@Test
 	public void toResource_item() {
-		val result = assembler.toResource(service, PROJECTION);
+		val result = assembler.toResource(ApiVersion.V2, service, PROJECTION);
 		assertNotNull(result);
 	}
 	
@@ -175,19 +198,31 @@ public class ResourceAssemblerTests {
 	// =================================================================================================================
 	
 	@Test
+	public void toRepoSearchList() {
+		val result = assembler.toRepoSearchList(ApiVersion.V2, "services");
+		assertNotNull(result);
+	}
+	
+	@Test
 	public void toRepoSearchResource() {
-		val result = assembler.toRepoSearchResource(itemPage, ITEM_CLASS, SEARCH_PATH, params, PROJECTION);
+		val result =
+				assembler.toRepoSearchResource(ApiVersion.V2, itemPage, ITEM_CLASS, SEARCH_PATH, params, PROJECTION);
 		assertNotNull(result);
 	}
 	
 	@Test(expected = NullPointerException.class)
+	public void toRepoSearchResource_nullApiVersion() {
+		assembler.toRepoSearchResource(null, itemPage, null, SEARCH_PATH, params, PROJECTION);
+	}
+	
+	@Test(expected = NullPointerException.class)
 	public void toRepoSearchResource_nullItemClass() {
-		assembler.toRepoSearchResource(itemPage, null, SEARCH_PATH, params, PROJECTION);
+		assembler.toRepoSearchResource(ApiVersion.V2, itemPage, null, SEARCH_PATH, params, PROJECTION);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void toRepoSearchResource_nullItemPage() {
-		assembler.toRepoSearchResource(null, ITEM_CLASS, SEARCH_PATH, params, PROJECTION);
+		assembler.toRepoSearchResource(ApiVersion.V2, null, ITEM_CLASS, SEARCH_PATH, params, PROJECTION);
 	}
 	
 	
@@ -197,12 +232,18 @@ public class ResourceAssemblerTests {
 	
 	@Test
 	public void toGlobalSearchResource() {
-		// TODO
+		val result = assembler.toGlobalSearchResource(ApiVersion.V2, searchResults);
+		assertNotNull(result);
 	}
 	
 	@Test(expected = NullPointerException.class)
-	public void toGlobalSearchResource_null() {
-		assembler.toGlobalSearchResource((SearchResults) null);
+	public void toGlobalSearchResource_nullApiVersion() {
+		assembler.toGlobalSearchResource(null, searchResults);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void toGlobalSearchResource_nullSearchResults() {
+		assembler.toGlobalSearchResource(ApiVersion.V2, (SearchResults) null);
 	}
 	
 	
@@ -219,7 +260,7 @@ public class ResourceAssemblerTests {
 	@Deprecated
 	@Test
 	public void toUsernamePage_nullPersonPage() {
-		val result = assembler.toUsernamePage(null, params);
+		val result = assembler.toUsernamePage(ApiVersion.V2, null, params);
 		assertNull(result);
 	}
 	

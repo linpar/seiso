@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.service.search.SearchQuery;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
 import com.expedia.seiso.web.hateoas.Resource;
@@ -58,7 +59,9 @@ public class GlobalSearchController {
 		
 		// TODO Use a handler method arg resolver instead. [WLW]
 		val query = new SearchQuery(keywords, toKeywordSet(keywords));
-		return delegate.globalSearch(query, pageable);
+		
+		// V2, since this isn't available in V2.
+		return delegate.globalSearch(ApiVersion.V2, query, pageable);
 	}
 	
 	private Set<String> toKeywordSet(String keywords) {

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.service.SearchEngine;
 import com.expedia.seiso.domain.service.search.SearchQuery;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.hateoas.Resource;
 
@@ -32,11 +33,15 @@ import com.expedia.seiso.web.hateoas.Resource;
  */
 @Component
 public class GlobalSearchDelegate {
+	@Autowired private ResourceAssembler resourceAssembler;
 	@Autowired private SearchEngine searchEngine;
-	@Autowired private ResourceAssembler itemAssembler;
 	
-	public Resource globalSearch(@NonNull SearchQuery query, @NonNull Pageable pageable) {
+	public Resource globalSearch(
+			@NonNull ApiVersion apiVersion,
+			@NonNull SearchQuery query,
+			@NonNull Pageable pageable) {
+		
 		val results = searchEngine.search(query, pageable);
-		return itemAssembler.toGlobalSearchResource(results);
+		return resourceAssembler.toGlobalSearchResource(apiVersion, results);
 	}
 }

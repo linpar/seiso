@@ -16,6 +16,7 @@
 package com.expedia.seiso.gateway.impl;
 
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -30,8 +31,9 @@ import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.gateway.model.ItemNotification;
-import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
+import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.hateoas.Resource;
 
 public class NotificationGatewayImplTests {
@@ -68,7 +70,8 @@ public class NotificationGatewayImplTests {
 	}
 	
 	private void initDependencies() {
-		when(itemAssembler.toResource((Item) anyObject(), (ProjectionNode) anyObject())).thenReturn(itemResource);
+		when(itemAssembler.toResource(eq(ApiVersion.V2), (Item) anyObject(), (ProjectionNode) anyObject()))
+				.thenReturn(itemResource);
 	}
 
 	@Test

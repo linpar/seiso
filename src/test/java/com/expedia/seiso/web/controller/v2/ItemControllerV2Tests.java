@@ -35,9 +35,10 @@ import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
-import com.expedia.seiso.web.controller.PEResource;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.seiso.web.hateoas.PEResource;
 import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.PagedResources;
 
@@ -92,10 +93,13 @@ public class ItemControllerV2Tests {
 		
 		when(itemMetaLookup.getItemClass(PAGING_REPO_KEY)).thenReturn(PAGING_ITEM_CLASS);
 		when(itemMetaLookup.getItemMeta(PAGING_ITEM_CLASS)).thenReturn(pagingItemMeta);
-		when(delegate.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params)).thenReturn(itemBaseResourcePage);
+		when(delegate.getAll(ApiVersion.V2, PAGING_REPO_KEY, VIEW_KEY, pageable, params))
+				.thenReturn(itemBaseResourcePage);
 		
-		when(delegate.getOne(PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY)).thenReturn(itemBaseResource);
-		when(delegate.getProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY)).thenReturn(propBaseResource);
+		when(delegate.getOne(ApiVersion.V2, PAGING_REPO_KEY, ITEM_KEY, VIEW_KEY))
+				.thenReturn(itemBaseResource);
+		when(delegate.getProperty(ApiVersion.V2, PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY))
+				.thenReturn(propBaseResource);
 		
 		when(itemPEResource.getItem()).thenReturn(service);
 	}
@@ -113,7 +117,7 @@ public class ItemControllerV2Tests {
 		val result = controller.getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
 		assertNotNull(result);
 		assertSame(itemBaseResourcePage, result);
-		verify(delegate).getAll(PAGING_REPO_KEY, VIEW_KEY, pageable, params);
+		verify(delegate).getAll(ApiVersion.V2, PAGING_REPO_KEY, VIEW_KEY, pageable, params);
 	}
 	
 	@Test

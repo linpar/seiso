@@ -30,6 +30,7 @@ import com.expedia.seiso.core.exception.ResourceNotFoundException;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.NodeRepo;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.hateoas.Resource;
 
@@ -42,7 +43,7 @@ import com.expedia.seiso.web.hateoas.Resource;
 public class NodeControllerV1 {
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private NodeRepo nodeRepo;
-	@Autowired private ResourceAssembler itemAssembler;
+	@Autowired private ResourceAssembler resourceAssembler;
 	
 	// Hand-coding this one because we don't want to return a page anymore, and don't want camel-case params, but also
 	// don't want to break existing code. Make this one the way we want it to be and then convert the other one over in
@@ -65,6 +66,6 @@ public class NodeControllerV1 {
 		val node = nodes.get(0);
 		val nodeMeta = itemMetaLookup.getItemMeta(Node.class);
 		val projectionNode = nodeMeta.getProjectionNode(Projection.Cardinality.SINGLE, Projection.DEFAULT);
-		return itemAssembler.toResource(node, projectionNode);
+		return resourceAssembler.toResource(ApiVersion.V1, node, projectionNode);
 	}
 }

@@ -40,14 +40,11 @@ import lombok.NonNull;
 @Data
 @NoArgsConstructor
 public class Resource {
-	private final List<Link> v1Links = new ArrayList<>();
-	private final List<Link> v2Links = new ArrayList<>();
+	private final List<Link> links = new ArrayList<>();
 	private Map<String, Object> properties = new TreeMap<>();
 	private Map<String, Object> associations = new TreeMap<>();
 	
-	public void addV1Link(@NonNull Link link) { v1Links.add(link); }
-	
-	public void addV2Link(@NonNull Link link) { v2Links.add(link); }
+	public void addLink(@NonNull Link link) { links.add(link); }
 	
 	public void setProperty(String name, Object value) { properties.put(name, value); }
 	

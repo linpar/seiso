@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.jackson.v1;
+package com.expedia.seiso.web.jackson.orig;
 
 import lombok.NonNull;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * @author Willie Wheeler
  */
 @Component
 @SuppressWarnings("serial")
-public class V1Mapper extends ObjectMapper {
+public class OrigModule extends SimpleModule {
 	
-	public V1Mapper(@NonNull V1Module v1Module) {
-		enable(SerializationFeature.INDENT_OUTPUT);
-		registerModule(v1Module);
+	public OrigModule(
+			@NonNull OrigResourceSerializer resourceSerializer,
+			@NonNull OrigResourcesSerializer resourcesSerializer,
+			@NonNull OrigPagedResourcesSerializer pagedResourcesSerializer) {
+		
+		addSerializer(resourceSerializer);
+		addSerializer(resourcesSerializer);
+		addSerializer(pagedResourcesSerializer);
 	}
 }

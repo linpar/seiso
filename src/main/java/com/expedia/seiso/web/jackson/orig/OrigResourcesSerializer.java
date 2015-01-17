@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.jackson.v1;
+package com.expedia.seiso.web.jackson.orig;
 
 import java.io.IOException;
 
 import lombok.NonNull;
 
-import org.springframework.stereotype.Component;
-
-import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -30,19 +28,18 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 /**
  * @author Willie Wheeler
  */
-@Component
-public class V1ResourceSerializer extends StdSerializer<Resource> {
-	private V1ResourceAssembler assembler;
+public class OrigResourcesSerializer extends StdSerializer<Resources> {
+	private OrigResourceAssembler assembler;
 	
-	public V1ResourceSerializer(@NonNull V1ResourceAssembler assembler) {
-		super(Resource.class, false);
+	public OrigResourcesSerializer(@NonNull OrigResourceAssembler assembler) {
+		super(Resources.class, false);
 		this.assembler = assembler;
 	}
 	
 	@Override
-	public void serialize(Resource baseResource, JsonGenerator jgen, SerializerProvider provider)
+	public void serialize(Resources resources, JsonGenerator jgen, SerializerProvider provider)
 			throws IOException, JsonGenerationException {
 		
-		jgen.writeObject(assembler.toV1Resource(baseResource));
+		jgen.writeObject(assembler.toOrigResources(resources));
 	}
 }

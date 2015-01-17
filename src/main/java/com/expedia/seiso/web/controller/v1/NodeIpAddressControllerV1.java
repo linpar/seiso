@@ -31,8 +31,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.key.NodeIpAddressKey;
 import com.expedia.seiso.domain.repo.NodeRepo;
-import com.expedia.seiso.web.controller.PEResource;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.seiso.web.hateoas.PEResource;
 import com.expedia.seiso.web.hateoas.Resource;
 
 /**
@@ -52,7 +53,7 @@ public class NodeIpAddressControllerV1 {
 			method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Resource get(@PathVariable String nodeName, @PathVariable String ipAddress) {
 		val itemKey = new NodeIpAddressKey(nodeName, ipAddress);
-		return basicItemDelegate.getOne(itemKey);
+		return basicItemDelegate.getOne(ApiVersion.V1, itemKey);
 	}
 
 	@RequestMapping(
