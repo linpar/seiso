@@ -46,14 +46,14 @@ public class DynaItemTests {
 	private ServiceInstance serviceInstance;
 
 	@Before
-	public void init() throws Exception {
-		initTestData();
+	public void setUp() throws Exception {
+		setUpTestData();
 		this.dataCenterWrapper = new DynaItem(dataCenter);
 		this.nodeWrapper = new DynaItem(node);
 		this.serviceInstanceWrapper = new DynaItem(serviceInstance);
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		this.dataCenter = new DataCenter().setKey("switch-supernap");
 		this.node = new Node().setName("mm01").setIpAddresses(new ArrayList<NodeIpAddress>());
 		this.serviceInstance = new ServiceInstance().setKey("airint-shopping-prod")

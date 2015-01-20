@@ -63,13 +63,13 @@ public class ItemPathsTests {
 	private ServiceInstancePort serviceInstancePort;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.itemPaths = new ItemPaths();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
+		setUpTestData();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 		this.serviceInstance = new ServiceInstance().setKey(KEY);
 		this.ipAddressRole = new IpAddressRole().setServiceInstance(serviceInstance).setName(KEY);
 		this.node = new Node().setName(KEY);

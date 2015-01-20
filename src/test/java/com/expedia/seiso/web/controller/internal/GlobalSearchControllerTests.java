@@ -50,17 +50,17 @@ public class GlobalSearchControllerTests {
 	@Mock private Resource searchResults;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.controller = new GlobalSearchController();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(delegate.globalSearch(eq(ApiVersion.V2), (SearchQuery) anyObject(), eq(pageable)))
 				.thenReturn(searchResults);
 	}

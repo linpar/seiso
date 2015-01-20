@@ -51,14 +51,14 @@ public class NotificationGatewayImplTests {
 	@Mock private Resource itemResource;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		this.gateway = new NotificationGatewayImpl();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 		
 		// @formatter:off
 		this.service = new Service()
@@ -69,7 +69,7 @@ public class NotificationGatewayImplTests {
 		// @formatter:on
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemAssembler.toResource(eq(ApiVersion.V2), (Item) anyObject(), (ProjectionNode) anyObject()))
 				.thenReturn(itemResource);
 	}

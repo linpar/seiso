@@ -82,10 +82,10 @@ public class RepoSearchDelegateTests {
 	@Mock private Resource resource;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 		
 		this.delegate = new RepoSearchDelegate(resourceAssembler);
 		delegate.setItemMetaLookup(itemMetaLookup);
@@ -94,7 +94,7 @@ public class RepoSearchDelegateTests {
 		delegate.setConversionService(conversionService);
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		this.params = new LinkedMultiValueMap<>();
 		params.set("name", "Aurelius");
 		
@@ -113,7 +113,7 @@ public class RepoSearchDelegateTests {
 		when(pagingItemMeta.getRepositorySearchMethod(SEARCH_PATH)).thenReturn(queryMethodWithPagingResults);
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		
 		when(itemMetaLookup.getItemClass(PAGING_REPO_KEY)).thenReturn(PAGING_ITEM_CLASS);
 		when(itemMetaLookup.getItemMeta(PAGING_ITEM_CLASS)).thenReturn(pagingItemMeta);

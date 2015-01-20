@@ -59,17 +59,17 @@ public class RepoSearchControllerV1Tests {
 	@Mock private HttpHeaders httpHeaders;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.controller = new RepoSearchControllerV1();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(delegate.getRepoSearchList(ApiVersion.V1, REPO_KEY)).thenReturn(repoSearchListResource);
 		when(delegate.repoSearch(ApiVersion.V1, REPO_KEY, SEARCH, VIEW_KEY, pageable, params))
 				.thenReturn(repoSearchPageResource);

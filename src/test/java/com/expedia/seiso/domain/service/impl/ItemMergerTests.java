@@ -48,14 +48,14 @@ public class ItemMergerTests {
 	private Service destService;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		this.itemMerger = new ItemMerger(repoAdapterLookup);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		// @formatter:off
 		this.serviceGroup = new ServiceGroup()
 				.setKey("my-service-group")
@@ -72,7 +72,7 @@ public class ItemMergerTests {
 		// @formatter:off
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		// @formatter:off
 		when(repoAdapterLookup.getRepoAdapterFor(ServiceGroup.class)).thenReturn(simpleItemRepoAdapter);
 		when(simpleItemRepoAdapter.find(new SimpleItemKey(ServiceGroup.class, serviceGroup.getKey()))).thenReturn(

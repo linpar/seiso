@@ -92,14 +92,14 @@ public class ResourceAssemblerTests {
 	@Mock private SearchResults searchResults;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.assembler = new ResourceAssembler();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 		this.queryMethod = ReflectionUtils.findMethod(ServiceRepo.class, "findByName", String.class);
 		this.queryMethods = Arrays.asList(queryMethod);
 		
@@ -121,7 +121,7 @@ public class ResourceAssemblerTests {
 		this.itemPage = new PageImpl<Service>(itemList, PAGE_REQUEST, 8675309);
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemMetaLookup.getItemClass("services")).thenReturn(Service.class);
 		
 		when(repositories.getRepositoryInformationFor(Service.class)).thenReturn(repoInfo);

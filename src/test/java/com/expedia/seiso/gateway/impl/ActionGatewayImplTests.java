@@ -46,17 +46,17 @@ public class ActionGatewayImplTests {
 	private BulkNodeActionRequest request;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		this.gateway = new ActionGatewayImpl();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 	}
 
 	@Test

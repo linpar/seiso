@@ -87,14 +87,14 @@ public class PEItemResourceListResolverTests {
 	private HttpHeaders httpHeaders;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		this.resolver = new PEResourcesResolver();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		when(peItemDtoListParam.getParameterType()).thenReturn((Class) PEResources.class);
 		when(dummyParam.getParameterType()).thenReturn((Class) Object.class);
 		when(nativeWebRequest.getNativeRequest(HttpServletRequest.class)).thenReturn(httpServletRequest);
@@ -103,7 +103,7 @@ public class PEItemResourceListResolverTests {
 		when(httpHeaders.getContentType()).thenReturn(MediaType.APPLICATION_JSON);
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		this.messageConverters = new ArrayList<>();
 		messageConverters.add(messageConverter);
 		ReflectionTestUtils.setField(resolver, "messageConverters", messageConverters);

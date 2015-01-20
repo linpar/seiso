@@ -42,7 +42,7 @@ public class ItemMetaLookupTests {
 	@Mock private Repositories repositories;
 
 	@Before
-	public void init() {
+	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		this.lookup = new ItemMetaLookup(repositories);
 	}

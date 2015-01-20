@@ -53,17 +53,17 @@ public class GlobalSearchDelegateTests {
 	@Mock private Resource searchResultsResource;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.delegate = new GlobalSearchDelegate();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(searchEngine.search(query, pageable)).thenReturn(searchResults);
 		when(resourceAssembler.toGlobalSearchResource(ApiVersion.V2, searchResults)).thenReturn(searchResultsResource);
 	}

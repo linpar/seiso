@@ -56,18 +56,18 @@ public class ItemLinksTests {
 	@Mock private MultiValueMap<String, String> params;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 		this.itemLinks = new ItemLinks(v2BaseUri, itemPaths, itemMetaLookup);
 	}
 
-	private void initTestData() throws Exception {
+	private void setUpTestData() throws Exception {
 		this.v2BaseUri = new URI("http://seiso.example.com/v2");
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemMetaLookup.getItemMeta(Service.class)).thenReturn(serviceMeta);
 		when(itemPaths.convert((Item) anyObject())).thenReturn(new String[0]);
 	}

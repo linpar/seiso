@@ -41,7 +41,7 @@ public class UserDetailsAdapterTests {
 	private User user;
 
 	@Before
-	public void init() {
+	public void setUp() {
 		val roles = new ArrayList<Role>();
 		roles.add(new Role().setName("ROLE_USER"));
 		roles.add(new Role().setName("ROLE_ADMIN"));

@@ -48,14 +48,14 @@ public class UriToItemKeyConverterTests {
 	@Mock private ItemMetaLookup itemMetaLookup;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		initDependencies();
+		setUpDependencies();
 		this.converter = new UriToItemKeyConverter(VERSION_URI, itemMetaLookup);
 		converter.postConstruct();
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemMetaLookup.getItemClass(RepoKeys.LOAD_BALANCERS)).thenReturn(LoadBalancer.class);
 		when(itemMetaLookup.getItemClass(RepoKeys.SERVICE_INSTANCES)).thenReturn(ServiceInstance.class);
 	}

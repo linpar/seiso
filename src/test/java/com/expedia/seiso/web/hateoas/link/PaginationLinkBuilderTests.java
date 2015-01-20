@@ -51,7 +51,7 @@ public class PaginationLinkBuilderTests {
 	private MultiValueMap<String, String> params;
 	
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		val uri = new URI("https://seiso.example.com/v2/cars/find-by-name");
 		this.uriComponents = UriComponentsBuilder.fromUri(uri).build();
 		

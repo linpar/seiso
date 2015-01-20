@@ -74,19 +74,19 @@ public class ItemControllerV2Tests {
 	@Mock private ItemKey itemKey;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.controller = new ItemControllerV2();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 		when(nonPagingItemMeta.isPagingRepo()).thenReturn(false);
 		when(pagingItemMeta.isPagingRepo()).thenReturn(true);
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemMetaLookup.getItemClass(NONPAGING_REPO_KEY)).thenReturn(NONPAGING_ITEM_CLASS);
 		when(itemMetaLookup.getItemMeta(NONPAGING_ITEM_CLASS)).thenReturn(nonPagingItemMeta);
 //		when(delegate.getAll(NONPAGING_REPO_KEY, VIEW_KEY)).thenReturn(itemResourceList);

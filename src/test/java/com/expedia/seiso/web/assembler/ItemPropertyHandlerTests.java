@@ -45,7 +45,7 @@ public class ItemPropertyHandlerTests {
 	@Mock private Object wrappedProp;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		this.handler = new ItemPropertyHandler(wrapper, model);
 		when(idProp.isIdProperty()).thenReturn(true);

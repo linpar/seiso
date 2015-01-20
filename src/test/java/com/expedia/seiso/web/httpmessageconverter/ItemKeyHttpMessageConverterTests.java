@@ -57,19 +57,19 @@ public class ItemKeyHttpMessageConverterTests {
 	private InputStream inputStream;
 	
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		this.httpMessageConverter = new ItemKeyHttpMessageConverter(uriToItemKeyConverter);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 	
-	private void initTestData() throws Exception {
+	private void setUpTestData() throws Exception {
 		this.inputStream = new ByteArrayInputStream("foo".getBytes(StandardCharsets.UTF_8));
 		when(inputMessage.getBody()).thenReturn(inputStream);
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(uriToItemKeyConverter.convert(anyString())).thenReturn(itemKey);
 	}
 	

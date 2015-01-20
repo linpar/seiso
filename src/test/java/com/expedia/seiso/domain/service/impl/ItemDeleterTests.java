@@ -45,17 +45,17 @@ public class ItemDeleterTests {
 	private Service service;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		this.itemDeleter = new ItemDeleter(repositories);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(repositories.getRepositoryFor(service.getClass())).thenReturn(serviceRepo);
 	}
 

@@ -141,7 +141,7 @@ public class SeisoDomainConfig {
 			// TODO Should be pretty easy to collapse these into a single class using lambdas.
 			// @formatting:off
 			return new RepoAdapterLookup((List<RepoAdapter>) Arrays.asList(
-					new SimpleItemRepoAdapter(repositories, itemMetaLookup()),
+					new SimpleItemRepoAdapter(itemMetaLookup(), repositories),
 					new EndpointRepoAdapter(endpointRepo),
 					new IpAddressRoleRepoAdapter(ipAddressRoleRepo),
 					new NodeIpAddressRepoAdapter(nodeIpAddressRepo),

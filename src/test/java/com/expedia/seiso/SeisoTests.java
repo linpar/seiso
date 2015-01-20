@@ -33,13 +33,13 @@ public class SeisoTests {
 	@Mock private Environment env;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		this.config = new Seiso();
 		MockitoAnnotations.initMocks(this);
-		initDependencies();
+		setUpDependencies();
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 	}
 
 	@Test

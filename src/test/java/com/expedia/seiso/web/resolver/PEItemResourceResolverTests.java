@@ -88,14 +88,14 @@ public class PEItemResourceResolverTests {
 	private HttpHeaders httpHeaders;
 
 	@Before
-	public void init() {
+	public void setUp() {
 		this.resolver = new PEResourceResolver(new ArrayList<SimplePropertyEntry>());
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		// this.httpServletRequest = new MockHttpServletRequest();
 		// httpServletRequest.addHeader("Accept", "application/json");
 		// httpServletRequest.addHeader("Content-Type", "application/json");
@@ -105,7 +105,7 @@ public class PEItemResourceResolverTests {
 		when(httpHeaders.getContentType()).thenReturn(MediaType.APPLICATION_JSON);
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemMetaLookup.getItemClass(RepoKeys.NODES)).thenReturn(Node.class);
 
 		this.messageConverters = new ArrayList<HttpMessageConverter<?>>();

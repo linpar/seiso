@@ -77,18 +77,18 @@ public class ItemControllerV1Tests {
 	@Mock private SaveAllResponse saveAllResponse;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.controller = new ItemControllerV1();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		when(peResource.getItem()).thenReturn(item);
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemMetaLookup.getItemClass(anyString())).thenReturn(Service.class);
 		
 		when(delegate.getAll(eq(ApiVersion.V1), eq(CRUD_REPO_KEY), anyString(), eq(pageable), eq(params)))

@@ -65,7 +65,7 @@ public class ItemTests {
 	private User user;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		
 		// @formatter:off
 

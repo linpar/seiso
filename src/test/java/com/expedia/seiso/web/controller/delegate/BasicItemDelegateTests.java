@@ -91,17 +91,17 @@ public class BasicItemDelegateTests {
 	@Mock private ItemKey itemKey;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 		this.delegate = new BasicItemDelegate(resourceAssembler);
 		delegate.setItemMetaLookup(itemMetaLookup);
 		delegate.setItemService(itemService);
 		
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 		when(nonPagingRepoMeta.isPagingRepo()).thenReturn(false);
 		when(nonPagingRepoMeta.getProjectionNode(Projection.Cardinality.COLLECTION, VIEW_KEY)).thenReturn(projection);
 		
@@ -123,7 +123,7 @@ public class BasicItemDelegateTests {
 		// @formatter:on
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemMetaLookup.getItemClass(NONPAGING_REPO_KEY)).thenReturn(NONPAGING_ITEM_CLASS);
 		when(itemMetaLookup.getItemClass(PAGING_REPO_KEY)).thenReturn(PAGING_ITEM_CLASS);
 		when(itemMetaLookup.getItemMeta(NONPAGING_ITEM_CLASS)).thenReturn(nonPagingRepoMeta);

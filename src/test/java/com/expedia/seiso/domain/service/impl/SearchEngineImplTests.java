@@ -65,14 +65,14 @@ public class SearchEngineImplTests {
 	@Mock private Iterator repoIterator;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		this.initTestData();
-		this.initDependencies();
+		this.setUpTestData();
+		this.setUpDependencies();
 		this.searchEngine = new SearchEngineImpl(repositories);
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		this.badSearchQuery = query("bad search query");
 		this.goodQuery = query("good search query");
 	}
@@ -83,7 +83,7 @@ public class SearchEngineImplTests {
 		return new SearchQuery(query, tokens);
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(repositories.iterator()).thenReturn(repoIterator);
 		when(repositories.getRepositoryFor(Node.class)).thenReturn(nodeRepo);
 		when(repositories.getRepositoryFor(Machine.class)).thenReturn(machineRepo);

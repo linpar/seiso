@@ -39,12 +39,12 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
  */
 @Component
 public class SimpleItemRepoAdapter implements RepoAdapter {
-	private Repositories repositories;
 	private ItemMetaLookup itemMetaLookup;
+	private Repositories repositories;
 	
-	public SimpleItemRepoAdapter(@NonNull Repositories repositories, @NonNull ItemMetaLookup itemMetaLookup) {
-		this.repositories = repositories;
+	public SimpleItemRepoAdapter(@NonNull ItemMetaLookup itemMetaLookup, @NonNull Repositories repositories) {
 		this.itemMetaLookup = itemMetaLookup;
+		this.repositories = repositories;
 	}
 	
 	@Override

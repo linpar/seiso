@@ -44,13 +44,13 @@ public class HalResourceAssemblerTests {
 	@Mock private PageMetadata pageMeta;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.assembler = new HalResourceAssembler();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
+		setUpTestData();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 		this.resource = new Resource();
 		resource.addLink(link);
 		resource.setProperty("someProperty", "someValue");

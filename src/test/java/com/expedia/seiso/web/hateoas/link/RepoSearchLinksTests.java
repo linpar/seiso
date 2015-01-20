@@ -56,18 +56,18 @@ public class RepoSearchLinksTests {
 	@Mock private ItemMeta itemMeta;
 	
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 		this.repoSearchLinks = new RepoSearchLinks(versionUri, itemPaths, itemMetaLookup);
 	}
 	
-	private void initTestData() throws Exception {
+	private void setUpTestData() throws Exception {
 		this.versionUri = new URI("https://seiso.example.com/v2");
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemMetaLookup.getItemMeta((Class<?>) anyObject())).thenReturn(itemMeta);
 	}
 	

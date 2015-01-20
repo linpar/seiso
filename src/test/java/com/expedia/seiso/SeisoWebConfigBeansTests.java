@@ -44,13 +44,13 @@ public class SeisoWebConfigBeansTests {
 	@Mock private UriToItemKeyConverter uriToItemKeyConverter;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.beans = new SeisoWebConfigBeans();
 		MockitoAnnotations.initMocks(this);
-		initDependencies();
+		setUpDependencies();
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(customProperties.getBaseUri()).thenReturn("https://seiso.example.com/v42");
 	}
 	

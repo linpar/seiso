@@ -48,7 +48,7 @@ public class LogFilterTests {
 	private FilterChain chain;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		this.filter = new LogFilter();
 		MockitoAnnotations.initMocks(this);
 		filter.init(filterConfig);

@@ -33,7 +33,7 @@ public interface ServiceInstancePortRepo extends PagingAndSortingRepository<Serv
 	ServiceInstancePort findByServiceInstanceAndNumber(ServiceInstance serviceInstance, Integer number);
 
 	ServiceInstancePort findByServiceInstanceKeyAndNumber(String serviceInstanceKey, Integer number);
-
+	
 	@Modifying
 	@Query("delete from ServiceInstancePort p where p.serviceInstance.key = :serviceInstanceKey and p.number = :number")
 	void deleteByServiceInstanceKeyAndNumber(@Param("serviceInstanceKey") String serviceInstanceKey,

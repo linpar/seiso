@@ -52,13 +52,13 @@ public class SeisoWebConfigBeansV2Tests {
 	@Mock private ConversionService conversionService;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.beans = new SeisoWebConfigBeansV2();
 		MockitoAnnotations.initMocks(this);
-		initDependencies();
+		setUpDependencies();
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(customProperties.getBaseUri()).thenReturn("https://seiso.example.com/v2");
 	}
 	

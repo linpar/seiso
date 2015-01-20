@@ -47,7 +47,7 @@ public class ServiceRepoImplTests {
 	private List<Service> mockResultList;
 
 	@Before
-	public void init() {
+	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
 		this.searchTokens = new HashSet<String>();

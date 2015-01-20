@@ -59,14 +59,14 @@ public class ServiceInstancePortListenerTests {
 	private ServiceInstancePort port;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		this.listener = new ServiceInstancePortListener();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		this.nodes = new ArrayList<>();
 		nodes.add(buildNode());
 		nodes.add(buildNode());
@@ -83,7 +83,7 @@ public class ServiceInstancePortListenerTests {
 		return new Node().setIpAddresses(ipAddresses);
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(appContext.getBean(EndpointRepo.class)).thenReturn(endpointRepo);
 	}
 

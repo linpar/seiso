@@ -43,7 +43,7 @@ public class ItemKeyTests {
 	private SimpleItemKey simpleItemKey1, simpleItemKey2, simpleItemKey3;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.endpointKey1 = new EndpointKey(1L);
 		this.endpointKey2 = new EndpointKey(1L);
 		this.endpointKey3 = new EndpointKey(2L);

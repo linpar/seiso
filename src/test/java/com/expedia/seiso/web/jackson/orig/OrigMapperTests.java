@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.jackson.v1;
+package com.expedia.seiso.web.jackson.orig;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 /**
  * @author Willie Wheeler
  */
-public class V1MapperTests {
+public class OrigMapperTests {
 	
 	// Dependencies
 	@Mock private OrigModule v1Module;
@@ -41,7 +41,7 @@ public class V1MapperTests {
 	@Mock private Version version;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		when(v1Module.getModuleName()).thenReturn("some-name");
 		when(v1Module.version()).thenReturn(version);

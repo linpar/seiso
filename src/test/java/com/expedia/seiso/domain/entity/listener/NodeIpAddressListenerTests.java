@@ -56,14 +56,14 @@ public class NodeIpAddressListenerTests {
 	private NodeIpAddress nodeIpAddress;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		this.listener = new NodeIpAddressListener();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		this.ports = new ArrayList<>();
 		ports.add(new ServiceInstancePort());
 		ports.add(new ServiceInstancePort());
@@ -72,7 +72,7 @@ public class NodeIpAddressListenerTests {
 				.setNode(new Node().setServiceInstance(new ServiceInstance().setPorts(ports))).setIpAddress("1.1.1.1");
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(appContext.getBean(EndpointRepo.class)).thenReturn(endpointRepo);
 	}
 

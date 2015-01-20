@@ -29,15 +29,22 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
 public interface RepoAdapter {
 
 	boolean supports(Class<?> itemClass);
-
+	
 	/**
-	 * Finds the corresponding persistent item.
+	 * Finds the corresponding persistent item, or <code>null</code> if it doesn't exist. (We return <code>null</code>
+	 * as opposed to throwing an exception because that's what the repos themselves do.)
 	 * 
 	 * @param key
-	 *            an item serving as a lookup key
-	 * @return persistent item, or null if it doesn't exist
+	 *            Item key
+	 * @return Persistent item, or <code>null</code> if it doesn't exist
 	 */
 	Item find(ItemKey key);
-
+	
+	/**
+	 * Deletes the requested item. Does nothing if there's no such item.
+	 * 
+	 * @param key
+	 *            Item key
+	 */
 	void delete(ItemKey key);
 }

@@ -47,18 +47,18 @@ public class UserDetailsServiceImplTests {
 	private User existingUser;
 
 	@Before
-	public void init() {
+	public void setUp() {
 		this.service = new UserDetailsServiceImpl();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		this.existingUser = new User().setUsername("existing-user");
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(userRepo.findByUsername(existingUser.getUsername())).thenReturn(existingUser);
 	}
 

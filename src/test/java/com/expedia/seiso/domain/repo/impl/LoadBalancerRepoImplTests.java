@@ -47,7 +47,7 @@ public class LoadBalancerRepoImplTests {
 	private List<LoadBalancer> mockResultList;
 
 	@Before
-	public void init() {
+	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
 		this.searchTokens = new HashSet<String>();

@@ -75,14 +75,14 @@ public class RepoSearchControllerV2Tests {
 	@Mock private PagedResources searchResultResourcePage;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.controller = new RepoSearchControllerV2();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 		when(nonPagingItemMeta.isPagingRepo()).thenReturn(false);
 		when(pagingItemMeta.isPagingRepo()).thenReturn(true);
 		
@@ -103,7 +103,7 @@ public class RepoSearchControllerV2Tests {
 				.thenReturn(searchMethodWithUniqueResult);
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemMetaLookup.getItemClass(NONPAGING_REPO_KEY)).thenReturn(NONPAGING_ITEM_CLASS);
 		when(itemMetaLookup.getItemMeta(NONPAGING_ITEM_CLASS)).thenReturn(nonPagingItemMeta);
 		

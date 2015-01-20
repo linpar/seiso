@@ -80,14 +80,14 @@ public class ItemServiceImplTests {
 	@Mock private Page<Person> personPage;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		this.itemService = new ItemServiceImpl();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		// @formatter:off
 		this.person = new Person()
 				.setUsername("wwheeler")
@@ -109,7 +109,7 @@ public class ItemServiceImplTests {
 		this.personKey = new SimpleItemKey(Person.class, person.getUsername());
 	}
 
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(itemMetaLookup.getItemMeta(Person.class)).thenReturn(personMeta);
 
 		when(repositories.getRepositoryFor(Person.class)).thenReturn(personRepo);

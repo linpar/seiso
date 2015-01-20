@@ -60,14 +60,14 @@ public class PersonControllerTests {
 	@Mock private Page<Person> personPage;
 	
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		this.controller = new ItemControllerV2();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 		this.people = new ArrayList<>();
 		people.add(new Person().setUsername("alpha"));
 		people.add(new Person().setUsername("beta"));
@@ -79,7 +79,7 @@ public class PersonControllerTests {
 		when(personPage.iterator()).thenReturn(people.iterator());
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(personRepo.findBySource(anyString(), eq(pageable))).thenReturn(personPage);
 	}
 	

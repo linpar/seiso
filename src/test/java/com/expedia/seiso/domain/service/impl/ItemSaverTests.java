@@ -46,14 +46,14 @@ public class ItemSaverTests {
 	private Person person, manager;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		initTestData();
-		initDependencies();
+		setUpTestData();
+		setUpDependencies();
 		this.itemSaver = new ItemSaver(repositories, itemMerger);
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 		// @formatter:off
 		this.manager = new Person()
 				.setUsername("jhogg")
@@ -69,7 +69,7 @@ public class ItemSaverTests {
 		// @formatter:on
 	}
 	
-	private void initDependencies() {
+	private void setUpDependencies() {
 		when(repositories.getRepositoryFor(Person.class)).thenReturn(personRepo);
 	}
 	

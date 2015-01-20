@@ -52,12 +52,12 @@ public class ResponseHeadersV1Tests {
 	private PagedResources baseResourcePage;
 	
 	@Before
-	public void init() {
+	public void setUp() {
 		this.responseHeaders = new ResponseHeadersV1();
-		initTestData();
+		setUpTestData();
 	}
 	
-	private void initTestData() {
+	private void setUpTestData() {
 		this.links = new ArrayList<>();
 		links.add(new Link(Relations.FIRST, FIRST_HREF));
 		links.add(new Link(Relations.PREVIOUS, PREV_HREF));

@@ -52,13 +52,13 @@ public class ExceptionHandlerAdviceTests {
 	private WebRequest webRequest;
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 		this.advice = new ExceptionHandlerAdvice();
 		MockitoAnnotations.initMocks(this);
-		initTestData();
+		setUpTestData();
 	}
 
-	private void initTestData() {
+	private void setUpTestData() {
 		this.resourceNotFoundException = new ResourceNotFoundException("my-rnfe-message");
 		this.jsonMappingException = new JsonMappingException("my-jme-message");
 		this.runtimeException = new RuntimeException("my-re-message");
