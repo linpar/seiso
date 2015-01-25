@@ -200,7 +200,7 @@ public class ResourceAssembler {
 		
 		pEntity.doWithProperties(propHandler);
 		pEntity.doWithAssociations(assocHandler);
-		doSpecialNonPersistentAssociations(item, resource.getAssociations());
+		doSpecialNonPersistentAssociations(apiVersion, item, resource.getAssociations());
 		
 		return resource;
 	}
@@ -449,11 +449,13 @@ public class ResourceAssembler {
 	// This is a temporary hack to handle special-case non-persistent properties.
 	// Specifically, we need to be able to map NodeIpAddress.aggregateRotationStatus. [WLW]
 	@Deprecated
-	private void doSpecialNonPersistentAssociations(Item item, Map<String, Object> model) {
+	private void doSpecialNonPersistentAssociations(ApiVersion apiVersion, Item item, Map<String, Object> model) {
 		val itemClass = item.getClass();
 		if (itemClass == NodeIpAddress.class) {
 			val nip = (NodeIpAddress) item;
-			model.put("aggregateRotationStatus", nip.getAggregateRotationStatus());
+			val rotationStatus = nip.getAggregateRotationStatus();
+			val rotationStatusResource = toResource(apiVersion, rotationStatus, ProjectionNode.FLAT_PROJECTION_NODE);
+			model.put("aggregateRotationStatus", rotationStatusResource);
 		}
 	}
 }

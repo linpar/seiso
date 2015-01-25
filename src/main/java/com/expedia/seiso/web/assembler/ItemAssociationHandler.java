@@ -65,8 +65,8 @@ public class ItemAssociationHandler implements SimpleAssociationHandler {
 		if (child != null) {
 			if (Item.class.isAssignableFrom(propType)) {
 				val propEntity = (Item) wrapper.getProperty(prop);
-				val propBaseResource = assembler.toResource(apiVersion, propEntity, child, false);
-				resource.setAssociation(propName, propBaseResource);
+				val propResource = assembler.toResource(apiVersion, propEntity, child, false);
+				resource.setAssociation(propName, propResource);
 			} else if (List.class.isAssignableFrom(propType)) {
 				val propEntityList = (List<?>) wrapper.getProperty(prop);
 				val propResourceList = assembler.toResourceList(apiVersion, propEntityList, child);
