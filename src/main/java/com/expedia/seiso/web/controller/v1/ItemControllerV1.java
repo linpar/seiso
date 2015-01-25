@@ -130,10 +130,10 @@ public class ItemControllerV1 {
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	@Transactional(propagation = Propagation.NEVER)
-	public SaveAllResponse postAll(@PathVariable String repoKey, PEResources peResourceList) {
-		log.trace("Batch saving {} items: repoKey={}", peResourceList.size(), repoKey);
+	public SaveAllResponse postAll(@PathVariable String repoKey, PEResources peResources) {
+		log.trace("Batch saving {} items: repoKey={}", peResources.size(), repoKey);
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
-		return delegate.postAll(itemClass, peResourceList, true);
+		return delegate.postAll(itemClass, peResources, true);
 	}
 
 	/**
