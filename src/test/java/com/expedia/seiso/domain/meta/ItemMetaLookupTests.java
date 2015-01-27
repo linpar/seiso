@@ -45,7 +45,7 @@ public class ItemMetaLookupTests {
 	public void setUp() {
 		this.lookup = new ItemMetaLookup();
 		MockitoAnnotations.initMocks(this);
-		lookup.postConstruct();
+//		lookup.postConstruct();
 	}
 
 	// FIXME Ignoring because I'm not yet sure how best to mock Repositories. [WLW]
