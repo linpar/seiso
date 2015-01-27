@@ -15,30 +15,19 @@
  */
 package com.expedia.seiso;
 
-import lombok.val;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-
-import com.expedia.seiso.core.config.CustomProperties;
-import com.expedia.seiso.core.util.ApplicationContextProvider;
-import com.expedia.seiso.web.jackson.hal.HalMapper;
-import com.expedia.seiso.web.jackson.hal.HalModule;
-import com.expedia.seiso.web.jackson.hal.HalPagedResourcesSerializer;
-import com.expedia.seiso.web.jackson.hal.HalResourceAssembler;
-import com.expedia.seiso.web.jackson.hal.HalResourceSerializer;
-import com.expedia.seiso.web.jackson.hal.HalResourcesSerializer;
 
 /**
  * @author Willie Wheeler
  */
 @Configuration
 @Import({
+	SeisoCoreConfig.class,
 	SeisoRabbitConfig.class,
 	SeisoDomainConfig.class,
 	SeisoWebConfigBeans.class,
@@ -57,26 +46,5 @@ public class Seiso {
 	
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Seiso.class, args);
-	}
-	
-	@Bean
-	public CustomProperties customProperties() { return new CustomProperties(); }
-	
-	@Bean
-	public ApplicationContextProvider applicationContextProvider() {
-		return new ApplicationContextProvider();
-	}
-	
-	// Putting this here since both AMQP and REST API need it.
-	// Actually the NotificationGatewayImpl uses the ResourceAssembler too, so we may need to move that here.
-	@Bean
-	public HalMapper halMapper() {
-		val assembler = new HalResourceAssembler();
-		// @formatter:off
-		return new HalMapper(new HalModule(
-				new HalResourceSerializer(assembler),
-				new HalResourcesSerializer(assembler),
-				new HalPagedResourcesSerializer(assembler)));
-		// @formatter:on
 	}
 }
