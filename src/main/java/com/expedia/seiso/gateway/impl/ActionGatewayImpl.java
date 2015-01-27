@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.core.util.C;
+import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.gateway.ActionGateway;
 import com.expedia.seiso.gateway.model.ActionRequest;
 
@@ -34,15 +34,15 @@ import com.expedia.seiso.gateway.model.ActionRequest;
  */
 @Component
 public class ActionGatewayImpl implements ActionGateway {
-	@Autowired
-	private AmqpTemplate amqpTemplate;
+	@Autowired private AmqpTemplate amqpTemplate;
+	@Autowired private CustomProperties customProperties;
 
 	// Asynchronous because we don't want failures here to impact the core app.
 	// TODO Verify that this actually works. [WLW]
 	@Async
 	@Override
 	public void publish(@NonNull ActionRequest request) {
-		val exchange = C.AMQP_EXCHANGE_SEISO_ACTION_REQUESTS;
+		val exchange = customProperties.getActionRequestExchange();
 		val routingKey = request.getCode();
 		amqpTemplate.convertAndSend(exchange, routingKey, request);
 	}

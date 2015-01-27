@@ -16,6 +16,8 @@
 package com.expedia.seiso.core.util;
 
 /**
+ * Constants.
+ * 
  * @author Willie Wheeler
  */
 public class C {
@@ -29,11 +31,4 @@ public class C {
 	public static final String EC_INVALID_REQUEST_JSON_PAYLOAD = "invalid_request_json_payload";
 
 	public static final String EC_RESOURCE_NOT_FOUND = "resource_not_found";
-
-	public static final String AMQP_EXCHANGE_SEISO_NOTIFICATIONS = "seiso.notifications";
-	public static final String AMQP_EXCHANGE_SEISO_ACTION_REQUESTS = "seiso.action_requests";
-
-	// Fanout exchanges ignore the routing key, so just use "".
-	// http://www.rabbitmq.com/tutorials/tutorial-three-java.html
-	// public static final String AMQP_DUMMY_ROUTING_KEY = "";
 }

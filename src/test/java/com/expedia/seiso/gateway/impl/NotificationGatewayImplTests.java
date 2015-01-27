@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.amqp.core.AmqpTemplate;
 
+import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
@@ -44,7 +45,8 @@ public class NotificationGatewayImplTests {
 	// Dependencies
 	@Mock private AmqpTemplate amqpTemplate;
 	@Mock private ResourceAssembler itemAssembler;
-
+	@Mock private CustomProperties customProperties;
+	
 	// Test data
 	private Service service;
 	private NodeIpAddress nip;
@@ -72,6 +74,7 @@ public class NotificationGatewayImplTests {
 	private void setUpDependencies() {
 		when(itemAssembler.toResource(eq(ApiVersion.V2), (Item) anyObject(), (ProjectionNode) anyObject()))
 				.thenReturn(itemResource);
+		when(customProperties.getChangeNotificationExchange()).thenReturn("seiso.notifications");
 	}
 
 	@Test
@@ -102,5 +105,15 @@ public class NotificationGatewayImplTests {
 	@Test
 	public void notify_deleteNodeIpAddress() {
 		gateway.notify(nip, ItemNotification.OP_DELETE);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void notify_nullItem() {
+		gateway.notify(null, ItemNotification.OP_CREATE);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void notify_nullItemNotification() {
+		gateway.notify(service, null);
 	}
 }

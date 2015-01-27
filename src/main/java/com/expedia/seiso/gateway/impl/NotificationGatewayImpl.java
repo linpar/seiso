@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.core.util.C;
+import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.gateway.NotificationGateway;
 import com.expedia.seiso.gateway.model.ItemNotification;
@@ -42,6 +42,7 @@ import com.expedia.seiso.web.assembler.ResourceAssembler;
 public class NotificationGatewayImpl implements NotificationGateway {
 	@Autowired private AmqpTemplate amqpTemplate;
 	@Autowired private ResourceAssembler resourceAssembler;
+	@Autowired private CustomProperties customProperties;
 	
 	// Asynchronous because we don't want failures here to impact the core app. For example, if RabbitMQ goes down, we
 	// don't want Seiso to be unable to create/update/delete items.
@@ -52,9 +53,10 @@ public class NotificationGatewayImpl implements NotificationGateway {
 		// Just go with V2 right now since nobody's using V1 here.
 		val itemResource = resourceAssembler.toResource(ApiVersion.V2, item, ProjectionNode.FLAT_PROJECTION_NODE);
 		
+		val exchange = customProperties.getChangeNotificationExchange();
 		val notification = new ItemNotification(itemType, itemResource, operation);
 		val routingKey = itemType + "." + operation;
 		log.info("Sending notification: itemType={}, itemKey={}, operation={}", itemType, item.itemKey(), operation);
-		amqpTemplate.convertAndSend(C.AMQP_EXCHANGE_SEISO_NOTIFICATIONS, routingKey, notification);
+		amqpTemplate.convertAndSend(exchange, routingKey, notification);
 	}
 }

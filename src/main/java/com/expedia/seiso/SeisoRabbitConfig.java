@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.expedia.seiso.core.util.C;
+import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.web.jackson.hal.HalMapper;
 
 // TODO Do we want this?
@@ -44,6 +44,7 @@ import com.expedia.seiso.web.jackson.hal.HalMapper;
 public class SeisoRabbitConfig {
 	@Autowired private CachingConnectionFactory connectionFactory;
 	@Autowired private HalMapper halMapper;
+	@Autowired private CustomProperties customProperties;
 	
 	@Bean
 	public RabbitAdmin rabbitAdmin() {
@@ -56,16 +57,14 @@ public class SeisoRabbitConfig {
 
 	@Bean
 	public Exchange seisoNotificationsExchange() {
-		val exchange = new TopicExchange(C.AMQP_EXCHANGE_SEISO_NOTIFICATIONS);
+		return new TopicExchange(customProperties.getChangeNotificationExchange());
 		// exchange.setAdminsThatShouldDeclare(rabbitAdmin());
-		return exchange;
 	}
 
 	@Bean
 	public Exchange seisoActionRequestsExchange() {
 		// Use a direct exchange since we want to route requests according to their request codes.
-		val exchange = new DirectExchange(C.AMQP_EXCHANGE_SEISO_ACTION_REQUESTS);
-		return exchange;
+		return new DirectExchange(customProperties.getActionRequestExchange());
 	}
 	
 	@Bean

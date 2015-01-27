@@ -18,6 +18,7 @@ package com.expedia.seiso.gateway.impl;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.amqp.core.AmqpTemplate;
 
+import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.gateway.model.BulkNodeActionRequest;
 
 /**
@@ -34,16 +36,14 @@ import com.expedia.seiso.gateway.model.BulkNodeActionRequest;
 public class ActionGatewayImplTests {
 
 	// Class under test
-	@InjectMocks
-	private ActionGatewayImpl gateway;
+	@InjectMocks private ActionGatewayImpl gateway;
 
 	// Dependencies
-	@Mock
-	private AmqpTemplate amqpTemplate;
+	@Mock private AmqpTemplate amqpTemplate;
+	@Mock private CustomProperties customProperties;
 
 	// Test data
-	@Mock
-	private BulkNodeActionRequest request;
+	@Mock private BulkNodeActionRequest request;
 
 	@Before
 	public void setUp() throws Exception {
@@ -57,6 +57,7 @@ public class ActionGatewayImplTests {
 	}
 
 	private void setUpDependencies() {
+		when(customProperties.getChangeNotificationExchange()).thenReturn("seiso.action_requests.v2");
 	}
 
 	@Test
