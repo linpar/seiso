@@ -24,6 +24,7 @@ import lombok.NonNull;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.repository.support.Repositories;
 
@@ -38,11 +39,7 @@ import com.expedia.seiso.core.exception.NotFoundException;
 @SuppressWarnings("rawtypes")
 @XSlf4j
 public class ItemMetaLookup {
-	@NonNull private Repositories repositories;
-	
-	public ItemMetaLookup(Repositories repositories) {
-		this.repositories = repositories;
-	}
+	@Autowired private Repositories repositories;
 	
 	private final Map<String, Class> itemClassesByRepoKey = new HashMap<>();
 	private final Map<Class, ItemMeta> itemMetasByItemClass = new HashMap<>();

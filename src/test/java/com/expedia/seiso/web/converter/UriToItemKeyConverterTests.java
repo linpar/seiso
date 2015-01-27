@@ -53,7 +53,6 @@ public class UriToItemKeyConverterTests {
 		this.converter = new UriToItemKeyConverter(VERSION_URI);
 		MockitoAnnotations.initMocks(this);
 		setUpDependencies();
-		converter.postConstruct();
 	}
 	
 	private void setUpDependencies() {

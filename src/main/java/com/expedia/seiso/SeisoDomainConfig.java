@@ -134,7 +134,7 @@ public class SeisoDomainConfig {
 		@Autowired private ServiceInstancePortRepo serviceInstancePortRepo;
 		
 		@Bean
-		public ItemMetaLookup itemMetaLookup() { return new ItemMetaLookup(repositories); }
+		public ItemMetaLookup itemMetaLookup() { return new ItemMetaLookup(); }
 		
 		@Bean
 		public RepoAdapterLookup repoAdapterLookup() {

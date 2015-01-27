@@ -15,10 +15,7 @@
  */
 package com.expedia.seiso.web.converter;
 
-import javax.annotation.PostConstruct;
-
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +36,7 @@ import com.expedia.seiso.domain.repo.RepoKeys;
  * @author Willie Wheeler
  */
 @Component
-@RequiredArgsConstructor
 public class UriToItemKeyConverter implements Converter<String, ItemKey> {
-	@NonNull private String versionUri;
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	
 	// Don't use UriTemplate here, because it does a greedy match against the URI, which isn't what we want.
@@ -55,8 +50,7 @@ public class UriToItemKeyConverter implements Converter<String, ItemKey> {
 	private String simpleUriTemplate;
 	private String compoundUriTemplate;
 	
-	@PostConstruct
-	public void postConstruct() {
+	public UriToItemKeyConverter(@NonNull String versionUri) {
 		this.simpleUriTemplate = versionUri + "/{repoKey}/{itemKey}";
 		this.compoundUriTemplate = versionUri + "/{repoKey}/{itemKey}/{collKey}/{elemKey}";
 	}
