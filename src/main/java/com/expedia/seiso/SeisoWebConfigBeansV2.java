@@ -47,7 +47,7 @@ public class SeisoWebConfigBeansV2 {
 	
 	@Bean
 	public UriToItemKeyConverter uriToItemKeyConverter() {
-		return new UriToItemKeyConverter(getVersionUri().toString(), itemMetaLookup);
+		return new UriToItemKeyConverter(getVersionUri().toString());
 	}
 	
 	@Bean

@@ -21,6 +21,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -41,7 +42,7 @@ import com.expedia.seiso.domain.repo.RepoKeys;
 @RequiredArgsConstructor
 public class UriToItemKeyConverter implements Converter<String, ItemKey> {
 	@NonNull private String versionUri;
-	@NonNull private ItemMetaLookup itemMetaLookup;
+	@Autowired private ItemMetaLookup itemMetaLookup;
 	
 	// Don't use UriTemplate here, because it does a greedy match against the URI, which isn't what we want.
 	// (E.g., the simple URI template matches /service-instances/foo/ports/8080, which isn't the intent.)

@@ -23,6 +23,7 @@ import lombok.val;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -42,16 +43,16 @@ public class UriToItemKeyConverterTests {
 	private static final String VERSION_URI = "https://seiso.example.com/v2";
 	
 	// Class under test
-	private UriToItemKeyConverter converter;
+	@InjectMocks private UriToItemKeyConverter converter;
 	
 	// Dependencies
 	@Mock private ItemMetaLookup itemMetaLookup;
 	
 	@Before
 	public void setUp() {
+		this.converter = new UriToItemKeyConverter(VERSION_URI);
 		MockitoAnnotations.initMocks(this);
 		setUpDependencies();
-		this.converter = new UriToItemKeyConverter(VERSION_URI, itemMetaLookup);
 		converter.postConstruct();
 	}
 	
@@ -62,12 +63,7 @@ public class UriToItemKeyConverterTests {
 	
 	@Test(expected = NullPointerException.class)
 	public void init_nullVersionUri() {
-		new UriToItemKeyConverter(null, itemMetaLookup);
-	}
-	
-	@Test(expected = NullPointerException.class)
-	public void init_nullItemMetaLookup() {
-		new UriToItemKeyConverter(VERSION_URI, null);
+		new UriToItemKeyConverter(null);
 	}
 	
 	@Test
