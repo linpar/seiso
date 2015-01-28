@@ -15,7 +15,6 @@
  */
 package com.expedia.seiso.domain.entity;
 
-import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,6 +38,7 @@ public abstract class AbstractItem implements Item {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
 	private Long id;
+	
+	private String sourceUri;
 }

@@ -43,7 +43,4 @@ public interface PersonRepo extends PagingAndSortingRepository<Person, Long> {
 	
 	@RestResource(path = "find-by-email")
 	Person findByEmail(@Param("email") String email);
-	
-	@RestResource(path = "find-by-source")
-	Page<Person> findBySource(@Param("source") String source, Pageable pageable);
 }

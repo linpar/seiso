@@ -30,9 +30,9 @@ import lombok.experimental.Accessors;
 
 import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
+import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.RestResource;
-import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 
@@ -85,10 +85,6 @@ public class Person extends AbstractItem {
 	@OneToMany(mappedBy = "manager")
 	@RestResource(path = "direct-reports")
 	private List<Person> directReports;
-	
-	private String source;
-	
-//	public List<Person> getDirectReports() { return directReports; }
 	
 	@Override
 	public ItemKey itemKey() {
