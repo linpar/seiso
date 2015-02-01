@@ -1,7 +1,7 @@
 # Changelog
 
 ## [0.2.0](https://github.com/ExpediaDotCom/seiso/tree/0.2.0)
-#### 01/02/15
+#### 02/01/15
 - *Merged pull-request:* Vagrant: Parameterise db "forwarded\_port" settings [\#29](https://github.com/ExpediaDotCom/seiso/pull/29) ([mattcallanan](https://github.com/mattcallanan))
 
 - *Merged pull-request:* README & Vagrant tweaks from issues encountered during first-time setup [\#27](https://github.com/ExpediaDotCom/seiso/pull/27) ([mattcallanan](https://github.com/mattcallanan))
