@@ -21,6 +21,7 @@ import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -30,7 +31,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.MediaTypes;
 
 // Don't use @EnableWebMvc here since we are using WebMvcConfigurationSupport directly. [WLW]
 
@@ -58,8 +58,10 @@ public class SeisoWebConfig extends WebMvcConfigurationSupport {
 				.favorParameter(false)
 				.ignoreAcceptHeader(false)
 				.useJaf(false)
-//				.defaultContentType(MediaType.APPLICATION_JSON);
-				.defaultContentType(MediaTypes.APPLICATION_HAL_JSON);
+				// https://github.com/ExpediaDotCom/seiso/issues/48
+				// Use application/json as the default to avoid a breaking change to the v1 API.
+//				.defaultContentType(MediaTypes.APPLICATION_HAL_JSON);
+				.defaultContentType(MediaType.APPLICATION_JSON);
 		// @formatter:on
 	}
 	
