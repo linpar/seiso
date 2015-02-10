@@ -18,6 +18,9 @@ package com.expedia.seiso.domain.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import lombok.NonNull;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
@@ -29,12 +32,16 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.expedia.seiso.core.exception.ResourceNotFoundException;
 import com.expedia.seiso.core.util.CollectionsUtils;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
@@ -63,6 +70,10 @@ public class ItemServiceImpl implements ItemService {
 	@Autowired private ItemMerger itemMerger;
 	@Autowired private ItemDeleter itemDeleter;
 	@Autowired private ItemSaver itemSaver;
+	@Autowired private TransactionTemplate txTemplate;
+	
+	@PersistenceContext
+	private EntityManager entityManager;
 	
 	/**
 	 * Using {@link Propagation.NEVER} because we don't want a single error to wreck the entire operation.
@@ -82,7 +93,16 @@ public class ItemServiceImpl implements ItemService {
 
 		for (val item : items) {
 			try {
-				save(item, mergeAssociations);
+				// Have to doInTransaction() since calling save() happens behind the transactional proxy.
+				// Also, see http://stackoverflow.com/questions/5568409/java-generics-void-void-types
+				txTemplate.execute(new TransactionCallback<Void>() {
+
+					@Override
+					public Void doInTransaction(TransactionStatus status) {
+						save(item, mergeAssociations);
+						return null;
+					}
+				});
 			} catch (RuntimeException e) {
 				e.printStackTrace();
 				val message = e.getClass() + ": " + e.getMessage();
@@ -107,10 +127,52 @@ public class ItemServiceImpl implements ItemService {
 		if (itemToSave == null) {
 			itemSaver.create(itemData, mergeAssociations);
 		} else {
-			itemSaver.update(itemData, itemToSave, mergeAssociations);
+			if (itemData instanceof Node) {
+				
+				// Special logic to handle diamond dependencies per https://github.com/ExpediaDotCom/seiso/issues/33.
+				// When moving a node, we need to delete the old node and create the new node. The deletion and creation
+				// automatically cascades to node IP addresses and endpoints.
+				val oldNode = (Node) itemToSave;
+				val oldSiKey = oldNode.getServiceInstance().getKey();
+				val newNode = (Node) itemData;
+				val newNodeName = newNode.getName();
+				val newSiKey = newNode.getServiceInstance().getKey();
+				
+				log.trace("oldServiceInstance={}, newServiceInstance={}", oldSiKey, newSiKey);
+				
+				// Sanity check
+				if (oldSiKey == null || newSiKey == null) {
+					throw new IllegalStateException("Node save failed: null service instance key");
+				}
+				
+				if (newSiKey.equals(oldSiKey)) {
+					log.trace("Updating node: {}", newNode);
+					itemSaver.update(newNode, oldNode, mergeAssociations);
+				} else {
+					log.trace("Moving node {} from service instance {} to service instance {}",
+							newNodeName, oldSiKey, newSiKey);
+					
+					log.trace("Deleting node: {}", oldNode.getId());
+					itemDeleter.delete(oldNode);
+					
+					// Hibernate reorders the operations, performing inserts before deletes, so we have to flush the
+					// session to force the deletes to happen. See https://forum.hibernate.org/viewtopic.php?t=934483.
+					// Note that Gavin says that usually when you delete and then reinsert, you're usually doing it
+					// wrong, but I don't think that's the case here. Our delete cascades down to node IP addresses and
+					// endpoints, and our reinsertion creates new entities through JPA listeners. So we really do want
+					// to wipe out the old entity (or at least its dependencies). [WLW]
+					entityManager.flush();
+					
+					log.trace("Creating node: {}", newNode.getId());
+					itemSaver.create(newNode, mergeAssociations);
+				}
+				
+			} else {
+				itemSaver.update(itemData, itemToSave, mergeAssociations);
+			}
 		}
 	}
-
+	
 	@Override
 	@SuppressWarnings("rawtypes")
 	public List findAll(@NonNull Class itemClass) {

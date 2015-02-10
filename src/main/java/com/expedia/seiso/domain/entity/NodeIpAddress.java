@@ -72,11 +72,11 @@ import com.expedia.seiso.domain.entity.listener.NodeIpAddressListener;
 //@formatter:on
 public class NodeIpAddress extends AbstractItem {
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "node_id")
 	private Node node;
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "ip_address_role_id")
 	private IpAddressRole ipAddressRole;
 
@@ -86,7 +86,7 @@ public class NodeIpAddress extends AbstractItem {
 	@OneToMany(mappedBy = "ipAddress", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Endpoint> endpoints = new ArrayList<>();
 
-	@ManyToOne
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "rotation_status_id")
 	private RotationStatus rotationStatus;
 

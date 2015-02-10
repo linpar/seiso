@@ -179,7 +179,7 @@ public class BasicItemDelegate {
 	
 	public SaveAllResponse postAll(
 			@NonNull Class<?> itemClass,
-			@NonNull PEResources peResourceList,
+			@NonNull PEResources peResources,
 			boolean mergeAssociations) {
 		
 		// FIXME The SaveAllResponse contains a SaveAllError, which in turn contains an Item. If the Item has a cycle,
@@ -192,7 +192,7 @@ public class BasicItemDelegate {
 		// returning ID info. [WLW]
 		//
 		// http://www.cowtowncoder.com/blog/archives/2012/03/entry_466.html [WLW]
-		return itemService.saveAll(itemClass, peResourceList, mergeAssociations);
+		return itemService.saveAll(itemClass, peResources, mergeAssociations);
 	}
 	
 	public void put(@NonNull Item item, boolean mergeAssociations) {

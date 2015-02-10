@@ -38,7 +38,7 @@ import com.expedia.seiso.domain.entity.Item;
 @RequiredArgsConstructor
 public class ItemSaver {
 	@NonNull private Repositories repositories;
-	@NonNull private ItemMerger itemMerger;
+	@NonNull private ItemMerger itemMerger;	
 	
 	public void create(@NonNull Item item, boolean mergeAssociations) {
 		val itemClass = item.getClass();

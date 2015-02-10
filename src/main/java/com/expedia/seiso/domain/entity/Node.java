@@ -27,15 +27,14 @@ import javax.persistence.OneToMany;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
+import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.RestResource;
-import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 
@@ -94,8 +93,7 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 	})
 //@formatter:on
 public class Node extends AbstractItem {
-	@Key
-	private String name;
+	@Key private String name;
 
 	/**
 	 * Optional description to support cases where service instance nodes aren't entirely interchangeable. For instance
@@ -116,7 +114,8 @@ public class Node extends AbstractItem {
 	@RestResource(path = "machine")
 	private Machine machine;
 
-	@NonNull
+//	@NonNull
+//	@ElementCollection
 	@OneToMany(mappedBy = "node", cascade = CascadeType.ALL, orphanRemoval = true)
 	@RestResource(path = "ip-addresses")
 	private List<NodeIpAddress> ipAddresses = new ArrayList<>();

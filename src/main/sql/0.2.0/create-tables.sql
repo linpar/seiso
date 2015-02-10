@@ -502,8 +502,10 @@ CREATE TABLE `user` (
   `username` varchar(40) NOT NULL,
   `password` varchar(64) NOT NULL,
   `enabled` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `source_uri` varchar(255) DEFAULT NULL
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_user_username` (`username`)
+  UNIQUE KEY `idx_user_username` (`username`),
+  KEY `source_uri` (`source_uri`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -16,6 +16,7 @@
 package com.expedia.seiso.domain.service.impl;
 
 import java.beans.PropertyDescriptor;
+import java.util.List;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,8 @@ public class ItemMerger {
 					if (mergeAssociations) {
 						mergeSingleAssociation(src, dest, propClass, propName);
 					}
+				} else if (List.class.isAssignableFrom(propClass)) {
+					// Skip lists. No warning need.
 				} else {
 					log.warn("Property '{}' has unrecognized class {}; skipping", propName, propClass.getSimpleName());
 				}

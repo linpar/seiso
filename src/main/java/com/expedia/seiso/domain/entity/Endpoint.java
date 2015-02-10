@@ -62,15 +62,15 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
 //@formatter:on
 public class Endpoint extends AbstractItem {
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "node_ip_address_id")
 	private NodeIpAddress ipAddress;
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "service_instance_port_id")
 	private ServiceInstancePort port;
 
-	@ManyToOne
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "rotation_status_id")
 	private RotationStatus rotationStatus;
 

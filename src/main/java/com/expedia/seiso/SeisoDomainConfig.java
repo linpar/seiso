@@ -32,7 +32,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.context.PersistentEntities;
 import org.springframework.data.repository.support.Repositories;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.expedia.seiso.SeisoDomainConfig.RepoConfig;
 import com.expedia.seiso.SeisoDomainConfig.ServiceConfig;
@@ -127,11 +129,17 @@ public class SeisoDomainConfig {
 	@EnableAspectJAutoProxy
 	@EnableTransactionManagement
 	public static class ServiceConfig {
+		@Autowired private PlatformTransactionManager txManager;
 		@Autowired private Repositories repositories;
 		@Autowired private EndpointRepo endpointRepo;
 		@Autowired private IpAddressRoleRepo ipAddressRoleRepo;
 		@Autowired private NodeIpAddressRepo nodeIpAddressRepo;
 		@Autowired private ServiceInstancePortRepo serviceInstancePortRepo;
+		
+		@Bean
+		public TransactionTemplate transactionTemplate() {
+			return new TransactionTemplate(txManager);
+		}
 		
 		@Bean
 		public ItemMetaLookup itemMetaLookup() { return new ItemMetaLookup(); }
