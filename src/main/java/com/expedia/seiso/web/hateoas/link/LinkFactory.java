@@ -25,6 +25,8 @@ import org.springframework.stereotype.Component;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 
 /**
+ * Creates {@link ItemLinks} and {@link RepoSearchLinks} instances and makes them available for use.
+ * 
  * @author Willie Wheeler
  */
 @Component
@@ -32,6 +34,14 @@ public class LinkFactory {
 	@Getter private ItemLinks itemLinks;
 	@Getter private RepoSearchLinks repoSearchLinks;
 	
+	/**
+	 * @param versionUri
+	 *            URI path up to and including the API version.
+	 * @param itemPaths
+	 *            Maps items to their URI paths.
+	 * @param itemMetaLookup
+	 *            Item metadata lookup.
+	 */
 	public LinkFactory(@NonNull URI versionUri, @NonNull ItemPaths itemPaths, @NonNull ItemMetaLookup itemMetaLookup) {
 		this.itemLinks = new ItemLinks(versionUri, itemPaths, itemMetaLookup);
 		this.repoSearchLinks = new RepoSearchLinks(versionUri, itemPaths, itemMetaLookup);

@@ -32,7 +32,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 
 import com.expedia.seiso.core.ann.Projection;
+import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.entity.key.EndpointKey;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.DynaItem;
@@ -114,7 +116,16 @@ public class BasicItemDelegate {
 			String view) {
 		
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
-		return getOne(apiVersion, new SimpleItemKey(itemClass, itemKey), view);
+		
+		// FIXME Yucky hardcode
+		ItemKey itemKeyObj;
+		if (apiVersion == ApiVersion.V1 && itemClass == Endpoint.class) {
+			itemKeyObj = new EndpointKey(Long.parseLong(itemKey));
+		} else {
+			itemKeyObj = new SimpleItemKey(itemClass, itemKey);
+		}
+		
+		return getOne(apiVersion, itemKeyObj, view);
 	}
 	
 	public Resource getOne(@NonNull ApiVersion apiVersion, @NonNull ItemKey itemKey) {

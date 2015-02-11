@@ -25,9 +25,14 @@ import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.entity.NodeIpAddress;
+import com.expedia.seiso.domain.entity.ServiceInstancePort;
+import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
+import com.expedia.seiso.domain.repo.ServiceInstancePortRepo;
 import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 
 /**
@@ -40,6 +45,10 @@ import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 @XSlf4j
 public class ItemMerger {
 	@NonNull private RepoAdapterLookup repoAdapterLookup;
+	
+	// FIXME Temporary til we can map URIs to items.
+	@Autowired private NodeIpAddressRepo nodeIpAddressRepo;
+	@Autowired private ServiceInstancePortRepo serviceInstancePortRepo;
 	
 	/**
 	 * Merges a source item into a destination item so we can write the destination item to the database.
@@ -104,7 +113,9 @@ public class ItemMerger {
 	@SuppressWarnings("rawtypes")
 	private void mergeSingleAssociation(Item src, Item dest, Class assocClass, String assocName) {
 		val itemDesc = BeanUtils.getPropertyDescriptor(src.getClass(), assocName);
-		log.trace("src.class={}, dest.class={}, itemDesc={}", src.getClass().getName(), dest.getClass().getName(),
+		log.trace("src.class={}, dest.class={}, itemDesc={}",
+				src.getClass().getName(),
+				dest.getClass().getName(),
 				itemDesc);
 
 		val getter = itemDesc.getReadMethod();
@@ -120,8 +131,26 @@ public class ItemMerger {
 
 		Item persistentAssoc = null;
 		if (assocData != null) {
-			val assocKey = assocData.itemKey();
-			persistentAssoc = repoAdapterLookup.getRepoAdapterFor(assocClass).find(assocKey);
+			
+			// FIXME This fails when the associated item isn't sufficiently hydrated to generate its item key. This
+			// happens for example when trying to generate a NodeIpAddress key when we haven't loaded the backing Node.
+			// Also happens with ServiceInstancePorts missing a backing service instance.
+			// https://github.com/ExpediaDotCom/seiso/issues/54
+			// 
+			// Need to get away from using ItemKeys here, and use the URI instead. We need a way (besides controllers,
+			// which help only at the top level) to resolve URIs into the objects that they reference.
+			// 
+			// In the meantime we'll just use the ID to support v1.
+			
+			if (assocClass == NodeIpAddress.class) {
+				persistentAssoc = nodeIpAddressRepo.findOne(assocData.getId());
+			} else if (assocClass == ServiceInstancePort.class) {
+				persistentAssoc = serviceInstancePortRepo.findOne(assocData.getId());
+			} else {
+				val repoAdapter = repoAdapterLookup.getRepoAdapterFor(assocClass);
+				val assocKey = assocData.itemKey();
+				persistentAssoc = repoAdapter.find(assocKey);
+			}
 		}
 
 		setter.invoke(dest, persistentAssoc);

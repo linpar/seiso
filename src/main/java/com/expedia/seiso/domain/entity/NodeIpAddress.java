@@ -158,6 +158,11 @@ public class NodeIpAddress extends AbstractItem {
 
 	@Override
 	public ItemKey itemKey() {
+		// FIXME This NPEs when there's no node loaded. So at least make it more explicit with ISE.
+		// Need to get away from itemKeys and use URIs instead.
+		if (node == null) {
+			throw new IllegalStateException("Need node to generate itemKey");
+		}
 		return new NodeIpAddressKey(node.getName(), ipAddress);
 	}
 

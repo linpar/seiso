@@ -33,7 +33,8 @@ import com.expedia.seiso.web.Relations;
 import com.expedia.seiso.web.hateoas.Link;
 
 /**
- * Various factory methods for creating API links.
+ * Various factory methods for creating item links. This does not include the repository search links, which
+ * {@link RepoSearchLinks} handles.
  * 
  * @author Willie Wheeler
  */

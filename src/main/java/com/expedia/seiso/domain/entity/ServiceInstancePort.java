@@ -87,6 +87,11 @@ public class ServiceInstancePort extends AbstractItem {
 
 	@Override
 	public ItemKey itemKey() {
+		// FIXME This NPEs when there's no service instance loaded. So at least make it more explicit with ISE.
+		// Need to get away from itemKeys and use URIs instead.
+		if (serviceInstance == null) {
+			throw new IllegalStateException("Need serviceInstance to generate itemKey");
+		}
 		return new ServiceInstancePortKey(serviceInstance.getKey(), number);
 	}
 

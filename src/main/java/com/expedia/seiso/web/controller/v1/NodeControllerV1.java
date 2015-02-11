@@ -52,7 +52,8 @@ public class NodeControllerV1 {
 			value = "/nodes/search/find-by-ip-address-and-port",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public Resource findNodeByIpAddressAndPort(@RequestParam("ip-address") String ipAddress,
+	public Resource findNodeByIpAddressAndPort(
+			@RequestParam("ip-address") String ipAddress,
 			@RequestParam("port") Integer port) {
 
 		val nodes = nodeRepo.findByIpAddressAndPort(ipAddress, port);
