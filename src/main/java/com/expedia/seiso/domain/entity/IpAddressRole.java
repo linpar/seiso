@@ -31,6 +31,7 @@ import lombok.experimental.Accessors;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
+import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.key.IpAddressRoleKey;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 
@@ -49,12 +50,14 @@ public class IpAddressRole extends AbstractItem {
 
 	@ManyToOne
 	@JoinColumn(name = "service_instance_id")
+	@RestResource(path = "service-instance")
 	private ServiceInstance serviceInstance;
 
 	private String name;
 	private String description;
 
 	@OneToMany(mappedBy = "ipAddressRole", cascade = CascadeType.ALL, orphanRemoval = true)
+	@RestResource(path = "ip-addresses")
 	private List<NodeIpAddress> ipAddresses;
 
 	@Override

@@ -35,6 +35,7 @@ import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
+import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 
@@ -69,6 +70,7 @@ public class LoadBalancer extends AbstractItem {
 
 	@ManyToOne
 	@JoinColumn(name = "data_center_id")
+	@RestResource(path = "data-center")
 	private DataCenter dataCenter;
 
 	// FIXME This is probably just temporary. Eventually we'll tie the service instance to a load balancer through a
@@ -76,6 +78,7 @@ public class LoadBalancer extends AbstractItem {
 	@NonNull
 	@OneToMany(mappedBy = "loadBalancer")
 	@OrderBy("key")
+	@RestResource(path = "load-balancer")
 	private List<ServiceInstance> serviceInstances = new ArrayList<>();
 
 	@Column(name = "type")

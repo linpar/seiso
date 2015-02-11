@@ -43,6 +43,7 @@ import lombok.experimental.Accessors;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
+import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.NodeIpAddressKey;
 import com.expedia.seiso.domain.entity.listener.NodeIpAddressListener;
@@ -78,6 +79,7 @@ public class NodeIpAddress extends AbstractItem {
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ip_address_role_id")
+	@RestResource(path = "ip-address-role")
 	private IpAddressRole ipAddressRole;
 
 	private String ipAddress;
@@ -88,6 +90,7 @@ public class NodeIpAddress extends AbstractItem {
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "rotation_status_id")
+	@RestResource(path = "rotation-status")
 	private RotationStatus rotationStatus;
 
 	// FIXME Hm this isn't showing up in the DTO because it's not a persistent property. See LegacyItemAssembler and
