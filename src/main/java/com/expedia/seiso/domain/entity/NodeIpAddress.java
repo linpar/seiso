@@ -93,8 +93,9 @@ public class NodeIpAddress extends AbstractItem {
 	@RestResource(path = "rotation-status")
 	private RotationStatus rotationStatus;
 
-	// FIXME Hm this isn't showing up in the DTO because it's not a persistent property. See LegacyItemAssembler and
-	// LegacyItemAssociationHandler.
+	// FIXME Hm this isn't showing up in the DTO because it's not a persistent property.
+	// I've hardcoded ResourceAssembler.doSpecialNonPersistentAssociations() to deal with this, but we need a more
+	// general solution. [WLW]
 	@Transient
 	public RotationStatus getAggregateRotationStatus() {
 

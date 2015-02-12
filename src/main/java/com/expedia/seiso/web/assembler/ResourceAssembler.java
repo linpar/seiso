@@ -37,10 +37,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
+import com.expedia.seiso.core.ann.Projection;
+import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.Person;
+import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.SearchResults;
 import com.expedia.seiso.web.ApiVersion;
@@ -446,7 +449,7 @@ public class ResourceAssembler {
 		return new PageMetadata(pageSize, pageNumber, totalItems);
 	}
 	
-	// This is a temporary hack to handle special-case non-persistent properties.
+	// FIXME This is a temporary hack to handle special-case non-persistent properties.
 	// Specifically, we need to be able to map NodeIpAddress.aggregateRotationStatus. [WLW]
 	@Deprecated
 	private void doSpecialNonPersistentAssociations(ApiVersion apiVersion, Item item, Map<String, Object> model) {
@@ -454,7 +457,12 @@ public class ResourceAssembler {
 		if (itemClass == NodeIpAddress.class) {
 			val nip = (NodeIpAddress) item;
 			val rotationStatus = nip.getAggregateRotationStatus();
-			val rotationStatusResource = toResource(apiVersion, rotationStatus, ProjectionNode.FLAT_PROJECTION_NODE);
+			
+			// Use default projection (not flat) because we need the status type to color code the labels.
+			val itemMeta = itemMetaLookup.getItemMeta(RotationStatus.class);
+			val proj = itemMeta.getProjectionNode(Cardinality.SINGLE, Projection.DEFAULT);
+			val rotationStatusResource = toResource(apiVersion, rotationStatus, proj);
+			
 			model.put("aggregateRotationStatus", rotationStatusResource);
 		}
 	}
