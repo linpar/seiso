@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  * @author Willie Wheeler
  */
 @Component
+@SuppressWarnings("serial")
 public class OrigResourceSerializer extends StdSerializer<Resource> {
 	private OrigResourceAssembler assembler;
 	

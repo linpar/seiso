@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  * @author Willie Wheeler
  */
 @Component
+@SuppressWarnings("serial")
 public class HalResourceSerializer extends StdSerializer<Resource> {
 	private HalResourceAssembler assembler;
 	

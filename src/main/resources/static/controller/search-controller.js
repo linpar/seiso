@@ -37,9 +37,9 @@ app.controller('SearchController', [ '$rootScope', '$scope', 'SearchService', '$
     $scope.searchResults = SearchService.getResults();
     $scope.search = function() {
       SearchService.search(function() { 
-        var searchResults = SearchService.getResults()['value']['_embedded'];
-        console.log(searchResults);
+        var searchResults = SearchService.getResults()['value'];
         $rootScope.searchResults = searchResults;
+//        console.log(JSON.stringify(searchResults));
         $location.path('/search');
       });
     };

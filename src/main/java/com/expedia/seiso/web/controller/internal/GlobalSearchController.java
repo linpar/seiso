@@ -61,6 +61,8 @@ public class GlobalSearchController {
 					direction = Direction.ASC)
 			Pageable pageable) {
 		
+		log.trace("Doing global search: keywords={}", keywords);
+		
 		// TODO Use a handler method arg resolver instead. [WLW]
 		val query = new SearchQuery(keywords, toKeywordSet(keywords));
 		
