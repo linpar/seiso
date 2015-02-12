@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import lombok.val;
+import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -37,11 +38,14 @@ import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
 import com.expedia.seiso.web.hateoas.Resource;
 
 /**
+ * Controller to perform global searches. This primarily supports the search box in the UI.
+ * 
  * @author Ken Van Eyk
  * @author Willie Wheeler
  */
 @RestController
 @RequestMapping("/internal/search")
+@XSlf4j
 public class GlobalSearchController {
 	@Autowired private GlobalSearchDelegate delegate;
 	
@@ -60,7 +64,7 @@ public class GlobalSearchController {
 		// TODO Use a handler method arg resolver instead. [WLW]
 		val query = new SearchQuery(keywords, toKeywordSet(keywords));
 		
-		// V2, since this isn't available in V2.
+		// V2, since this isn't available in V1.
 		return delegate.globalSearch(ApiVersion.V2, query, pageable);
 	}
 	

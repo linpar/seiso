@@ -16,10 +16,12 @@
 package com.expedia.seiso.core.util;
 
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 
 /**
  * @author Willie Wheeler
  */
+@UtilityClass
 public class ReflectionUtils {
 
 	@SneakyThrows

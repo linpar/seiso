@@ -20,10 +20,12 @@ import java.util.List;
 
 import lombok.NonNull;
 import lombok.val;
+import lombok.experimental.UtilityClass;
 
 /**
  * @author Willie Wheeler
  */
+@UtilityClass
 public class CollectionsUtils {
 
 	public static Class<?> getElementClass(@NonNull List<?> list) {

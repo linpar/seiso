@@ -15,11 +15,14 @@
  */
 package com.expedia.seiso.core.util;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * Constants.
  * 
  * @author Willie Wheeler
  */
+@UtilityClass
 public class C {
 	public static final int DEFAULT_PAGE_NUMBER = 0;
 	public static final int DEFAULT_PAGE_SIZE = 100;
