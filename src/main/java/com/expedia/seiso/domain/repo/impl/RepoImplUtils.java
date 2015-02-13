@@ -46,8 +46,10 @@ public class RepoImplUtils {
 			@NotNull Set<String> searchTokens,
 			Pageable pageable) {
 		
+		// Set max results to avoid huge search queries.
 		val items = new QueryFactory()
 			.buildQuery(entityName, entityManager, fieldNames, searchTokens)
+			.setMaxResults(50)
 			.getResultList();
 		return new PageImpl<T>(items);
 	}
