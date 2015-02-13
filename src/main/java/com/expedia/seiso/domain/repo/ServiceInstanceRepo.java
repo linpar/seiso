@@ -23,12 +23,14 @@ import org.springframework.data.repository.query.Param;
 import com.expedia.seiso.core.ann.FindByKey;
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.ServiceInstance;
+import com.expedia.seiso.domain.repo.custom.ServiceInstanceRepoCustom;
 
 /**
  * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.SERVICE_INSTANCES)
-public interface ServiceInstanceRepo extends PagingAndSortingRepository<ServiceInstance, Long> {
+public interface ServiceInstanceRepo
+		extends PagingAndSortingRepository<ServiceInstance, Long>, ServiceInstanceRepoCustom {
 
 	@FindByKey
 	ServiceInstance findByKey(@Param("key") String key);

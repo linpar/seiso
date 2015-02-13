@@ -21,10 +21,10 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
 
 import lombok.NonNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -33,43 +33,21 @@ import com.expedia.seiso.domain.repo.custom.MachineRepoCustom;
 
 /**
  * @author Ken Van Eyk
+ * @author Willie Wheeler
  */
 public class MachineRepoImpl implements MachineRepoCustom {
 	private static final String ENTITY_NAME = "Machine";
-	private static final Set<String> FIELD_NAMES = new LinkedHashSet<String>(Arrays.asList(new String[] { "name",
-			"hostname", "ipAddress" }));
+	private static final Set<String> FIELD_NAMES =
+			new LinkedHashSet<String>(Arrays.asList("name", "hostname", "ipAddress"));
 
-	@PersistenceContext
-	private EntityManager entityManager;
-	private RepoImplUtils repoUtils;
-
-	// TODO @PersistenceContext can't be applied at the constructor level, reconcile for consistency
-	// https://jira.spring.io/browse/SPR-10443
-	public MachineRepoImpl() {
-		this(null);
-	}
-
-	public MachineRepoImpl(@NotNull EntityManager entityManager) {
-		this(entityManager, null);
-	}
-
-	public MachineRepoImpl(@NotNull EntityManager entityManager, RepoImplUtils repoUtils) {
-		this.entityManager = entityManager;
-		this.repoUtils = (repoUtils == null ? RepoImplUtils.getInstance() : repoUtils);
-	}
+	@PersistenceContext private EntityManager entityManager;
+	@Autowired private RepoImplUtils repoUtils;
 
 	@Override
-	public Class<Machine> getResultType() {
-		return Machine.class;
-	}
+	public Class<Machine> getResultType() { return Machine.class; }
 
 	@Override
 	public Page<Machine> search(@NonNull Set<String> searchTokens, Pageable pageable) {
-		Page<Machine> searchPage = this.repoUtils.search(MachineRepoImpl.ENTITY_NAME, this.entityManager,
-				MachineRepoImpl.FIELD_NAMES, searchTokens, pageable);
-		;
-
-		return searchPage;
+		return repoUtils.search(ENTITY_NAME, entityManager, FIELD_NAMES, searchTokens, pageable);
 	}
-
 }

@@ -15,40 +15,34 @@
  */
 package com.expedia.seiso.domain.repo.impl;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.validation.constraints.NotNull;
+import javax.persistence.PersistenceContext;
 
-import lombok.NonNull;
-import lombok.val;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.domain.service.search.QueryFactory;
+import com.expedia.seiso.domain.entity.ServiceInstance;
+import com.expedia.seiso.domain.repo.custom.ServiceInstanceRepoCustom;
 
 /**
- * @author Ken Van Eyk
  * @author Willie Wheeler
  */
-@Component
-public class RepoImplUtils {
+public class ServiceInstanceRepoImpl implements ServiceInstanceRepoCustom {
+	private static final String ENTITY_NAME = "ServiceInstance";
+	private static final Set<String> FIELD_NAMES = Collections.singleton("key");
+	
+	@PersistenceContext private EntityManager entityManager;
+	@Autowired private RepoImplUtils repoUtils;
 
-	// TODO use pageable ?
-	@SuppressWarnings("unchecked")
-	public <T> Page<T> search(
-			@NotNull String entityName,
-			@NotNull EntityManager entityManager,
-			@NonNull Set<String> fieldNames,
-			@NotNull Set<String> searchTokens,
-			Pageable pageable) {
-		
-		val items = new QueryFactory()
-			.buildQuery(entityName, entityManager, fieldNames, searchTokens)
-			.getResultList();
-		return new PageImpl<T>(items);
+	@Override
+	public Class<ServiceInstance> getResultType() { return ServiceInstance.class; }
+
+	@Override
+	public Page<ServiceInstance> search(Set<String> searchTokens, Pageable pageable) {
+		return repoUtils.search(ENTITY_NAME, entityManager, FIELD_NAMES, searchTokens, pageable);
 	}
 }

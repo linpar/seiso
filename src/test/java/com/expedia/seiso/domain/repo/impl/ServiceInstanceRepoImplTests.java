@@ -37,13 +37,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
- * @author Ken Van Eyk
  * @author Willie Wheeler
  */
-public class ServiceRepoImplTests {
+public class ServiceInstanceRepoImplTests {
 	
 	// Class under test
-	@InjectMocks private ServiceRepoImpl repo;
+	@InjectMocks private ServiceInstanceRepoImpl repo;
 	
 	// Dependencies
 	@Mock private EntityManager entityManager;
@@ -56,7 +55,7 @@ public class ServiceRepoImplTests {
 
 	@Before
 	public void setUp() {
-		this.repo = new ServiceRepoImpl();
+		this.repo = new ServiceInstanceRepoImpl();
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(repo, "entityManager", entityManager);
 		initTestData();

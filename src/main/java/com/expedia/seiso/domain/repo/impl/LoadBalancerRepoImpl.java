@@ -21,10 +21,10 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
 
 import lombok.NonNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -33,43 +33,20 @@ import com.expedia.seiso.domain.repo.custom.LoadBalancerRepoCustom;
 
 /**
  * @author Ken Van Eyk
+ * @author Willie Wheeler
  */
 public class LoadBalancerRepoImpl implements LoadBalancerRepoCustom {
 	private static final String ENTITY_NAME = "LoadBalancer";
-	private static final Set<String> FIELD_NAMES = new LinkedHashSet<String>(Arrays.asList(new String[] { "name",
-			"ipAddress" }));
+	private static final Set<String> FIELD_NAMES = new LinkedHashSet<String>(Arrays.asList("name", "ipAddress"));
 
-	@PersistenceContext
-	private EntityManager entityManager;
-	private RepoImplUtils repoUtils;
-
-	// TODO @PersistenceContext can't be applied at the constructor level, reconcile for consistency
-	// https://jira.spring.io/browse/SPR-10443
-	public LoadBalancerRepoImpl() {
-		this(null);
-	}
-
-	public LoadBalancerRepoImpl(@NotNull EntityManager entityManager) {
-		this(entityManager, null);
-	}
-
-	public LoadBalancerRepoImpl(@NotNull EntityManager entityManager, RepoImplUtils repoUtils) {
-		this.entityManager = entityManager;
-		this.repoUtils = (repoUtils == null ? RepoImplUtils.getInstance() : repoUtils);
-	}
+	@PersistenceContext private EntityManager entityManager;
+	@Autowired private RepoImplUtils repoUtils;
 
 	@Override
-	public Class<LoadBalancer> getResultType() {
-		return LoadBalancer.class;
-	}
+	public Class<LoadBalancer> getResultType() { return LoadBalancer.class; }
 
 	@Override
 	public Page<LoadBalancer> search(@NonNull Set<String> searchTokens, Pageable pageable) {
-		Page<LoadBalancer> searchPage = this.repoUtils.search(LoadBalancerRepoImpl.ENTITY_NAME, this.entityManager,
-				LoadBalancerRepoImpl.FIELD_NAMES, searchTokens, pageable);
-		;
-
-		return searchPage;
+		return repoUtils.search(ENTITY_NAME, entityManager, FIELD_NAMES, searchTokens, pageable);
 	}
-
 }

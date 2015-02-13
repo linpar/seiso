@@ -52,6 +52,7 @@ import com.expedia.seiso.domain.repo.adapter.RepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 import com.expedia.seiso.domain.repo.adapter.ServiceInstancePortRepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.SimpleItemRepoAdapter;
+import com.expedia.seiso.domain.repo.impl.RepoImplUtils;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SearchEngine;
 import com.expedia.seiso.domain.service.impl.ItemDeleter;
@@ -122,6 +123,11 @@ public class SeisoDomainConfig {
 			val beans = BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, MappingContext.class);
 			for (val context : beans.values()) { contexts.add(context); }
 			return new PersistentEntities(contexts);
+		}
+		
+		@Bean
+		public RepoImplUtils repoImplUtils() {
+			return new RepoImplUtils();
 		}
 	}
 	

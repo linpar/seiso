@@ -15,58 +15,66 @@
  */
 package com.expedia.seiso.domain.repo.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
+
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 
-import org.junit.Assert;
+import lombok.val;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import com.expedia.seiso.domain.entity.Node;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
- * @author Ken Van Eyk (kvaneyk@expedia.com)
+ * @author Ken Van Eyk
+ * @author Willie Wheeler
  */
 public class NodeRepoImplTests {
-	private Set<String> searchTokens;
-	private Pageable pageable;
-	@Mock
-	private EntityManager entityManager;
-	private MockRepoImplUtils mockRepoImplUtils;
-	private Page<Node> mockResultsPage;
-	private List<Node> mockResultList;
+	
+	// Class under test
+	@InjectMocks private NodeRepoImpl repo;
+	
+	// Dependencies
+	@Mock private EntityManager entityManager;
+	@Mock private RepoImplUtils repoUtils;
+	
+	// Test data
+	@Mock private Set<String> searchTokens;
+	@Mock private Pageable pageable;
+	@Mock private Page resultsPage;
 
 	@Before
 	public void setUp() {
+		this.repo = new NodeRepoImpl();
 		MockitoAnnotations.initMocks(this);
-
-		this.searchTokens = new HashSet<String>();
-		searchTokens.add("foo");
-		this.pageable = new PageRequest(1, 1);
-
-		this.mockResultList = new ArrayList<Node>();
-		this.mockResultsPage = new PageImpl<Node>(this.mockResultList);
-		this.mockRepoImplUtils = new MockRepoImplUtils(this.mockResultsPage);
+		ReflectionTestUtils.setField(repo, "entityManager", entityManager);
+		initTestData();
+		initDependencies();
+	}
+	
+	private void initTestData() {
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void initDependencies() {
+		when(repoUtils.search(anyString(), eq(entityManager), (Set) anyObject(), eq(searchTokens), eq(pageable)))
+				.thenReturn(resultsPage);
 	}
 
 	@Test
 	public void searchTest() {
-		NodeRepoImpl nodeRepoImpl = new NodeRepoImpl(this.entityManager, this.mockRepoImplUtils);
-
-		Page<Node> expected = this.mockResultsPage;
-		Page<Node> actual = nodeRepoImpl.search(this.searchTokens, pageable);
-
-		Assert.assertEquals(expected, actual);
+		val actual = repo.search(searchTokens, pageable);
+		assertEquals(resultsPage, actual);
 	}
-
 }

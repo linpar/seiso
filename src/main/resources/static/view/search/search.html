@@ -23,6 +23,21 @@
   </section>
   <section>
     <header>
+      <h2>Service Instances <small>({{$root.searchResults.serviceInstance.length}})</small></h2>
+    </header>
+    <div ng-show="$root.searchResults.serviceInstance.length == 0">
+      <p>No results.</p>
+    </div>
+    <div ng-show="$root.searchResults.serviceInstance.length &gt; 0">
+      <ul class="list-unstyled">
+        <li ng-repeat="serviceInstance in $root.searchResults.serviceInstance | orderBy:'key'">
+          <a ng-href="{{uri('serviceInstances', serviceInstance.key)}}">{{serviceInstance.key}}</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+  <section>
+    <header>
       <h2>Nodes <small>({{$root.searchResults.node.length}})</small></h2>
     </header>
     <div ng-show="$root.searchResults.node.length == 0">
