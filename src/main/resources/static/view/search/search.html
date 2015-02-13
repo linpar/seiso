@@ -33,7 +33,7 @@
     <div ng-show="$root.searchResults.serviceInstance.length &gt; 0">
       <ul class="list-unstyled">
         <li ng-repeat="serviceInstance in $root.searchResults.serviceInstance | orderBy:'key'">
-          <a ng-href="{{uri('serviceInstances', serviceInstance.key)}}">{{serviceInstance.key}}</a>
+          <a ng-href="{{uri('service-instances', serviceInstance.key)}}">{{serviceInstance.key}}</a>
         </li>
       </ul>
     </div>
