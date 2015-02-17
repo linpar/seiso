@@ -22,6 +22,7 @@ mysql_database db_name do
 end
 
 node['seiso_db']['sql_scripts'].each do |s|
+  puts "Executing SQL script: #{s}"
   mysql_database db_name do
     connection mysql_connection
     sql { ::File.open("#{node['seiso_db']['artifacts_dir']}/#{s}").read }

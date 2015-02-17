@@ -32,10 +32,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.util.C;
+import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 
 /**
  * @author Willie Wheeler
@@ -43,6 +45,7 @@ import com.expedia.seiso.web.hateoas.Resource;
 @RestController
 @RequestMapping("/v1")
 public class RepoSearchControllerV1 {
+	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private RepoSearchDelegate delegate;
 	@Autowired private ResponseHeadersV1 responseHeaders;
 	
@@ -59,7 +62,7 @@ public class RepoSearchControllerV1 {
 			value = "/{repoKey}/search/{search}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public HttpEntity<PagedResources> repoSearch(
+	public HttpEntity<Object> repoSearch(
 			@PathVariable String repoKey,
 			@PathVariable String search,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view,
@@ -70,9 +73,21 @@ public class RepoSearchControllerV1 {
 			Pageable pageable,
 			@RequestParam MultiValueMap<String, String> params) {
 		
-		// Is it correct that v1 always returns a page here? [WLW]
-		val baseResourcePage = delegate.repoSearch(ApiVersion.V1, repoKey, search, view, pageable, params);
-		val headers = responseHeaders.buildResponseHeaders(baseResourcePage);
-		return new HttpEntity<>(baseResourcePage, headers);
+		val result = delegate.repoSearch(ApiVersion.V1, repoKey, search, view, pageable, params);
+		val resultType = result.getClass();
+		if (PagedResources.class.isAssignableFrom(resultType)) {
+			val pagedResources = (PagedResources) result;
+			val headers = responseHeaders.buildResponseHeaders(pagedResources);
+			return new HttpEntity<>(pagedResources, headers);
+		} else if (Resources.class.isAssignableFrom(resultType)) {
+			val resources = (Resources) result;
+			return new HttpEntity<>(resources);
+		} else {
+			// We *could* just wrap the result with an HttpEntity and return it, but we're not expecting any such
+			// responses, so safer to simply whitelist the result types. (That way we don't have to commit to supporting
+			// them.) If later we have searches that return a single value or whatever, then we can handle those. [WLW]
+			throw new UnsupportedOperationException(
+					"Don't know how to handle repo search result of type " + resultType.getName());
+		}
 	}
 }

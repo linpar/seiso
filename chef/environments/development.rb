@@ -36,8 +36,9 @@ override_attributes(
   },
   "seiso_db" => {
     "sql_scripts" => [
-      "0.2.0/create-tables.sql",
-      "0.2.0/insert-sample-data.sql"
+      "create-tables.sql",
+      "insert-reference-data.sql",
+      "insert-sample-data.sql"
     ]
   }
 )

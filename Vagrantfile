@@ -29,7 +29,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     
     # Would be nice to make this optional. In my case I don't want to use port forwarding (I am treating the VMs as
     # separate machines on the network) and I'd prefer not to forward ports needlessly. [WLW]
-    db.vm.network "forwarded_port", guest: settings["db"]["port"]["guest"], host: settings["db"]["port"]["host"]
+    
+    # FIXME Commenting this out for now because it seems to prevent private networking from working.
+    # Happy to keep it but we need to make it where the user has a choice. Haven't looked deeply at this so it's
+    # possible that I'm mistaken about this. [WLW]
+#    db.vm.network "forwarded_port", guest: settings["db"]["port"]["guest"], host: settings["db"]["port"]["host"]
     
     db.vm.synced_folder settings["db"]["artifacts_dir"]["host"], settings["db"]["artifacts_dir"]["guest"]
     db.vm.provision "chef_solo" do |chef|

@@ -273,7 +273,7 @@ public class ResourceAssembler {
 	 * 
 	 * @return Repository search result resource page
 	 */
-	public PagedResources toRepoSearchResource(
+	public PagedResources toRepoSearchPagedResources(
 			@NonNull ApiVersion apiVersion,
 			@NonNull Page resultPage,
 			@NonNull Class itemClass,

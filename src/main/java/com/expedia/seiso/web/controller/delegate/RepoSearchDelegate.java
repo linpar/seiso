@@ -16,6 +16,11 @@
 package com.expedia.seiso.web.controller.delegate;
 
 import static org.springframework.util.Assert.notNull;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -33,17 +38,15 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.hateoas.Link;
 import com.expedia.seiso.web.hateoas.Resource;
+import com.expedia.seiso.web.hateoas.Resources;
 
-// TODO
-// - Handle list results
-// - Handle unique result
+// TODO Handle the case where a repo search method returns a unique result (e.g., PersonRepo.findByEmail()). [WLW]
 
 /**
  * Web component to perform repository searches on behalf of version-specific controllers.
@@ -71,7 +74,7 @@ public class RepoSearchDelegate {
 	 *            API version
 	 * @param repoKey
 	 *            repository key
-	 * @param path
+	 * @param search
 	 *            search path
 	 * @param pageable
 	 *            page request params
@@ -80,38 +83,52 @@ public class RepoSearchDelegate {
 	 * @return result page
 	 */
 	@SuppressWarnings("rawtypes")
-	public PagedResources repoSearch(
+	public Object repoSearch(
 			@NonNull ApiVersion apiVersion,
 			@NonNull String repoKey,
-			@NonNull String path,
+			@NonNull String search,
 			@NonNull String view,
 			@NonNull Pageable pageable,
 			@NonNull MultiValueMap<String, String> params) {
-
+		
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
 		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
-		val itemPage = repoSearch(itemClass, path, pageable, params);
+		val searchMethod = itemMeta.getRepositorySearchMethod(search);
+		notNull(searchMethod, "Unknown search: " + search);
+		val returnType = searchMethod.getReturnType();
 		val proj = itemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
-		return resourceAssembler.toRepoSearchResource(apiVersion, itemPage, itemClass, path, params, proj);
+		val result = getResult(itemClass, searchMethod, pageable, params);
+		
+		if (returnType == List.class) {
+			val resultList = (List) result;
+			val resourceList = resourceAssembler.toResourceList(apiVersion, resultList, proj);
+			// TODO Probably want a self link in here, at least. [WLW]
+			return new Resources(new ArrayList<Link>(), resourceList);
+		} else if (returnType == Page.class) {
+			val resultPage = (Page) result;
+			return resourceAssembler.toRepoSearchPagedResources(apiVersion, resultPage, itemClass, search, params, proj);
+		} else {
+			throw new UnsupportedOperationException(
+					"Don't know how to handle search " + search + " with return type " + returnType.getName());
+		}
 	}
 	
 	// FIXME Some of this belongs in ItemServiceImpl.
+	// This can return either a Page or a List, depending on the search method we invoke.
 	@SuppressWarnings("unchecked")
-	private <T extends Item> Page<T> repoSearch(
+	private Object getResult(
 			Class<?> itemClass,
-			String query,
+			Method searchMethod,
 			Pageable pageable,
 			MultiValueMap<String, String> params) {
 		
-		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
-		val method = itemMeta.getRepositorySearchMethod(query);
-		notNull(method, "Unknown search: " + query);
-
-		log.trace("Finding {} using method {}", itemClass.getSimpleName(), method.getName());
+		val searchMethodName = searchMethod.getName();
+		log.trace("Finding {} using method {}", itemClass.getSimpleName(), searchMethodName);
 		val repo = repositories.getRepositoryFor(itemClass);
-		val paramClasses = method.getParameterTypes();
-		val allAnns = method.getParameterAnnotations();
+		val paramClasses = searchMethod.getParameterTypes();
+		val allAnns = searchMethod.getParameterAnnotations();
 		val paramVals = new Object[paramClasses.length];
+		
 		for (int i = 0; i < paramClasses.length; i++) {
 			log.trace("Processing param {}", i);
 			if (paramClasses[i] == Pageable.class) {
@@ -135,10 +152,7 @@ public class RepoSearchDelegate {
 			}
 		}
 
-		log.trace("Invoking method {} on repo {} with {} params", method.getName(), repo.getClass(), paramVals.length);
-		// FIXME ClassCastException when this isn't a list. E.g. EndpointRepo.findByIpAddressAndPort. [WLW]
-//		val result = (List<T>) ReflectionUtils.invokeMethod(method, repo, paramVals);
-		val result = (Page<T>) ReflectionUtils.invokeMethod(method, repo, paramVals);
-		return result;
+		log.trace("Invoking {}.{} with {} params", repo.getClass().getName(), searchMethodName, paramVals.length);
+		return ReflectionUtils.invokeMethod(searchMethod, repo, paramVals);
 	}
 }

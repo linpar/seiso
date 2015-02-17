@@ -206,23 +206,23 @@ public class ResourceAssemblerTests {
 	@Test
 	public void toRepoSearchResource() {
 		val result =
-				assembler.toRepoSearchResource(ApiVersion.V2, itemPage, ITEM_CLASS, SEARCH_PATH, params, PROJECTION);
+				assembler.toRepoSearchPagedResources(ApiVersion.V2, itemPage, ITEM_CLASS, SEARCH_PATH, params, PROJECTION);
 		assertNotNull(result);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void toRepoSearchResource_nullApiVersion() {
-		assembler.toRepoSearchResource(null, itemPage, null, SEARCH_PATH, params, PROJECTION);
+		assembler.toRepoSearchPagedResources(null, itemPage, null, SEARCH_PATH, params, PROJECTION);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void toRepoSearchResource_nullItemClass() {
-		assembler.toRepoSearchResource(ApiVersion.V2, itemPage, null, SEARCH_PATH, params, PROJECTION);
+		assembler.toRepoSearchPagedResources(ApiVersion.V2, itemPage, null, SEARCH_PATH, params, PROJECTION);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void toRepoSearchResource_nullItemPage() {
-		assembler.toRepoSearchResource(ApiVersion.V2, null, ITEM_CLASS, SEARCH_PATH, params, PROJECTION);
+		assembler.toRepoSearchPagedResources(ApiVersion.V2, null, ITEM_CLASS, SEARCH_PATH, params, PROJECTION);
 	}
 	
 	
