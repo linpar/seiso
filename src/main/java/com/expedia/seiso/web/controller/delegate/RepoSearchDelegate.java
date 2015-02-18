@@ -115,7 +115,6 @@ public class RepoSearchDelegate {
 	
 	// FIXME Some of this belongs in ItemServiceImpl.
 	// This can return either a Page or a List, depending on the search method we invoke.
-	@SuppressWarnings("unchecked")
 	private Object getResult(
 			Class<?> itemClass,
 			Method searchMethod,
