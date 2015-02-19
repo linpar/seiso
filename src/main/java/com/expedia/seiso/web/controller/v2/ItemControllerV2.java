@@ -23,8 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,12 +38,10 @@ import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.hateoas.PEResource;
-import com.expedia.seiso.web.hateoas.PEResources;
 import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.Resources;
@@ -159,6 +155,8 @@ public class ItemControllerV2 {
 			consumes = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void put(@PathVariable String repoKey, @PathVariable String itemKey, PEResource peResource) {
+		// mergeAssociations = false because v2 treats associations as separate resources, and merging associations
+		// would null out the current item's associations.
 		delegate.put(peResource.getItem(), false);
 	}
 	

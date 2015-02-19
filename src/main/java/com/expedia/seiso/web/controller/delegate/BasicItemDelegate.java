@@ -206,6 +206,16 @@ public class BasicItemDelegate {
 		return itemService.saveAll(itemClass, peResources, mergeAssociations);
 	}
 	
+	/**
+	 * HTTP PUT implementation for individual items.
+	 * 
+	 * @param item
+	 *            Item to put.
+	 * @param mergeAssociations
+	 *            Flag indicating whether we want to merge the source item's associations into the target, as opposed to
+	 *            simply ignoring the associations. The v1 API merges, but the v2 API treats such associations as
+	 *            separate resources, and hence does not merge.
+	 */
 	public void put(@NonNull Item item, boolean mergeAssociations) {
 		log.trace("Putting item: {}", item.itemKey());
 		itemService.save(item, mergeAssociations);

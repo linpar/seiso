@@ -37,6 +37,9 @@
 			<span ng-if="owner"><a ng-href="{{uri('people', owner.username)}}">{{owner.firstName}} {{owner.lastName}}</a></span>
 			<span ng-if="!owner">-</span>
 		</li>
+		<!-- TODO Minimum deployment & ops capacity -->
+		<!-- Also Mike is going to want to see the Eos-enabled flag, but we need a way to do this without hardcoding it
+		     into Seiso. [WLW] -->
 	</ul>
 	<tabset>
 		<tab heading="Nodes">
@@ -44,6 +47,9 @@
 		</tab>
 		<tab heading="Endpoint Info">
 			<ng-include src="'view/items/service-instance/details/endpoint-info-pane.html'" />
+		</tab>
+		<tab heading="Monitoring">
+			<ng-include src="'view/items/service-instance/details/monitoring-pane.html'" />
 		</tab>
 	</tabset>
 </div>
