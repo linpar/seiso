@@ -1,5 +1,9 @@
 -- Patch file
 
+-- =====================================================================================================================
+-- Issue #65: Seiso/Seyren integration
+-- =====================================================================================================================
+
 alter table service_instance add column enable_seyren tinyint(1) unsigned not null default false after min_capacity_ops;
 
 -- Was originally going to include Seyren subscriptions too, but seems better just to provide an API link to the check
@@ -28,4 +32,19 @@ create table service_instance_seyren_check (
   key seyren_check_id (seyren_check_id),
   constraint sisc_service_instance_id foreign key (service_instance_id) references service_instance (id),
   constraint sisc_seyren_check_id foreign key (seyren_check_id) references seyren_check (id)
+) engine=InnoDB;
+
+
+-- =====================================================================================================================
+-- Issue #66: Data sources
+-- =====================================================================================================================
+
+-- This is a configuration table, not an item table.
+-- So we don't need to have a data_source_id field. Might add it in the future, but not now.
+create table data_source (
+  id int unsigned not null auto_increment primary key,
+  ukey varchar(80) not null,
+  base_uri varchar(250) not null,
+  unique key ukey (ukey),
+  unique key base_uri (base_uri)
 ) engine=InnoDB;

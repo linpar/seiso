@@ -18,7 +18,6 @@ package com.expedia.seiso.domain.entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -26,17 +25,30 @@ import lombok.experimental.Accessors;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * Abstract base class for implementing items.
+ * Represents a source of Seiso item data. In general we create sync processes to copy data from the data source into
+ * Seiso, sometimes as a batch process and sometimes in real time. Examples include:
+ * 
+ * <ul>
+ * <li>Active Directory</li>
+ * <li>Chef server</li>
+ * <li>Load balancers</li>
+ * <li>Git repositories</li>
+ * <li>Seyren servers</li>
+ * </ul>
+ * 
+ * and so forth.
  * 
  * @author Willie Wheeler
  */
 @Data
 @Accessors(chain = true)
-@MappedSuperclass
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class AbstractItem implements Item {
-
+public class DataSource {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	
+	private String key;
+	private String baseUri;
 }
