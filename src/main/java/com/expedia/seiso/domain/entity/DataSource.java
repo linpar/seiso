@@ -15,14 +15,20 @@
  */
 package com.expedia.seiso.domain.entity;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.expedia.seiso.core.ann.Key;
+import com.expedia.seiso.core.ann.Projection;
+import com.expedia.seiso.core.ann.Projection.Cardinality;
+import com.expedia.seiso.core.ann.Projections;
+import com.expedia.seiso.domain.entity.key.ItemKey;
+import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 
 /**
  * Represents a source of Seiso item data. In general we create sync processes to copy data from the data source into
@@ -42,13 +48,25 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @Data
 @Accessors(chain = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class DataSource {
+@EqualsAndHashCode(callSuper = false, of = "key")
+@ToString(of = { "key", "baseUri" })
+@Entity
+//@formatter:off
+@Projections({
+	@Projection(cardinality = Cardinality.COLLECTION, paths = {}),
+	@Projection(cardinality = Cardinality.SINGLE, paths = {})
+})
+//@formatter:on
+public class DataSource extends AbstractItem {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	
+	@Key
+	@Column(name = "ukey")
 	private String key;
+	
 	private String baseUri;
+
+	@Override
+	public ItemKey itemKey() {
+		return new SimpleItemKey(DataSource.class, key);
+	}
 }

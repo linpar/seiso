@@ -22,7 +22,7 @@ create table seyren_check (
   state varchar(20),
   source_uri varchar(255),
   unique key seyren_id (seyren_id)
-) engine=InnoDB;
+) engine=InnoDB default charset=utf8;
 
 create table service_instance_seyren_check (
   id int(10) unsigned not null auto_increment primary key,
@@ -32,7 +32,7 @@ create table service_instance_seyren_check (
   key seyren_check_id (seyren_check_id),
   constraint sisc_service_instance_id foreign key (service_instance_id) references service_instance (id),
   constraint sisc_seyren_check_id foreign key (seyren_check_id) references seyren_check (id)
-) engine=InnoDB;
+) engine=InnoDB default charset=utf8;
 
 
 -- =====================================================================================================================
@@ -42,9 +42,19 @@ create table service_instance_seyren_check (
 -- This is a configuration table, not an item table.
 -- So we don't need to have a data_source_id field. Might add it in the future, but not now.
 create table data_source (
-  id int unsigned not null auto_increment primary key,
+  id int(10) unsigned not null auto_increment primary key,
   ukey varchar(80) not null,
   base_uri varchar(250) not null,
   unique key ukey (ukey),
   unique key base_uri (base_uri)
-) engine=InnoDB;
+) engine=InnoDB default charset=utf8;
+
+
+-- =====================================================================================================================
+-- Issue #67: Update Seyren entity to use data sources
+-- =====================================================================================================================
+
+alter table seyren_check add column data_source_id int(10) unsigned not null after source_uri;
+alter table seyren_check add key data_source_id (data_source_id);
+alter table seyren_check add constraint seyren_check_data_source_id foreign key (data_source_id) references data_source (id);
+

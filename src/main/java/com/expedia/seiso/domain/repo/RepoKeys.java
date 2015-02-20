@@ -22,6 +22,7 @@ public interface RepoKeys {
 	
 	// Core repos
 	public static final String DATA_CENTERS = "data-centers";
+	public static final String DATA_SOURCES = "data-sources";
 	public static final String ENDPOINTS = "endpoints";
 	public static final String ENVIRONMENTS = "environments";
 	public static final String HEALTH_STATUSES = "health-statuses";

@@ -21,6 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,8 +48,10 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
 // @formatter:off
 @Projections({
 	@Projection(cardinality = Cardinality.COLLECTION, paths = {
+			"dataSource"
 	}),
 	@Projection(cardinality = Cardinality.SINGLE, paths = {
+			"dataSource"
 	})
 })
 // @formatter:on
@@ -73,6 +76,10 @@ public class SeyrenCheck extends AbstractItem {
 	private Long error;
 	private Boolean enabled;
 	private String state;
+	
+	@ManyToOne
+	@JoinColumn(name = "data_source_id")
+	private DataSource dataSource;
 	
 	/* (non-Javadoc)
 	 * @see com.expedia.seiso.domain.entity.Item#itemKey()

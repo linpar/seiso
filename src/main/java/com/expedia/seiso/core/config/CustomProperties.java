@@ -30,5 +30,4 @@ public class CustomProperties {
 	@NonNull private String baseUri;
 	@NonNull private String changeNotificationExchange;
 	@NonNull private String actionRequestExchange;
-	private String seyrenBaseUri;
 }

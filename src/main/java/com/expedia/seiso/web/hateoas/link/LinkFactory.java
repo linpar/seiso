@@ -22,7 +22,6 @@ import lombok.NonNull;
 
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 
 /**
@@ -36,8 +35,6 @@ public class LinkFactory {
 	@Getter private RepoSearchLinks repoSearchLinks;
 	
 	/**
-	 * @param customProperties
-	 *            App configuration
 	 * @param versionUri
 	 *            URI path up to and including the API version.
 	 * @param itemPaths
@@ -46,12 +43,11 @@ public class LinkFactory {
 	 *            Item metadata lookup.
 	 */
 	public LinkFactory(
-			@NonNull CustomProperties customProperties,
 			@NonNull URI versionUri,
 			@NonNull ItemPaths itemPaths,
 			@NonNull ItemMetaLookup itemMetaLookup) {
 		
-		this.itemLinks = new ItemLinks(customProperties, versionUri, itemPaths, itemMetaLookup);
+		this.itemLinks = new ItemLinks(versionUri, itemPaths, itemMetaLookup);
 		this.repoSearchLinks = new RepoSearchLinks(versionUri, itemPaths, itemMetaLookup);
 	}
 }

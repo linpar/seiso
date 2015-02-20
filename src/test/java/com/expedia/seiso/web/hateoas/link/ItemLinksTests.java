@@ -62,7 +62,7 @@ public class ItemLinksTests {
 		MockitoAnnotations.initMocks(this);
 		setUpTestData();
 		setUpDependencies();
-		this.itemLinks = new ItemLinks(customProperties, v2BaseUri, itemPaths, itemMetaLookup);
+		this.itemLinks = new ItemLinks(v2BaseUri, itemPaths, itemMetaLookup);
 	}
 
 	private void setUpTestData() throws Exception {
