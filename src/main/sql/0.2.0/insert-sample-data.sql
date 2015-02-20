@@ -222,42 +222,42 @@ insert into service (id, ukey, name, group_id, type_id, description, owner_id, s
 , (6, 'cruise-booking', 'Cruise Booking Service', 3, 3, 'UI + REST API for cruise booking.', 1, 'https://github.example.com/cruise-booking', 'Java')
   ;
 
-insert into service_instance (id, ukey, service_id, environment_id, data_center_id, load_balanced) values
-  (1, 'air-shopping-int', 1, 1, 3, true)
-, (2, 'air-shopping-acc', 1, 2, 3, true)
-, (3, 'air-shopping-perf', 1, 3, 3, true)
-, (4, 'air-shopping-prod', 1, 4, 3, true)
-, (5, 'air-shopping-dr', 1, 5, 7, true)
+insert into service_instance (id, ukey, service_id, environment_id, data_center_id, load_balanced, enable_seyren) values
+  (1, 'air-shopping-int', 1, 1, 3, true, false)
+, (2, 'air-shopping-acc', 1, 2, 3, true, false)
+, (3, 'air-shopping-perf', 1, 3, 3, true, false)
+, (4, 'air-shopping-prod', 1, 4, 3, true, true)
+, (5, 'air-shopping-dr', 1, 5, 7, true, false)
  
-, (6, 'air-booking-int', 2, 1, 3, true)
-, (7, 'air-booking-acc', 2, 2, 3, true)
-, (8, 'air-booking-perf', 2, 3, 3, true)
-, (9, 'air-booking-prod', 2, 4, 3, true)
-, (10, 'air-booking-dr', 2, 5, 7, true)
+, (6, 'air-booking-int', 2, 1, 3, true, false)
+, (7, 'air-booking-acc', 2, 2, 3, true, false)
+, (8, 'air-booking-perf', 2, 3, 3, true, false)
+, (9, 'air-booking-prod', 2, 4, 3, true, false)
+, (10, 'air-booking-dr', 2, 5, 7, true, false)
  
-, (11, 'car-shopping-int', 3, 1, 3, true)
-, (12, 'car-shopping-acc', 3, 2, 3, true)
-, (13, 'car-shopping-perf', 3, 3, 3, true)
-, (14, 'car-shopping-prod', 3, 4, 3, true)
-, (15, 'car-shopping-dr', 3, 5, 7, true)
+, (11, 'car-shopping-int', 3, 1, 3, true, false)
+, (12, 'car-shopping-acc', 3, 2, 3, true, false)
+, (13, 'car-shopping-perf', 3, 3, 3, true, false)
+, (14, 'car-shopping-prod', 3, 4, 3, true, false)
+, (15, 'car-shopping-dr', 3, 5, 7, true, false)
  
-, (16, 'car-booking-int', 4, 1, 3, true)
-, (17, 'car-booking-acc', 4, 2, 3, true)
-, (18, 'car-booking-perf', 4, 3, 3, true)
-, (19, 'car-booking-prod', 4, 4, 3, true)
-, (20, 'car-booking-dr', 4, 5, 7, true)
+, (16, 'car-booking-int', 4, 1, 3, true, false)
+, (17, 'car-booking-acc', 4, 2, 3, true, false)
+, (18, 'car-booking-perf', 4, 3, 3, true, false)
+, (19, 'car-booking-prod', 4, 4, 3, true, false)
+, (20, 'car-booking-dr', 4, 5, 7, true, false)
  
-, (21, 'cruise-shopping-int', 5, 1, 10, true)
-, (22, 'cruise-shopping-acc', 5, 2, 10, true)
-, (23, 'cruise-shopping-perf', 5, 3, 10, true)
-, (24, 'cruise-shopping-prod', 5, 4, 1, true)
-, (25, 'cruise-shopping-dr', 5, 5, 2, true)
+, (21, 'cruise-shopping-int', 5, 1, 10, true, false)
+, (22, 'cruise-shopping-acc', 5, 2, 10, true, false)
+, (23, 'cruise-shopping-perf', 5, 3, 10, true, false)
+, (24, 'cruise-shopping-prod', 5, 4, 1, true, false)
+, (25, 'cruise-shopping-dr', 5, 5, 2, true, false)
  
-, (26, 'cruise-booking-int', 6, 1, 10, true)
-, (27, 'cruise-booking-acc', 6, 2, 10, true)
-, (28, 'cruise-booking-perf', 6, 3, 10, true)
-, (29, 'cruise-booking-prod', 6, 4, 1, true)
-, (30, 'cruise-booking-dr', 6, 5, 2, true)
+, (26, 'cruise-booking-int', 6, 1, 10, true, false)
+, (27, 'cruise-booking-acc', 6, 2, 10, true, false)
+, (28, 'cruise-booking-perf', 6, 3, 10, true, false)
+, (29, 'cruise-booking-prod', 6, 4, 1, true, false)
+, (30, 'cruise-booking-dr', 6, 5, 2, true, false)
   ;
 
 insert into service_instance_port (id, service_instance_id, number, protocol, description) values
@@ -540,4 +540,20 @@ where
   sip.service_instance_id = si.id
   and nip.node_id = n.id
   and n.service_instance_id = si.id
+  ;
+
+insert into seyren_check (id, seyren_id, name, description, graphite_base_url, target, warn, error, enabled, state) values
+  (1, '548b6c1ee4b05461bb170982', 'Air Shopping Prod - CPU Load', 'Maximum CPU load average across all servers', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshopp.airshop*-prod.load.load.shortterm)', 6, 8, 1, 'OK')
+, (2, '548b7a99e4b05461bb170ecc', 'Air Shopping Prod - Memory Free', 'Minimum free memory across all servers. If this drops too low then you may need to bounce the boxes.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.memory.memory-free)', 150000000, 100000000, 1, 'OK')
+, (3, '548b7ed5e4b05461bb171058', 'Air Shopping Prod - Disk Free', 'Minimum disk free across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.df-mapper_VolGroup01-var--log.df_complex-free)', 10000000000, 5000000000, 1, 'WARN')
+, (4, '548b88c9e4b013e35f320674', 'Air Shopping Prod - Network Rx', 'Maximum network packets received across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.interface-eth0.if_packets.rx)', 4000, 5000, 1, 'OK')
+, (5, '548b8cf8e4b013e35f320816', 'Air Shopping Prod - Network Tx', 'Maximum network packets transmitted across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.interface-eth0.if_packets.tx)', 4000, 5000, 1, 'OK')
+  ;
+
+insert into service_instance_seyren_check values
+  (1, 4, 1)
+, (2, 4, 2)
+, (3, 4, 3)
+, (4, 4, 4)
+, (5, 4, 5)
   ;

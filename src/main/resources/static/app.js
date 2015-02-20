@@ -136,19 +136,20 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoControl
 			}
 		};
 	})
-    // binds 'enter' key press to a provided function
-    .directive('ngEnter', function () {
-                              return function (scope, element, attrs) {
-                                         element.bind("keydown keypress", function (event) {
-                                                                              if(event.which === 13) {
-                                                                                  scope.$apply(function (){
-                                                                                                   scope.$eval(attrs.ngEnter);
-                                                                                               });
-                                                                                  event.preventDefault();
-                                                                              }
-                                                                          });
-                                     };
-                          })	
+	
+	// binds 'enter' key press to a provided function
+	.directive('ngEnter', function () {
+		return function (scope, element, attrs) {
+			element.bind("keydown keypress", function (event) {
+				if(event.which === 13) {
+					scope.$apply(function () {
+						scope.$eval(attrs.ngEnter);
+					});
+					event.preventDefault();
+				}
+			});
+		};
+	})	
 
 	// paginationConfig is an existing constant. We're updating it here.
 	.run(function($rootScope, paginationConfig, generalRegions) {

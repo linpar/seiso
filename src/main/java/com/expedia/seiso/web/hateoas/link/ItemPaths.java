@@ -42,6 +42,7 @@ import com.expedia.seiso.domain.entity.ServiceGroup;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.entity.ServiceType;
+import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.entity.StatusType;
 import com.expedia.seiso.domain.repo.RepoKeys;
 
@@ -125,6 +126,10 @@ public class ItemPaths {
 				(Item item) -> new String[] { RepoKeys.SERVICE_TYPES, ((ServiceType) item).getKey() });
 		converters.put(StatusType.class,
 				(Item item) -> new String[] { RepoKeys.STATUS_TYPES, ((StatusType) item).getKey() });
+		
+		// Custom integrations
+		converters.put(SeyrenCheck.class,
+				(Item item) -> new String[] { RepoKeys.SEYREN_CHECKS, ((SeyrenCheck) item).getSeyrenId() });
 	}
 	
 	public String[] convert(@NonNull Item item) {

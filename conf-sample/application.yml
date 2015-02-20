@@ -44,3 +44,4 @@ custom:
   base-uri: http://localhost:8443
   change-notification-exchange: seiso.notifications.v2
   action-request-exchange: seiso.action_requests.v2
+  seyren-base-uri: http://seyren.example.com

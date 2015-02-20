@@ -29,4 +29,7 @@ public class Relations {
 	// IANA has a standard link relationship for search, but it's for OpenSearch. So we namespace it here.
 	// http://www.iana.org/assignments/link-relations/link-relations.xhtml
 	public static final String S_SEARCH = "s:search";
+	
+	public static final String S_SEYREN_CHECK_API = "s:seyren-check-api";
+	public static final String S_SEYREN_CHECK_UI = "s:seyren-check-ui";
 }

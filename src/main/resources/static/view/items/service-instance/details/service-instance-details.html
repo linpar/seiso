@@ -48,8 +48,8 @@
 		<tab heading="Endpoint Info">
 			<ng-include src="'view/items/service-instance/details/endpoint-info-pane.html'" />
 		</tab>
-		<tab heading="Monitoring">
-			<ng-include src="'view/items/service-instance/details/monitoring-pane.html'" />
+		<tab heading="Seyren" ng-if="serviceInstance.enableSeyren">
+			<ng-include src="'view/items/service-instance/details/seyren-pane.html'" />
 		</tab>
 	</tabset>
 </div>

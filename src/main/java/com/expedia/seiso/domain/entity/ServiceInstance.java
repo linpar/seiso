@@ -145,14 +145,20 @@ public class ServiceInstance extends AbstractItem {
 	 * that we use an integer representation to avoid floating point representation issues.
 	 */
 	private Integer minCapacityOps;
-
+	
 	/**
 	 * Indicates whether Eos manages this service instance; i.e., whether Eos manages health state machines for the
 	 * service instance's nodes.
 	 * 
-	 * DEPRECATED Don't want EOS-specific stuff here. [WLW]
+	 * DEPRECATED Don't want EOS-specific stuff here, at least not while Eos is Expedia-proprietary software. If we
+	 * open source Eos then we might rename this to enableEos. [WLW]
 	 */
 	private Boolean eosManaged;
+	
+	/**
+	 * Enable Seyren integration.
+	 */
+	private Boolean enableSeyren;
 
 	@Deprecated
 	public Boolean getEosManaged() {

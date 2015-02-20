@@ -87,6 +87,18 @@ angular.module('seisoControllers').controller('ServiceInstanceDetailsController'
 		$scope.percentHealthyGivenEnabled = 100 * ($scope.numHealthyGivenEnabled / $scope.numEnabled);
 		$scope.nodeRows = nodeRows;
 		
+		if ($scope.serviceInstance.enableSeyren) {
+			var request = {
+				method: 'GET',
+				url: 'v2/seyren-checks/search/find-by-service-instance?key=' + $routeParams.key,
+				headers: { 'Accept': 'application/hal+json' }
+			}
+			$http(request).success(function(data) {
+				var checks = data._embedded.items;
+				$scope.checks = checks;
+			});
+		}
+		
 		$scope.interrogate = function() {
 			console.log("Publishing interrogate request");
 			$http.post('v1/actions', { "code" : "interrogate", "nodeKeys" : [] }).success(function(data) {
@@ -102,5 +114,6 @@ angular.module('seisoControllers').controller('ServiceInstanceDetailsController'
 		$scope.setMaintenanceMode = function() {
 			alert("Setting maintenance mode for selected nodes");
 		}
-	});
+		
+	});	
 } ]);

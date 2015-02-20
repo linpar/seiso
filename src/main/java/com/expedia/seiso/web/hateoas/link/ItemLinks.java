@@ -20,6 +20,7 @@ import java.net.URI;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.Relations;
 import com.expedia.seiso.web.hateoas.Link;
@@ -40,8 +43,11 @@ import com.expedia.seiso.web.hateoas.Link;
  */
 @Component
 @RequiredArgsConstructor
+@XSlf4j
 public class ItemLinks {
 	private static final MultiValueMap<String, String> EMPTY_PARAMS = new LinkedMultiValueMap<>();
+	
+	@NonNull private CustomProperties customProperties;
 	
 	/** Includes version prefix; e.g., /v1, /v2 */
 	@NonNull private URI versionUri;
@@ -134,6 +140,21 @@ public class ItemLinks {
 				.toString();
 		// @formatter:on
 		return new Link("s:" + prop, href);
+	}
+	
+	
+	// =================================================================================================================
+	// Special item links
+	// =================================================================================================================
+	
+	public Link seyrenCheckApiLink(@NonNull SeyrenCheck check) {
+		val href = customProperties.getSeyrenBaseUri() + "/api/checks/" + check.getSeyrenId();
+		return new Link(Relations.S_SEYREN_CHECK_API, href);
+	}
+	
+	public Link seyrenCheckUiLink(@NonNull SeyrenCheck check) {
+		val href = customProperties.getSeyrenBaseUri() + "/#/checks/" + check.getSeyrenId();
+		return new Link(Relations.S_SEYREN_CHECK_UI, href);
 	}
 	
 	

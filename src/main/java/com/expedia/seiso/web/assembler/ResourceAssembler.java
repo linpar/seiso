@@ -44,6 +44,7 @@ import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.entity.RotationStatus;
+import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.SearchResults;
 import com.expedia.seiso.web.ApiVersion;
@@ -196,6 +197,7 @@ public class ResourceAssembler {
 		
 		resource.addLink(itemLinks(apiVersion).itemLink(item));
 		resource.addLink(itemLinks(apiVersion).repoLink(Relations.UP, itemClass));
+		addSpecialLinks(apiVersion, item, resource);
 		
 		val propHandler = new ItemPropertyHandler(itemWrapper, resource.getProperties());
 		val assocHandler =
@@ -447,6 +449,14 @@ public class ResourceAssembler {
 		val pageNumber = itemPage.getNumber();
 		val totalItems = itemPage.getTotalElements();
 		return new PageMetadata(pageSize, pageNumber, totalItems);
+	}
+	
+	private void addSpecialLinks(ApiVersion apiVersion, Item item, Resource resource) {
+		val itemLinks = itemLinks(apiVersion);
+		if (item instanceof SeyrenCheck) {
+			resource.addLink(itemLinks.seyrenCheckApiLink((SeyrenCheck) item));
+			resource.addLink(itemLinks.seyrenCheckUiLink((SeyrenCheck) item));
+		}
 	}
 	
 	// FIXME This is a temporary hack to handle special-case non-persistent properties.

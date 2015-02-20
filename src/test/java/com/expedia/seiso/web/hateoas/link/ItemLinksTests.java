@@ -31,6 +31,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.util.MultiValueMap;
 
+import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMeta;
@@ -46,6 +47,7 @@ public class ItemLinksTests {
 	private ItemLinks itemLinks;
 
 	// Dependencies
+	@Mock private CustomProperties customProperties;
 	@Mock private ItemPaths itemPaths;
 	@Mock private ItemMetaLookup itemMetaLookup;
 
@@ -60,7 +62,7 @@ public class ItemLinksTests {
 		MockitoAnnotations.initMocks(this);
 		setUpTestData();
 		setUpDependencies();
-		this.itemLinks = new ItemLinks(v2BaseUri, itemPaths, itemMetaLookup);
+		this.itemLinks = new ItemLinks(customProperties, v2BaseUri, itemPaths, itemMetaLookup);
 	}
 
 	private void setUpTestData() throws Exception {

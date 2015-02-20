@@ -104,12 +104,12 @@ public class SeisoWebConfigBeans {
 	
 	@Bean
 	public LinkFactory linkFactoryV1() {
-		return new LinkFactory(getVersionUri("v1"), itemPaths(), itemMetaLookup);
+		return new LinkFactory(customProperties, getVersionUri("v1"), itemPaths(), itemMetaLookup);
 	}
 	
 	@Bean
 	public LinkFactory linkFactoryV2() {
-		return new LinkFactory(getVersionUri("v2"), itemPaths(), itemMetaLookup);
+		return new LinkFactory(customProperties, getVersionUri("v2"), itemPaths(), itemMetaLookup);
 	}
 	
 	@Bean

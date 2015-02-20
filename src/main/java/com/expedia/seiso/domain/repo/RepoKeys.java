@@ -19,6 +19,8 @@ package com.expedia.seiso.domain.repo;
  * @author Willie Wheeler
  */
 public interface RepoKeys {
+	
+	// Core repos
 	public static final String DATA_CENTERS = "data-centers";
 	public static final String ENDPOINTS = "endpoints";
 	public static final String ENVIRONMENTS = "environments";
@@ -38,4 +40,7 @@ public interface RepoKeys {
 	public static final String SERVICE_TYPES = "service-types";
 	public static final String SERVICES = "services";
 	public static final String STATUS_TYPES = "status-types";
+	
+	// Custom integrations
+	public static final String SEYREN_CHECKS = "seyren-checks";
 }
