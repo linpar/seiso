@@ -23,7 +23,10 @@ import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.core.ann.FindByKey;
 import com.expedia.seiso.core.ann.RestResource;
+import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Environment;
+
+// TODO This might need to be pageable, at least with the way we've been creating these things at Expedia. :-)
 
 /**
  * @author Willie Wheeler
@@ -36,4 +39,7 @@ public interface EnvironmentRepo extends CrudRepository<Environment, Long> {
 
 	@FindByKey
 	Environment findByKey(@Param("key") String key);
+	
+	@RestResource(path = "find-by-source")
+	List<Endpoint> findBySourceKey(@Param("key") String key);
 }

@@ -143,16 +143,16 @@ public class ItemLinks {
 	// =================================================================================================================
 	
 	public Link seyrenCheckApiLink(@NonNull SeyrenCheck check) {
-		val dataSource = check.getDataSource();
-		assert (dataSource != null);
-		val href = dataSource.getBaseUri() + "/api/checks/" + check.getSeyrenId();
+		val source = check.getSource();
+		assert (source != null);
+		val href = source.getBaseUri() + "/api/checks/" + check.getSeyrenId();
 		return new Link(Relations.S_SEYREN_CHECK_API, href);
 	}
 	
 	public Link seyrenCheckUiLink(@NonNull SeyrenCheck check) {
-		val dataSource = check.getDataSource();
-		assert (dataSource != null);
-		val href = dataSource.getBaseUri() + "/#/checks/" + check.getSeyrenId();
+		val source = check.getSource();
+		assert (source != null);
+		val href = source.getBaseUri() + "/#/checks/" + check.getSeyrenId();
 		return new Link(Relations.S_SEYREN_CHECK_UI, href);
 	}
 	

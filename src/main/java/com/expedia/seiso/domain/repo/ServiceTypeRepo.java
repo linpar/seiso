@@ -36,4 +36,7 @@ public interface ServiceTypeRepo extends CrudRepository<ServiceType, Long> {
 
 	@FindByKey
 	ServiceType findByKey(@Param("key") String key);
+	
+	@RestResource(path = "find-by-source")
+	List<ServiceType> findBySourceKey(@Param("key") String key);
 }

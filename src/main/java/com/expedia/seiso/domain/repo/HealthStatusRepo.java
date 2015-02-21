@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.domain.repo;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -32,4 +34,7 @@ public interface HealthStatusRepo extends PagingAndSortingRepository<HealthStatu
 	HealthStatus findByKey(@Param("key") String key);
 
 	HealthStatus findByName(@Param("name") String name);
+	
+	@RestResource(path = "find-by-source")
+	Page<HealthStatus> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

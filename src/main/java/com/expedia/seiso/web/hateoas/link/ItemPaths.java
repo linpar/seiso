@@ -24,7 +24,7 @@ import lombok.val;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.DataCenter;
-import com.expedia.seiso.domain.entity.DataSource;
+import com.expedia.seiso.domain.entity.Source;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Environment;
 import com.expedia.seiso.domain.entity.HealthStatus;
@@ -64,8 +64,6 @@ public class ItemPaths {
 	public ItemPaths() {
 		converters.put(DataCenter.class,
 				(Item item) -> new String[] { RepoKeys.DATA_CENTERS, ((DataCenter) item).getKey() });
-		converters.put(DataSource.class,
-				(Item item) -> new String[] { RepoKeys.DATA_SOURCES, ((DataSource) item).getKey() });
 		
 		// FIXME This is the v1 path, but we don't want to use the database ID in the v2 path.
 		converters.put(Endpoint.class,
@@ -127,6 +125,8 @@ public class ItemPaths {
 				});
 		converters.put(ServiceType.class,
 				(Item item) -> new String[] { RepoKeys.SERVICE_TYPES, ((ServiceType) item).getKey() });
+		converters.put(Source.class,
+				(Item item) -> new String[] { RepoKeys.SOURCES, ((Source) item).getKey() });
 		converters.put(StatusType.class,
 				(Item item) -> new String[] { RepoKeys.STATUS_TYPES, ((StatusType) item).getKey() });
 		

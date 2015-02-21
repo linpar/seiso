@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.domain.repo;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -34,8 +36,12 @@ public interface ServiceInstancePortRepo extends PagingAndSortingRepository<Serv
 
 	ServiceInstancePort findByServiceInstanceKeyAndNumber(String serviceInstanceKey, Integer number);
 	
+	@RestResource(path = "find-by-source")
+	Page<ServiceInstancePort> findBySourceKey(@Param("key") String key, Pageable pageable);
+	
 	@Modifying
 	@Query("delete from ServiceInstancePort p where p.serviceInstance.key = :serviceInstanceKey and p.number = :number")
-	void deleteByServiceInstanceKeyAndNumber(@Param("serviceInstanceKey") String serviceInstanceKey,
+	void deleteByServiceInstanceKeyAndNumber(
+			@Param("serviceInstanceKey") String serviceInstanceKey,
 			@Param("number") Integer number);
 }

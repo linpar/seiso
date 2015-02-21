@@ -28,8 +28,9 @@
 --     App : 10.7.0.0/16
 --     DB  : 10.11.0.0/16
 
-insert into data_source (id, ukey, base_uri) values
-  (1, 'seyren-prod', 'http://seyren.example.com')
+insert into source (id, ukey, base_uri, source_id) values
+  (1, 'seiso-data-common', 'https://github.example.com/seiso-data/common', 1)
+, (2, 'seyren-prod', 'http://seyren.example.com', 1)
   ;
 
 insert into `user` (id, username, password, enabled) values
@@ -546,12 +547,12 @@ where
   and n.service_instance_id = si.id
   ;
 
-insert into seyren_check (id, seyren_id, name, description, graphite_base_url, target, warn, error, enabled, state, data_source_id) values
-  (1, '548b6c1ee4b05461bb170982', 'Air Shopping Prod - CPU Load', 'Maximum CPU load average across all servers', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshopp.airshop*-prod.load.load.shortterm)', 6, 8, 1, 'OK', 1)
-, (2, '548b7a99e4b05461bb170ecc', 'Air Shopping Prod - Memory Free', 'Minimum free memory across all servers. If this drops too low then you may need to bounce the boxes.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.memory.memory-free)', 150000000, 100000000, 1, 'OK', 1)
-, (3, '548b7ed5e4b05461bb171058', 'Air Shopping Prod - Disk Free', 'Minimum disk free across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.df-mapper_VolGroup01-var--log.df_complex-free)', 10000000000, 5000000000, 1, 'WARN', 1)
-, (4, '548b88c9e4b013e35f320674', 'Air Shopping Prod - Network Rx', 'Maximum network packets received across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.interface-eth0.if_packets.rx)', 4000, 5000, 1, 'OK', 1)
-, (5, '548b8cf8e4b013e35f320816', 'Air Shopping Prod - Network Tx', 'Maximum network packets transmitted across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.interface-eth0.if_packets.tx)', 4000, 5000, 1, 'OK', 1)
+insert into seyren_check (id, seyren_id, name, description, graphite_base_url, target, warn, error, enabled, state, source_id) values
+  (1, '548b6c1ee4b05461bb170982', 'Air Shopping Prod - CPU Load', 'Maximum CPU load average across all servers', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshopp.airshop*-prod.load.load.shortterm)', 6, 8, 1, 'OK', 2)
+, (2, '548b7a99e4b05461bb170ecc', 'Air Shopping Prod - Memory Free', 'Minimum free memory across all servers. If this drops too low then you may need to bounce the boxes.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.memory.memory-free)', 150000000, 100000000, 1, 'OK', 2)
+, (3, '548b7ed5e4b05461bb171058', 'Air Shopping Prod - Disk Free', 'Minimum disk free across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.df-mapper_VolGroup01-var--log.df_complex-free)', 10000000000, 5000000000, 1, 'WARN', 2)
+, (4, '548b88c9e4b013e35f320674', 'Air Shopping Prod - Network Rx', 'Maximum network packets received across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.interface-eth0.if_packets.rx)', 4000, 5000, 1, 'OK', 2)
+, (5, '548b8cf8e4b013e35f320816', 'Air Shopping Prod - Network Tx', 'Maximum network packets transmitted across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.interface-eth0.if_packets.tx)', 4000, 5000, 1, 'OK', 2)
   ;
 
 insert into service_instance_seyren_check values

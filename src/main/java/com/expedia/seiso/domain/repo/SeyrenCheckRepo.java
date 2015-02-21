@@ -17,6 +17,8 @@ package com.expedia.seiso.domain.repo;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -37,4 +39,7 @@ public interface SeyrenCheckRepo extends PagingAndSortingRepository<SeyrenCheck,
 //	@Query("from SeyrenCheck c where c.serviceInstances.key = :key order by name")
 //	List<SeyrenCheck> findByServiceInstanceKey(@Param("key") String key);
 	List<SeyrenCheck> findByServiceInstancesKey(@Param("key") String key);
+	
+	@RestResource(path = "find-by-source")
+	Page<SeyrenCheck> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

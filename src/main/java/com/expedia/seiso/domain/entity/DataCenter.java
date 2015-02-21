@@ -57,7 +57,8 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 			"serviceInstances.service.type",
 			"serviceInstances.service.owner",
 			"serviceInstances.environment",
-			"loadBalancers"
+			"loadBalancers",
+			"source"
 			})
 	})
 //@formatter:on

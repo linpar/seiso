@@ -36,4 +36,7 @@ public interface DataCenterRepo extends CrudRepository<DataCenter, Long> {
 
 	@FindByKey
 	DataCenter findByKey(@Param("key") String key);
+	
+	@RestResource(path = "find-by-source")
+	List<DataCenter> findBySourceKey(@Param("key") String key);
 }

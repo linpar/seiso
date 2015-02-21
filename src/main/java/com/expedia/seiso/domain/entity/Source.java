@@ -57,7 +57,7 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 	@Projection(cardinality = Cardinality.SINGLE, paths = {})
 })
 //@formatter:on
-public class DataSource extends AbstractItem {
+public class Source extends AbstractItem {
 	
 	@Key
 	@Column(name = "ukey")
@@ -67,6 +67,6 @@ public class DataSource extends AbstractItem {
 
 	@Override
 	public ItemKey itemKey() {
-		return new SimpleItemKey(DataSource.class, key);
+		return new SimpleItemKey(Source.class, key);
 	}
 }

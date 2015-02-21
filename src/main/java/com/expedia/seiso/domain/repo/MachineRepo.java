@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.domain.repo;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -46,5 +48,7 @@ public interface MachineRepo extends PagingAndSortingRepository<Machine, Long>, 
 	// FIXME This won't work til NodeControllerV1 can handle single return values. [WLW]
 	// @RestResource(path = "find-by-ip-address")
 	Machine findByIpAddress(@Param("ip") String ipAddress);
-
+	
+	@RestResource(path = "find-by-source")
+	Page<Machine> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

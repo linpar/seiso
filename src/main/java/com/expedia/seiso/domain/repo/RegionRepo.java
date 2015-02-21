@@ -17,6 +17,8 @@ package com.expedia.seiso.domain.repo;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -37,4 +39,7 @@ public interface RegionRepo extends PagingAndSortingRepository<Region, Long> {
 	@FindByKey
 	@Query("from Region r left join fetch r.infrastructureProvider where r.key = :key")
 	Region findByKey(@Param("key") String key);
+	
+	@RestResource(path = "find-by-source")
+	Page<Region> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

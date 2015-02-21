@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.domain.repo;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -32,4 +34,7 @@ public interface StatusTypeRepo extends CrudRepository<StatusType, Long> {
 	StatusType findByKey(@Param("key") String key);
 
 	StatusType findByName(@Param("name") String name);
+	
+	@RestResource(path = "find-by-source")
+	List<StatusType> findBySourceKey(@Param("key") String key);
 }

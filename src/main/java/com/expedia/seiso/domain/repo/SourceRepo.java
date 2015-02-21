@@ -23,17 +23,17 @@ import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.core.ann.FindByKey;
 import com.expedia.seiso.core.ann.RestResource;
-import com.expedia.seiso.domain.entity.DataSource;
+import com.expedia.seiso.domain.entity.Source;
 
 /**
  * @author Willie Wheeler
  */
 @RestResource(path = "data-sources")
-public interface DataSourceRepo extends PagingAndSortingRepository<DataSource, Long> {
+public interface SourceRepo extends PagingAndSortingRepository<Source, Long> {
 
-	@Query("from DataSource order by key")
-	List<DataSource> findAll();
+	@Query("from Source order by key")
+	List<Source> findAll();
 
 	@FindByKey
-	DataSource findByKey(@Param("key") String key);
+	Source findByKey(@Param("key") String key);
 }

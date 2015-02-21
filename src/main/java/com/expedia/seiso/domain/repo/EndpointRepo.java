@@ -17,6 +17,8 @@ package com.expedia.seiso.domain.repo;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -60,4 +62,7 @@ public interface EndpointRepo extends PagingAndSortingRepository<Endpoint, Long>
 	@RestResource(path = "find-by-ip-address-and-port")
 	@Query("from Endpoint e where e.ipAddress.ipAddress = :ipAddress and e.port.number = :port")
 	Endpoint findByIpAddressAndPort(@Param("ipAddress") String ipAddress, @Param("port") int port);
+	
+	@RestResource(path = "find-by-source")
+	Page<Endpoint> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

@@ -21,7 +21,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,6 +34,7 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.key.ItemKey;
+import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 
 /**
  * @author Willie Wheeler
@@ -48,10 +48,9 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
 // @formatter:off
 @Projections({
 	@Projection(cardinality = Cardinality.COLLECTION, paths = {
-			"dataSource"
 	}),
 	@Projection(cardinality = Cardinality.SINGLE, paths = {
-			"dataSource"
+			"source"
 	})
 })
 // @formatter:on
@@ -77,17 +76,8 @@ public class SeyrenCheck extends AbstractItem {
 	private Boolean enabled;
 	private String state;
 	
-	@ManyToOne
-	@JoinColumn(name = "data_source_id")
-	private DataSource dataSource;
-	
-	/* (non-Javadoc)
-	 * @see com.expedia.seiso.domain.entity.Item#itemKey()
-	 */
 	@Override
 	public ItemKey itemKey() {
-		// TODO Auto-generated method stub
-		return null;
+		return new SimpleItemKey(SeyrenCheck.class, seyrenId);
 	}
-
 }

@@ -36,4 +36,7 @@ public interface InfrastructureProviderRepo extends CrudRepository<Infrastructur
 
 	@FindByKey
 	InfrastructureProvider findByKey(@Param("key") String key);
+	
+	@RestResource(path = "find-by-source")
+	List<InfrastructureProvider> findBySourceKey(@Param("key") String key);
 }

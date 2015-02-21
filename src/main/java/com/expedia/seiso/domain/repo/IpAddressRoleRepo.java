@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.domain.repo;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -33,9 +35,13 @@ public interface IpAddressRoleRepo extends PagingAndSortingRepository<IpAddressR
 	IpAddressRole findByServiceInstanceAndName(ServiceInstance serviceInstance, String name);
 
 	IpAddressRole findByServiceInstanceKeyAndName(String serviceInstanceKey, String name);
+	
+	@RestResource(path = "find-by-source")
+	Page<IpAddressRole> findBySourceKey(@Param("key") String key, Pageable pageable);
 
 	@Modifying
 	@Query("delete from IpAddressRole r where r.serviceInstance.key = :serviceInstanceKey and r.name = :name")
-	void deleteByServiceInstanceKeyAndName(@Param("serviceInstanceKey") String serviceInstanceKey,
+	void deleteByServiceInstanceKeyAndName(
+			@Param("serviceInstanceKey") String serviceInstanceKey,
 			@Param("name") String name);
 }

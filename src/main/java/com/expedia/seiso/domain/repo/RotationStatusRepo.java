@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.domain.repo;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -32,4 +34,7 @@ public interface RotationStatusRepo extends CrudRepository<RotationStatus, Long>
 	RotationStatus findByKey(@Param("key") String key);
 
 	RotationStatus findByName(@Param("name") String name);
+	
+	@RestResource(path = "find-by-source")
+	List<RotationStatus> findBySourceKey(@Param("key") String key);
 }
