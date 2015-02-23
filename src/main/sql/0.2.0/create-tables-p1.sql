@@ -69,7 +69,7 @@ alter table source add key source_id (source_id);
 alter table source add constraint source_source_id foreign key (source_id) references source (id);
 
 alter table seyren_check drop foreign key seyren_check_data_source_id;
-alter table seyren_check drop key data_source_id;
+alter table seyren_check drop key source_id;
 alter table seyren_check change data_source_id source_id int(10) unsigned not null;
 alter table seyren_check add key source_id (source_id);
 alter table seyren_check add constraint seyren_check_source_id foreign key (source_id) references source (id);

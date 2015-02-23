@@ -1,14 +1,19 @@
 angular.module('seisoControllers').controller('ServiceInstanceDetailsController', [ '$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
-	$http.get('v1/service-instances/' + $routeParams.key).success(function(data) {
+	var request = {
+		method: 'GET',
+		url: 'v2/service-instances/' + $routeParams.key,
+		headers: { 'Accept': 'application/hal+json' }
+	}
+	$http(request).success(function(data) {
 		$scope.serviceInstance = data;
-		$scope.dataCenter = $scope.serviceInstance.dataCenter;
-		$scope.environment = $scope.serviceInstance.environment;
-		$scope.ipAddressRoles = $scope.serviceInstance.ipAddressRoles;
-		$scope.loadBalancer = $scope.serviceInstance.loadBalancer;
-		$scope.nodes = $scope.serviceInstance.nodes;
-		$scope.ports = $scope.serviceInstance.ports;
-		$scope.service = $scope.serviceInstance.service;
-		$scope.owner = $scope.service.owner;
+		$scope.dataCenter = $scope.serviceInstance._embedded.dataCenter;
+		$scope.environment = $scope.serviceInstance._embedded.environment;
+		$scope.ipAddressRoles = $scope.serviceInstance._embedded.ipAddressRoles;
+		$scope.loadBalancer = $scope.serviceInstance._embedded.loadBalancer;
+		$scope.nodes = $scope.serviceInstance._embedded.nodes;
+		$scope.ports = $scope.serviceInstance._embedded.ports;
+		$scope.service = $scope.serviceInstance._embedded.service;
+		$scope.owner = $scope.service._embedded.owner;
 		
 		// FIXME Generates NPE if owner is null. [WLW]
 //		$scope.owner.name = $scope.owner.firstName + ' ' + $scope.owner.lastName;
@@ -34,7 +39,7 @@ angular.module('seisoControllers').controller('ServiceInstanceDetailsController'
 			// FIXME Shouldn't hardcode what's currently an Eos-specific health status.
 			if (node.healthStatus.key.toLowerCase() == 'healthy') { $scope.numHealthy++; }
 			
-			var ipAddresses = node.ipAddresses;
+			var ipAddresses = node._embedded.ipAddresses;
 			var nodeEnabled = true;
 			
 			if (ipAddresses.length == 0) {
@@ -55,9 +60,9 @@ angular.module('seisoControllers').controller('ServiceInstanceDetailsController'
 					var nodeRow = {
 						"name" : node.name,
 						"ipAddress" : ipAddress.ipAddress,
-						"ipAddressRole" : ipAddress.ipAddressRole.name,
-						"endpoints" : ipAddress.endpoints,
-						"aggregateRotationStatus" : ipAddress.aggregateRotationStatus
+						"ipAddressRole" : ipAddress._embedded.ipAddressRole.name,
+						"endpoints" : ipAddress._embedded.endpoints,
+						"aggregateRotationStatus" : ipAddress._embedded.aggregateRotationStatus
 					};
 					if (j == 0) {
 						// Distinguish name from display name. We want to filter by name, but display by
@@ -69,7 +74,7 @@ angular.module('seisoControllers').controller('ServiceInstanceDetailsController'
 					}
 					nodeRows.push(nodeRow);
 					
-					if (ipAddress.aggregateRotationStatus.key != "enabled") {
+					if (ipAddress._embedded.aggregateRotationStatus.key != "enabled") {
 						nodeEnabled = false;
 					}
 				}
@@ -77,7 +82,7 @@ angular.module('seisoControllers').controller('ServiceInstanceDetailsController'
 			
 			if (nodeEnabled) {
 				$scope.numEnabled++;
-				if (node.healthStatus.key == 'Healthy') { $scope.numHealthyGivenEnabled++; }
+				if (node._embedded.healthStatus.key == 'Healthy') { $scope.numHealthyGivenEnabled++; }
 			}
 		}
 		
@@ -87,8 +92,8 @@ angular.module('seisoControllers').controller('ServiceInstanceDetailsController'
 		$scope.percentHealthyGivenEnabled = 100 * ($scope.numHealthyGivenEnabled / $scope.numEnabled);
 		$scope.nodeRows = nodeRows;
 		
-		$scope.dashboards = $scope.serviceInstance.dashboards;
-		$scope.checks = $scope.serviceInstance.seyrenChecks;
+		$scope.dashboards = $scope.serviceInstance._embedded.dashboards;
+		$scope.checks = $scope.serviceInstance._embedded.seyrenChecks;
 		
 		$scope.interrogate = function() {
 			console.log("Publishing interrogate request");
