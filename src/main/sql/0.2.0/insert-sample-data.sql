@@ -547,6 +547,14 @@ where
   and n.service_instance_id = si.id
   ;
 
+insert into dashboard (id, ukey, name, type, description, ui_uri, api_uri, source_id) values
+  (1, 'air-shopping-prod-metrics', 'Air Shopping System Metrics', 'Grafana', 'System metrics (CPU, memory, network, disk) for the Air Shopping production service instance.', 'https://dashboards.example.com/#/air-shopping-prod-metrics', 'https://dashboards.example.com/v1/air-shopping-prod-metrics', 1)
+  ;
+
+insert into service_instance_dashboard values
+  (1, 4, 1)
+  ;
+
 insert into seyren_check (id, seyren_id, name, description, graphite_base_url, target, warn, error, enabled, state, source_id) values
   (1, '548b6c1ee4b05461bb170982', 'Air Shopping Prod - CPU Load', 'Maximum CPU load average across all servers', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshopp.airshop*-prod.load.load.shortterm)', 6, 8, 1, 'OK', 2)
 , (2, '548b7a99e4b05461bb170ecc', 'Air Shopping Prod - Memory Free', 'Minimum free memory across all servers. If this drops too low then you may need to bounce the boxes.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.memory.memory-free)', 150000000, 100000000, 1, 'OK', 2)

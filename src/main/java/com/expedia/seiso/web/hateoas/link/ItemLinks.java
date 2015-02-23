@@ -27,6 +27,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.expedia.seiso.domain.entity.Dashboard;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
@@ -141,6 +142,16 @@ public class ItemLinks {
 	// =================================================================================================================
 	// Special item links
 	// =================================================================================================================
+	
+	public Link dashboardApiLink(@NonNull Dashboard dashboard) {
+		val href = dashboard.getApiUri();
+		return (href == null ? null : new Link(Relations.S_DASHBOARD_API, href));
+	}
+	
+	public Link dashboardUiLink(@NonNull Dashboard dashboard) {
+		val href = dashboard.getUiUri();
+		return (href == null ? null : new Link(Relations.S_DASHBOARD_API, href));
+	}
 	
 	public Link seyrenCheckApiLink(@NonNull SeyrenCheck check) {
 		val source = check.getSource();

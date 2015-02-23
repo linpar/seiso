@@ -22,6 +22,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -78,7 +80,9 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 			"nodes.ipAddresses.ipAddressRole",
 			"nodes.ipAddresses.rotationStatus.statusType",
 			"nodes.ipAddresses.aggregateRotationStatus.statusType",
-			"nodes.healthStatus.statusType"
+			"nodes.healthStatus.statusType",
+			"dashboards",
+			"seyrenChecks"
 			}),
 	@Projection(cardinality = Cardinality.SINGLE, name = "infrastructure", paths = {
 			"environment",
@@ -131,7 +135,7 @@ public class ServiceInstance extends AbstractItem {
 	private List<Node> nodes = new ArrayList<>();
 
 	private Boolean loadBalanced;
-
+	
 	/**
 	 * Required capacity, in deployment contexts, as a percentage of available nodes to total nodes. For example, if
 	 * there are 10 nodes and we want at least 6 to be available at any given time, then the value here will be 60. Note
@@ -145,6 +149,27 @@ public class ServiceInstance extends AbstractItem {
 	 * that we use an integer representation to avoid floating point representation issues.
 	 */
 	private Integer minCapacityOps;
+	
+	@ManyToMany
+	@JoinTable(
+			name = "service_instance_dashboard",
+			joinColumns = @JoinColumn(name = "service_instance_id"),
+			inverseJoinColumns = @JoinColumn(name = "dashboard_id"))
+	@RestResource(path = "dashboards")
+	private List<Dashboard> dashboards;
+	
+	// FIXME Hm, don't think we want to have to grow the ServiceInstance class every time we add support for a new type
+	// of alert. (Open/closed principle violation.) At the same time if multiple types of entity can have dashboards and
+	// alerts, then we don't want to bake all those entity types into the Dashboard and SeyrenCheck classes. So we will
+	// need to decide how we want to handle this. [WLW]
+	@ManyToMany
+	@JoinTable(
+			name = "service_instance_seyren_check",
+			joinColumns =  @JoinColumn(name = "service_instance_id"),
+			inverseJoinColumns = @JoinColumn(name = "seyren_check_id"))
+	@RestResource(path = "seyren-checks")
+	private List<SeyrenCheck> seyrenChecks;
+	
 	
 	/**
 	 * Indicates whether Eos manages this service instance; i.e., whether Eos manages health state machines for the

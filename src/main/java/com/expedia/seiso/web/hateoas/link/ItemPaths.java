@@ -23,8 +23,8 @@ import lombok.val;
 
 import org.springframework.stereotype.Component;
 
+import com.expedia.seiso.domain.entity.Dashboard;
 import com.expedia.seiso.domain.entity.DataCenter;
-import com.expedia.seiso.domain.entity.Source;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Environment;
 import com.expedia.seiso.domain.entity.HealthStatus;
@@ -44,6 +44,7 @@ import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.entity.ServiceType;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
+import com.expedia.seiso.domain.entity.Source;
 import com.expedia.seiso.domain.entity.StatusType;
 import com.expedia.seiso.domain.repo.RepoKeys;
 
@@ -62,6 +63,8 @@ public class ItemPaths {
 	private final Map<Class<?>, ItemPathConverter> converters = new HashMap<>();
 	
 	public ItemPaths() {
+		converters.put(Dashboard.class,
+				(Item item) -> new String[] { RepoKeys.DASHBOARDS, ((Dashboard) item).getKey() });
 		converters.put(DataCenter.class,
 				(Item item) -> new String[] { RepoKeys.DATA_CENTERS, ((DataCenter) item).getKey() });
 		

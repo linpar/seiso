@@ -26,6 +26,9 @@ public class Relations {
 	public static final String NEXT = "next";
 	public static final String LAST = "last";
 	
+	public static final String S_DASHBOARD_API = "s:dashboard-api";
+	public static final String S_DASHBOARD_UI = "s:dashboard-ui";
+	
 	// IANA has a standard link relationship for search, but it's for OpenSearch. So we namespace it here.
 	// http://www.iana.org/assignments/link-relations/link-relations.xhtml
 	public static final String S_SEARCH = "s:search";

@@ -1,4 +1,4 @@
-<section>
+<section ng-if="serviceInstance.enableSeyren">
 	<header>
 		<h1>
 			<i class="fa fa-exclamation-triangle"></i> Seyren Checks
@@ -8,43 +8,54 @@
 			</span>
 		</h1>
 	</header>
-	<div ng-show="checks">
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Enabled</th>
-					<th>State</th>
-					<th>Name</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="check in checks">
-					<td class="text-center">
-						<div ng-if="check.enabled">
-							<i class="fa fa-check-circle fa-lg" style="color:#43ac6a"></i>
-						</div>
-					</td>
-					<td>
-						<div ng-switch="check.state">
-							<div ng-switch-when="OK">
-								<span class="label label-success">{{check.state}}</span>
+	<div ng-if="checks.length &gt; 0">
+		<div ng-show="checks">
+			<table class="table">
+				<colgroup>
+					<col style="width:12.5%"></col>
+					<col style="width:12.5%"></col>
+					<col style="width:25%"></col>
+					<col style="width:50%"></col>
+				</colgroup>
+				<thead>
+					<tr>
+						<th>Enabled</th>
+						<th>State</th>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="check in checks">
+						<td>
+							<div ng-if="check.enabled">
+								<i class="fa fa-check-circle fa-lg" style="color:#43ac6a"></i>
 							</div>
-							<div ng-switch-when="WARN">
-								<span class="label label-warning">{{check.state}}</span>
+						</td>
+						<td>
+							<div ng-switch="check.state">
+								<div ng-switch-when="OK">
+									<span class="label label-success">{{check.state}}</span>
+								</div>
+								<div ng-switch-when="WARN">
+									<span class="label label-warning">{{check.state}}</span>
+								</div>
+								<div ng-switch-when="ERROR">
+									<span class="label label-danger">{{check.state}}</span>
+								</div>
+								<div ng-switch-default>
+									<span class="label label-info">{{check.state || '-'}}</span>
+								</div>
 							</div>
-							<div ng-switch-when="ERROR">
-								<span class="label label-danger">{{check.state}}</span>
-							</div>
-							<div ng-switch-default>
-								<span class="label label-info">{{check.state || '-'}}</span>
-							</div>
-						</div>
-					</td>
-					<td><a ng-href="{{check._links['s:seyren-check-ui'].href}}" target="_blank">{{check.name || '-'}}</a></td>
-					<td>{{check.description || '-'}}</td>
-				</tr>
-			</tbody>
-		</table>
+						</td>
+						<td><a ng-href="{{check._links['s:seyren-check-ui'].href}}" target="_blank">{{check.name || '-'}}</a></td>
+						<td>{{check.description || '-'}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div ng-if="checks.length == 0">
+		<p>No Seyren checks.</p>
 	</div>
 </section>

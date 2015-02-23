@@ -87,17 +87,8 @@ angular.module('seisoControllers').controller('ServiceInstanceDetailsController'
 		$scope.percentHealthyGivenEnabled = 100 * ($scope.numHealthyGivenEnabled / $scope.numEnabled);
 		$scope.nodeRows = nodeRows;
 		
-		if ($scope.serviceInstance.enableSeyren) {
-			var request = {
-				method: 'GET',
-				url: 'v2/seyren-checks/search/find-by-service-instance?key=' + $routeParams.key,
-				headers: { 'Accept': 'application/hal+json' }
-			}
-			$http(request).success(function(data) {
-				var checks = data._embedded.items;
-				$scope.checks = checks;
-			});
-		}
+		$scope.dashboards = $scope.serviceInstance.dashboards;
+		$scope.checks = $scope.serviceInstance.seyrenChecks;
 		
 		$scope.interrogate = function() {
 			console.log("Publishing interrogate request");

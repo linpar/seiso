@@ -40,6 +40,7 @@ import org.springframework.util.StringUtils;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.RestResource;
+import com.expedia.seiso.domain.entity.Dashboard;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.Person;
@@ -453,7 +454,12 @@ public class ResourceAssembler {
 	
 	private void addSpecialLinks(ApiVersion apiVersion, Item item, Resource resource) {
 		val itemLinks = itemLinks(apiVersion);
-		if (item instanceof SeyrenCheck) {
+		if (item instanceof Dashboard) {
+			val apiLink = itemLinks.dashboardApiLink((Dashboard) item);
+			if (apiLink != null) { resource.addLink(apiLink); }
+			val uiLink = itemLinks.dashboardUiLink((Dashboard) item);
+			if (uiLink != null) { resource.addLink(uiLink); }
+		} else if (item instanceof SeyrenCheck) {
 			resource.addLink(itemLinks.seyrenCheckApiLink((SeyrenCheck) item));
 			resource.addLink(itemLinks.seyrenCheckUiLink((SeyrenCheck) item));
 		}

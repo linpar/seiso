@@ -22,17 +22,17 @@ import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.core.ann.FindByKey;
 import com.expedia.seiso.core.ann.RestResource;
-import com.expedia.seiso.domain.entity.SeyrenCheck;
+import com.expedia.seiso.domain.entity.Dashboard;
 
 /**
  * @author Willie Wheeler
  */
 @RestResource(path = RepoKeys.SEYREN_CHECKS)
-public interface SeyrenCheckRepo extends PagingAndSortingRepository<SeyrenCheck, Long> {
+public interface DashboardRepo extends PagingAndSortingRepository<Dashboard, Long> {
 	
 	@FindByKey
-	SeyrenCheck findBySeyrenId(@Param("id") String seyrenId);
+	Dashboard findByKey(@Param("key") String key);
 	
 	@RestResource(path = "find-by-source")
-	Page<SeyrenCheck> findBySourceKey(@Param("key") String key, Pageable pageable);
+	Page<Dashboard> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

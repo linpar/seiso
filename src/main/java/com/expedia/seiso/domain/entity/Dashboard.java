@@ -15,6 +15,7 @@
  */
 package com.expedia.seiso.domain.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import lombok.Data;
@@ -36,8 +37,8 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false, of = "seyrenId")
-@ToString(callSuper = true, of = { "seyrenId", "name" })
+@EqualsAndHashCode(callSuper = false, of = "key")
+@ToString(callSuper = true, of = { "key", "name" })
 @Entity
 // @formatter:off
 @Projections({
@@ -48,19 +49,20 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 	})
 })
 // @formatter:on
-public class SeyrenCheck extends AbstractItem {
-	@Key private String seyrenId;
+public class Dashboard extends AbstractItem {
+	
+	@Key
+	@Column(name = "ukey")
+	private String key;
+	
 	private String name;
+	private String type;
 	private String description;
-	private String graphiteBaseUrl;
-	private String target;
-	private Long warn;
-	private Long error;
-	private Boolean enabled;
-	private String state;
+	private String apiUri;
+	private String uiUri;
 	
 	@Override
 	public ItemKey itemKey() {
-		return new SimpleItemKey(SeyrenCheck.class, seyrenId);
+		return new SimpleItemKey(Dashboard.class, key);
 	}
 }

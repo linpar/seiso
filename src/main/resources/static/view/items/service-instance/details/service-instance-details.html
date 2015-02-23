@@ -43,13 +43,14 @@
 	</ul>
 	<tabset>
 		<tab heading="Nodes">
-			<ng-include src="'view/items/service-instance/details/nodes-pane.html'" />
+			<ng-include src="'view/items/service-instance/details/nodes-pane.html'"></ng-include>
 		</tab>
 		<tab heading="Endpoint Info">
-			<ng-include src="'view/items/service-instance/details/endpoint-info-pane.html'" />
+			<ng-include src="'view/items/service-instance/details/endpoint-info-pane.html'"></ng-include>
 		</tab>
-		<tab heading="Seyren" ng-if="serviceInstance.enableSeyren">
-			<ng-include src="'view/items/service-instance/details/seyren-pane.html'" />
+		<!--tab heading="Monitoring" ng-if="serviceInstance.enableSeyren"-->
+		<tab heading="Monitoring">
+			<ng-include src="'view/items/service-instance/details/monitoring-pane.html'"></ng-include>
 		</tab>
 	</tabset>
 </div>

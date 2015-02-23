@@ -190,3 +190,32 @@ alter table `user` add constraint user_source_id foreign key (source_id) referen
 alter table user_role add column source_id int(10) unsigned;
 alter table user_role add key source_id (source_id);
 alter table user_role add constraint user_role_source_id foreign key (source_id) references source(id);
+
+
+-- =====================================================================================================================
+-- Issue #68: Support dashboards
+-- =====================================================================================================================
+
+create table dashboard (
+  id int(10) unsigned not null auto_increment primary key,
+  ukey varchar(80) not null,
+  name varchar(250) not null,
+  type varchar(80),
+  description varchar(1000),
+  ui_uri varchar(255),
+  api_uri varchar(255),
+  source_id int(10) unsigned not null,
+  unique key ukey (ukey),
+  key source_id (source_id),
+  constraint dashboard_source_id foreign key (source_id) references source (id)
+) engine=InnoDB default charset=utf8;
+
+create table service_instance_dashboard (
+  id int(10) unsigned not null auto_increment primary key,
+  service_instance_id int(10) unsigned not null,
+  dashboard_id int(10) unsigned not null,
+  key service_instance_id (service_instance_id),
+  key dashbaord_id (dashboard_id),
+  constraint sid_service_instance_id foreign key (service_instance_id) references service_instance (id),
+  constraint sid_dashboard_id foreign key (dashboard_id) references dashboard (id)
+) engine=InnoDB default charset=utf8;
