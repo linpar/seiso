@@ -4,7 +4,7 @@
 -- Issue #65: Seiso/Seyren integration
 -- =====================================================================================================================
 
-alter table service_instance add column enable_seyren tinyint(1) unsigned not null default false after min_capacity_ops;
+alter table service_instance add column enable_seyren tinyint(1) unsigned default false after min_capacity_ops;
 
 -- Was originally going to include Seyren subscriptions too, but seems better just to provide an API link to the check
 -- details so the client can just navigate to the source.
