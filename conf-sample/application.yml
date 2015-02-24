@@ -39,6 +39,12 @@ server:
     key-store: classpath:keystore-dev.jks
     key-store-password: seisoapi
 
+# IMPORTANT: This is a potential security risk, so use discretion.
+# The admin panel currently assumes that endpoints.health.sensitive is false.
+endpoints:
+  health:
+    sensitive: false
+
 custom:
   # No trailing slash!
   base-uri: http://localhost:8443

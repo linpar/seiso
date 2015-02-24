@@ -5,7 +5,7 @@
 	<h1>
 		Services
 		<span ng-show="showPageMeta"><small>({{lowerIndex}}-{{upperIndex}} of {{totalItems}})</small></span>
-		<span ng-hide="showPageMeta"><small><i class="fa fa-spinner fa-spin"></i></small></span>
+		<span ng-show="pageLoading"><small><i class="fa fa-spinner fa-spin"></i></small></span>
 	</h1>
 </div>
 <section ng-show="items">

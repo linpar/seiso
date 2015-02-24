@@ -13,21 +13,27 @@ var listController = function(path) {
 var pagingListController = function(path, sortKey) {
 	return [ '$scope', '$http', '$routeParams', 'paginationConfig', function($scope, $http, $routeParams, paginationConfig) {
 		$scope.pageSelected = function() {
+			$scope.pageLoading = true;
 			var apiPage = $scope.currentPage - 1;
 			var pageSize = paginationConfig.itemsPerPage;
 			$http.get('v1/' + path + '?page=' + apiPage + '&size=' + pageSize + '&sort=' + sortKey).success(function(data, status, headers) {
 				var totalItems = headers('X-Pagination-TotalElements');
 				var totalPages = headers('X-Pagination-TotalPages');
+				
 				// FIXME Handle no-items case [WLW]
 				var lowerIndex = ($scope.currentPage - 1) * pageSize + 1;
 				var upperIndex = Math.min(totalItems, $scope.currentPage * pageSize);
-				$scope.showPageMeta = false;
+				
+				// Disabling this, as I don't think there's a reason to hide it. That just creates a flicker.
+//				$scope.showPageMeta = false;
+				
 				$scope.totalItems = totalItems;
 				$scope.totalPages = totalPages;
 				$scope.lowerIndex = lowerIndex;
 				$scope.upperIndex = upperIndex;
 				$scope.showPageMeta = true;
 				$scope.items = data;
+				$scope.pageLoading = false;
 			});
 		};
 		

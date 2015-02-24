@@ -5,7 +5,7 @@
 	<h1>
 		People
 		<span ng-show="showPageMeta"><small>({{lowerIndex}}-{{upperIndex}} of {{totalItems}})</small></span>
-		<span ng-hide="items"><small><i class="fa fa-spinner fa-spin"></i></small></span>
+		<span ng-show="pageLoading"><small><i class="fa fa-spinner fa-spin"></i></small></span>
 	</h1>
 </div>
 <div ng-show="items">
@@ -38,7 +38,7 @@
 						<div ng-show="person.location">{{person.location}}</div>
 						<div>
 							<!-- TODO Convert to modal [WLW] -->
-							<a href="https://maps.google.com/maps?q={{person.streetAddress | lowercase}}+{{person.location | lowercase}}" rel="nofollow" target="_blank"><span class="glyphicon glyphicon-map-marker"></span> Map</a>​
+							<a href="https://maps.google.com/maps?q={{person.streetAddress | lowercase}}+{{person.location | lowercase}}" rel="nofollow" target="_blank"><span class="fa fa-map-marker"></span> Map</a>​
 						</div>
 					</div>
 				</td>
@@ -47,7 +47,7 @@
 						<span class="glyphicon glyphicon-earphone"></span> {{person.workPhone}}
 					</div>
 					<div ng-show="person.email">
-						<a ng-href="mailto:{{person.email}}"><span class="glyphicon glyphicon-envelope"></span> {{person.email}}</a>
+						<a ng-href="mailto:{{person.email}}"><span class="fa fa-envelope"></span> {{person.email}}</a>
 					</div>
 				</td>
 			</tr>

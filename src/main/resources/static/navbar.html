@@ -16,13 +16,13 @@
             <div id="searchInputGroup" class="input-group input-group-sm input-xs">
               <input type="text" class="form-control input-xs" placeholder="Search" ng-model="searchQuery.value" ng-enter="search()" />
               <div class="input-group-btn">
-                <button class="btn btn-default" type="submit" ng-click="search()"><i class="glyphicon glyphicon-search"></i></button>
+                <button class="btn btn-default" type="submit" ng-click="search()"><i class="fa fa-search"></i></button>
               </div>
             </div>
           </form>
         </li>
         <li class="dropdown">
-          <a class="dropdown-toggle"><span class="glyphicon glyphicon-globe"></span> Services <b class="caret"></b></a>
+          <a class="dropdown-toggle"><span class="fa fa-globe"></span> Services <b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li><a ng-href="{{uri('services')}}">Services</a></li>
             <li><a ng-href="{{uri('environments')}}">Environments</a></li>
@@ -41,10 +41,8 @@
             <li><a ng-href="{{uri('load-balancers')}}">Load Balancers</a></li>
           </ul>
         </li>
-        <li><a ng-href="{{uri('people')}}"><span class="glyphicon glyphicon-user"></span> People</a></li>
-<!--
-        <li><a ng-href="{{uri('admin')}}"><span class="glyphicon glyphicon-stats"></span> Admin</a></li>
--->
+        <li><a ng-href="{{uri('people')}}"><span class="fa fa-user"></span> People</a></li>
+<!--             <li><a ng-href="{{uri('admin')}}"><span class="fa fa-bar-chart"></span> Admin</a></li>-->
       </ul>
     </div>
   </div>
