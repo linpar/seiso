@@ -29,8 +29,9 @@
 							</div>
 							<div ng-if="specialRegion.dataCenters.length &gt; 0">
 								<ul class="list-unstyled">
-									<li ng-repeat="dataCenter in specialRegion.dataCenters"><a
-										ng-href="{{uri('data-centers', dataCenter.key)}}">{{dataCenter.name}}</a></li>
+									<li ng-repeat="dataCenter in specialRegion.dataCenters">
+										<a ng-href="{{uri('data-centers', dataCenter.key)}}">{{dataCenter.name}}</a>
+									</li>
 								</ul>
 							</div>
 						</div>

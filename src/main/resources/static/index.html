@@ -12,13 +12,13 @@
 <link rel="stylesheet" type="text/css" href="css/samurai/bootstrap.min.css?v=3">
 </head>
 <body>
-	<div ng-include src="'navbar.html'"></div>
+	<ng-include src="'navbar.html'"></ng-include>
 	<div class="page-content">
 		<div class="container">
-			<div ng-view></div>
+			<ng-view></ng-view>
 		</div>
 	</div>
-	<div ng-include src="'footer.html'"></div>
+	<ng-include src="'footer.html'"></ng-include>
 
 	<!-- Need jQuery and Bootstrap JS for the rotation popovers -->
 	<script type="text/javascript" src="bower/jquery/jquery.min.js"></script>

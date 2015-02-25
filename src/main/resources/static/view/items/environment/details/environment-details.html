@@ -1,23 +1,24 @@
-<div class="page-header">
-	<ul class="breadcrumb">
-		<li><a ng-href="{{uri()}}">Home</a></li>
-		<li><a ng-href="{{uri('environments')}}">Environments</a></li>
-	</ul>
-	<div ng-show="environment != null">
+<div ng-hide="environment">
+	<h1><i class="fa fa-star fa-spin"></i> Loading</h1>
+</div>
+<div ng-show="environment">
+	<div class="page-header">
+		<ul class="breadcrumb">
+			<li><a ng-href="{{uri()}}">Home</a></li>
+			<li><a ng-href="{{uri('environments')}}">Environments</a></li>
+		</ul>
 		<h1>{{environment.name}}</h1>
 		<div class="lead" ng-if="environment.description">{{environment.description}}</div>
 	</div>
+	<ul class="field-list">
+		<li>
+			<div>Key:</div>
+			<div>{{environment.key}}</div>
+		</li>
+		<li>
+			<div>AKA:</div>
+			<div>{{environment.aka || '-'}}</div>
+		</li>
+	</ul>
+	<ng-include src="'view/items/environment/details/service-instances-pane.html'"></ng-include>
 </div>
-
-<ul class="field-list">
-	<li>
-		<div>Key:</div>
-		<div>{{environment.key}}</div>
-	</li>
-	<li>
-		<div>AKA:</div>
-		<div>{{environment.aka || '-'}}</div>
-	</li>
-</ul>
-
-<ng-include src="'view/items/environment/details/service-instances-pane.html'"></ng-include>

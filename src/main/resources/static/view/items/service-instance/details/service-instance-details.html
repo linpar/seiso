@@ -1,16 +1,14 @@
-<div class="page-header" ng-show="serviceInstance">
-	<ul class="breadcrumb">
-		<li><a ng-href="{{uri()}}">Home</a></li>
-		<li><a ng-href="{{uri('service-instances')}}">Service Instances</a></li>
-	</ul>
-	<h1>{{serviceInstance.key}}</h1>
+<div ng-hide="serviceInstance">
+	<h1><i class="fa fa-star fa-spin"></i> Loading</h1>
 </div>
-
-<div id="page-spinner" ng-hide="serviceInstance">
-	<i class="fa fa-spinner fa-spin fa-3x"></i>
-</div>
-
 <div ng-show="serviceInstance">
+	<div class="page-header">
+		<ul class="breadcrumb">
+			<li><a ng-href="{{uri()}}">Home</a></li>
+			<li><a ng-href="{{uri('service-instances')}}">Service Instances</a></li>
+		</ul>
+		<h1>{{serviceInstance.key}}</h1>
+	</div>
 	<ul class="field-list">
 		<li>
 			<div>Service:</div>
