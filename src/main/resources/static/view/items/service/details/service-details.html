@@ -1,23 +1,28 @@
-<div class="page-header">
-	<ul class="breadcrumb">
-		<li><a ng-href="{{uri()}}">Home</a></li>
-		<li><a ng-href="{{uri('services')}}">Services</a></li>
-	</ul>
-	<div ng-show="service">
-		<h1>{{service.name}}</h1>
-		<div class="header-description" ng-if="service.description || service.scmRepository">
-			<div ng-if="service.description != null">
-				<div class="lead">{{service.description}}</div>
-			</div>
-			<div ng-if="service.scmRepository != null">
-				<div>
-					<a ng-href="{{service.scmRepository}}">{{service.scmRepository}}</a>
+<!-- TODO Figure out how to avoid duplicating this everywhere -->
+<div id="page-spinner" ng-show="pageLoading">
+	<i class="fa fa-spinner fa-spin"></i> Loading
+</div>
+
+<div ng-show="service">
+	<div class="page-header">
+		<ul class="breadcrumb">
+			<li><a ng-href="{{uri()}}">Home</a></li>
+			<li><a ng-href="{{uri('services')}}">Services</a></li>
+		</ul>
+		<div ng-show="service">
+			<h1>{{service.name}}</h1>
+			<div class="header-description" ng-if="service.description || service.scmRepository">
+				<div ng-if="service.description != null">
+					<div class="lead">{{service.description}}</div>
+				</div>
+				<div ng-if="service.scmRepository != null">
+					<div>
+						<a ng-href="{{service.scmRepository}}">{{service.scmRepository}}</a>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<div ng-show="service">
 	<ul class="field-list">
 		<li>
 			<div>Key:</div>
@@ -43,5 +48,5 @@
 			</div>
 		</li>
 	</ul>
+	<ng-include src="'view/items/service/details/service-instances-pane.html'"></ng-include>
 </div>
-<div ng-include src="'view/items/service/details/service-instances-pane.html'"></div>

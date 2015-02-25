@@ -1,4 +1,5 @@
 angular.module('seisoControllers').controller('ServiceInstanceDetailsController', [ '$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
+	$scope.pageLoading = true;
 	var request = {
 		method: 'GET',
 		url: 'v2/service-instances/' + $routeParams.key,
@@ -111,5 +112,6 @@ angular.module('seisoControllers').controller('ServiceInstanceDetailsController'
 			alert("Setting maintenance mode for selected nodes");
 		}
 		
+		$scope.pageLoading = false;
 	});	
 } ]);

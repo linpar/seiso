@@ -84,11 +84,13 @@ seisoControllers
 			} ])
 	.controller('EnvironmentDetailsController', [ '$scope', '$http', '$routeParams',
 			function($scope, $http, $routeParams) {
+				$scope.pageLoading = true;
 				$http.get('v1/environments/' + $routeParams.key).success(function(data) {
 					$scope.environment = data;
 					// FIXME We need to move the service instances into a separate search, because some environments
 					// have a lot. [WLW]
 					$scope.serviceInstances = data.serviceInstances;
+					$scope.pageLoading = false;
 				});
 			} ])
 	.controller('LoadBalancerDetailsController', [ '$scope', '$http', '$routeParams',
