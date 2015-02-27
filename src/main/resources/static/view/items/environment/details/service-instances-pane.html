@@ -11,19 +11,35 @@
 	<div ng-if="serviceInstances.length &gt; 0">
 		<table class="table">
 			<colgroup>
-				<col style="width:50%">
-				<col style="width:50%">
+				<col style="width:25%">
+				<col style="width:25%">
+				<col style="width:25%">
+				<col style="width:25%">
 			</colgroup>
 			<thead>
 				<tr>
 					<th>Service Instance</th>
 					<th>Service</th>
+					<th>Data Center</th>
+					<th>Owner</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr ng-repeat="serviceInstance in serviceInstances">
 					<td><a ng-href="{{uri('service-instances', serviceInstance.key)}}">{{serviceInstance.key}}</a></td>
 					<td><a ng-href="{{uri('services', serviceInstance.service.key)}}">{{serviceInstance.service.name}}</a></td>
+					<td>
+						<span ng-if="serviceInstance.dataCenter">
+							<a ng-href="{{uri('data-centers', serviceInstance.dataCenter.key)}}">{{serviceInstance.dataCenter.name}}</a>
+						</span>
+						<span ng-if="!serviceInstance.dataCenter">-</span>
+					</td>
+					<td>
+						<span ng-if="serviceInstance.service.owner">
+							<a ng-href="{{uri('people', serviceInstance.service.owner.username)}}">{{serviceInstance.service.owner.firstName}} {{serviceInstance.service.owner.lastName}}</a>
+						</span>
+						<span ng-if="!serviceInstance.service.owner">-</span>
+					</td>
 				</tr>
 			</tbody>
 		</table>

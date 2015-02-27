@@ -11,15 +11,17 @@
 	<div ng-if="serviceInstances.length &gt; 0">
 		<table class="table">
 			<colgroup>
-				<col style="width:33%">
-				<col style="width:33%">
-				<col style="width:33%">
+				<col style="width:25%">
+				<col style="width:25%">
+				<col style="width:25%">
+				<col style="width:25%">
 			</colgroup>
 			<thead>
 				<tr>
 					<th>Service Instance</th>
 					<th>Service</th>
 					<th>Environment</th>
+					<th>Owner</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -27,6 +29,12 @@
 					<td><a ng-href="{{uri('service-instances', serviceInstance.key)}}">{{serviceInstance.key}}</a></td>
 					<td><a ng-href="{{uri('services', serviceInstance.service.key)}}">{{serviceInstance.service.name}}</a></td>
 					<td><a ng-href="{{uri('environments', serviceInstance.environment.key)}}">{{serviceInstance.environment.name}}</a></td>
+					<td>
+						<span ng-if="serviceInstance.service.owner">
+							<a ng-href="{{uri('people', serviceInstance.service.owner.username)}}">{{serviceInstance.service.owner.firstName}} {{serviceInstance.service.owner.lastName}}</a>
+						</span>
+						<span ng-if="!serviceInstance.service.owner">-</span>
+					</td>
 				</tr>
 			</tbody>
 		</table>
