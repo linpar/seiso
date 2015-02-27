@@ -1,85 +1,87 @@
-<div ng-hide="machine">
-	<h1 class="loading-page"><i class="fa fa-spinner fa-spin"></i> Loading machine</h1>
-</div>
-<div ng-show="machine">
-	<div class="page-header">
+<div class="page-header">
+	<div ng-show="machine">
 		<ul class="breadcrumb">
 			<li><a ng-href="{{uri()}}">Home</a></li>
 			<li>Machines</li>
 		</ul>
 		<h1><i class="fa fa-server"></i> {{machine.name}}</h1>
 	</div>
-	<section>
-		<header>
-			<h1>Machine Details</h1>
-		</header>
-		<div class="row">
-			<div class="col-md-6">
-				<table class="table">
-					<colgroup>
-						<col style="width:33%">
-						<col style="width:67%">
-					</colgroup>
-					<tbody>
-						<tr>
-							<td>FQDN</td>
-							<td>{{machine.fqdn || '-'}}</td>
-						</tr>
-						<tr>
-							<td>Domain</td>
-							<td>{{machine.domain || '-'}}</td>
-						</tr>
-						<tr>
-							<td>IPv4 Address</td>
-							<td>{{machine.ipAddress || '-'}}</td>
-						</tr>
-						<tr>
-							<td>IPv6 Address</td>
-							<td>{{machine.ip6Address || '-'}}</td>
-						</tr>
-						<tr>
-							<td>MAC Address</td>
-							<td>{{machine.macAddress || '-'}}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="col-md-6">
-				<table class="table">
-					<colgroup>
-						<col style="width:33%">
-						<col style="width:67%">
-					</colgroup>
-					<tbody>
-						<tr>
-							<td>Native Machine ID</td>
-							<td>{{machine.nativeMachineId || '-'}}</td>
-						</tr>
-						<tr>
-							<td>Type</td>
-							<td>{{machine.machineType || '-'}}</td>
-						</tr>
-						<tr>
-							<td>Data Center</td>
-							<td>
-								<div ng-if="dataCenter">
-									<a ng-href="{{uri('data-centers', dataCenter.key)}}">{{dataCenter.key}}</a>
-								</div>
-								<div ng-if="!dataCenter">-</div>
-							</td>
-						</tr>
-						<tr>
-							<td>OS</td>
-							<td>{{machine.os}} {{machine.osVersion}}</td>
-						</tr>
-						<tr>
-							<td>Platform</td>
-							<td>{{machine.platform}} {{machine.platformVersion}}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</section>
+	<div ng-hide="machine">
+		<h1>Loading <i class="fa fa-spinner fa-spin"></i></h1>
+	</div>
 </div>
+
+<section ng-show="machine">
+	<header>
+		<h1>Machine Details</h1>
+	</header>
+	<div class="row">
+		<div class="col-md-6">
+			<table class="table">
+				<colgroup>
+					<col style="width:33%">
+					<col style="width:67%">
+				</colgroup>
+				<tbody>
+					<tr>
+						<td>FQDN</td>
+						<td>{{machine.fqdn || '-'}}</td>
+					</tr>
+					<tr>
+						<td>Domain</td>
+						<td>{{machine.domain || '-'}}</td>
+					</tr>
+					<tr>
+						<td>IPv4 Address</td>
+						<td>{{machine.ipAddress || '-'}}</td>
+					</tr>
+					<tr>
+						<td>IPv6 Address</td>
+						<td>{{machine.ip6Address || '-'}}</td>
+					</tr>
+					<tr>
+						<td>MAC Address</td>
+						<td>{{machine.macAddress || '-'}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-6">
+			<table class="table">
+				<colgroup>
+					<col style="width:33%">
+					<col style="width:67%">
+				</colgroup>
+				<tbody>
+					<tr>
+						<td>Native Machine ID</td>
+						<td>{{machine.nativeMachineId || '-'}}</td>
+					</tr>
+					<tr>
+						<td>Type</td>
+						<td>{{machine.machineType || '-'}}</td>
+					</tr>
+					<tr>
+						<td>Data Center</td>
+						<td>
+							<div ng-if="dataCenter">
+								<a ng-href="{{uri('data-centers', dataCenter.key)}}">{{dataCenter.key}}</a>
+							</div>
+							<div ng-if="!dataCenter">-</div>
+						</td>
+					</tr>
+					<tr>
+						<td>OS</td>
+						<td>{{machine.os}} {{machine.osVersion}}</td>
+					</tr>
+					<tr>
+						<td>Platform</td>
+						<td>{{machine.platform}} {{machine.platformVersion}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</section>
+
 <ng-include src="'view/items/machine/details/nodes-pane.html'" />
