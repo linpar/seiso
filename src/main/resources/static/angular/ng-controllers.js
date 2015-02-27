@@ -204,7 +204,7 @@ var dataCenterDetailsController = function() {
 var environmentListController = function() {
 	var controller = function($scope, $http) {
 		$http.get('/v1/environments')
-				.success(function() { $scope.items = data; })
+				.success(function(data) { $scope.items = data; })
 				.error(function() { alert('Error while getting environments.'); })
 				.finally(function() { $scope.model.wait = false; });
 	}
@@ -212,12 +212,16 @@ var environmentListController = function() {
 };
 
 var environmentDetailsController = function() {
-	var controller = function($scope, $http) {
-		$scope.environment = environment.data;
-		// FIXME Move to separate search per https://github.com/ExpediaDotCom/seiso/issues/75
-		$scope.serviceInstances = $scope.environment.serviceInstances
+	var controller = function($scope, $http, $routeParams) {
+		$http.get('/v1/environments/' + $routeParams.key)
+				.success(function(data) {
+					$scope.environment = data;
+					// FIXME Move to separate search per https://github.com/ExpediaDotCom/seiso/issues/75
+					$scope.serviceInstances = data.serviceInstances
+				})
+				.error(function() { alert('Error while getting environment.'); });
 	}
-	return [ '$scope', 'environment', controller ];
+	return [ '$scope', '$http', '$routeParams', controller ];
 }
 
 var loadBalancerDetailsController = function() {
