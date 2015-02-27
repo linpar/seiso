@@ -111,7 +111,7 @@
 						<td><span ng-show="nodeRow.healthStatus" class="label label-{{nodeRow.healthStatus.statusType.key}}">{{nodeRow.healthStatus.name}}</span></td>
 						<td>{{nodeRow.ipAddress}} ({{nodeRow.ipAddressRole}})</td>
 						<td style="width:0">
-							<span ng-if="nodeRow.aggregateRotationStatus" class="label label-{{nodeRow.aggregateRotationStatus.statusType.key}}">{{nodeRow.aggregateRotationStatus.name}}</span>
+							<span ng-if="nodeRow.aggregateRotationStatus" class="label label-{{nodeRow.aggregateRotationStatus._embedded.statusType.key}}">{{nodeRow.aggregateRotationStatus.name}}</span>
 						</td>
 						<td style="width:20%">
 							<span ng-if="nodeRow.aggregateRotationStatus"><a rotation-details-popover="/v1/nodes/{{nodeRow.name}}/ip-addresses/{{nodeRow.ipAddress}}">[Details]</a></span>

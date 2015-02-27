@@ -4,36 +4,46 @@
 	</ul>
 	<h1>
 		Service Instances
-		<span ng-show="showPageMeta"><small>({{lowerIndex}}-{{upperIndex}} of {{totalItems}})</small></span>
-		<span ng-show="pageLoading"><small><i class="fa fa-spinner fa-spin"></i></small></span>
+		<span ng-show="items" ng-switch="items.length">
+			<span ng-switch-when="0"><small>(0)</small></span>
+			<span ng-switch-default><small>({{lowerIndex}}-{{upperIndex}} of {{totalItems}})</small></span>
+		</span>
+		<span ng-hide="items">
+			<small><i class="fa fa-spinner fa-spin"></i></small>
+		</span>
 	</h1>
 </div>
-<section ng-show="items">
-	<div ng-show="totalPages &gt; 1" class="pagination-wrapper">
-		<pagination total-items="totalItems" ng-model="currentPage" ng-change="pageSelected()" />
-	</div>
-	<table class="table">
-		<colgroup>
-			<col style="width:33%;">
-			<col style="width:33%">
-			<col style="width:33%">
-		</colgroup>
-		<thead>
-			<tr>
-				<th>Service Instance</th>
-				<th>Service</th>
-				<th>Environment</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr ng-repeat="serviceInstance in items | orderBy:'key'">
-				<td><a ng-href="{{uri('service-instances', serviceInstance.key)}}">{{serviceInstance.key}}</a></td>
-				<td><a ng-href="{{uri('services', serviceInstance.service.key)}}">{{serviceInstance.service.name}}</a></td>
-				<td><a ng-href="{{uri('environments', serviceInstance.environment.key)}}">{{serviceInstance.environment.name}}</a></td>
-			</tr>
-		</tbody>
-	</table>
-	<div ng-show="totalPages &gt; 1" class="pagination-wrapper">
-		<pagination total-items="totalItems" ng-model="currentPage" ng-change="pageSelected()" />
-	</div>
-</section>
+<div ng-show="items" ng-switch="items.length">
+	<section ng-switch-when="0">
+		<h3>No service instances.</h3>
+	</section>
+	<section ng-switch-default>
+		<div class="pagination-wrapper" ng-if="totalPages &gt; 1">
+			<pagination total-items="totalItems" ng-model="model.currentPage" ng-change="model.pageSelected()" />
+		</div>
+		<table class="table">
+			<colgroup>
+				<col style="width:33%;">
+				<col style="width:33%">
+				<col style="width:33%">
+			</colgroup>
+			<thead>
+				<tr>
+					<th>Service Instance</th>
+					<th>Service</th>
+					<th>Environment</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="serviceInstance in items | orderBy:'key'">
+					<td><a ng-href="{{uri('service-instances', serviceInstance.key)}}">{{serviceInstance.key}}</a></td>
+					<td><a ng-href="{{uri('services', serviceInstance.service.key)}}">{{serviceInstance.service.name}}</a></td>
+					<td><a ng-href="{{uri('environments', serviceInstance.environment.key)}}">{{serviceInstance.environment.name}}</a></td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="pagination-wrapper" ng-if="totalPages &gt; 1">
+			<pagination total-items="totalItems" ng-model="model.currentPage" ng-change="model.pageSelected()" />
+		</div>
+	</section>
+</div>

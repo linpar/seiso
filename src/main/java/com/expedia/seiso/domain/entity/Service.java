@@ -65,15 +65,7 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 			"serviceInstances.environment",
 			"serviceInstances.dataCenter.region.infrastructureProvider",
 			"serviceInstances.nodes"
-			}),
-	@Projection(cardinality = Cardinality.SINGLE, name = "dependencies", paths = {
-			"dependencies.source.type",
-			"dependencies.target.type",
-			"dependencies.type",
-			"dependents.source.type",
-			"dependents.target.type",
-			"dependents.type"
-			})
+		})
 	})
 //@formatter:on
 public class Service extends AbstractItem {

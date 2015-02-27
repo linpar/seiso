@@ -4,63 +4,80 @@
 	</ul>
 	<h1>Statuses</h1>
 </div>
-<div class="well well-sm">
-	<ul class="list-inline" style="margin:0">
-		<li>Legend:</li>
-		<li ng-repeat="statusType in statusTypes | orderBy:'name'">
-			<span style="margin-left:5px"><span class="label label-{{statusType.key}}">&nbsp;&nbsp;&nbsp;</span> {{statusType.name}}</span>
-		</li>
-	</ul>
-</div>
+<section>
+	<div ng-hide="statusTypes">
+		<i class="fa fa-spinner fa-spin fa-2x"></i>
+	</div>
+	<div ng-show="statusTypes" class="well well-sm">
+		<ul class="list-inline" style="margin:0">
+			<li>Legend:</li>
+			<li ng-repeat="statusType in statusTypes | orderBy:'name'">
+				<span style="margin-left:5px"><span class="label label-{{statusType.key}}">&nbsp;&nbsp;&nbsp;</span> {{statusType.name}}</span>
+			</li>
+		</ul>
+	</div>
+</section>
 <div class="row">
 	<div class="col-md-6">
 		<section>
 			<header>
-				<h1>Health Statuses <small>({{healthStatuses.length}})</small></h1>
+				<h1>
+					Health Statuses
+					<span ng-hide="healthStatuses"><small><i class="fa fa-spinner fa-spin"></i></small></span>
+					<span ng-show="healthStatuses"><small>({{healthStatuses.length}})</small></span>
+				</h1>
 			</header>
-			<table class="table">
-				<colgroup>
-					<col style="width:50%">
-					<col style="width:50%">
-				</colgroup>
-				<thead>
-					<tr>
-						<th>Status</th>
-						<th>Key</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="healthStatus in healthStatuses | orderBy:'name'">
-						<td><span class="label label-{{healthStatus.statusType.key}}">{{healthStatus.name}}</span>
-						<td>{{healthStatus.key}}</td>
-					</tr>
-				</tbody>
-			</table>
+			<div ng-show="healthStatuses">
+				<table class="table">
+					<colgroup>
+						<col style="width:50%">
+						<col style="width:50%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>Status</th>
+							<th>Key</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="healthStatus in healthStatuses | orderBy:'name'">
+							<td><span class="label label-{{healthStatus.statusType.key}}">{{healthStatus.name}}</span>
+							<td>{{healthStatus.key}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</section>
 	</div>
 	<div class="col-md-6">
 		<section>
 			<header>
-				<h1>Rotation Statuses <small>({{rotationStatuses.length}})</small></h1>
+				<h1>
+					Rotation Statuses
+					<span ng-hide="rotationStatuses"><small><i class="fa fa-spinner fa-spin"></i></small></span>
+					<span ng-show="rotationStatuses"><small>({{rotationStatuses.length}})</small></span>
+				</h1>
 			</header>
-			<table class="table">
-				<colgroup>
-					<col style="width:50%">
-					<col style="width:50%">
-				</colgroup>
-				<thead>
-					<tr>
-						<th>Status</th>
-						<th>Key</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="rotationStatus in rotationStatuses | orderBy:'name'">
-						<td><span class="label label-{{rotationStatus.statusType.key}}">{{rotationStatus.name}}</span>
-						<td>{{rotationStatus.key}}</td>
-					</tr>
-				</tbody>
-			</table>
+			<div ng-show="rotationStatuses">
+				<table class="table">
+					<colgroup>
+						<col style="width:50%">
+						<col style="width:50%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>Status</th>
+							<th>Key</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="rotationStatus in rotationStatuses | orderBy:'name'">
+							<td><span class="label label-{{rotationStatus.statusType.key}}">{{rotationStatus.name}}</span>
+							<td>{{rotationStatus.key}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</section>
 	</div>
 </div>

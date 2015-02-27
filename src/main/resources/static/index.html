@@ -11,7 +11,10 @@
 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Serif">
 <link rel="stylesheet" type="text/css" href="css/samurai/bootstrap.min.css?v=3">
 </head>
-<body>
+<body ng-class="{wait: model.wait}">
+	<div id="page-spinner" ng-show="model.wait">
+		<i class="fa fa-spinner fa-spin"></i> Loading
+	</div>
 	<ng-include src="'navbar.html'"></ng-include>
 	<div class="page-content">
 		<div class="container">
@@ -34,17 +37,10 @@
 	<!-- https://github.com/ocombe/ocLazyLoad -->
 	<!-- http://blog.getelementsbyidea.com/load-a-module-on-demand-with-angularjs/ -->
 	<script type="text/javascript" src="app.js"></script>
-	<script type="text/javascript" src="controller/controllers.js"></script>
-	<script type="text/javascript" src="controller/admin-controller.js"></script>
-	<script type="text/javascript" src="controller/data-center-list-controller.js"></script>
-	<script type="text/javascript" src="controller/home-controller.js"></script>
-	<script type="text/javascript" src="controller/machine-details-controller.js"></script>
-	<script type="text/javascript" src="controller/node-details-controller.js"></script>
-	<script type="text/javascript" src="controller/node-name-typeahead-controller.js"></script>
-	<script type="text/javascript" src="controller/node-search-controller.js"></script>
-	<script type="text/javascript" src="controller/person-details-controller.js"></script>
-	<script type="text/javascript" src="controller/service-details-controller.js"></script>
-	<script type="text/javascript" src="controller/service-instance-details-controller.js"></script>
-	<script type="text/javascript" src="controller/search-controller.js"></script>
+	<script type="text/javascript" src="angular/ng-constants.js"></script>
+	<script type="text/javascript" src="angular/ng-directives.js"></script>
+	<script type="text/javascript" src="angular/ng-filters.js"></script>
+	<script type="text/javascript" src="angular/ng-services.js"></script>
+	<script type="text/javascript" src="angular/ng-controllers.js"></script>
 </body>
 </html>

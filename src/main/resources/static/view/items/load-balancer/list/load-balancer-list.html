@@ -4,32 +4,43 @@
 	</ul>
 	<h1>
 		Load Balancers
-		<span ng-show="items"><small>({{items.length}})</small></span>
-		<span ng-show="pageLoading"><small><i class="fa fa-spinner fa-spin"></i></small></span>
+		<span ng-show="items" ng-switch="items.length">
+			<span ng-switch-when="0"><small>(0)</small></span>
+			<span ng-switch-default><small>({{lowerIndex}}-{{upperIndex}} of {{totalItems}})</small></span>
+		</span>
+		<span ng-hide="items">
+			<small><i class="fa fa-spinner fa-spin"></i></small>
+		</span>
 	</h1>
 </div>
-
-<table class="table">
-	<colgroup>
-		<col style="width:25%">
-		<col style="width:20%">
-		<col style="width:35%">
-		<col style="width:20%">
-	</colgroup>
-	<thead>
-		<tr>
-			<th>Load Balancer</th>
-			<th>Type</th>
-			<th>Data Center</th>
-			<th>IP Address</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr ng-repeat="loadBalancer in items">
-			<td><a ng-href="{{uri('load-balancers', loadBalancer.name)}}">{{loadBalancer.name}}</a></td>
-			<td>{{loadBalancer.type || '-'}}</td>
-			<td><a ng-href="{{uri('data-centers', loadBalancer.dataCenter.key)}}">{{loadBalancer.dataCenter.name}}</a></td>
-			<td>{{loadBalancer.ipAddress || '-'}}</td>
-		</tr>
-	</tbody>
-</table>
+<div ng-show="items" ng-switch="items.length">
+	<section ng-switch-when="0">
+		<h3>No load balancers.</h3>
+	</section>
+	<section ng-switch-default>
+		<table class="table">
+			<colgroup>
+				<col style="width:25%">
+				<col style="width:20%">
+				<col style="width:35%">
+				<col style="width:20%">
+			</colgroup>
+			<thead>
+				<tr>
+					<th>Load Balancer</th>
+					<th>Type</th>
+					<th>Data Center</th>
+					<th>IP Address</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="loadBalancer in items">
+					<td><a ng-href="{{uri('load-balancers', loadBalancer.name)}}">{{loadBalancer.name}}</a></td>
+					<td>{{loadBalancer.type || '-'}}</td>
+					<td><a ng-href="{{uri('data-centers', loadBalancer.dataCenter.key)}}">{{loadBalancer.dataCenter.name}}</a></td>
+					<td>{{loadBalancer.ipAddress || '-'}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+</div>

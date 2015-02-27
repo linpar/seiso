@@ -84,6 +84,7 @@ public class ItemControllerV1 {
 			@RequestParam MultiValueMap<String, String> params) {
 		
 		log.trace("Getting all items: repoKey={}", repoKey);
+		
 		val result = delegate.getAll(ApiVersion.V1, repoKey, view, pageable, params);
 		val resultClass = result.getClass();
 		

@@ -1,4 +1,14 @@
-/* For Angular/Bootstrap integration */
+/*
+body {
+  cursor: default;
+}
+
+// http://stackoverflow.com/questions/10305392/simplest-way-to-set-cursor-to-wait-then-have-all-elements-revert-back
+body.wait, body.wait * {
+  cursor: wait !important;
+}
+*/
+
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
 .pagination-wrapper {
@@ -78,10 +88,10 @@ fieldset {
   position: fixed;
   top: 0;
   right: 0;
-  padding: 5px;
+  padding: 5px 10px;
   z-index: 9999;
-  background-color: @btn-info-bg;
-  color: @btn-info-color;
+  background-color: @btn-warning-bg;
+  color: @btn-warning-color;
 }
 
 

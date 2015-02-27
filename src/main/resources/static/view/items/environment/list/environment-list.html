@@ -4,30 +4,39 @@
 	</ul>
 	<h1>
 		Environments
-		<span ng-show="items"><small>({{items.length}})</small></span>
-		<span ng-show="pageLoading"><small><i class="fa fa-spinner fa-spin"></i></small></span>
+		<span ng-show="items" ng-switch="items.length">
+			<span ng-switch-when="0"><small>(0)</small></span>
+			<!-- FIXME Convert to paging repo -->
+			<span ng-switch-default><small>(1-{{items.length}} of {{items.length}})</small></span>
+		</span>
 	</h1>
 </div>
-
-<table class="table">
-	<colgroup>
-		<col style="width:25%">
-		<col style="width:25%">
-		<col style="width:50%">
-	</colgroup>
-	<thead>
-		<tr>
-			<th>Environment</th>
-			<th>AKA</th>
-			<th>Description</th>
-		</tr>
-	</thead>
-	<tbody>
-		<!-- FIXME Better for the API itself to sort the environments [WLW] -->
-		<tr ng-repeat="environment in items">
-			<td><a ng-href="{{uri('environments', environment.key)}}">{{environment.name}}</a></td>
-			<td>{{environment.aka}}</td>
-			<td>{{environment.description}}</td>
-		</tr>
-	</tbody>
-</table>
+<div ng-show="items" ng-switch="items.length">
+	<section ng-switch-when="0">
+		<h3>No environments.</h3>
+	</section>
+	<section ng-switch-default>
+		<table class="table">
+			<colgroup>
+				<col style="width:25%">
+				<col style="width:25%">
+				<col style="width:50%">
+			</colgroup>
+			<thead>
+				<tr>
+					<th>Environment</th>
+					<th>AKA</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- FIXME Better for the API itself to sort the environments [WLW] -->
+				<tr ng-repeat="environment in items">
+					<td><a ng-href="{{uri('environments', environment.key)}}">{{environment.name}}</a></td>
+					<td>{{environment.aka}}</td>
+					<td>{{environment.description}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+</div>

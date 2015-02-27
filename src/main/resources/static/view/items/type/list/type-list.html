@@ -4,30 +4,32 @@
 	</ul>
 	<h1>Types</h1>
 </div>
-<div class="row">
-	<div class="col-md-6">
-		<section>
-			<header>
-				<h1>Service Types <small>({{serviceTypes.length}})</small></h1>
-			</header>
-			<table class="table">
-				<colgroup>
-					<col style="width:50%">
-					<col style="width:50%">
-				</colgroup>
-				<thead>
-					<tr>
-						<th>Type</th>
-						<th>Key</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="serviceType in serviceTypes | orderBy:'name'">
-						<td>{{serviceType.name}}</td>
-						<td>{{serviceType.key}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</section>
+<div ng-show="items">
+	<div class="row">
+		<div class="col-md-6">
+			<section>
+				<header>
+					<h1>Service Types <small>({{items.length}})</small></h1>
+				</header>
+				<table class="table">
+					<colgroup>
+						<col style="width:50%">
+						<col style="width:50%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>Type</th>
+							<th>Key</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="serviceType in items | orderBy:'name'">
+							<td>{{serviceType.name}}</td>
+							<td>{{serviceType.key}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+		</div>
 	</div>
 </div>
