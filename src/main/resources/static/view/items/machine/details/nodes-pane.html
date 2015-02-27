@@ -1,4 +1,7 @@
-<section>
+<section ng-hide="nodes">
+	<h1><i class="fa fa-spinner fa-spin"></i> Loading nodes</h1>
+</section>
+<section ng-show="nodes">
 	<header>
 		<h1>Nodes <small>({{nodes.length}})</small></h1>
 	</header>

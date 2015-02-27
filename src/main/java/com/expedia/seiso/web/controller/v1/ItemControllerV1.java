@@ -108,6 +108,8 @@ public class ItemControllerV1 {
 			@PathVariable String itemKey,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
 		
+//		try { Thread.sleep(2000L); } catch (Exception e) { }
+		
 		return delegate.getOne(ApiVersion.V1, repoKey, itemKey, view);
 	}
 	
