@@ -463,6 +463,7 @@ angular.module('seisoControllers', [])
 		.controller('LoadBalancerListController', pagingController('/v1/load-balancers', 'name'))
 		.controller('LoadBalancerDetailsController', loadBalancerDetailsController())
 		.controller('MachineDetailsController', machineDetailsController())
+		
 		.controller('NodeDetailsController', nodeDetailsController())
 		.controller('PersonListController', pagingController('/v1/people', 'lastName,firstName'))
 		.controller('PersonDetailsController', personDetailsController())
