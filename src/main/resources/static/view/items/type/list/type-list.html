@@ -4,13 +4,17 @@
 	</ul>
 	<h1>Types</h1>
 </div>
-<div ng-show="items">
-	<div class="row">
-		<div class="col-md-6">
-			<section>
-				<header>
-					<h1>Service Types <small>({{items.length}})</small></h1>
-				</header>
+<div class="row">
+	<div class="col-md-6">
+		<section>
+			<header>
+				<h1>
+					Service Types
+					<span ng-show="items"><small>({{items.length}})</small></span>
+					<span ng-hide="items"><i class="fa fa-spinner fa-spin"></i></span>
+				</h1>
+			</header>
+			<div ng-if="items.length &gt; 0">
 				<table class="table">
 					<colgroup>
 						<col style="width:50%">
@@ -29,7 +33,7 @@
 						</tr>
 					</tbody>
 				</table>
-			</section>
-		</div>
+			</div>
+		</section>
 	</div>
 </div>

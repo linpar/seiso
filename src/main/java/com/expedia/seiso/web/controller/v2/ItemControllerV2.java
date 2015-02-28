@@ -16,7 +16,6 @@
 package com.expedia.seiso.web.controller.v2;
 
 import lombok.val;
-import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -64,7 +63,6 @@ import com.expedia.seiso.web.hateoas.Resources;
 @RestController
 @RequestMapping("/v2")
 @Transactional
-@XSlf4j
 public class ItemControllerV2 {
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private BasicItemDelegate delegate;

@@ -2,36 +2,31 @@
 	<header>
 		<h1>
 			Service Instances
-			<span ng-show="serviceInstances != null"><small>({{serviceInstances.length}})</small></span>
-			<span ng-hide="serviceInstances != null"><small><i class="fa fa-spinner fa-spin"></i></small></span>
+			<span ng-show="serviceInstances"><small>({{serviceInstances.length}})</small></span>
+			<span ng-hide="serviceInstances"><i class="fa fa-spinner fa-spin"></i></span>
 		</h1>
 	</header>
-	<div ng-show="serviceInstances != null">
-		<div ng-if="serviceInstances.length === 0">
-			<p>None.</p>
-		</div>
-		<div ng-if="serviceInstances.length &gt; 0">
-			<table class="table">
-				<colgroup>
-					<col style="width:33%">
-					<col style="width:33%">
-					<col style="width:33%">
-				</colgroup>
-				<thead>
-					<tr>
-						<th>Service Instance</th>
-						<th>Environment</th>
-						<th>Data Center</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="serviceInstance in serviceInstances">
-						<td><a ng-href="{{uri('service-instances', serviceInstance.key)}}">{{serviceInstance.key}}</a></td>
-						<td><a ng-href="{{uri('environments', serviceInstance.environment.key)}}">{{serviceInstance.environment.name}}</a></td>
-						<td><a ng-href="{{uri('data-centers', serviceInstance.dataCenter.key)}}">{{serviceInstance.dataCenter.name}}</a></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+	<div ng-show="serviceInstances" ng-if="serviceInstances.length &gt; 0">
+		<table class="table">
+			<colgroup>
+				<col style="width:33%">
+				<col style="width:33%">
+				<col style="width:33%">
+			</colgroup>
+			<thead>
+				<tr>
+					<th>Service Instance</th>
+					<th>Environment</th>
+					<th>Data Center</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="serviceInstance in serviceInstances">
+					<td><a ng-href="{{uri('service-instances', serviceInstance.key)}}">{{serviceInstance.key}}</a></td>
+					<td><a ng-href="{{uri('environments', serviceInstance.environment.key)}}">{{serviceInstance.environment.name}}</a></td>
+					<td><a ng-href="{{uri('data-centers', serviceInstance.dataCenter.key)}}">{{serviceInstance.dataCenter.name}}</a></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </section>

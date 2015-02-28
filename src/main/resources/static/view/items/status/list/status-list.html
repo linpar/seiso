@@ -6,7 +6,7 @@
 </div>
 <section>
 	<div ng-hide="statusTypes">
-		<i class="fa fa-spinner fa-spin fa-2x"></i>
+		<h1><i class="fa fa-spinner fa-spin"></i></h1>
 	</div>
 	<div ng-show="statusTypes" class="well well-sm">
 		<ul class="list-inline" style="margin:0">
@@ -23,7 +23,7 @@
 			<header>
 				<h1>
 					Health Statuses
-					<span ng-hide="healthStatuses"><small><i class="fa fa-spinner fa-spin"></i></small></span>
+					<span ng-hide="healthStatuses"><i class="fa fa-spinner fa-spin"></i></span>
 					<span ng-show="healthStatuses"><small>({{healthStatuses.length}})</small></span>
 				</h1>
 			</header>
@@ -54,7 +54,7 @@
 			<header>
 				<h1>
 					Rotation Statuses
-					<span ng-hide="rotationStatuses"><small><i class="fa fa-spinner fa-spin"></i></small></span>
+					<span ng-hide="rotationStatuses"><i class="fa fa-spinner fa-spin"></i></span>
 					<span ng-show="rotationStatuses"><small>({{rotationStatuses.length}})</small></span>
 				</h1>
 			</header>

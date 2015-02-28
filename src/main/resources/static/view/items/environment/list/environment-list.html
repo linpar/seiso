@@ -1,5 +1,5 @@
 <div id="page-spinner-panel" ng-hide="items">
-	<i class="fa fa-star fa-spin fa-5x"></i>
+	<i class="fa fa-spinner fa-spin fa-5x"></i>
 </div>
 <div ng-show="items">
 	<div class="page-header">
@@ -8,11 +8,9 @@
 		</ul>
 		<h1>
 			Environments
-			<span ng-show="items" ng-switch="items.length">
-				<span ng-switch-when="0"><small>(0)</small></span>
-				<!-- FIXME Convert to paging repo -->
-				<span ng-switch-default><small>(1-{{items.length}} of {{items.length}})</small></span>
-			</span>
+			<span ng-if="items.length === 0"><small>(0)</small></span>
+			<!-- FIXME Convert to paging repo -->
+			<span ng-if="items.length &gt; 0"><small>(1-{{items.length}} of {{items.length}})</small></span>
 		</h1>
 	</div>
 	<div ng-if="items.length === 0">

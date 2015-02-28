@@ -1,23 +1,21 @@
-<div class="page-header">
-	<ul class="breadcrumb">
-		<li><a ng-href="{{uri()}}">Home</a></li>
-	</ul>
-	<h1>
-		People
-		<span ng-show="items" ng-switch="items.length">
-			<span ng-switch-when="0"><small>(0)</small></span>
-			<span ng-switch-default><small>({{lowerIndex}}-{{upperIndex}} of {{totalItems}})</small></span>
-		</span>
-		<span ng-hide="items">
-			<small><i class="fa fa-spinner fa-spin"></i></small>
-		</span>
-	</h1>
+<div id="page-spinner-panel" ng-hide="items">
+	<i class="fa fa-spinner fa-spin fa-5x"></i>
 </div>
-<div ng-show="items" ng-switch="items.length">
-	<section ng-switch-when="0">
+<div ng-show="items">
+	<div class="page-header">
+		<ul class="breadcrumb">
+			<li><a ng-href="{{uri()}}">Home</a></li>
+		</ul>
+		<h1>
+			People
+			<span ng-if="items.length === 0"><small>(0)</small></span>
+			<span ng-if="items.length &gt; 0"><small>({{lowerIndex}}-{{upperIndex}} of {{totalItems}})</small></span>
+		</h1>
+	</div>
+	<div ng-if="items.length === 0">
 		<h3>No people.</h3>
-	</section>
-	<section ng-switch-default>
+	</div>
+	<div ng-if="items.length &gt; 0">
 		<div class="pagination-wrapper" ng-if="totalPages &gt; 1">
 			<pagination total-items="totalItems" ng-model="model.currentPage" ng-change="model.pageSelected()" />
 		</div>
@@ -65,5 +63,5 @@
 		<div class="pagination-wrapper" ng-if="totalPages &gt; 1">
 			<pagination total-items="totalItems" ng-model="model.currentPage" ng-change="model.pageSelected()" />
 		</div>
-	</section>
+	</div>
 </div>

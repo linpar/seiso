@@ -85,9 +85,6 @@ public class ItemControllerV1 {
 		
 		log.trace("Getting all items: repoKey={}", repoKey);
 		
-		// FIXME
-//		try { Thread.sleep(1000L); } catch (Exception e) { }
-		
 		val result = delegate.getAll(ApiVersion.V1, repoKey, view, pageable, params);
 		val resultClass = result.getClass();
 		
@@ -110,9 +107,6 @@ public class ItemControllerV1 {
 			@PathVariable String repoKey,
 			@PathVariable String itemKey,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
-		
-		// FIXME
-//		try { Thread.sleep(1000L); } catch (Exception e) { }
 		
 		return delegate.getOne(ApiVersion.V1, repoKey, itemKey, view);
 	}
