@@ -33,6 +33,7 @@ import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.core.exception.NotFoundException;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.assembler.ProjectionParser;
 
@@ -99,10 +100,13 @@ public class ItemMetaImpl implements ItemMeta {
 
 		val projectionsAnnArr = projectionsAnn.value();
 		for (val projectionAnn : projectionsAnnArr) {
-			val key = new Key(projectionAnn.cardinality(), projectionAnn.name());
-			val projection = new ProjectionParser(projectionAnn.paths()).parse();
-			log.debug("Adding projection: key={}, projection={}", key, projection);
-			projections.put(key, projection);
+			val apiVersions = projectionAnn.apiVersions();
+			for (val apiVersion : apiVersions) {
+				val key = new Key(apiVersion, projectionAnn.cardinality(), projectionAnn.name());
+				val projection = new ProjectionParser(projectionAnn.paths()).parse();
+				log.debug("Adding projection: key={}, projection={}", key, projection);
+				projections.put(key, projection);
+			}
 		}
 	}
 
@@ -145,8 +149,14 @@ public class ItemMetaImpl implements ItemMeta {
 	}
 
 	@Override
-	public ProjectionNode getProjectionNode(Projection.Cardinality cardinality, String projectionKey) {
-		Key key = new Key(cardinality, projectionKey);
+	public ProjectionNode getProjectionNode(
+			ApiVersion apiVersion,
+			Projection.Cardinality cardinality,
+			String projectionKey) {
+		
+		// TODO add one key per api version
+		
+		Key key = new Key(apiVersion, cardinality, projectionKey);
 		ProjectionNode node = projections.get(key);
 		notNull(node, "No projection for key=" + key);
 		return node;
@@ -168,10 +178,12 @@ public class ItemMetaImpl implements ItemMeta {
 
 	@Data
 	private static class Key {
+		private ApiVersion apiVersion;
 		private Projection.Cardinality cardinality;
 		private String viewKey;
 
-		public Key(Projection.Cardinality cardinality, String viewKey) {
+		public Key(ApiVersion apiVersion, Projection.Cardinality cardinality, String viewKey) {
+			this.apiVersion = apiVersion;
 			this.cardinality = cardinality;
 			this.viewKey = viewKey;
 		}

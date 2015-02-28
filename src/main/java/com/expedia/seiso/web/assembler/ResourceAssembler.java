@@ -476,7 +476,7 @@ public class ResourceAssembler {
 			
 			// Use default projection (not flat) because we need the status type to color code the labels.
 			val itemMeta = itemMetaLookup.getItemMeta(RotationStatus.class);
-			val proj = itemMeta.getProjectionNode(Cardinality.SINGLE, Projection.DEFAULT);
+			val proj = itemMeta.getProjectionNode(apiVersion, Cardinality.SINGLE, Projection.DEFAULT);
 			val rotationStatusResource = toResource(apiVersion, rotationStatus, proj);
 			
 			model.put("aggregateRotationStatus", rotationStatusResource);

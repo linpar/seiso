@@ -96,7 +96,7 @@ public class RepoSearchDelegate {
 		val searchMethod = itemMeta.getRepositorySearchMethod(search);
 		notNull(searchMethod, "Unknown search: " + search);
 		val returnType = searchMethod.getReturnType();
-		val proj = itemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
+		val proj = itemMeta.getProjectionNode(apiVersion, Projection.Cardinality.COLLECTION, view);
 		val result = getResult(itemClass, searchMethod, pageable, params);
 		
 		if (returnType == List.class) {

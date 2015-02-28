@@ -36,6 +36,7 @@ import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.seiso.web.ApiVersion;
 
 /**
  * An environment into which we deploy artifacts. Examples would be trunk, integration, live, hotfix and DR.
@@ -50,11 +51,14 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 //@formatter:off
 @Projections({
 	@Projection(cardinality = Cardinality.COLLECTION),
-	@Projection(cardinality = Cardinality.SINGLE, paths = {
+	@Projection(apiVersions = ApiVersion.V1, cardinality = Cardinality.SINGLE, paths = {
 			"serviceInstances.service.type",
 			"serviceInstances.service.owner",
 			"serviceInstances.dataCenter.region.infrastructureProvider"
-			})
+			}),
+			
+	// https://github.com/ExpediaDotCom/seiso/issues/75
+	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.SINGLE)
 	})
 //@formatter:on
 public class Environment extends AbstractItem {

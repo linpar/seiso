@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.RestResource;
+import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 
 // TODO Consider adding getSingleResourceRel() method here (e.g. people vs person)
@@ -41,8 +42,8 @@ public interface ItemMeta {
 	Method getRepositoryFindByKeyMethod();
 	
 	Method getRepositorySearchMethod(String query);
-
-	ProjectionNode getProjectionNode(Projection.Cardinality cardinality, String projectionKey);
+	
+	ProjectionNode getProjectionNode(ApiVersion apiVersion, Projection.Cardinality cardinality, String projectionKey);
 
 	/**
 	 * @param propKey

@@ -103,11 +103,11 @@ public class BasicItemDelegateTests {
 	
 	private void setUpTestData() {
 		when(nonPagingRepoMeta.isPagingRepo()).thenReturn(false);
-		when(nonPagingRepoMeta.getProjectionNode(Projection.Cardinality.COLLECTION, VIEW_KEY)).thenReturn(projection);
+		when(nonPagingRepoMeta.getProjectionNode(ApiVersion.V2, Projection.Cardinality.COLLECTION, VIEW_KEY)).thenReturn(projection);
 		
 		when(pagingRepoMeta.isPagingRepo()).thenReturn(true);
-		when(pagingRepoMeta.getProjectionNode(Projection.Cardinality.COLLECTION, VIEW_KEY)).thenReturn(projection);
-		when(pagingRepoMeta.getProjectionNode(Projection.Cardinality.SINGLE, VIEW_KEY)).thenReturn(projection);
+		when(pagingRepoMeta.getProjectionNode(ApiVersion.V2, Projection.Cardinality.COLLECTION, VIEW_KEY)).thenReturn(projection);
+		when(pagingRepoMeta.getProjectionNode(ApiVersion.V2, Projection.Cardinality.SINGLE, VIEW_KEY)).thenReturn(projection);
 		when(pagingRepoMeta.getPropertyName(PAGING_ITEM_PROPERTY_KEY)).thenReturn(PAGING_ITEM_PROPERTY_NAME);
 		when(pagingRepoMeta.getPropertyName(PAGING_LIST_PROPERTY_KEY)).thenReturn(PAGING_LIST_PROPERTY_NAME);
 		

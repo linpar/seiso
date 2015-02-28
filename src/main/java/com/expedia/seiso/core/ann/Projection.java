@@ -20,6 +20,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.expedia.seiso.web.ApiVersion;
+
 /**
  * @author Willie Wheeler
  */
@@ -32,7 +34,9 @@ public @interface Projection {
 
 	/** Default view name */
 	public String DEFAULT = "default";
-
+	
+	ApiVersion[] apiVersions() default { ApiVersion.V1, ApiVersion.V2 };
+	
 	Cardinality cardinality();
 
 	String name() default DEFAULT;

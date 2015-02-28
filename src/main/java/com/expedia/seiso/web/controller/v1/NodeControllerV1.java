@@ -66,7 +66,8 @@ public class NodeControllerV1 {
 
 		val node = nodes.get(0);
 		val nodeMeta = itemMetaLookup.getItemMeta(Node.class);
-		val projectionNode = nodeMeta.getProjectionNode(Projection.Cardinality.SINGLE, Projection.DEFAULT);
+		val projectionNode =
+				nodeMeta.getProjectionNode(ApiVersion.V1, Projection.Cardinality.SINGLE, Projection.DEFAULT);
 		return resourceAssembler.toResource(ApiVersion.V1, node, projectionNode);
 	}
 }

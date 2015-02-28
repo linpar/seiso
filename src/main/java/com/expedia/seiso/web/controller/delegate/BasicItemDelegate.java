@@ -84,7 +84,7 @@ public class BasicItemDelegate {
 		
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
 		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
-		val proj = itemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
+		val proj = itemMeta.getProjectionNode(apiVersion, Projection.Cardinality.COLLECTION, view);
 		if (itemMeta.isPagingRepo()) {
 			val itemPage = itemService.findAll(itemClass, pageable);
 			return resourceAssembler.toPagedResources(apiVersion, itemClass, itemPage, proj, params);
@@ -135,7 +135,7 @@ public class BasicItemDelegate {
 	public Resource getOne(@NonNull ApiVersion apiVersion, @NonNull ItemKey itemKey, String view) {
 		val item = itemService.find(itemKey);
 		val itemMeta = itemMetaLookup.getItemMeta(item.getClass());
-		val proj = itemMeta.getProjectionNode(Projection.Cardinality.SINGLE, view);
+		val proj = itemMeta.getProjectionNode(apiVersion, Projection.Cardinality.SINGLE, view);
 		return resourceAssembler.toResource(apiVersion, item, proj, true);
 	}
 	
@@ -269,7 +269,7 @@ public class BasicItemDelegate {
 		if (itemPropValue == null) { return null; }
 		val propClass = itemPropValue.getClass();
 		val propMeta = itemMetaLookup.getItemMeta(propClass);
-		val proj = propMeta.getProjectionNode(Projection.Cardinality.SINGLE, view);
+		val proj = propMeta.getProjectionNode(apiVersion, Projection.Cardinality.SINGLE, view);
 		return resourceAssembler.toResource(apiVersion, itemPropValue, proj);
 	}
 	
@@ -282,7 +282,7 @@ public class BasicItemDelegate {
 
 		val elemClass = CollectionUtils.findCommonElementType(listPropValue);
 		val elemMeta = itemMetaLookup.getItemMeta(elemClass);
-		val proj = elemMeta.getProjectionNode(Projection.Cardinality.COLLECTION, view);
+		val proj = elemMeta.getProjectionNode(apiVersion, Projection.Cardinality.COLLECTION, view);
 		return resourceAssembler.toResourceList(apiVersion, listPropValue, proj);
 	}
 }
