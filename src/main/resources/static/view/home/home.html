@@ -1,42 +1,45 @@
-<div class="page-header">
-	<h1>Seiso</h1>
+<div id="page-spinner-panel" ng-hide="serviceGroups">
+	<i class="fa fa-star fa-spin fa-5x"></i>
 </div>
-<section>
-	<header>
-		<h1>
-			Services by group <span ng-hide="serviceGroups"><small><i class="fa fa-spinner fa-spin"></i></small></span>
-		</h1>
-	</header>
-	<div class="row">
-		<div class="col-md-8">
-			<accordion close-others="true">
-				<accordion-group is-open="status.open" ng-repeat="group in serviceGroups" style="opacity:0.8">
-					<accordion-heading>
-						{{group.name}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
-					</accordion-heading>
-					<div ng-if="group.services.length === 0">
-						<p>No services.</p>
-					</div>
-					<div ng-if="group.services.length &gt; 0">
-						<div class="row">
-							<div class="col-md-6">
-								<ul class="list-unstyled">
-									<li ng-repeat="service in group.services.slice(0, (group.services.length + 1) / 2)">
-										<a ng-href="{{uri('services', service.key)}}">{{service.name}}</a>
-									</li>
-								</ul>
-							</div>
-							<div class="col-md-6">
-								<ul class="list-unstyled">
-									<li ng-repeat="service in group.services.slice((group.services.length + 1) / 2, group.services.length)">
-										<a ng-href="{{uri('services', service.key)}}">{{service.name}}</a>
-									</li>
-								</ul>
+<div ng-show="serviceGroups">
+	<div class="page-header">
+		<h1>Seiso</h1>
+	</div>
+	<section>
+		<header>
+			<h1>Services by group</h1>
+		</header>
+		<div class="row">
+			<div class="col-md-8">
+				<accordion close-others="true">
+					<accordion-group is-open="status.open" ng-repeat="group in serviceGroups" style="opacity:0.8">
+						<accordion-heading>
+							{{group.name}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+						</accordion-heading>
+						<div ng-if="group.services.length === 0">
+							<p>No services.</p>
+						</div>
+						<div ng-if="group.services.length &gt; 0">
+							<div class="row">
+								<div class="col-md-6">
+									<ul class="list-unstyled">
+										<li ng-repeat="service in group.services.slice(0, (group.services.length + 1) / 2)">
+											<a ng-href="{{uri('services', service.key)}}">{{service.name}}</a>
+										</li>
+									</ul>
+								</div>
+								<div class="col-md-6">
+									<ul class="list-unstyled">
+										<li ng-repeat="service in group.services.slice((group.services.length + 1) / 2, group.services.length)">
+											<a ng-href="{{uri('services', service.key)}}">{{service.name}}</a>
+										</li>
+									</ul>
+								</div>
 							</div>
 						</div>
-					</div>
-				</accordion-group>
-			</accordion>
+					</accordion-group>
+				</accordion>
+			</div>
 		</div>
-	</div>
-</section>
+	</section>
+</div>

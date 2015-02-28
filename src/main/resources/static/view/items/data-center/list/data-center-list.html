@@ -1,45 +1,45 @@
-<div class="page-header">
-	<ul class="breadcrumb">
-		<li><a ng-href="{{uri()}}">Home</a></li>
-	</ul>
-	<h1>
-		Data Centers
-		<span ng-hide="infrastructureProviders">
-			<small><i class="fa fa-spinner fa-spin"></i></small>
-		</span>
-	</h1>
+<div id="page-spinner-panel" ng-hide="infrastructureProviders">
+	<i class="fa fa-star fa-spin fa-5x"></i>
 </div>
-<section ng-repeat="provider in infrastructureProviders" style="margin-top: 30px">
-	<header>
-		<h1>{{provider.name}}</h1>
-	</header>
-	<div class="row">
-		<div class="col-md-3" ng-repeat="generalRegion in generalRegions">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4>{{generalRegion.name}}</h4>
-				</div>
-				<div class="panel-body">
-					<div ng-if="provider.specialRegions[generalRegion.key].length == 0">
-						<p>None.</p>
+<div ng-show="infrastructureProviders">
+	<div class="page-header">
+		<ul class="breadcrumb">
+			<li><a ng-href="{{uri()}}">Home</a></li>
+		</ul>
+		<h1>Data Centers</h1>
+	</div>
+	<section ng-repeat="provider in infrastructureProviders" style="margin-top: 30px">
+		<header>
+			<h1>{{provider.name}}</h1>
+		</header>
+		<div class="row">
+			<div class="col-md-3" ng-repeat="generalRegion in generalRegions">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4>{{generalRegion.name}}</h4>
 					</div>
-					<div ng-if="provider.specialRegions[generalRegion.key].length &gt; 0">
-						<div class="panel-subpanel" ng-repeat="specialRegion in provider.specialRegions[generalRegion.key]">
-							<h4>{{specialRegion.name}}</h4>
-							<div ng-if="specialRegion.dataCenters.length == 0">
-								<p>None.</p>
-							</div>
-							<div ng-if="specialRegion.dataCenters.length &gt; 0">
-								<ul class="list-unstyled">
-									<li ng-repeat="dataCenter in specialRegion.dataCenters">
-										<a ng-href="{{uri('data-centers', dataCenter.key)}}">{{dataCenter.name}}</a>
-									</li>
-								</ul>
+					<div class="panel-body">
+						<div ng-if="provider.specialRegions[generalRegion.key].length == 0">
+							<p>None.</p>
+						</div>
+						<div ng-if="provider.specialRegions[generalRegion.key].length &gt; 0">
+							<div class="panel-subpanel" ng-repeat="specialRegion in provider.specialRegions[generalRegion.key]">
+								<h4>{{specialRegion.name}}</h4>
+								<div ng-if="specialRegion.dataCenters.length == 0">
+									<p>None.</p>
+								</div>
+								<div ng-if="specialRegion.dataCenters.length &gt; 0">
+									<ul class="list-unstyled">
+										<li ng-repeat="dataCenter in specialRegion.dataCenters">
+											<a ng-href="{{uri('data-centers', dataCenter.key)}}">{{dataCenter.name}}</a>
+										</li>
+									</ul>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</section>
+	</section>
+</div>

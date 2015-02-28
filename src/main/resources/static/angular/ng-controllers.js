@@ -7,7 +7,6 @@
 
 var homeController = function() {
 	var controller = function($scope, $http) {
-		$scope.model.pageLoading = true;
 		$scope.pageId = 'home';
 		serviceGroupsMap = {};
 		$http.get('v1/service-groups').success(function(data) {
@@ -18,7 +17,6 @@ var homeController = function() {
 				serviceGroup.services = [];
 				serviceGroupsMap[serviceGroup.key] = serviceGroup;
 			}
-			$scope.model.pageLoading = false;
 		});
 		
 		// FIXME If there are more than 300 services, we won't catch them all. We need a JS client for getting the
@@ -117,7 +115,6 @@ var pagingController = function(path, sortKey) {
 		};
 		
 		$scope.model.pageSelected = function() {
-			$scope.model.wait = true;
 			var pageNumber = $scope.model.currentPage - 1;
 			console.log("Page selected: path=" + path
 					+ ", pageNumber=" + pageNumber
@@ -125,8 +122,7 @@ var pagingController = function(path, sortKey) {
 					+ ", sortKey=" + sortKey);
 			v1Api.getPage(path, pageNumber, pageSize, sortKey)
 					.success(successHandler)
-					.error(function() { alert('Error while getting page.'); })
-					.finally(function() { $scope.model.wait = false; });
+					.error(function() { alert('Error while getting page.'); });
 		};
 		
 		// Initialize first page
@@ -139,8 +135,6 @@ var pagingController = function(path, sortKey) {
 
 var dataCenterListController = function() {
 	var controller = function($scope, $http, generalRegions) {
-		$scope.model.wait = true;
-		
 		var successHandler = function(data) {
 			var srcProviders = data;
 			var destProviders = {};
@@ -178,8 +172,7 @@ var dataCenterListController = function() {
 		// general region) and corresponding data centers.
 		$http.get('/v1/infrastructure-providers')
 				.success(successHandler)
-				.error(function() { alert('Error while getting data centers.'); })
-				.finally(function() { $scope.model.wait = false; });
+				.error(function() { alert('Error while getting data centers.'); });
 	}
 	
 	return [ '$scope', '$http', 'generalRegions', controller ];
@@ -195,8 +188,7 @@ var dataCenterDetailsController = function() {
 		}
 		$http.get('/v1/data-centers/' + $routeParams.key)
 				.success(successHandler)
-				.error(function() { alert('Error while getting data center.'); })
-				.finally(function() { $scope.model.wait = false; });
+				.error(function() { alert('Error while getting data center.'); });
 	}
 	return [ '$scope', '$http', '$routeParams', controller ];
 }
@@ -205,8 +197,7 @@ var environmentListController = function() {
 	var controller = function($scope, $http) {
 		$http.get('/v1/environments')
 				.success(function(data) { $scope.items = data; })
-				.error(function() { alert('Error while getting environments.'); })
-				.finally(function() { $scope.model.wait = false; });
+				.error(function() { alert('Error while getting environments.'); });
 	}
 	return [ '$scope', '$http', controller ];
 };
@@ -251,8 +242,6 @@ var machineDetailsController = function() {
 
 var nodeDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
-		$scope.model.wait = true;
-		
 		var successHandler = function(data) {
 			$scope.node = data;
 			if ($scope.node != null) {
@@ -276,8 +265,7 @@ var nodeDetailsController = function() {
 		
 		$http.get('/v1/nodes/' + $routeParams.name)
 				.success(successHandler)
-				.error(function() { alert('Error while getting node.'); })
-				.finally(function() { $scope.model.wait = false });
+				.error(function() { alert('Error while getting node.'); });
 	}
 	return [ '$scope', '$http', '$routeParams', controller ];
 }
@@ -309,8 +297,6 @@ var serviceDetailsController = function() {
 
 var serviceInstanceDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
-		$scope.model.wait = true;
-		
 		var request = {
 			method: 'GET',
 			url: '/v2/service-instances/' + $routeParams.key,
@@ -427,8 +413,7 @@ var serviceInstanceDetailsController = function() {
 		
 		$http(request)
 				.success(successHandler)
-				.error(function() { alert('Error while getting service instance.'); })
-				.finally(function() { $scope.model.wait = false; });
+				.error(function() { alert('Error while getting service instance.'); });
 	}
 	
 	return [ '$scope', '$http', '$routeParams', controller ];
@@ -453,8 +438,7 @@ var typeListController = function() {
 	var controller = function($scope, $http) {
 		$http.get('/v1/service-types')
 				.success(function(data) { $scope.items = data; })
-				.error(function() { alert('Error while getting service types.'); })
-				.finally(function() { $scope.model.wait = false; });
+				.error(function() { alert('Error while getting service types.'); });
 	};
 	return [ '$scope', '$http', controller ];
 };

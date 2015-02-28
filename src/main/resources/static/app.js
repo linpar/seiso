@@ -49,20 +49,7 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoFilters
 	// See https://docs.angularjs.org/guide/di
 	// paginationConfig is an existing constant. We're updating it here.
 	.run([ '$rootScope', function($rootScope) {
-		
-		// http://stackoverflow.com/questions/16972976/angular-js-propagate-child-scope-variable-changes-to-parent-scope
-		$rootScope.model = {
-			wait: false
-		};
-		
-		// http://blog.brunoscopelliti.com/show-route-only-after-all-promises-are-resolved/
-		$rootScope.$on('$routeChangeStart', function(e, curr, prev) {
-			$rootScope.model.wait = true;
-		});
-		$rootScope.$on('$routeChangeSuccess', function(e, curr, prev) {
-			$rootScope.model.wait = false;
-		});
-		
+		$rootScope.model = {};
 		$rootScope.uri = function(repoKey, itemKey) {
 			if (repoKey == null) {
 				return '#/';
