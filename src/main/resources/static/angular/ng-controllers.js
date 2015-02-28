@@ -7,7 +7,7 @@
 
 var homeController = function() {
 	var controller = function($scope, $http) {
-		$scope.pageId = 'home';
+		$scope.model.page.title = 'Home';
 		serviceGroupsMap = {};
 		$http.get('v1/service-groups').success(function(data) {
 			$scope.serviceGroups = data;
@@ -39,6 +39,7 @@ var homeController = function() {
 
 var searchController = function() {
 	var controller = function($rootScope, $scope, SearchService, $location) {
+		$scope.model.page.title = 'Search Results';
 		$scope.searchService = SearchService;
 		$scope.searchQuery = SearchService.getQuery();
 		$scope.searchResults = SearchService.getResults();
@@ -56,6 +57,7 @@ var searchController = function() {
 // FIXME Break this up into multiple controllers so we don't have to load so much data at once. [WLW]
 var adminController = function() {
 	var controller = function($scope, $http) {
+		$scope.model.page.title = 'Admin Console';
 		console.log('Getting health');
 		$http.get('health').success(function(data) {
 			console.log('Got health');
@@ -94,9 +96,9 @@ var adminController = function() {
 // Item controllers
 // =====================================================================================================================
 
-var pagingController = function(path, sortKey) {
+var pagingController = function(title, path, sortKey) {
 	var controller = function($scope, paginationConfig, v1Api) {
-		console.log("Creating new paging list controller");
+		$scope.model.page.title = title;
 		var pageSize = paginationConfig.itemsPerPage;
 		
 		var successHandler = function(data, status, headers) {
@@ -135,6 +137,7 @@ var pagingController = function(path, sortKey) {
 
 var dataCenterListController = function() {
 	var controller = function($scope, $http, generalRegions) {
+		$scope.model.page.title = 'Data Centers';
 		var successHandler = function(data) {
 			var srcProviders = data;
 			var destProviders = {};
@@ -181,6 +184,7 @@ var dataCenterListController = function() {
 var dataCenterDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
 		var successHandler = function(data) {
+			$scope.model.page.title = data.name;
 			$scope.dataCenter = data;
 			// FIXME Move to separate search per https://github.com/ExpediaDotCom/seiso/issues/76
 			$scope.serviceInstances = data.serviceInstances;
@@ -195,6 +199,7 @@ var dataCenterDetailsController = function() {
 
 var environmentListController = function() {
 	var controller = function($scope, $http) {
+		$scope.model.page.title = 'Environments';
 		$http.get('/v1/environments')
 				.success(function(data) { $scope.items = data; })
 				.error(function() { alert('Error while getting environments.'); });
@@ -206,6 +211,7 @@ var environmentDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
 		$http.get('/v1/environments/' + $routeParams.key)
 				.success(function(data) {
+					$scope.model.page.title = data.name;
 					$scope.environment = data;
 					// FIXME Move to separate search per https://github.com/ExpediaDotCom/seiso/issues/75
 					$scope.serviceInstances = data.serviceInstances
@@ -219,7 +225,10 @@ var loadBalancerDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
 		// TODO Move to service
 		$http.get('/v1/load-balancers/' + $routeParams.name)
-				.success(function(data) { $scope.loadBalancer = data; })
+				.success(function(data) {
+					$scope.model.page.title = data.name;
+					$scope.loadBalancer = data;
+				})
 				.error(function() { alert('Error while getting load balancer.'); });
 		$http.get('/v1/load-balancers/' + $routeParams.name + '?view=service-instances')
 				.success(function(data) { $scope.serviceInstances = data.serviceInstances; })
@@ -232,6 +241,7 @@ var machineDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
 		$http.get('/v1/machines/' + $routeParams.name)
 				.success(function(data) {
+					$scope.model.page.title = data.name;
 					$scope.machine = data;
 					$scope.nodes = data.nodes;
 				})
@@ -243,6 +253,7 @@ var machineDetailsController = function() {
 var nodeDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
 		var successHandler = function(data) {
+			$scope.model.page.title = data.name;
 			$scope.node = data;
 			if ($scope.node != null) {
 				$scope.serviceInstance = $scope.node.serviceInstance;
@@ -273,8 +284,10 @@ var nodeDetailsController = function() {
 var personDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
 		var successHandler = function(data) {
+			var fullName = data.firstName + ' ' + data.lastName;
+			$scope.model.page.title = fullName;
 			$scope.person = data;
-			$scope.person.firstNameLastName = data.firstName + ' ' + data.lastName;
+			$scope.person.firstNameLastName = fullName;
 		}
 		$http.get('/v2/people/' + $routeParams.username, { headers: { 'Accept': 'application/hal+json' } })
 				.success(successHandler)
@@ -286,7 +299,10 @@ var personDetailsController = function() {
 var serviceDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
 		$http.get('/v1/services/' + $routeParams.key)
-				.success(function(data) { $scope.service = data; })
+				.success(function(data) {
+					$scope.model.page.title = data.name;
+					$scope.service = data;
+				})
 				.error(function() { alert('Error while getting service.'); });
 		$http.get('/v1/services/' + $routeParams.key + '?view=instances')
 				.success(function(data) { $scope.serviceInstances = data.serviceInstances; })
@@ -304,6 +320,7 @@ var serviceInstanceDetailsController = function() {
 		}
 		
 		var successHandler = function(data) {
+			$scope.model.page.title = data.key;
 			$scope.serviceInstance = data;
 			$scope.dataCenter = $scope.serviceInstance._embedded.dataCenter;
 			$scope.environment = $scope.serviceInstance._embedded.environment;
@@ -421,6 +438,8 @@ var serviceInstanceDetailsController = function() {
 
 var statusListController = function() {
 	var controller = function($scope, $http) {
+		$scope.model.page.title = 'Statuses';
+		
 		// TODO Handle errors
 		$http.get('/v1/status-types')
 				.success(function(data) { $scope.statusTypes = data; });
@@ -436,6 +455,7 @@ var statusListController = function() {
 // happens we can treat this like we're treating StatusListController above, with embedded GETs. [WLW]
 var typeListController = function() {
 	var controller = function($scope, $http) {
+		$scope.model.page.title = 'Types';
 		$http.get('/v1/service-types')
 				.success(function(data) { $scope.items = data; })
 				.error(function() { alert('Error while getting service types.'); });
@@ -460,15 +480,15 @@ angular.module('seisoControllers', [])
 		.controller('DataCenterDetailsController', dataCenterDetailsController())
 		.controller('EnvironmentListController', environmentListController())
 		.controller('EnvironmentDetailsController', environmentDetailsController())
-		.controller('LoadBalancerListController', pagingController('/v1/load-balancers', 'name'))
+		.controller('LoadBalancerListController', pagingController('Load Balancers', '/v1/load-balancers', 'name'))
 		.controller('LoadBalancerDetailsController', loadBalancerDetailsController())
 		.controller('MachineDetailsController', machineDetailsController())
 		.controller('NodeDetailsController', nodeDetailsController())
-		.controller('PersonListController', pagingController('/v1/people', 'lastName,firstName'))
+		.controller('PersonListController', pagingController('People', '/v1/people', 'lastName,firstName'))
 		.controller('PersonDetailsController', personDetailsController())
-		.controller('ServiceListController', pagingController('/v1/services', 'name'))
+		.controller('ServiceListController', pagingController('Services', '/v1/services', 'name'))
 		.controller('ServiceDetailsController', serviceDetailsController())
-		.controller('ServiceInstanceListController', pagingController('/v1/service-instances', 'key'))
+		.controller('ServiceInstanceListController', pagingController('Service Instances', '/v1/service-instances', 'key'))
 		.controller('ServiceInstanceDetailsController', serviceInstanceDetailsController())
 		.controller('StatusListController', statusListController())
 		.controller('TypeListController', typeListController())

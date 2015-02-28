@@ -8,8 +8,8 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoFilters
 		
 		var route = function(controllerName, viewName) {
 			return {
-				'controller': controllerName + 'Controller',
-				'templateUrl': 'view/' + viewName + '.html'
+				controller: controllerName + 'Controller',
+				templateUrl: 'view/' + viewName + '.html'
 			};
 		}
 		
@@ -49,7 +49,11 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoFilters
 	// See https://docs.angularjs.org/guide/di
 	// paginationConfig is an existing constant. We're updating it here.
 	.run([ '$rootScope', function($rootScope) {
-		$rootScope.model = {};
+		$rootScope.model = {
+			page: {
+				title: 'Seiso'
+			}
+		};
 		$rootScope.uri = function(repoKey, itemKey) {
 			if (repoKey == null) {
 				return '#/';
