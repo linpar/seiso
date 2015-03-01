@@ -38,6 +38,7 @@ import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.seiso.web.ApiVersion;
 
 /**
  * @author Willie Wheeler
@@ -52,12 +53,16 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 	@Projection(cardinality = Cardinality.COLLECTION, paths = {
 			"region.infrastructureProvider"
 			}),
-	@Projection(cardinality = Cardinality.SINGLE, paths = {
+	@Projection(apiVersions = ApiVersion.V1, cardinality = Cardinality.SINGLE, paths = {
 			"region.infrastructureProvider",
 			"serviceInstances.service.type",
 			"serviceInstances.service.owner",
 			"serviceInstances.environment",
 			"loadBalancers",
+			"source"
+			}),
+	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.SINGLE, paths = {
+			"region.infrastructureProvider",
 			"source"
 			})
 	})

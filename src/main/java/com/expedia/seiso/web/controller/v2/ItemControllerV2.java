@@ -117,7 +117,7 @@ public class ItemControllerV2 {
 			@PathVariable String itemKey,
 			@PathVariable String propKey,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
-		
+				
 		return delegate.getProperty(ApiVersion.V2, repoKey, itemKey, propKey, view);
 	}
 	

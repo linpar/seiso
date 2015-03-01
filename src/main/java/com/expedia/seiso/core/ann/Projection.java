@@ -35,6 +35,7 @@ public @interface Projection {
 	/** Default view name */
 	public String DEFAULT = "default";
 	
+	// TODO Declare all the versions explicitly, and make { } the default.
 	ApiVersion[] apiVersions() default { ApiVersion.V1, ApiVersion.V2 };
 	
 	Cardinality cardinality();

@@ -37,6 +37,7 @@ import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.seiso.web.ApiVersion;
 
 /**
  * @author Willie Wheeler
@@ -55,17 +56,27 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 			"machine",
 			"healthStatus.statusType"
 			}),
-	@Projection(cardinality = Cardinality.COLLECTION, name = "serviceInstanceNodes", paths = {
+	@Projection(apiVersions = ApiVersion.V1, cardinality = Cardinality.COLLECTION, name = "serviceInstanceNodes", paths = {
 			"machine"
 			}),
-	@Projection(cardinality = Cardinality.COLLECTION, name = "withEndpoints", paths = {
+	@Projection(apiVersions = ApiVersion.V1, cardinality = Cardinality.COLLECTION, name = "withEndpoints", paths = {
 			"serviceInstance",
 			"machine",
 			"ipAddresses.ipAddressRole",
 			"ipAddresses.endpoints.port",
 			"ipAddresses.endpoints.rotationStatus"
 			}),
-
+	
+	// View to show nodes on the service instance details page.
+	// N.B. v2 uses lowercase-and-hyphens rather than camelCase.
+	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.COLLECTION, name = "service-instance-nodes", paths = {
+			"machine",
+			"ipAddresses.ipAddressRole",
+			"ipAddresses.endpoints.port",
+			"ipAddresses.endpoints.rotationStatus",
+			"healthStatus.statusType"
+	}),
+	
 	// TODO Hm, maybe we should make the default single view show what we expect users to provide on a put. GET/PUT
 	// symmetry kind of thing. Then use the other projections to support specific automation/UI needs. [WLW]
 	@Projection(cardinality = Cardinality.SINGLE, paths = {
@@ -81,7 +92,7 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 			"healthStatus.statusType"
 			}),
 
-	@Projection(cardinality = Cardinality.SINGLE, name = "state", paths = {
+	@Projection(apiVersions = ApiVersion.V1, cardinality = Cardinality.SINGLE, name = "state", paths = {
 			"serviceInstance.service.ipAddressRoles",
 			"serviceInstance.ports",
 			"machine",

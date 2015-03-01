@@ -42,6 +42,7 @@ import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.seiso.web.ApiVersion;
 
 /**
  * <p>
@@ -64,9 +65,10 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 			"service.owner",
 			"environment",
 			"dataCenter.region.infrastructureProvider",
-			"loadBalancer"
+			"loadBalancer",
+			"source"
 			}),
-	@Projection(cardinality = Cardinality.SINGLE, paths = {
+	@Projection(apiVersions = ApiVersion.V1, cardinality = Cardinality.SINGLE, paths = {
 			"service.group",
 			"service.type",
 			"service.owner",
@@ -82,12 +84,27 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 			"nodes.ipAddresses.aggregateRotationStatus.statusType",
 			"nodes.healthStatus.statusType",
 			"dashboards",
-			"seyrenChecks"
+			"seyrenChecks",
+			"source"
+			}),
+	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.SINGLE, paths = {
+			"service.group",
+			"service.type",
+			"service.owner",
+			"environment",
+			"dataCenter.region.infrastructureProvider",
+			"loadBalancer",
+			"ipAddressRoles",
+			"ports",
+			"dashboards",
+			"seyrenChecks",
+			"source"
 			}),
 	@Projection(cardinality = Cardinality.SINGLE, name = "infrastructure", paths = {
 			"environment",
 			"dataCenter.region.infrastructureProvider",
-			"loadBalancer"
+			"loadBalancer",
+			"source"
 			})
 	})
 //@formatter:on

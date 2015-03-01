@@ -177,6 +177,11 @@ public class BasicItemDelegate {
 		if (Item.class.isAssignableFrom(propClass)) {
 			return getItemProperty(apiVersion, (Item) propValue, view);
 		} else if (List.class.isAssignableFrom(propClass)) {
+			// FIXME Need pagination here.
+			// E.g., dataCenter.serviceInstances and environment.serviceInstances are too long.
+			// FIXME Also potentially need projections here.
+			// E.g., /service-instance/:key/nodes doesn't include embedded IP addresses, which the service instance
+			// details page needs.
 			return getListProperty(apiVersion, (List<?>) propValue, view);
 		} else {
 			String msg = "Resource assembly for type " + propClass.getName() + " not supported";

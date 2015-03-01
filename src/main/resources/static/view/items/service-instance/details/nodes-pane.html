@@ -20,9 +20,16 @@
 
 <section>
 	<header>
-		<h1>Nodes <small>({{nodes.length}})</small></h1>
+		<h1>
+			Nodes
+			<span ng-show="nodeStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span>
+			<span ng-show="nodeStatus == 'loaded'"><small>({{nodes.length}})</small></span>
+			<span ng-show="nodeStatus == 'error'">
+				<small><span class="label label-danger"><i class="fa fa-times-circle"></i> Couldn't get nodes</span></small>
+			</span>
+		</h1>
 	</header>
-	<div ng-show="nodes.length &gt; 0">
+	<div ng-show="nodeStatus == 'loaded' &amp;&amp; nodes.length &gt; 0">
 		<section>
 			<div class="row">
 				<div class="col-md-4">

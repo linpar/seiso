@@ -54,12 +54,15 @@ import com.expedia.seiso.web.ApiVersion;
 	@Projection(apiVersions = ApiVersion.V1, cardinality = Cardinality.SINGLE, paths = {
 			"serviceInstances.service.type",
 			"serviceInstances.service.owner",
-			"serviceInstances.dataCenter.region.infrastructureProvider"
+			"serviceInstances.dataCenter.region.infrastructureProvider",
+			"source"
 			}),
 			
 	// https://github.com/ExpediaDotCom/seiso/issues/75
-	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.SINGLE)
-	})
+	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.SINGLE, paths = {
+			"source"
+			})
+})
 //@formatter:on
 public class Environment extends AbstractItem {
 

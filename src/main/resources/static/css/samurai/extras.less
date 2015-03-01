@@ -1,14 +1,3 @@
-/*
-body {
-  cursor: default;
-}
-
-// http://stackoverflow.com/questions/10305392/simplest-way-to-set-cursor-to-wait-then-have-all-elements-revert-back
-body.wait, body.wait * {
-  cursor: wait !important;
-}
-*/
-
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
 .pagination-wrapper {
@@ -88,10 +77,6 @@ fieldset {
   padding-top: 120px;
   padding-bottom: 120px;
   text-align: center;
-  
-  .fa-star {
-  	color: #FFE11A;
-  }
 }
 
 
@@ -113,26 +98,3 @@ fieldset {
   font-size: 250%;
   font-weight: bold;
 }
-
-
-/* ICONS ============================================================================================================ */
-
-span.star {
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  display: inline-block;
-  color: #000;
-}
-
-span.star:before {
-  content:"\f006";
-/*   color: #000; */
-}
-
-span.star:hover:before, span.star:hover~span.star:before, span.star.favorite:before {
-  content: "\f005";
-/*   color: #e3cf7a; */
-}
-
-span.star:hover { cursor: pointer; }
