@@ -22,107 +22,101 @@
 	<header>
 		<h1>
 			Nodes
-			<span ng-show="nodeStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span>
-			<span ng-show="nodeStatus == 'loaded'"><small>({{nodes.length}})</small></span>
-			<span ng-show="nodeStatus == 'error'">
-				<small><span class="label label-danger"><i class="fa fa-times-circle"></i> Couldn't get nodes</span></small>
+			<span ng-show="nodeStatsStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span>
+			<span ng-show="nodeStatsStatus == 'loaded'"><small>({{nodeStats.numNodes}})</small></span>
+			<span ng-show="nodeStatsStatus == 'error'">
+				<small><span class="label label-danger"><i class="fa fa-times-circle"></i> Couldn't get node stats</span></small>
 			</span>
 		</h1>
 	</header>
-	<div ng-show="nodeStatus == 'loaded' &amp;&amp; nodes.length &gt; 0">
-		<section>
-			<div class="row">
-				<div class="col-md-4">
-					<div class="well well-sm">
-						<div class="metric">
-							<div class="metric-count">{{numHealthy}} of {{numNodes}}</div>
-							<div class="metric-percentage">{{percentHealthy | number : 1}}%</div>
-							<div class="metric-name">Healthy</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="well well-sm">
-						<div class="metric">
-							<div class="metric-count">{{numEnabled}} of {{numNodes}}</div>
-							<div class="metric-percentage">{{percentEnabled | number : 1}}%</div>
-							<div class="metric-name">Enabled</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="well well-sm">
-						<div class="metric">
-							<div class="metric-count">{{numHealthyGivenEnabled}} of {{numEnabled}}</div>
-							<div class="metric-percentage">
-								<span ng-if="numEnabled == 0">N/A</span>
-								<span ng-if="numEnabled &gt; 0">{{percentHealthyGivenEnabled | number : 1}}%</span>
-							</div>
-							<div class="metric-name">Healthy, given enabled</div>
-						</div>
+	
+	<section ng-show="nodeStatsStatus == 'loaded'">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="well well-sm">
+					<div class="metric">
+						<div class="metric-count">{{nodeStats.numHealthy}} of {{nodeStats.numNodes}}</div>
+						<div class="metric-percentage">{{nodeStats.percentHealthy | number : 1}}%</div>
+						<div class="metric-name">Healthy</div>
 					</div>
 				</div>
 			</div>
-		</section>
-		<section>
-			<!--
-			<div class="well well-sm">
-				<form class="form-inline">
-					<div class="form-group">
-						<label for="node-filter">Node filter:</label>
-						<input type="text" ng-model="nodeRow.name" class="form-control input-sm"></input>
+			<div class="col-md-4">
+				<div class="well well-sm">
+					<div class="metric">
+						<div class="metric-count">{{nodeStats.numEnabled}} of {{nodeStats.numNodes}}</div>
+						<div class="metric-percentage">{{nodeStats.percentEnabled | number : 1}}%</div>
+						<div class="metric-name">Enabled</div>
 					</div>
-					<div class="form-group" style="margin-left:30px">
-						<label for="bulk-action">Bulk Actions:</label>
-						<select id="bulk-action" class="form-control input-sm">
-							<option>-- Choose one --</option>
-							<option>Convict (bounce)</option>
-							<option>Deploy</option>
-							<option>Maintenance mode</option>
-							<option>Set active channel</option>
-							<option>Interrogate</option>
-						</select>
-						<button class="btn btn-sm btn-primary" ng-click="interrogate()">Interrogate</button>
-						<button class="btn btn-sm btn-primary" ng-click="convict()">Convict</button>
-						<button class="btn btn-sm btn-primary" ng-click="deploy()">Deploy</button>
-						<button class="btn btn-sm btn-primary" ng-click="setMaintenanceMode()">Set Maintenance Mode</button>
-					</div>
-				</form>
+				</div>
 			</div>
-			-->
-			<table class="table">
-				<thead>
-					<tr>
-<!-- 						<th><input type="checkbox"></input></th> -->
-						<th style="width:20%">Node</th>
-						<th style="width:20%">Version</th>
-						<th style="width:20%">Health</th>
-						<th style="width:25%">IP Address</th>
-						<th style="width:15%" colspan="2">Rotation</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="nodeRow in nodeRows | filter:nodeRow:strict">
-						<!--
-						<td>
-							<div ng-if="nodeRow.showActions">
-								<input type="checkbox"></input>
-							</div>
-						</td>
-						-->
-						<td><a ng-href="{{uri('nodes', nodeRow.name)}}">{{nodeRow.displayName}}</a></td>
-						<td><span ng-show="nodeRow.version != null">{{nodeRow.version}}</span></td>
-						<td><span ng-show="nodeRow.healthStatus" class="label label-{{nodeRow.healthStatus.statusType.key}}">{{nodeRow.healthStatus.name}}</span></td>
-						<td>{{nodeRow.ipAddress}} ({{nodeRow.ipAddressRole}})</td>
-						<td style="width:0">
-							<span ng-if="nodeRow.aggregateRotationStatus" class="label label-{{nodeRow.aggregateRotationStatus._embedded.statusType.key}}">{{nodeRow.aggregateRotationStatus.name}}</span>
-						</td>
-						<td style="width:20%">
-							<span ng-if="nodeRow.aggregateRotationStatus"><a rotation-details-popover="/v1/nodes/{{nodeRow.name}}/ip-addresses/{{nodeRow.ipAddress}}">[Details]</a></span>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</section>
-	</div>
+			<div class="col-md-4">
+				<div class="well well-sm">
+					<div class="metric">
+						<div class="metric-count">{{nodeStats.numHealthyGivenEnabled}} of {{nodeStats.numEnabled}}</div>
+						<div class="metric-percentage">
+							<span ng-if="nodeStats.numEnabled == 0">N/A</span>
+							<span ng-if="nodeStats.numEnabled &gt; 0">{{nodeStats.percentHealthyGivenEnabled | number : 1}}%</span>
+						</div>
+						<div class="metric-name">Healthy, given enabled</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	
+	<!-- TODO Add spinner -->
+	<section ng-switch="nodeListStatus">
+		<div ng-switch-when="loading">
+			<h3>Getting nodes <i class="fa fa-spinner fa-spin"></i></h3>
+		</div>
+		<div ng-switch-when="error">
+			<h3><span class="label label-danger"><i class="fa fa-times-circle"></i> Couldn't get nodes</span></h3>
+		</div>
+		<div ng-switch-when="loaded">
+			<div ng-if="nodes.length == 0">
+				<h3>No nodes.</h3>
+			</div>
+			<div ng-if="nodes.length &gt; 0">
+				<div class="pagination-wrapper" ng-if="metadata.totalPages &gt; 1">
+					<pagination total-items="metadata.totalItems" ng-model="nodesCurrentPage" ng-change="pageSelected()" />
+				</div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th style="width:20%">Node</th>
+							<th style="width:20%">Version</th>
+							<th style="width:20%">Health</th>
+							<th style="width:25%">IP Address</th>
+							<th style="width:15%" colspan="2">Rotation</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="nodeRow in nodeRows | filter:nodeRow:strict">
+							<!--
+							<td>
+								<div ng-if="nodeRow.showActions">
+									<input type="checkbox"></input>
+								</div>
+							</td>
+							-->
+							<td><a ng-href="{{uri('nodes', nodeRow.name)}}">{{nodeRow.displayName}}</a></td>
+							<td><span ng-show="nodeRow.version != null">{{nodeRow.version}}</span></td>
+							<td><span ng-show="nodeRow.healthStatus" class="label label-{{nodeRow.healthStatus._embedded.statusType.key}}">{{nodeRow.healthStatus.name}}</span></td>
+							<td>{{nodeRow.ipAddress}} ({{nodeRow.ipAddressRole}})</td>
+							<td style="width:0">
+								<span ng-if="nodeRow.aggregateRotationStatus" class="label label-{{nodeRow.aggregateRotationStatus._embedded.statusType.key}}">{{nodeRow.aggregateRotationStatus.name}}</span>
+							</td>
+							<td style="width:20%">
+								<span ng-if="nodeRow.aggregateRotationStatus"><a rotation-details-popover="/v1/nodes/{{nodeRow.name}}/ip-addresses/{{nodeRow.ipAddress}}">[Details]</a></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="pagination-wrapper" ng-if="metadata.totalPages &gt; 1">
+					<pagination total-items="metadata.totalItems" ng-model="nodesCurrentPage" ng-change="pageSelected()" />
+				</div>
+			</div>
+		</div>
+	</section>
 </section>

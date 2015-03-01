@@ -33,9 +33,19 @@ import com.expedia.seiso.domain.repo.custom.NodeRepoCustom;
  */
 @RestResource(path = RepoKeys.NODES)
 public interface NodeRepo extends PagingAndSortingRepository<Node, Long>, NodeRepoCustom {
-
+	public static final String NODE_STATS_QUERY =
+			"select count(*), sum(case when n.healthStatus.key = 'healthy' then 1 else 0 end)"
+			+ " from Node n"
+			+ " where n.serviceInstance.key = :key";
+	
 	@FindByKey
 	Node findByName(@Param("name") String name);
+	
+	@RestResource(path = "find-by-service-instance")
+	Page<Node> findByServiceInstanceKey(@Param("key") String key, Pageable pageable);
+	
+	@Query(NODE_STATS_QUERY)
+	List<Object[]> findNodeStatsByServiceInstanceKey(@Param("key") String key);
 	
 	// FIXME Shouldn't this return a unique result?
 	@RestResource(path = "find-by-ip-address-and-port")

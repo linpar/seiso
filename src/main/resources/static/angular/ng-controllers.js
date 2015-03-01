@@ -313,14 +313,20 @@ var serviceDetailsController = function() {
 
 var serviceInstanceDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
-		$scope.nodeStatus = 'loading';
+		$scope.nodeStatsStatus = 'loading';
+		$scope.nodeListStatus = 'loading';
 		
 		var serviceInstanceRequest = {
 			method: 'GET',
 			url: '/v2/service-instances/' + $routeParams.key,
 			headers: { 'Accept': 'application/hal+json' }
 		}
-				
+		var nodeStatsRequest = {
+			method: 'GET',
+			url: '/v2/service-instances/' + $routeParams.key + '/node-stats',
+			headers: { 'Accept': 'application/hal+json' }
+		}
+		
 		var serviceInstanceSuccessHandler = function(data) {
 			$scope.model.page.title = data.key;
 			$scope.serviceInstance = data;
@@ -333,42 +339,32 @@ var serviceInstanceDetailsController = function() {
 			$scope.owner = $scope.service._embedded.owner;
 			$scope.dashboards = $scope.serviceInstance._embedded.dashboards;
 			$scope.checks = $scope.serviceInstance._embedded.seyrenChecks;
+			$scope.nodesCurrentPage = 1;
 			
 			var nodesRequest = {
 				method: 'GET',
-				url: '/v2/service-instances/' + $routeParams.key + '/nodes?view=service-instance-nodes',
+				url: '/v2/nodes/search/find-by-service-instance?key=' + $routeParams.key + '&view=service-instance-nodes',
 				headers: { 'Accept': 'application/hal+json' }
 			}
 			
 			var nodesSuccessHandler = function(data) {
-				$scope.nodes = data;
-				console.log("Loaded " + $scope.nodes.length + " nodes");
-				
-				// Initialize node counts
-				$scope.numHealthy = 0;
-				$scope.numEnabled = 0;
-				$scope.numHealthyGivenEnabled = 0;
-				
+				$scope.metadata = data.metadata;
+				$scope.nodes = data._embedded.items;
+								
 				// Build the node table, which is really a list of IP addresses grouped by node. [WLW]
 				var nodeRows = [];
 				for (i = 0; i < $scope.nodes.length; i++) {
 					var node = $scope.nodes[i];
 					
-					if (node.healthStatus == null) {
-						node.healthStatus = {
+					if (node._embedded.healthStatus == null) {
+						node._embedded.healthStatus = {
 							"key" : "unknown",
 							"name" : "Unknown",
 							"statusType" : { "key" : "warning" }
 						}
 					}
 					
-					// FIXME Shouldn't hardcode what's currently an Eos-specific health status.
-					if (node.healthStatus.key.toLowerCase() == 'healthy') { $scope.numHealthy++; }
-					
-					// FIXME This is failing because the /service-instances/:key/nodes endpoint currently uses a flat
-					// projection. 
 					var ipAddresses = node._embedded.ipAddresses;
-					
 					var nodeEnabled = true;
 					
 					if (ipAddresses.length == 0) {
@@ -377,7 +373,7 @@ var serviceInstanceDetailsController = function() {
 							"name" : node.name,
 							"displayName" : node.name,
 							"version" : node.version,
-							"healthStatus" : node.healthStatus,
+							"healthStatus" : node._embedded.healthStatus,
 							"showActions" : true
 						}
 						nodeRows.push(nodeRow);
@@ -398,7 +394,7 @@ var serviceInstanceDetailsController = function() {
 								// displayName.
 								nodeRow.displayName = node.name;
 								nodeRow.version = node.version,
-								nodeRow.healthStatus = node.healthStatus;
+								nodeRow.healthStatus = node._embedded.healthStatus;
 								nodeRow.showActions = true;
 							}
 							nodeRows.push(nodeRow);
@@ -408,31 +404,35 @@ var serviceInstanceDetailsController = function() {
 							}
 						}
 					}
-					
-					if (nodeEnabled) {
-						$scope.numEnabled++;
-						if (node._embedded.healthStatus.key == 'Healthy') { $scope.numHealthyGivenEnabled++; }
-					}
 				}
 				
-				$scope.numNodes = $scope.nodes.length;
-				$scope.percentHealthy = 100 * ($scope.numHealthy / $scope.numNodes);
-				$scope.percentEnabled = 100 * ($scope.numEnabled / $scope.numNodes);
-				$scope.percentHealthyGivenEnabled = 100 * ($scope.numHealthyGivenEnabled / $scope.numEnabled);
 				$scope.nodeRows = nodeRows;
-				$scope.nodeStatus = 'loaded';
+				$scope.nodeListStatus = 'loaded';
 			}
 			
 			// Load nodes AFTER loading the service instance since we need service instance data to build endpoints.
 			// FIXME Need paging here to support large node sets.
 			$http(nodesRequest)
 					.success(nodesSuccessHandler)
-					.error(function() { $scope.nodeStatus = 'error'; });
+					.error(function() { $scope.nodeListStatus = 'error'; });
+		}
+		
+		var nodeStatsSuccessHandler = function(data) {
+			var nodeStats = data;
+			nodeStats.percentHealthy = 100 * (nodeStats.numHealthy / nodeStats.numNodes);
+			nodeStats.percentEnabled = 100 * (nodeStats.numEnabled / nodeStats.numNodes);
+			nodeStats.percentHealthyGivenEnabled = 100 * (nodeStats.numHealthyGivenEnabled / nodeStats.numEnabled);
+			
+			$scope.nodeStats = nodeStats;
+			$scope.nodeStatsStatus = 'loaded';
 		}
 		
 		$http(serviceInstanceRequest)
 				.success(serviceInstanceSuccessHandler)
 				.error(function() { alert('Error while getting service instance.'); });
+		$http(nodeStatsRequest)
+				.success(nodeStatsSuccessHandler)
+				.error(function() { $scope.nodeStatsStatus = 'error' });
 	}
 	
 	return [ '$scope', '$http', '$routeParams', controller ];

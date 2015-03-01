@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,7 @@ import com.expedia.seiso.web.hateoas.Resource;
  */
 @RestController
 @RequestMapping("/v2")
+@Transactional
 public class RepoSearchControllerV2 {
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private RepoSearchDelegate delegate;

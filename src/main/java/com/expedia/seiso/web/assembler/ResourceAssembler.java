@@ -45,6 +45,7 @@ import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.entity.RotationStatus;
+import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.SearchResults;
@@ -459,6 +460,8 @@ public class ResourceAssembler {
 			if (apiLink != null) { resource.addLink(apiLink); }
 			val uiLink = itemLinks.dashboardUiLink((Dashboard) item);
 			if (uiLink != null) { resource.addLink(uiLink); }
+		} else if (item instanceof ServiceInstance) {
+			// TODO Add link to service instance node-stats
 		} else if (item instanceof SeyrenCheck) {
 			resource.addLink(itemLinks.seyrenCheckApiLink((SeyrenCheck) item));
 			resource.addLink(itemLinks.seyrenCheckUiLink((SeyrenCheck) item));

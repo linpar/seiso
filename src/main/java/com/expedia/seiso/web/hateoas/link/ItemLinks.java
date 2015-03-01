@@ -29,6 +29,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.expedia.seiso.domain.entity.Dashboard;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.Relations;
@@ -142,6 +143,15 @@ public class ItemLinks {
 	// =================================================================================================================
 	// Special item links
 	// =================================================================================================================
+	
+	public Link serviceInstanceNodeStatsLink(String rel, @NonNull ServiceInstance serviceInstance) {
+		val href = repoUri(ServiceInstance.class, EMPTY_PARAMS)
+				.pathSegment(itemPathSegment(serviceInstance))
+				.pathSegment("node-stats")
+				.build()
+				.toString();
+		return new Link(rel, href);
+	}
 	
 	public Link dashboardApiLink(@NonNull Dashboard dashboard) {
 		val href = dashboard.getApiUri();

@@ -28,6 +28,86 @@
 --     App : 10.7.0.0/16
 --     DB  : 10.11.0.0/16
 
+-- Inserts a range of machines.
+delimiter $$
+drop procedure if exists create_machines $$
+create procedure create_machines(
+  in machine_start_index int unsigned,
+  in machine_end_index int unsigned,
+  in machine_start_id int unsigned,
+  in host_prefix varchar(40),
+  in domain varchar(40),
+  in os varchar(40),
+  in data_center_id int unsigned,
+  in ip_address_start bigint unsigned)
+  
+begin
+  declare machine_index int unsigned;
+  declare machine_id int unsigned;
+  declare hostname varchar(40);
+  declare machine_num char(3);
+  declare ip_address_int int unsigned;
+  declare octet1 int unsigned;
+  declare octet2 int unsigned;
+  declare octet3 int unsigned;
+  declare octet4 int unsigned;
+  declare ip_address varchar(20);
+  declare fqdn varchar(80);
+  
+  set machine_index = machine_start_index;
+  while machine_index <= machine_end_index do
+    set machine_id = machine_start_id + machine_index - 1;
+    set ip_address_int = ip_address_start + machine_index - 1;
+    
+    set machine_num = right(concat('000', machine_index), 3);
+    set hostname = concat(host_prefix, machine_num);
+    set fqdn = concat(hostname, '.', domain);
+    
+    set octet1 = ((ip_address_int >> 24) & 255);
+    set octet2 = ((ip_address_int >> 16) & 255);
+    set octet3 = ((ip_address_int >> 8) & 255);
+    set octet4 = (ip_address_int & 255);
+    set ip_address = concat(octet1, '.', octet2, '.', octet3, '.', octet4);
+    
+    insert into machine (id, name, hostname, domain, os, data_center_id, ip_address, fqdn) values
+      (machine_id, fqdn, hostname, domain, os, data_center_id, ip_address, fqdn);
+    set machine_index = machine_index + 1;
+  end while;
+end $$
+delimiter ;
+
+-- Inserts a range of nodes
+delimiter $$
+drop procedure if exists create_nodes $$
+create procedure create_nodes(
+  in service_instance_key varchar(40),
+  in num_nodes int unsigned,
+  in service_key varchar(40),
+  in env_key varchar(40),
+  in service_version varchar(128),
+  in machine_start_id int unsigned)
+  
+begin
+  declare node_index int unsigned;
+  declare machine_id int unsigned;
+  declare node_name varchar(80);
+  declare node_num char(3);
+  declare service_instance_id int unsigned;
+  
+  set service_instance_id = (select id from service_instance where ukey = service_instance_key);
+  
+  set node_index = 1;
+  while node_index <= num_nodes do
+    set machine_id = machine_start_id + node_index - 1;
+    set node_num = right(concat('000', node_index), 3);
+    set node_name = concat(service_key, node_num, '-', env_key);
+    insert into node (name, version, service_instance_id, machine_id, health_status_id) values
+        (node_name, service_version, service_instance_id, machine_id, 1);
+    set node_index = node_index + 1;
+  end while;
+end $$
+delimiter ;
+
 insert into source (id, ukey, base_uri, source_id) values
   (1, 'seiso-data-common', 'https://github.example.com/seiso-data/common', 1)
 , (2, 'seyren-prod', 'http://seyren.example.com', 1)
@@ -116,89 +196,55 @@ insert into data_center (id, ukey, name, region_id) values
 -- insert into load_balancer (id, data_center_id, name, type, ip_address, api_uri) values
 --   ;
 
-insert into machine (id, name, hostname, domain, os, data_center_id, ip_address, fqdn) values
+-- TODO Create machines one environment at a time so we can just provide a single IP seed. Easier to manage.
 
-  -- Air Shopping
-  (1, 'airshop001.int.example.com', 'airshop001', 'int.example.com', 'linux', 3, '10.13.0.1', 'airshop001.int.example.com')
-, (2, 'airshop002.int.example.com', 'airshop002', 'int.example.com', 'linux', 3, '10.13.0.2', 'airshop002.int.example.com')
-, (3, 'airshop001.acc.example.com', 'airshop001', 'acc.example.com', 'linux', 3, '10.13.16.1', 'airshop001.acc.example.com')
-, (4, 'airshop002.acc.example.com', 'airshop002', 'acc.example.com', 'linux', 3, '10.13.16.2', 'airshop002.acc.example.com')
-, (5, 'airshop001.perf.example.com', 'airshop001', 'perf.example.com', 'linux', 3, '10.13.32.1', 'airshop001.perf.example.com')
-, (6, 'airshop002.perf.example.com', 'airshop002', 'perf.example.com', 'linux', 3, '10.13.32.2', 'airshop002.perf.example.com')
-, (7, 'airshop001.prod.example.com', 'airshop001', 'prod.example.com', 'linux', 3, '10.1.0.1', 'airshop001.prod.example.com')
-, (8, 'airshop002.prod.example.com', 'airshop002', 'prod.example.com', 'linux', 3, '10.1.0.2', 'airshop002.prod.example.com')
-, (9, 'airshop003.prod.example.com', 'airshop003', 'prod.example.com', 'linux', 3, '10.1.0.3', 'airshop003.prod.example.com')
-, (10, 'airshop004.prod.example.com', 'airshop004', 'prod.example.com', 'linux', 3, '10.1.0.4', 'airshop004.prod.example.com')
-, (11, 'airshop001.dr.example.com', 'airshop001', 'dr.example.com', 'linux', 7, '10.7.0.1', 'airshop001.dr.example.com')
-, (12, 'airshop002.dr.example.com', 'airshop002', 'dr.example.com', 'linux', 7, '10.7.0.2', 'airshop002.dr.example.com')
-, (13, 'airshop003.dr.example.com', 'airshop003', 'dr.example.com', 'linux', 7, '10.7.0.3', 'airshop003.dr.example.com')
-, (14, 'airshop004.dr.example.com', 'airshop004', 'dr.example.com', 'linux', 7, '10.7.0.4', 'airshop004.dr.example.com')
+-- Air Shopping
+call create_machines(1, 2, 1, 'airshop', 'int.example.com', 'linux', 3, 168624129);
+call create_machines(1, 2, 3, 'airshop', 'acc.example.com', 'linux', 3, 168628225);
+call create_machines(1, 2, 5, 'airshop', 'perf.example.com', 'linux', 3, 168632321);
+call create_machines(1, 4, 7, 'airshop', 'prod.example.com', 'linux', 3, 167837697);
+call create_machines(1, 4, 11, 'airshop', 'dr.example.com', 'linux', 3, 168230913);
 
-  -- Air Booking
-, (15, 'airbook001.int.example.com', 'airbook001', 'int.example.com', 'linux', 3, '10.13.0.3', 'airbook001.int.example.com')
-, (16, 'airbook002.int.example.com', 'airbook002', 'int.example.com', 'linux', 3, '10.13.0.4', 'airbook002.int.example.com')
-, (17, 'airbook001.acc.example.com', 'airbook001', 'acc.example.com', 'linux', 3, '10.13.16.3', 'airbook001.acc.example.com')
-, (18, 'airbook002.acc.example.com', 'airbook002', 'acc.example.com', 'linux', 3, '10.13.16.4', 'airbook002.acc.example.com')
-, (19, 'airbook001.perf.example.com', 'airbook001', 'perf.example.com', 'linux', 3, '10.13.32.3', 'airbook001.perf.example.com')
-, (20, 'airbook002.perf.example.com', 'airbook002', 'perf.example.com', 'linux', 3, '10.13.32.4', 'airbook002.perf.example.com')
-, (21, 'airbook001.prod.example.com', 'airbook001', 'prod.example.com', 'linux', 3, '10.1.0.5', 'airbook001.prod.example.com')
-, (22, 'airbook002.prod.example.com', 'airbook002', 'prod.example.com', 'linux', 3, '10.1.0.6', 'airbook002.prod.example.com')
-, (23, 'airbook003.prod.example.com', 'airbook003', 'prod.example.com', 'linux', 3, '10.1.0.7', 'airbook003.prod.example.com')
-, (24, 'airbook004.prod.example.com', 'airbook004', 'prod.example.com', 'linux', 3, '10.1.0.8', 'airbook004.prod.example.com')
-, (25, 'airbook001.dr.example.com', 'airbook001', 'dr.example.com', 'linux', 7, '10.7.0.5', 'airbook001.dr.example.com')
-, (26, 'airbook002.dr.example.com', 'airbook002', 'dr.example.com', 'linux', 7, '10.7.0.6', 'airbook002.dr.example.com')
-, (27, 'airbook003.dr.example.com', 'airbook003', 'dr.example.com', 'linux', 7, '10.7.0.7', 'airbook003.dr.example.com')
-, (28, 'airbook004.dr.example.com', 'airbook004', 'dr.example.com', 'linux', 7, '10.7.0.8', 'airbook004.dr.example.com')
+-- Air Booking
+call create_machines(1, 2, 15, 'airbook', 'int.example.com', 'linux', 3, 168624131);
+call create_machines(1, 2, 17, 'airbook', 'acc.example.com', 'linux', 3, 168628227);
+call create_machines(1, 2, 19, 'airbook', 'perf.example.com', 'linux', 3, 168632323);
+call create_machines(1, 4, 21, 'airbook', 'prod.example.com', 'linux', 3, 167837701);
+call create_machines(1, 4, 25, 'airbook', 'dr.example.com', 'linux', 3, 168230917);
 
-  -- Car Shopping
-, (29, 'carshop001.int.example.com', 'carshop001', 'int.example.com', 'linux', 3, '10.13.0.5', 'carshop001.int.example.com')
-, (30, 'carshop002.int.example.com', 'carshop002', 'int.example.com', 'linux', 3, '10.13.0.6', 'carshop002.int.example.com')
-, (31, 'carshop001.acc.example.com', 'carshop001', 'acc.example.com', 'linux', 3, '10.13.16.5', 'carshop001.acc.example.com')
-, (32, 'carshop002.acc.example.com', 'carshop002', 'acc.example.com', 'linux', 3, '10.13.16.6', 'carshop002.acc.example.com')
-, (33, 'carshop001.perf.example.com', 'carshop001', 'perf.example.com', 'linux', 3, '10.13.32.5', 'carshop001.perf.example.com')
-, (34, 'carshop002.perf.example.com', 'carshop002', 'perf.example.com', 'linux', 3, '10.13.32.6', 'carshop002.perf.example.com')
-, (35, 'carshop001.prod.example.com', 'carshop001', 'prod.example.com', 'linux', 3, '10.1.0.9', 'carshop001.prod.example.com')
-, (36, 'carshop002.prod.example.com', 'carshop002', 'prod.example.com', 'linux', 3, '10.1.0.10', 'carshop002.prod.example.com')
-, (37, 'carshop003.prod.example.com', 'carshop003', 'prod.example.com', 'linux', 3, '10.1.0.11', 'carshop003.prod.example.com')
-, (38, 'carshop004.prod.example.com', 'carshop004', 'prod.example.com', 'linux', 3, '10.1.0.12', 'carshop004.prod.example.com')
-, (39, 'carshop001.dr.example.com', 'carshop001', 'dr.example.com', 'linux', 7, '10.7.0.9', 'carshop001.dr.example.com')
-, (40, 'carshop002.dr.example.com', 'carshop002', 'dr.example.com', 'linux', 7, '10.7.0.10', 'carshop002.dr.example.com')
-, (41, 'carshop003.dr.example.com', 'carshop003', 'dr.example.com', 'linux', 7, '10.7.0.11', 'carshop003.dr.example.com')
-, (42, 'carshop004.dr.example.com', 'carshop004', 'dr.example.com', 'linux', 7, '10.7.0.12', 'carshop004.dr.example.com')
+-- Car Shopping
+call create_machines(1, 2, 29, 'carshop', 'int.example.com', 'linux', 3, 168624133);
+call create_machines(1, 2, 31, 'carshop', 'acc.example.com', 'linux', 3, 168628229);
+call create_machines(1, 2, 33, 'carshop', 'perf.example.com', 'linux', 3, 168632325);
+call create_machines(1, 4, 35, 'carshop', 'prod.example.com', 'linux', 3, 167837705);
+call create_machines(1, 4, 39, 'carshop', 'dr.example.com', 'linux', 3, 168230921);
 
-  -- Car Booking
-, (43, 'carbook001.int.example.com', 'carbook001', 'int.example.com', 'linux', 3, '10.13.0.7', 'carbook001.int.example.com')
-, (44, 'carbook002.int.example.com', 'carbook002', 'int.example.com', 'linux', 3, '10.13.0.8', 'carbook002.int.example.com')
-, (45, 'carbook001.acc.example.com', 'carbook001', 'acc.example.com', 'linux', 3, '10.13.16.7', 'carbook001.acc.example.com')
-, (46, 'carbook002.acc.example.com', 'carbook002', 'acc.example.com', 'linux', 3, '10.13.16.8', 'carbook002.acc.example.com')
-, (47, 'carbook001.perf.example.com', 'carbook001', 'perf.example.com', 'linux', 3, '10.13.32.7', 'carbook001.perf.example.com')
-, (48, 'carbook002.perf.example.com', 'carbook002', 'perf.example.com', 'linux', 3, '10.13.32.8', 'carbook002.perf.example.com')
-, (49, 'carbook001.prod.example.com', 'carbook001', 'prod.example.com', 'linux', 3, '10.1.0.13', 'carbook001.prod.example.com')
-, (50, 'carbook002.prod.example.com', 'carbook002', 'prod.example.com', 'linux', 3, '10.1.0.14', 'carbook002.prod.example.com')
-, (51, 'carbook003.prod.example.com', 'carbook003', 'prod.example.com', 'linux', 3, '10.1.0.15', 'carbook003.prod.example.com')
-, (52, 'carbook004.prod.example.com', 'carbook004', 'prod.example.com', 'linux', 3, '10.1.0.16', 'carbook004.prod.example.com')
-, (53, 'carbook001.dr.example.com', 'carbook001', 'dr.example.com', 'linux', 7, '10.7.0.13', 'carbook001.dr.example.com')
-, (54, 'carbook002.dr.example.com', 'carbook002', 'dr.example.com', 'linux', 7, '10.7.0.14', 'carbook002.dr.example.com')
-, (55, 'carbook003.dr.example.com', 'carbook003', 'dr.example.com', 'linux', 7, '10.7.0.15', 'carbook003.dr.example.com')
-, (56, 'carbook004.dr.example.com', 'carbook004', 'dr.example.com', 'linux', 7, '10.7.0.16', 'carbook004.dr.example.com')
+-- Car Booking
+call create_machines(1, 2, 43, 'carbook', 'int.example.com', 'linux', 3, 168624135);
+call create_machines(1, 2, 45, 'carbook', 'acc.example.com', 'linux', 3, 168628231);
+call create_machines(1, 2, 47, 'carbook', 'perf.example.com', 'linux', 3, 168632327);
+call create_machines(1, 4, 49, 'carbook', 'prod.example.com', 'linux', 3, 167837709);
+call create_machines(1, 4, 53, 'carbook', 'dr.example.com', 'linux', 3, 168230925);
 
-  -- Cruise Shopping and Booking
-  -- Two nodes per machine here, each with its own IP address.
-, (57, 'cruise001.int.example.com', 'cruise001', 'int.example.com', 'linux', 10, '10.13.0.9', 'cruise001.int.example.com')
-, (58, 'cruise002.int.example.com', 'cruise002', 'int.example.com', 'linux', 10, '10.13.0.10', 'cruise002.int.example.com')
-, (59, 'cruise001.acc.example.com', 'cruise001', 'acc.example.com', 'linux', 10, '10.13.16.9', 'cruise001.acc.example.com')
-, (60, 'cruise002.acc.example.com', 'cruise002', 'acc.example.com', 'linux', 10, '10.13.16.10', 'cruise002.acc.example.com')
-, (61, 'cruise001.perf.example.com', 'cruise001', 'perf.example.com', 'linux', 10, '10.13.32.9', 'cruise001.perf.example.com')
-, (62, 'cruise002.perf.example.com', 'cruise002', 'perf.example.com', 'linux', 10, '10.13.32.10', 'cruise002.perf.example.com')
-, (63, 'cruise001.prod.example.com', 'cruise001', 'prod.example.com', 'linux', 1, '10.1.0.17', 'cruise001.prod.example.com')
-, (64, 'cruise002.prod.example.com', 'cruise002', 'prod.example.com', 'linux', 1, '10.1.0.18', 'cruise002.prod.example.com')
-, (65, 'cruise003.prod.example.com', 'cruise003', 'prod.example.com', 'linux', 1, '10.1.0.19', 'cruise003.prod.example.com')
-, (66, 'cruise004.prod.example.com', 'cruise004', 'prod.example.com', 'linux', 1, '10.1.0.20', 'cruise004.prod.example.com')
-, (67, 'cruise001.dr.example.com', 'cruise001', 'dr.example.com', 'linux', 2, '10.7.0.17', 'cruise001.dr.example.com')
-, (68, 'cruise002.dr.example.com', 'cruise002', 'dr.example.com', 'linux', 2, '10.7.0.18', 'cruise002.dr.example.com')
-, (69, 'cruise003.dr.example.com', 'cruise003', 'dr.example.com', 'linux', 2, '10.7.0.19', 'cruise003.dr.example.com')
-, (70, 'cruise004.dr.example.com', 'cruise004', 'dr.example.com', 'linux', 2, '10.7.0.20', 'cruise004.dr.example.com')
-  ;
+-- Cruise Shopping and Booking
+-- Two nodes per machine here, each with its own IP address.
+call create_machines(1, 2, 57, 'cruise', 'int.example.com', 'linux', 3, 168624137);
+call create_machines(1, 2, 59, 'cruise', 'acc.example.com', 'linux', 3, 168628233);
+call create_machines(1, 2, 61, 'cruise', 'perf.example.com', 'linux', 3, 168632329);
+call create_machines(1, 4, 63, 'cruise', 'prod.example.com', 'linux', 3, 167837713);
+call create_machines(1, 4, 67, 'cruise', 'dr.example.com', 'linux', 3, 168230929);
+
+call create_machines(1, 4, 10000, 'hotelshop', 'int.example.com', 'linux', 3, 168624139);
+call create_machines(1, 4, 10020, 'hotelshop', 'acc.example.com', 'linux', 3, 168628235);
+call create_machines(1, 4, 10040, 'hotelshop', 'perf.example.com', 'linux', 3, 168632331);
+call create_machines(1, 300, 10200, 'hotelshop', 'prod.example.com', 'linux', 3, 167837717);
+call create_machines(1, 300, 10600, 'hotelshop', 'dr.example.com', 'linux', 3, 168230933);
+
+call create_machines(1, 2, 11000, 'hotelbook', 'int.example.com', 'linux', 7, 168624143);
+call create_machines(1, 2, 11020, 'hotelbook', 'acc.example.com', 'linux', 7, 168628239);
+call create_machines(1, 2, 11040, 'hotelbook', 'perf.example.com', 'linux', 7, 168632335);
+call create_machines(1, 30, 11200, 'hotelbook', 'prod.example.com', 'linux', 7, 167838017);
+call create_machines(1, 30, 11600, 'hotelbook', 'dr.example.com', 'linux', 7, 168231233);
 
 insert into environment (id, ukey, name, aka, description) values
   (1, 'int', 'Integration', null, 'Automated integration testing')
@@ -225,6 +271,8 @@ insert into service (id, ukey, name, group_id, type_id, description, owner_id, s
 , (4, 'car-booking', 'Car Booking Service', 2, 3, 'UI + REST API for car booking.', 17, 'https://github.example.com/car-booking', 'NodeJS')
 , (5, 'cruise-shopping', 'Cruise Shopping Service', 3, 3, 'UI + REST API for cruise shopping.', 1, 'https://github.example.com/cruise-shopping', 'Java')
 , (6, 'cruise-booking', 'Cruise Booking Service', 3, 3, 'UI + REST API for cruise booking.', 1, 'https://github.example.com/cruise-booking', 'Java')
+, (7, 'hotel-shopping', 'Hotel Shopping Service', 5, 3, 'UI + REST API for hotel shopping.', 1, 'http://github.example.com/hotel-shopping', 'Java')
+, (8, 'hotel-booking', 'Hotel Booking Service', 5, 3, 'UI + REST API for hotel booking.', 1, 'http://github.example.com/hotel-booking', 'Java')
   ;
 
 insert into service_instance (id, ukey, service_id, environment_id, data_center_id, load_balanced, enable_seyren) values
@@ -263,273 +311,131 @@ insert into service_instance (id, ukey, service_id, environment_id, data_center_
 , (28, 'cruise-booking-perf', 6, 3, 10, true, false)
 , (29, 'cruise-booking-prod', 6, 4, 1, true, false)
 , (30, 'cruise-booking-dr', 6, 5, 2, true, false)
+ 
+, (31, 'hotel-shopping-int', 7, 1, 3, true, false)
+, (32, 'hotel-shopping-acc', 7, 2, 3, true, false)
+, (33, 'hotel-shopping-perf', 7, 3, 3, true, false)
+, (34, 'hotel-shopping-prod', 7, 4, 3, true, false)
+, (35, 'hotel-shopping-dr', 7, 5, 7, true, false)
+ 
+, (36, 'hotel-booking-int', 8, 1, 3, true, false)
+, (37, 'hotel-booking-acc', 8, 2, 3, true, false)
+, (38, 'hotel-booking-perf', 8, 3, 3, true, false)
+, (39, 'hotel-booking-prod', 8, 4, 3, true, false)
+, (40, 'hotel-booking-dr', 8, 5, 7, true, false)
   ;
 
-insert into service_instance_port (id, service_instance_id, number, protocol, description) values
-  (1, 1, 8443, 'https', 'UI + REST API port')
-, (2, 2, 8443, 'https', 'UI + REST API port')
-, (3, 3, 8443, 'https', 'UI + REST API port')
-, (4, 4, 8443, 'https', 'UI + REST API port')
-, (5, 5, 8443, 'https', 'UI + REST API port')
-, (6, 6, 8443, 'https', 'UI + REST API port')
-, (7, 7, 8443, 'https', 'UI + REST API port')
-, (8, 8, 8443, 'https', 'UI + REST API port')
-, (9, 9, 8443, 'https', 'UI + REST API port')
-, (10, 10, 8443, 'https', 'UI + REST API port')
-, (11, 11, 8443, 'https', 'UI + REST API port')
-, (12, 12, 8443, 'https', 'UI + REST API port')
-, (13, 13, 8443, 'https', 'UI + REST API port')
-, (14, 14, 8443, 'https', 'UI + REST API port')
-, (15, 15, 8443, 'https', 'UI + REST API port')
-, (16, 16, 8443, 'https', 'UI + REST API port')
-, (17, 17, 8443, 'https', 'UI + REST API port')
-, (18, 18, 8443, 'https', 'UI + REST API port')
-, (19, 19, 8443, 'https', 'UI + REST API port')
-, (0, 20, 8443, 'https', 'UI + REST API port')
-, (21, 21, 8443, 'https', 'UI + REST API port')
-, (22, 22, 8443, 'https', 'UI + REST API port')
-, (23, 23, 8443, 'https', 'UI + REST API port')
-, (24, 24, 8443, 'https', 'UI + REST API port')
-, (25, 25, 8443, 'https', 'UI + REST API port')
-, (26, 26, 8443, 'https', 'UI + REST API port')
-, (27, 27, 8443, 'https', 'UI + REST API port')
-, (28, 28, 8443, 'https', 'UI + REST API port')
-, (29, 29, 8443, 'https', 'UI + REST API port')
-, (30, 30, 8443, 'https', 'UI + REST API port')
-  ;
-  
-insert into ip_address_role (id, service_instance_id, name, description) values
-  (1, 1, 'default', 'Default IP address role')
-, (2, 2, 'default', 'Default IP address role')
-, (3, 3, 'default', 'Default IP address role')
-, (4, 4, 'default', 'Default IP address role')
-, (5, 5, 'default', 'Default IP address role')
-, (6, 6, 'default', 'Default IP address role')
-, (7, 7, 'default', 'Default IP address role')
-, (8, 8, 'default', 'Default IP address role')
-, (9, 9, 'default', 'Default IP address role')
-, (10, 10, 'default', 'Default IP address role')
-, (11, 11, 'default', 'Default IP address role')
-, (12, 12, 'default', 'Default IP address role')
-, (13, 13, 'default', 'Default IP address role')
-, (14, 14, 'default', 'Default IP address role')
-, (15, 15, 'default', 'Default IP address role')
-, (16, 16, 'default', 'Default IP address role')
-, (17, 17, 'default', 'Default IP address role')
-, (18, 18, 'default', 'Default IP address role')
-, (19, 19, 'default', 'Default IP address role')
-, (20, 20, 'default', 'Default IP address role')
-, (21, 21, 'default', 'Default IP address role')
-, (22, 22, 'default', 'Default IP address role')
-, (23, 23, 'default', 'Default IP address role')
-, (24, 24, 'default', 'Default IP address role')
-, (25, 25, 'default', 'Default IP address role')
-, (26, 26, 'default', 'Default IP address role')
-, (27, 27, 'default', 'Default IP address role')
-, (28, 28, 'default', 'Default IP address role')
-, (29, 29, 'default', 'Default IP address role')
-, (30, 30, 'default', 'Default IP address role')
+-- Autogenerate SIPs
+insert into
+  service_instance_port (service_instance_id, number, protocol, description)
+select
+  si.id,
+  8443,
+  'https',
+  'UI + REST API port'
+from
+  service_instance si
   ;
 
-insert into node (id, name, version, service_instance_id, machine_id, health_status_id) values
-
-  -- Air Shopping
-  (1, 'airshop001-int', '3.15.0', 1, 1, 1)
-, (2, 'airshop002-int', '3.15.0', 1, 2, 1)
-, (3, 'airshop001-acc', '3.15.0', 2, 3, 1)
-, (4, 'airshop002-acc', '3.15.0', 2, 4, 1)
-, (5, 'airshop001-perf', '3.15.0', 3, 5, 1)
-, (6, 'airshop002-perf', '3.15.0', 3, 6, 1)
-, (7, 'airshop001-prod', '3.14.1', 4, 7, 1)
-, (8, 'airshop002-prod', '3.14.1', 4, 8, 2)
-, (9, 'airshop003-prod', '3.14.1', 4, 9, 1)
-, (10, 'airshop004-prod', '3.14.1', 4, 10, 1)
-, (11, 'airshop001-dr', '3.14.1', 5, 11, 1)
-, (12, 'airshop002-dr', '3.14.1', 5, 12, 1)
-, (13, 'airshop003-dr', '3.14.1', 5, 13, 1)
-, (14, 'airshop004-dr', '3.14.1', 5, 14, 1)
-
-  -- Air Booking
-, (15, 'airbook001-int', '6.0.23', 6, 15, 1)
-, (16, 'airbook002-int', '6.0.23', 6, 16, 1)
-, (17, 'airbook001-acc', '6.0.23', 7, 17, 1)
-, (18, 'airbook002-acc', '6.0.23', 7, 18, 1)
-, (19, 'airbook001-perf', '6.0.23', 8, 19, 1)
-, (20, 'airbook002-perf', '6.0.23', 8, 20, 1)
-, (21, 'airbook001-prod', '6.0.22', 9, 21, 3)
-, (22, 'airbook002-prod', '6.0.22', 9, 22, 3)
-, (23, 'airbook003-prod', '6.0.22', 9, 23, 3)
-, (24, 'airbook004-prod', '6.0.22', 9, 24, 3)
-, (25, 'airbook001-dr', '6.0.22', 10, 25, 1)
-, (26, 'airbook002-dr', '6.0.22', 10, 26, 1)
-, (27, 'airbook003-dr', '6.0.22', 10, 27, 1)
-, (28, 'airbook004-dr', '6.0.22', 10, 28, 1)
-
-  -- Car Shopping
-, (29, 'carshop001-int', '1.21.0', 11, 29, 1)
-, (30, 'carshop002-int', '1.21.0', 11, 30, 1)
-, (31, 'carshop001-acc', '1.21.0', 12, 31, 1)
-, (32, 'carshop002-acc', '1.21.0', 12, 32, 1)
-, (33, 'carshop001-perf', '1.21.0', 13, 33, 2)
-, (34, 'carshop002-perf', '1.21.0', 13, 34, 2)
-, (35, 'carshop001-prod', '1.20.3', 14, 35, 1)
-, (36, 'carshop002-prod', '1.20.3', 14, 36, 2)
-, (37, 'carshop003-prod', '1.20.3', 14, 37, 1)
-, (38, 'carshop004-prod', '1.20.3', 14, 38, 1)
-, (39, 'carshop001-dr', '1.20.3', 15, 39, 1)
-, (40, 'carshop002-dr', '1.20.3', 15, 40, 1)
-, (41, 'carshop003-dr', '1.20.3', 15, 41, 1)
-, (42, 'carshop004-dr', '1.20.3', 15, 42, 1)
-
-  -- Car Booking
-, (43, 'carbook001-int', '1.18.0', 16, 43, 3)
-, (44, 'carbook002-int', '1.18.0', 16, 44, 1)
-, (45, 'carbook001-acc', '1.18.0', 17, 45, 1)
-, (46, 'carbook002-acc', '1.18.0', 17, 46, 1)
-, (47, 'carbook001-perf', '1.18.0', 18, 47, 1)
-, (48, 'carbook002-perf', '1.18.0', 18, 48, 1)
-, (49, 'carbook001-prod', '1.17.3', 19, 49, 3)
-, (50, 'carbook002-prod', '1.17.3', 19, 50, 3)
-, (51, 'carbook003-prod', '1.17.3', 19, 51, 3)
-, (52, 'carbook004-prod', '1.17.3', 19, 52, 3)
-, (53, 'carbook001-dr', '1.17.3', 20, 53, 1)
-, (54, 'carbook002-dr', '1.17.3', 20, 54, 1)
-, (55, 'carbook003-dr', '1.17.3', 20, 55, 1)
-, (56, 'carbook004-dr', '1.17.3', 20, 56, 1)
-
-  -- Cruise Shopping
-, (57, 'cruiseshop001-int', '2.1.0', 21, 57, 1)
-, (58, 'cruiseshop002-int', '2.1.0', 21, 58, 1)
-, (59, 'cruiseshop001-acc', '2.1.0', 22, 59, 1)
-, (60, 'cruiseshop002-acc', '2.1.0', 22, 60, 1)
-, (61, 'cruiseshop001-perf', '2.1.0', 23, 61, 1)
-, (62, 'cruiseshop002-perf', '2.1.0', 23, 62, 1)
-, (63, 'cruiseshop001-prod', '2.0.0', 24, 63, 1)
-, (64, 'cruiseshop002-prod', '2.0.0', 24, 64, 1)
-, (65, 'cruiseshop003-prod', '2.0.0', 24, 65, 1)
-, (66, 'cruiseshop004-prod', '2.0.0', 24, 66, 1)
-, (67, 'cruiseshop001-dr', '2.0.0', 25, 67, 1)
-, (68, 'cruiseshop002-dr', '2.0.0', 25, 68, 1)
-, (69, 'cruiseshop003-dr', '2.0.0', 25, 69, 1)
-, (70, 'cruiseshop004-dr', '2.0.0', 25, 70, 1)
-
-  -- Cruise Booking
-, (71, 'cruisebook001-int', '1.1.0', 26, 57, 1)
-, (72, 'cruisebook002-int', '1.1.0', 26, 58, 1)
-, (73, 'cruisebook001-acc', '1.1.0', 27, 59, 1)
-, (74, 'cruisebook002-acc', '1.1.0', 27, 60, 1)
-, (75, 'cruisebook001-perf', '1.1.0', 28, 61, 1)
-, (76, 'cruisebook002-perf', '1.1.0', 28, 62, 1)
-, (77, 'cruisebook001-prod', '1.0.7', 29, 63, 1)
-, (78, 'cruisebook002-prod', '1.0.7', 29, 64, 1)
-, (79, 'cruisebook003-prod', '1.0.7', 29, 65, 1)
-, (80, 'cruisebook004-prod', '1.0.7', 29, 66, 1)
-, (81, 'cruisebook001-dr', '1.0.7', 30, 67, 1)
-, (82, 'cruisebook002-dr', '1.0.7', 30, 68, 1)
-, (83, 'cruisebook003-dr', '1.0.7', 30, 69, 1)
-, (84, 'cruisebook004-dr', '1.0.7', 30, 70, 1)
-  ;
-  
-insert into node_ip_address (id, node_id, ip_address_role_id, ip_address, rotation_status_id) values
-
-  -- Air Shopping
-  (1, 1, 1, '10.13.0.1', 1)
-, (2, 2, 1, '10.13.0.2', 1)
-, (3, 3, 2, '10.13.16.1', 1)
-, (4, 4, 2, '10.13.16.2', 1)
-, (5, 5, 3, '10.13.32.1', 1)
-, (6, 6, 3, '10.13.32.2', 1)
-, (7, 7, 4, '10.1.0.1', 1)
-, (8, 8, 4, '10.1.0.2', 1)
-, (9, 9, 4, '10.1.0.3', 1)
-, (10, 10, 4, '10.1.0.4', 1)
-, (11, 11, 5, '10.7.0.1', 1)
-, (12, 12, 5, '10.7.0.2', 1)
-, (13, 13, 5, '10.7.0.3', 1)
-, (14, 14, 5, '10.7.0.4', 1)
-
-  -- Air Booking
-, (15, 15, 6, '10.13.0.3', 2)
-, (16, 16, 6, '10.13.0.4', 1)
-, (17, 17, 7, '10.13.16.3', 1)
-, (18, 18, 7, '10.13.16.4', 1)
-, (19, 19, 8, '10.13.32.3', 1)
-, (20, 20, 8, '10.13.32.4', 1)
-, (21, 21, 9, '10.1.0.5', 1)
-, (22, 22, 9, '10.1.0.6', 1)
-, (23, 23, 9, '10.1.0.7', 1)
-, (24, 24, 9, '10.1.0.8', 1)
-, (25, 25, 10, '10.7.0.5', 1)
-, (26, 26, 10, '10.7.0.6', 1)
-, (27, 27, 10, '10.7.0.7', 1)
-, (28, 28, 10, '10.7.0.8', 1)
-
-  -- Car Shopping
-, (29, 29, 11, '10.13.0.5', 1)
-, (30, 30, 11, '10.13.0.6', 1)
-, (31, 31, 12, '10.13.16.5', 1)
-, (32, 32, 12, '10.13.16.6', 1)
-, (33, 33, 13, '10.13.32.5', 1)
-, (34, 34, 13, '10.13.32.6', 1)
-, (35, 35, 14, '10.1.0.9', 1)
-, (36, 36, 14, '10.1.0.10', 1)
-, (37, 37, 14, '10.1.0.11', 1)
-, (38, 38, 14, '10.1.0.12', 1)
-, (39, 39, 15, '10.7.0.9', 1)
-, (40, 40, 15, '10.7.0.10', 1)
-, (41, 41, 15, '10.7.0.11', 1)
-, (42, 42, 15, '10.7.0.12', 1)
-
-  -- Car Booking
-, (43, 43, 16, '10.13.0.7', 1)
-, (44, 44, 16, '10.13.0.8', 1)
-, (45, 45, 17, '10.13.16.7', 1)
-, (46, 46, 17, '10.13.16.8', 1)
-, (47, 47, 18, '10.13.32.7', 1)
-, (48, 48, 18, '10.13.32.8', 1)
-, (49, 49, 19, '10.1.0.13', 1)
-, (50, 50, 19, '10.1.0.14', 1)
-, (51, 51, 19, '10.1.0.15', 1)
-, (52, 52, 19, '10.1.0.16', 1)
-, (53, 53, 20, '10.7.0.13', 2)
-, (54, 54, 20, '10.7.0.14', 1)
-, (55, 55, 20, '10.7.0.15', 1)
-, (56, 56, 20, '10.7.0.16', 1)
-
-  -- Cruise Shopping
-, (57, 57, 21, '10.13.0.9', 1)
-, (58, 58, 21, '10.13.0.10', 1)
-, (59, 59, 22, '10.13.16.9', 1)
-, (60, 60, 22, '10.13.16.10', 1)
-, (61, 61, 23, '10.13.32.9', 1)
-, (62, 62, 23, '10.13.32.10', 1)
-, (63, 63, 24, '10.1.0.17', 1)
-, (64, 64, 24, '10.1.0.18', 1)
-, (65, 65, 24, '10.1.0.19', 1)
-, (66, 66, 24, '10.1.0.20', 1)
-, (67, 67, 25, '10.7.0.17', 1)
-, (68, 68, 25, '10.7.0.18', 1)
-, (69, 69, 25, '10.7.0.19', 1)
-, (70, 70, 25, '10.7.0.20', 1)
-
-  -- Cruise Booking
-, (71, 71, 26, '10.13.0.11', 1)
-, (72, 72, 26, '10.13.0.12', 1)
-, (73, 73, 27, '10.13.16.11', 1)
-, (74, 74, 27, '10.13.16.12', 1)
-, (75, 75, 28, '10.13.32.11', 1)
-, (76, 76, 28, '10.13.32.12', 1)
-, (77, 77, 29, '10.1.0.21', 1)
-, (78, 78, 29, '10.1.0.22', 1)
-, (79, 79, 29, '10.1.0.23', 2)
-, (80, 80, 29, '10.1.0.24', 1)
-, (81, 81, 30, '10.7.0.21', 1)
-, (82, 82, 30, '10.7.0.22', 1)
-, (83, 83, 30, '10.7.0.23', 1)
-, (84, 84, 30, '10.7.0.24', 1)
+insert into
+  service_instance_port (service_instance_id, number, protocol, description)
+select
+  si.id,
+  9443,
+  'https',
+  'Admin port'
+from
+  service_instance si
   ;
 
--- Autogenerate the endpoints based on the previous data.
+-- Autogenerate IPRs
+insert into
+  ip_address_role (id, service_instance_id, name, description)
+select
+  si.id,
+  si.id,
+  'default',
+  'Default IP address role'
+from
+  service_instance si
+  ;
+
+-- Air Shopping
+call create_nodes('air-shopping-int', 2, 'airshop', 'int', '3.15.0', 1);
+call create_nodes('air-shopping-acc', 2, 'airshop', 'acc', '3.15.0', 3);
+call create_nodes('air-shopping-perf', 2, 'airshop', 'perf', '3.15.0', 5);
+call create_nodes('air-shopping-prod', 4, 'airshop', 'prod', '3.14.1', 7);
+call create_nodes('air-shopping-dr', 4, 'airshop', 'dr', '3.14.1', 11);
+
+-- Air Booking
+call create_nodes('air-booking-int', 2, 'airbook', 'int', '6.0.2', 15);
+call create_nodes('air-booking-acc', 2, 'airbook', 'acc', '6.0.2', 17);
+call create_nodes('air-booking-perf', 2, 'airbook', 'perf', '6.0.2', 19);
+call create_nodes('air-booking-prod', 4, 'airbook', 'prod', '6.0.1', 21);
+call create_nodes('air-booking-dr', 4, 'airbook', 'dr', '6.0.1', 25);
+
+-- Car Shopping
+call create_nodes('car-shopping-int', 2, 'carshop', 'int', '1.21.0', 29);
+call create_nodes('car-shopping-acc', 2, 'carshop', 'acc', '1.21.0', 31);
+call create_nodes('car-shopping-perf', 2, 'carshop', 'perf', '1.21.0', 33);
+call create_nodes('car-shopping-prod', 4, 'carshop', 'prod', '1.20.3', 35);
+call create_nodes('car-shopping-dr', 4, 'carshop', 'dr', '1.20.3', 39);
+
+-- Car Booking
+call create_nodes('car-booking-int', 2, 'carbook', 'int', '1.18.0', 43);
+call create_nodes('car-booking-acc', 2, 'carbook', 'acc', '1.18.0', 45);
+call create_nodes('car-booking-perf', 2, 'carbook', 'perf', '1.18.0', 47);
+call create_nodes('car-booking-prod', 4, 'carbook', 'prod', '1.17.3', 49);
+call create_nodes('car-booking-dr', 4, 'carbook', 'dr', '1.17.3', 53);
+
+-- Cruise Shopping
+call create_nodes('cruise-shopping-int', 2, 'cruiseshop', 'int', '2.1.0', 57);
+call create_nodes('cruise-shopping-acc', 2, 'cruiseshop', 'acc', '2.1.0', 59);
+call create_nodes('cruise-shopping-perf', 2, 'cruiseshop', 'perf', '2.1.0', 61);
+call create_nodes('cruise-shopping-prod', 4, 'cruiseshop', 'prod', '2.0.0', 63);
+call create_nodes('cruise-shopping-dr', 4, 'cruiseshop', 'dr', '2.0.3', 67);
+
+-- Cruise Booking
+call create_nodes('cruise-booking-int', 2, 'cruisebook', 'int', '1.1.0', 57);
+call create_nodes('cruise-booking-acc', 2, 'cruisebook', 'acc', '1.1.0', 59);
+call create_nodes('cruise-booking-perf', 2, 'cruisebook', 'perf', '1.1.0', 61);
+call create_nodes('cruise-booking-prod', 4, 'cruisebook', 'prod', '1.0.7', 63);
+call create_nodes('cruise-booking-dr', 4, 'cruisebook', 'dr', '1.0.7', 67);
+
+-- Hotel Shopping
+call create_nodes('hotel-shopping-int', 4, 'hotelshop', 'int', '4.0.0', 10000);
+call create_nodes('hotel-shopping-acc', 4, 'hotelshop', 'acc', '4.0.0', 10020);
+call create_nodes('hotel-shopping-perf', 4, 'hotelshop', 'perf', '4.0.0', 10040);
+call create_nodes('hotel-shopping-prod', 300, 'hotelshop', 'prod', '3.3.0', 10200);
+call create_nodes('hotel-shopping-dr', 300, 'hotelshop', 'dr', '3.3.0', 10600);
+
+-- Hotel Booking
+call create_nodes('hotel-booking-int', 2, 'hotelbook', 'int', '3.1.2', 11000);
+call create_nodes('hotel-booking-acc', 2, 'hotelbook', 'acc', '3.1.2', 11020);
+call create_nodes('hotel-booking-perf', 2, 'hotelbook', 'perf', '3.1.2', 11040);
+call create_nodes('hotel-booking-prod', 30, 'hotelbook', 'prod', '3.1.1', 11200);
+call create_nodes('hotel-booking-dr', 30, 'hotelbook', 'dr', '3.1.1', 11600);
+
+-- Autogenerate NIPs
+insert into
+  node_ip_address (node_id, ip_address_role_id, ip_address, rotation_status_id)
+select
+  n.id,
+  ipr.id,
+  m.ip_address,
+  1
+from
+  node n,
+  service_instance si,
+  ip_address_role ipr,
+  machine m
+where
+  n.service_instance_id = si.id
+  and ipr.service_instance_id = si.id
+  and n.machine_id = m.id
+  ;
+
+-- Autogenerate endpoints
 insert into
   endpoint (service_instance_port_id, node_ip_address_id, rotation_status_id)
 select
