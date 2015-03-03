@@ -1,0 +1,34 @@
+<!-- http://stackoverflow.com/questions/21362712/html-file-as-content-in-bootstrap-popover-in-angularjs-directive -->
+<script id="rotationDetailsPopover.html" type="text/ng-template">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>IP Address</th>
+				<th>Port</th>
+				<th>Rotation</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="endpoint in ipAddress.endpoints">
+				<td>{{ipAddress.ipAddress}}</td>
+				<td>{{endpoint.port.number}}</td>
+				<td><span class="label label-{{endpoint.rotationStatus.statusType.key}}">{{endpoint.rotationStatus.name}}</span></td>
+			</tr>
+		</tbody>
+	</table>
+</script>
+
+<section>
+	<header>
+		<h1>
+			Nodes
+			<span ng-show="nodeStatsStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span>
+			<span ng-show="nodeStatsStatus == 'loaded'"><small>({{nodeStats.numNodes}})</small></span>
+			<span ng-show="nodeStatsStatus == 'error'">
+				<small><span class="label label-danger"><i class="fa fa-times-circle"></i> Couldn't get node stats</span></small>
+			</span>
+		</h1>
+	</header>
+	<ng-include src="'view/items/service-instance/details/node-stats.html'"></ng-include>
+	<ng-include src="'view/items/service-instance/details/node-list.html'"></ng-include>
+</section>

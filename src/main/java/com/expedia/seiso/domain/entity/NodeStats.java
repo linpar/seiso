@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.repo.custom;
+package com.expedia.seiso.domain.entity;
 
-import com.expedia.seiso.domain.entity.NodeStats;
-import com.expedia.seiso.domain.entity.ServiceInstance;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * @author Willie Wheeler
  */
-public interface ServiceInstanceRepoCustom extends SearchableRepository<ServiceInstance> {
-	
-	/**
-	 * @param key
-	 *            service instance key
-	 * @return service instance node stats
-	 */
-	NodeStats getServiceInstanceNodeStats(String key);
+@Data
+@AllArgsConstructor
+public class NodeStats {
+	private Integer numNodes;
+	private Integer numHealthy;
+	private Integer numEnabled;
+	private Integer numHealthyGivenEnabled;
 }

@@ -9,7 +9,7 @@ var homeController = function() {
 	var controller = function($scope, $http) {
 		$scope.model.page.title = 'Home';
 		serviceGroupsMap = {};
-		$http.get('v1/service-groups').success(function(data) {
+		$http.get('/v1/service-groups').success(function(data) {
 			$scope.serviceGroups = data;
 			$scope.serviceGroups.push({ "key" : "_ungrouped", "name" : "Ungrouped" });
 			for (i = 0; i < data.length; i++) {
@@ -21,7 +21,7 @@ var homeController = function() {
 		
 		// FIXME If there are more than 300 services, we won't catch them all. We need a JS client for getting the
 		// full list from the paging API. (The API will continue to page.) [WLW]
-		$http.get('v1/services?page=0&size=300&sort=name').success(function(data) {
+		$http.get('/v1/services?page=0&size=300&sort=name').success(function(data) {
 			services = data;
 			for (i = 0; i < services.length; i++) {
 				service = services[i];
@@ -138,34 +138,10 @@ var pagingController = function(title, path, sortKey) {
 var dataCenterListController = function() {
 	var controller = function($scope, $http, generalRegions) {
 		$scope.model.page.title = 'Data Centers';
+		
 		var successHandler = function(data) {
 			var srcProviders = data;
-			var destProviders = {};
-			for (i = 0; i < srcProviders.length; i++) {
-			
-				// Initialize provider data structure.
-				var srcProvider = srcProviders[i];
-				var providerKey = srcProvider.key;
-				destProviders[providerKey] = {
-					'name' : srcProvider.name,
-					'specialRegions' : {}
-				};
-				var destProvider = destProviders[providerKey];
-				for (j = 0; j < generalRegions.length; j++) {
-					var generalRegion = generalRegions[j];
-					destProvider.specialRegions[generalRegion.key] = [];
-				};
-				
-				// Distribute the provider's special regions into into general regional buckets.
-				destProvider = destProviders[providerKey];
-				var srcSpecialRegions = srcProvider.regions;
-				for (j = 0; j < srcSpecialRegions.length; j++) {
-					var srcSpecialRegion = srcSpecialRegions[j];
-					var generalRegionKey = srcSpecialRegion.regionKey;
-					destProvider.specialRegions[generalRegionKey].push(srcSpecialRegion);
-				}
-			}
-			
+			var destProviders = organizeDataCenters(srcProviders, generalRegions);
 			$scope.generalRegions = generalRegions;
 			$scope.infrastructureProviders = destProviders;
 		}
@@ -313,126 +289,83 @@ var serviceDetailsController = function() {
 
 var serviceInstanceDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
-		$scope.nodeStatsStatus = 'loading';
-		$scope.nodeListStatus = 'loading';
-		
-		var serviceInstanceRequest = {
-			method: 'GET',
-			url: '/v2/service-instances/' + $routeParams.key,
-			headers: { 'Accept': 'application/hal+json' }
-		}
-		var nodeStatsRequest = {
-			method: 'GET',
-			url: '/v2/service-instances/' + $routeParams.key + '/node-stats',
-			headers: { 'Accept': 'application/hal+json' }
-		}
-		
-		var serviceInstanceSuccessHandler = function(data) {
-			$scope.model.page.title = data.key;
-			$scope.serviceInstance = data;
-			$scope.dataCenter = $scope.serviceInstance._embedded.dataCenter;
-			$scope.environment = $scope.serviceInstance._embedded.environment;
-			$scope.ipAddressRoles = $scope.serviceInstance._embedded.ipAddressRoles;
-			$scope.loadBalancer = $scope.serviceInstance._embedded.loadBalancer;
-			$scope.ports = $scope.serviceInstance._embedded.ports;
-			$scope.service = $scope.serviceInstance._embedded.service;
-			$scope.owner = $scope.service._embedded.owner;
-			$scope.dashboards = $scope.serviceInstance._embedded.dashboards;
-			$scope.checks = $scope.serviceInstance._embedded.seyrenChecks;
-			$scope.nodesCurrentPage = 1;
-			
-			var nodesRequest = {
+		(function getServiceInstance() {
+			var serviceInstanceRequest = {
 				method: 'GET',
-				url: '/v2/nodes/search/find-by-service-instance?key=' + $routeParams.key + '&view=service-instance-nodes',
+				url: '/v2/service-instances/' + $routeParams.key,
 				headers: { 'Accept': 'application/hal+json' }
 			}
-			
-			var nodesSuccessHandler = function(data) {
-				$scope.metadata = data.metadata;
-				$scope.nodes = data._embedded.items;
-								
-				// Build the node table, which is really a list of IP addresses grouped by node. [WLW]
-				var nodeRows = [];
-				for (i = 0; i < $scope.nodes.length; i++) {
-					var node = $scope.nodes[i];
-					
-					if (node._embedded.healthStatus == null) {
-						node._embedded.healthStatus = {
-							"key" : "unknown",
-							"name" : "Unknown",
-							"statusType" : { "key" : "warning" }
-						}
-					}
-					
-					var ipAddresses = node._embedded.ipAddresses;
-					var nodeEnabled = true;
-					
-					if (ipAddresses.length == 0) {
-						// Handle special case where there aren't any IP addresses.
-						var nodeRow = {
-							"name" : node.name,
-							"displayName" : node.name,
-							"version" : node.version,
-							"healthStatus" : node._embedded.healthStatus,
-							"showActions" : true
-						}
-						nodeRows.push(nodeRow);
-						nodeEnabled = false;
-					} else {
-						// Handle case where there are IP addresses.
-						for (j = 0; j < ipAddresses.length; j++) {
-							var ipAddress = ipAddresses[j];
-							var nodeRow = {
-								"name" : node.name,
-								"ipAddress" : ipAddress.ipAddress,
-								"ipAddressRole" : ipAddress._embedded.ipAddressRole.name,
-								"endpoints" : ipAddress._embedded.endpoints,
-								"aggregateRotationStatus" : ipAddress._embedded.aggregateRotationStatus
-							};
-							if (j == 0) {
-								// Distinguish name from display name. We want to filter by name, but display by
-								// displayName.
-								nodeRow.displayName = node.name;
-								nodeRow.version = node.version,
-								nodeRow.healthStatus = node._embedded.healthStatus;
-								nodeRow.showActions = true;
-							}
-							nodeRows.push(nodeRow);
-							
-							if (ipAddress._embedded.aggregateRotationStatus.key != "enabled") {
-								nodeEnabled = false;
-							}
-						}
-					}
-				}
+			var serviceInstanceSuccessHandler = function(data) {
+				var serviceInstance = data;
+				var siEmbedded = serviceInstance._embedded;
+				var service = siEmbedded.service;
 				
-				$scope.nodeRows = nodeRows;
-				$scope.nodeListStatus = 'loaded';
+				$scope.serviceInstance = serviceInstance;
+				$scope.model.page.title = serviceInstance.key;
+				$scope.dataCenter = siEmbedded.dataCenter;
+				$scope.environment = siEmbedded.environment;
+				$scope.ipAddressRoles = siEmbedded.ipAddressRoles;
+				$scope.loadBalancer = siEmbedded.loadBalancer;
+				$scope.ports = siEmbedded.ports;
+				$scope.service = service;
+				$scope.owner = service._embedded.owner;
+				$scope.dashboards = siEmbedded.dashboards;
+				$scope.checks = siEmbedded.seyrenChecks;
 			}
-			
-			// Load nodes AFTER loading the service instance since we need service instance data to build endpoints.
-			// FIXME Need paging here to support large node sets.
-			$http(nodesRequest)
-					.success(nodesSuccessHandler)
-					.error(function() { $scope.nodeListStatus = 'error'; });
+			// TODO Do better error handling, like the examples below.
+			$http(serviceInstanceRequest)
+					.success(serviceInstanceSuccessHandler)
+					.error(function() { alert('Error while getting service instance.'); });
+		})();
+		
+		(function getNodeStats() {
+			$scope.nodeStatsStatus = 'loading';
+			var nodeStatsRequest = {
+				method: 'GET',
+				url: '/v2/service-instances/' + $routeParams.key + '/node-stats',
+				headers: { 'Accept': 'application/hal+json' }
+			}
+			var nodeStatsSuccessHandler = function(data) {
+				var nodeStats = data;
+				enrichNodeStats(nodeStats);
+				$scope.nodeStats = nodeStats;
+				$scope.nodeStatsStatus = 'loaded';
+			}
+			$http(nodeStatsRequest)
+					.success(nodeStatsSuccessHandler)
+					.error(function() { $scope.nodeStatsStatus = 'error' });
+		})();
+		
+		$scope.model.nodes = {
+			currentPage: 1,
+			pageSelected: function() {
+				(function getNodes(pageNumber) {
+					$scope.nodeListStatus = 'loading';
+					var apiPageNumber = pageNumber - 1;
+					
+					var nodesRequest = {
+						method: 'GET',
+						url: '/v2/nodes/search/find-by-service-instance?key=' + $routeParams.key + '&view=service-instance-nodes&page=' + apiPageNumber,
+						headers: { 'Accept': 'application/hal+json' }
+					}
+					
+					var nodesSuccessHandler = function(data) {
+						var nodePage = data;
+						$scope.metadata = nodePage.metadata;
+						$scope.nodeRows = nodePageToNodeRows(nodePage);
+						$scope.nodeListStatus = 'loaded';
+					}
+					
+					// Load nodes AFTER loading the service instance since we need service instance data to build endpoints.
+					// FIXME Need paging here to support large node sets.
+					$http(nodesRequest)
+							.success(nodesSuccessHandler)
+							.error(function() { $scope.nodeListStatus = 'error'; });
+				})($scope.model.nodes.currentPage);
+			}
 		}
 		
-		var nodeStatsSuccessHandler = function(data) {
-			var nodeStats = data;
-			nodeStats.percentHealthy = 100 * (nodeStats.numHealthy / nodeStats.numNodes);
-			nodeStats.percentEnabled = 100 * (nodeStats.numEnabled / nodeStats.numNodes);
-			nodeStats.percentHealthyGivenEnabled = 100 * (nodeStats.numHealthyGivenEnabled / nodeStats.numEnabled);
-			
-			$scope.nodeStats = nodeStats;
-			$scope.nodeStatsStatus = 'loaded';
-		}
-		
-		$http(serviceInstanceRequest)
-				.success(serviceInstanceSuccessHandler)
-				.error(function() { alert('Error while getting service instance.'); });
-		$http(nodeStatsRequest)
-				.success(nodeStatsSuccessHandler)
-				.error(function() { $scope.nodeStatsStatus = 'error' });
+		$scope.model.nodes.pageSelected();
 	}
 	
 	return [ '$scope', '$http', '$routeParams', controller ];
