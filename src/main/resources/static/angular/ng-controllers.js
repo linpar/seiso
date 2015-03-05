@@ -184,17 +184,52 @@ var environmentListController = function() {
 };
 
 var environmentDetailsController = function() {
-	var controller = function($scope, $http, $routeParams) {
-		$http.get('/v1/environments/' + $routeParams.key)
-				.success(function(data) {
-					$scope.model.page.title = data.name;
-					$scope.environment = data;
-					// FIXME Move to separate search per https://github.com/ExpediaDotCom/seiso/issues/75
-					$scope.serviceInstances = data.serviceInstances
-				})
-				.error(function() { alert('Error while getting environment.'); });
+	var controller = function($scope, $http, paginationConfig, $routeParams) {
+		(function getEnvironment() {
+			var envRequest = {
+				method: 'GET',
+				url: '/v2/environments/' + $routeParams.key,
+				headers: { 'Accept': 'application/hal+json' }
+			}
+			var envSuccessHandler = function(data) {
+				var env = data;
+				$scope.environment = env;
+				$scope.model.page.title = env.name;
+			}
+			$http(envRequest)
+					.success(envSuccessHandler)
+					.error(function() { alert('Error while getting environment.'); });
+		})();
+		
+		$scope.model.serviceInstances = {
+			currentPage: 1,
+			pageSelected: function() {
+				(function getServiceInstances(pageNumber) {
+					$scope.serviceInstanceListStatus = 'loading';
+					var apiPageNumber = pageNumber - 1;
+					var siRequest = {
+							method: 'GET',
+							url: '/v2/service-instances/search/find-by-environment?key=' + $routeParams.key
+							    + '&page=' + apiPageNumber + '&size=' + paginationConfig.itemsPerPage + '&sort=key',
+							headers: { 'Accept': 'application/hal+json' }
+					}
+					var siSuccessHandler = function(data) {
+						var siPage = data;
+						$scope.serviceInstances = siPage._embedded.items;
+						$scope.serviceInstanceMetadata = siPage.metadata;
+						$scope.serviceInstanceListStatus = 'loaded';
+					}
+					$http(siRequest)
+					.success(siSuccessHandler)
+					.error(function() { $scope.serviceInstanceListStatus = 'error'; });
+				})();
+			}
+		}
+		
+		$scope.model.serviceInstances.pageSelected();
 	}
-	return [ '$scope', '$http', '$routeParams', controller ];
+	
+	return [ '$scope', '$http', 'paginationConfig', '$routeParams', controller ];
 }
 
 var loadBalancerDetailsController = function() {
@@ -288,7 +323,7 @@ var serviceDetailsController = function() {
 }
 
 var serviceInstanceDetailsController = function() {
-	var controller = function($scope, $http, $routeParams) {
+	var controller = function($scope, $http, paginationConfig, $routeParams) {
 		(function getServiceInstance() {
 			var serviceInstanceRequest = {
 				method: 'GET',
@@ -342,22 +377,17 @@ var serviceInstanceDetailsController = function() {
 				(function getNodes(pageNumber) {
 					$scope.nodeListStatus = 'loading';
 					var apiPageNumber = pageNumber - 1;
-					
 					var nodesRequest = {
 						method: 'GET',
-						url: '/v2/nodes/search/find-by-service-instance?key=' + $routeParams.key + '&view=service-instance-nodes&page=' + apiPageNumber,
+						url: '/v2/nodes/search/find-by-service-instance?key=' + $routeParams.key + '&view=service-instance-nodes&page=' + apiPageNumber + '&size=' + paginationConfig.itemsPerPage + '&sort=name',
 						headers: { 'Accept': 'application/hal+json' }
 					}
-					
 					var nodesSuccessHandler = function(data) {
 						var nodePage = data;
 						$scope.metadata = nodePage.metadata;
 						$scope.nodeRows = nodePageToNodeRows(nodePage);
 						$scope.nodeListStatus = 'loaded';
 					}
-					
-					// Load nodes AFTER loading the service instance since we need service instance data to build endpoints.
-					// FIXME Need paging here to support large node sets.
 					$http(nodesRequest)
 							.success(nodesSuccessHandler)
 							.error(function() { $scope.nodeListStatus = 'error'; });
@@ -368,7 +398,7 @@ var serviceInstanceDetailsController = function() {
 		$scope.model.nodes.pageSelected();
 	}
 	
-	return [ '$scope', '$http', '$routeParams', controller ];
+	return [ '$scope', '$http', 'paginationConfig', '$routeParams', controller ];
 }
 
 var statusListController = function() {

@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -36,7 +37,10 @@ public interface ServiceInstanceRepo
 
 	@FindByKey
 	ServiceInstance findByKey(@Param("key") String key);
-
+	
+	@RestResource(path = "find-by-environment")
+	Page<ServiceInstance> findByEnvironmentKey(@Param("key") String key, Pageable pageable);
+	
 	@RestResource(path = "find-by-environment-and-eos-managed")
 	List<ServiceInstance> findByEnvironmentKeyAndEosManaged(
 			@Param("env") String environmentKey,

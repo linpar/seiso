@@ -58,4 +58,25 @@ public class PageMetadata {
 		long base = totalItems / pageSize;
 		return (totalItems % pageSize == 0 ? base : base + 1);
 	}
+	
+	public long getPageLowIndex() {
+		long lowIndex = pageNumber * pageSize;
+		return (lowIndex < totalItems ? lowIndex : -1);
+	}
+	
+	public long getPageHighIndex() {
+		long totalPages = getTotalPages();
+		long lastPage = totalPages - 1;
+		if (pageNumber < 0) {
+			// This shouldn't happen, but just being paranoid.
+			throw new IllegalStateException("pageNumber must be >= 0");
+		} else if (pageNumber < lastPage) {
+			return (pageNumber + 1) * pageSize - 1;
+		} else if (pageNumber == lastPage) {
+			long itemsOnLastPage = totalItems - lastPage * pageSize;
+			return (pageNumber * pageSize) + (itemsOnLastPage - 1);
+		} else {
+			return -1;
+		}
+	}
 }

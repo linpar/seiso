@@ -36,12 +36,12 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoFilters
 				.otherwise({ redirectTo : '/' });
 		
 		// Pagination configuration. Is this the right place to do this?
-		paginationConfig.itemsPerPage = 100;
+		paginationConfig.itemsPerPage = 50;
 		paginationConfig.maxSize = 7;
 		paginationConfig.boundaryLinks = true;
 		// FIXME Want to use &laquo;, &lsaquo;, etc., but Angular is escaping the &. [WLW] 
 		paginationConfig.firstText = '<<';
-		paginationConfig.previousText = '<';
+		paginationConfig.previousText = "<";
 		paginationConfig.nextText = '>';
 		paginationConfig.lastText = '>>';
 	} ])

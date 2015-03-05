@@ -22,10 +22,11 @@
 	<header>
 		<h1>
 			Nodes
-			<span ng-show="nodeStatsStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span>
-			<span ng-show="nodeStatsStatus == 'loaded'"><small>({{nodeStats.numNodes}})</small></span>
-			<span ng-show="nodeStatsStatus == 'error'">
-				<small><span class="label label-danger"><i class="fa fa-times-circle"></i> Couldn't get node stats</span></small>
+			<span ng-show="nodeListStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span>
+			<span ng-show="nodeListStatus == 'loaded'">
+				<!-- TODO Scope metadata to the node list, since we could conceivably have other pages here as well. -->
+				<span ng-if="metadata.totalItems == 0"><small>(0)</small></span>
+				<span ng-if="metadata.totalItems &gt; 0"><small>({{metadata.pageLowIndex + 1}}-{{metadata.pageHighIndex + 1}} of {{metadata.totalItems}})</small></span>
 			</span>
 		</h1>
 	</header>
