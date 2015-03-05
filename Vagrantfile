@@ -25,16 +25,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.omnibus.chef_version = :latest
   
   config.vm.define "db" do |db|
-    db.vm.network "private_network", ip: settings["db"]["ip_address"], auto_config: true
-    
-    # Would be nice to make this optional. In my case I don't want to use port forwarding (I am treating the VMs as
-    # separate machines on the network) and I'd prefer not to forward ports needlessly. [WLW]
-    
-    # FIXME Commenting this out for now because it seems to prevent private networking from working.
-    # Happy to keep it but we need to make it where the user has a choice. Haven't looked deeply at this so it's
-    # possible that I'm mistaken about this. [WLW]
-#    db.vm.network "forwarded_port", guest: settings["db"]["port"]["guest"], host: settings["db"]["port"]["host"]
-    
+    db.vm.network "forwarded_port", guest: settings["db"]["port"]["guest"], host: settings["db"]["port"]["host"]
     db.vm.synced_folder settings["db"]["artifacts_dir"]["host"], settings["db"]["artifacts_dir"]["guest"]
     db.vm.provision "chef_solo" do |chef|
       configure_chef(chef, "seiso_db")
@@ -47,7 +38,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   
   config.vm.define "bus" do |bus|
-    bus.vm.network "private_network", ip: settings["bus"]["ip_address"], auto_config: true
+    bus.vm.network "forwarded_port", guest: settings["bus"]["port"]["guest"], host: settings["bus"]["port"]["host"]
     bus.vm.provision "chef_solo" do |chef|
       configure_chef(chef, "seiso_bus")
     end

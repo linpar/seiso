@@ -4,8 +4,7 @@ spring:
     show-banner: true
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    # Note: Change the port if using Vagrant setup with non-default 'host' port-forwarding
-    url: jdbc:mysql://localhost:3306/seiso?autoReconnect=true
+    url: jdbc:mysql://127.0.0.1:23141/seiso?autoReconnect=true
     username: root
     password: 
     # TODO Add other data source settings here
@@ -17,8 +16,8 @@ spring:
     hibernate:
       naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
   rabbitmq:
-    host: 192.168.33.10
-    port: 5672
+    host: 127.0.0.1
+    port: 23142
     username: seiso
     password: seiso
 
