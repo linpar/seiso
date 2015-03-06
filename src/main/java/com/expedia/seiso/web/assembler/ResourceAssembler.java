@@ -186,10 +186,16 @@ public class ResourceAssembler {
 	 * @param apiVersion
 	 * @param item
 	 * @param proj
-	 * @param includeCuries
+	 * @param topLevel
+	 *            Top-level resource? (Only top-level resources have links beyond the self-link.)
 	 * @return
 	 */
-	public Resource toResource(@NonNull ApiVersion apiVersion, Item item, ProjectionNode proj, boolean includeCuries) {
+	public Resource toResource(
+			@NonNull ApiVersion apiVersion,
+			Item item,
+			ProjectionNode proj,
+			boolean topLevel) {
+		
 		if (item == null) { return null; }
 		
 		val itemClass = item.getClass();
@@ -197,13 +203,18 @@ public class ResourceAssembler {
 		val pEntity = repositories.getPersistentEntity(item.getClass());
 		val itemWrapper = BeanWrapper.create(item, null);
 		
+		// All resources get a self link, whether top-level or not.
 		resource.addLink(itemLinks(apiVersion).itemLink(item));
-		resource.addLink(itemLinks(apiVersion).repoLink(Relations.UP, itemClass));
-		addSpecialLinks(apiVersion, item, resource);
+		
+		// Only top-level resources get non-self links.
+		if (topLevel) {
+			resource.addLink(itemLinks(apiVersion).repoLink(Relations.UP, itemClass));
+			addSpecialLinks(apiVersion, item, resource);
+		}
 		
 		val propHandler = new ItemPropertyHandler(itemWrapper, resource.getProperties());
 		val assocHandler =
-				new ItemAssociationHandler(this, itemLinks(apiVersion), apiVersion, proj, itemWrapper, resource);
+				new ItemAssociationHandler(this, itemLinks(apiVersion), apiVersion, proj, itemWrapper, resource, topLevel);
 		
 		pEntity.doWithProperties(propHandler);
 		pEntity.doWithAssociations(assocHandler);

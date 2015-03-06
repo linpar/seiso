@@ -17,8 +17,7 @@ package com.expedia.seiso.web.assembler;
 
 import java.util.List;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
@@ -36,15 +35,16 @@ import com.expedia.seiso.web.hateoas.link.ItemLinks;
 /**
  * @author Willie Wheeler
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 @XSlf4j
 public class ItemAssociationHandler implements SimpleAssociationHandler {
-	@NonNull private final ResourceAssembler assembler;
-	@NonNull private final ItemLinks itemLinks;
-	@NonNull private final ApiVersion apiVersion;
-	@NonNull private final ProjectionNode projection;
-	@NonNull private final BeanWrapper<? extends Item> wrapper;
-	@NonNull private final Resource resource;
+	private final ResourceAssembler assembler;
+	private final ItemLinks itemLinks;
+	private final ApiVersion apiVersion;
+	private final ProjectionNode projection;
+	private final BeanWrapper<? extends Item> wrapper;
+	private final Resource resource;
+	private final boolean topLevel;
 
 	@Override
 	public void doWithAssociation(Association<? extends PersistentProperty<?>> assoc) {
@@ -57,9 +57,11 @@ public class ItemAssociationHandler implements SimpleAssociationHandler {
 		val child = projection.getChild(propName);
 		
 		// Link
-		val restResource = prop.findAnnotation(RestResource.class);
-		val path = (restResource == null ? propName : restResource.path());
-		resource.addLink(itemLinks.itemPropertyLink(item, path));
+		if (topLevel) {
+			val restResource = prop.findAnnotation(RestResource.class);
+			val path = (restResource == null ? propName : restResource.path());
+			resource.addLink(itemLinks.itemPropertyLink(item, path));
+		}
 		
 		// Property
 		if (child != null) {

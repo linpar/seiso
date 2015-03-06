@@ -110,6 +110,13 @@ public class ItemLinks {
 	// Item links
 	// =================================================================================================================
 	
+	/**
+	 * Returns a self link to the given item.
+	 * 
+	 * @param item
+	 *            item
+	 * @return self link to the item.
+	 */
 	public Link itemLink(@NonNull Item item) {
 		return itemLink(Relations.SELF, item);
 	}
