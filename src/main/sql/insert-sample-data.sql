@@ -28,6 +28,58 @@
 --     App : 10.7.0.0/16
 --     DB  : 10.11.0.0/16
 
+
+-- =====================================================================================================================
+-- Les procédures
+-- =====================================================================================================================
+
+delimiter $$
+drop procedure if exists create_load_balancer $$
+create procedure create_load_balancer(
+  in data_center_key varchar(40),
+  in name varchar(80),
+  in type varchar(80),
+  in ip_address varchar(20),
+  in api_url varchar(250))
+
+begin
+  declare data_center_id smallint unsigned;
+  
+  set data_center_id = (select id from data_center where ukey = data_center_key);
+  
+  insert into load_balancer (data_center_id, name, type, ip_address, api_url) values
+      (data_center_id, name, type, ip_address, api_url);
+end $$
+delimiter ;
+
+-- http://forums.mysql.com/read.php?98,576167,576175#msg-576175
+delimiter $$
+drop procedure if exists create_service_instance $$
+create procedure create_service_instance(
+  in _ukey varchar(40),
+  in _service_key varchar(40),
+  in _environment_key varchar(40),
+  in _data_center_key varchar(40),
+  in _load_balanced tinyint(1) unsigned,
+  in _load_balancer_name varchar(40),
+  in _enable_seyren tinyint(1) unsigned)
+
+begin
+  declare _sid int unsigned;
+  declare _eid int unsigned;
+  declare _dcid int unsigned;
+  declare _lbid int unsigned;
+  
+  set _sid = (select id from service where ukey = _service_key);
+  set _eid = (select id from environment where ukey = _environment_key);
+  set _dcid = (select id from data_center where ukey = _data_center_key);
+  set _lbid = (select id from load_balancer where name = _load_balancer_name);
+  
+  insert into service_instance (ukey, service_id, environment_id, data_center_id, load_balanced, load_balancer_id, enable_seyren) values
+      (_ukey, _sid, _eid, _dcid, _load_balanced, _lbid, _enable_seyren);
+end $$
+delimiter ;
+
 -- Inserts a range of machines.
 delimiter $$
 drop procedure if exists create_machines $$
@@ -107,6 +159,92 @@ begin
   end while;
 end $$
 delimiter ;
+
+delimiter $$
+drop procedure if exists create_dashboard $$
+create procedure create_dashboard(
+  in _ukey varchar(80),
+  in _name varchar(250),
+  in _type varchar(80),
+  in _description varchar(1000),
+  in _ui_uri varchar(255),
+  in _api_uri varchar(255),
+  in _source_key varchar(80))
+
+begin
+  declare _source_id int unsigned;
+  
+  set _source_id = (select id from source where ukey = _source_key);
+  
+  insert into dashboard (ukey, name, type, description, ui_uri, api_uri, source_id) values
+      (_ukey, _name, _type, _description, _ui_uri, _api_uri, _source_id);
+end $$
+delimiter ;
+
+delimiter $$
+drop procedure if exists create_service_instance_dashboard $$
+create procedure create_service_instance_dashboard(
+  in _service_instance_key varchar(40),
+  in _dashboard_key varchar(80))
+
+begin
+  declare _service_instance_id int unsigned;
+  declare _dashboard_id int unsigned;
+  
+  set _service_instance_id = (select id from service_instance where ukey = _service_instance_key);
+  set _dashboard_id = (select id from dashboard where ukey = _dashboard_key);
+  
+  insert into service_instance_dashboard (service_instance_id, dashboard_id) values
+      (_service_instance_id, _dashboard_id);
+end $$
+delimiter ;
+
+delimiter $$
+drop procedure if exists create_seyren_check $$
+create procedure create_seyren_check(
+  in _seyren_id varchar(40),
+  in _name varchar(250),
+  in _description varchar(1000),
+  in _graphite_base_url varchar(250),
+  in _target varchar(1000),
+  in _warn bigint,
+  in _error bigint,
+  in _enabled tinyint unsigned,
+  in _state varchar(20),
+  in _source_key varchar(80))
+
+begin
+  declare _source_id int unsigned;
+  
+  set _source_id = (select id from source where ukey = _source_key);
+  
+  insert into seyren_check (seyren_id, name, description, graphite_base_url, target, warn, error, enabled, state, source_id) values
+      (_seyren_id, _name, _description, _graphite_base_url, _target, _warn, _error, _enabled, _state, _source_id);
+end $$
+delimiter ;
+
+delimiter $$
+drop procedure if exists create_service_instance_seyren_check $$
+create procedure create_service_instance_seyren_check(
+  in _service_instance_key varchar(40),
+  in _seyren_check_key varchar(80))
+
+begin
+  declare _service_instance_id int unsigned;
+  declare _seyren_check_id int unsigned;
+  
+  set _service_instance_id = (select id from service_instance where ukey = _service_instance_key);
+  set _seyren_check_id = (select id from seyren_check where seyren_id = _seyren_check_key);
+  
+  insert into service_instance_seyren_check (service_instance_id, seyren_check_id) values
+      (_service_instance_id, _seyren_check_id);
+end $$
+delimiter ;
+
+
+-- =====================================================================================================================
+-- Les données
+-- =====================================================================================================================
 
 insert into source (id, ukey, base_uri, source_id) values
   (1, 'seiso-data-common', 'https://github.example.com/seiso-data/common', 1)
@@ -193,8 +331,8 @@ insert into data_center (id, ukey, name, region_id) values
 , (10, 'do-us-east-1a', 'DO US East 1a', 11)
   ;
 
--- insert into load_balancer (id, data_center_id, name, type, ip_address, api_uri) values
---   ;
+call create_load_balancer ('aws-us-east-1a', 'aws-elb-001', 'elb', '1.2.3.4', null);
+call create_load_balancer ('aws-us-west-1a', 'aws-elb-002', 'elb', '1.2.3.5', null);
 
 -- TODO Create machines one environment at a time so we can just provide a single IP seed. Easier to manage.
 
@@ -246,6 +384,7 @@ call create_machines(1, 2, 11040, 'hotelbook', 'perf.example.com', 'linux', 7, 1
 call create_machines(1, 30, 11200, 'hotelbook', 'prod.example.com', 'linux', 7, 167838017);
 call create_machines(1, 30, 11600, 'hotelbook', 'dr.example.com', 'linux', 7, 168231233);
 
+-- TODO Use proc
 insert into environment (id, ukey, name, aka, description) values
   (1, 'int', 'Integration', null, 'Automated integration testing')
 , (2, 'acc', 'Acceptance', null, 'Automated user acceptance testing')
@@ -254,6 +393,7 @@ insert into environment (id, ukey, name, aka, description) values
 , (5, 'dr', 'Disaster Recovery', null, 'Disaster recovery')
   ;
 
+-- TODO Use proc
 insert into service_group (id, ukey, name, description) values
   (1, 'air', 'Air Services', 'Air shopping, booking and support services.')
 , (2, 'cars', 'Car Services', 'Rental car services.')
@@ -264,6 +404,7 @@ insert into service_group (id, ukey, name, description) values
 , (7, 'platform', 'Platform', 'Travel platform services.')
   ;
 
+-- TODO Use proc
 insert into service (id, ukey, name, group_id, type_id, description, owner_id, scm_repository, platform) values
   (1, 'air-shopping', 'Air Shopping Service', 1, 3, 'UI + REST API for air shopping.', 5, 'https://github.example.com/air-shopping', 'Java')
 , (2, 'air-booking', 'Air Booking Service', 1, 3, 'UI + REST API for air booking.', 5, 'https://github.example.com/air-booking', 'Java')
@@ -275,55 +416,53 @@ insert into service (id, ukey, name, group_id, type_id, description, owner_id, s
 , (8, 'hotel-booking', 'Hotel Booking Service', 5, 3, 'UI + REST API for hotel booking.', 1, 'http://github.example.com/hotel-booking', 'Java')
   ;
 
-insert into service_instance (id, ukey, service_id, environment_id, data_center_id, load_balanced, enable_seyren) values
-  (1, 'air-shopping-int', 1, 1, 3, true, false)
-, (2, 'air-shopping-acc', 1, 2, 3, true, false)
-, (3, 'air-shopping-perf', 1, 3, 3, true, false)
-, (4, 'air-shopping-prod', 1, 4, 3, true, true)
-, (5, 'air-shopping-dr', 1, 5, 7, true, false)
- 
-, (6, 'air-booking-int', 2, 1, 3, true, false)
-, (7, 'air-booking-acc', 2, 2, 3, true, false)
-, (8, 'air-booking-perf', 2, 3, 3, true, false)
-, (9, 'air-booking-prod', 2, 4, 3, true, false)
-, (10, 'air-booking-dr', 2, 5, 7, true, false)
- 
-, (11, 'car-shopping-int', 3, 1, 3, true, false)
-, (12, 'car-shopping-acc', 3, 2, 3, true, false)
-, (13, 'car-shopping-perf', 3, 3, 3, true, false)
-, (14, 'car-shopping-prod', 3, 4, 3, true, false)
-, (15, 'car-shopping-dr', 3, 5, 7, true, false)
- 
-, (16, 'car-booking-int', 4, 1, 3, true, false)
-, (17, 'car-booking-acc', 4, 2, 3, true, false)
-, (18, 'car-booking-perf', 4, 3, 3, true, false)
-, (19, 'car-booking-prod', 4, 4, 3, true, false)
-, (20, 'car-booking-dr', 4, 5, 7, true, false)
- 
-, (21, 'cruise-shopping-int', 5, 1, 10, true, false)
-, (22, 'cruise-shopping-acc', 5, 2, 10, true, false)
-, (23, 'cruise-shopping-perf', 5, 3, 10, true, false)
-, (24, 'cruise-shopping-prod', 5, 4, 1, true, false)
-, (25, 'cruise-shopping-dr', 5, 5, 2, true, false)
- 
-, (26, 'cruise-booking-int', 6, 1, 10, true, false)
-, (27, 'cruise-booking-acc', 6, 2, 10, true, false)
-, (28, 'cruise-booking-perf', 6, 3, 10, true, false)
-, (29, 'cruise-booking-prod', 6, 4, 1, true, false)
-, (30, 'cruise-booking-dr', 6, 5, 2, true, false)
- 
-, (31, 'hotel-shopping-int', 7, 1, 3, true, false)
-, (32, 'hotel-shopping-acc', 7, 2, 3, true, false)
-, (33, 'hotel-shopping-perf', 7, 3, 3, true, false)
-, (34, 'hotel-shopping-prod', 7, 4, 3, true, false)
-, (35, 'hotel-shopping-dr', 7, 5, 7, true, false)
- 
-, (36, 'hotel-booking-int', 8, 1, 3, true, false)
-, (37, 'hotel-booking-acc', 8, 2, 3, true, false)
-, (38, 'hotel-booking-perf', 8, 3, 3, true, false)
-, (39, 'hotel-booking-prod', 8, 4, 3, true, false)
-, (40, 'hotel-booking-dr', 8, 5, 7, true, false)
-  ;
+call create_service_instance('air-shopping-int', 'air-shopping', 'int', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('air-shopping-acc', 'air-shopping', 'acc', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('air-shopping-perf', 'air-shopping', 'perf', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('air-shopping-prod', 'air-shopping', 'prod', 'aws-us-east-1a', true, 'aws-elb-001', true); 
+call create_service_instance('air-shopping-dr', 'air-shopping', 'dr', 'aws-us-west-1a', true, 'aws-elb-002', false); 
+
+call create_service_instance('air-booking-int', 'air-booking', 'int', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('air-booking-acc', 'air-booking', 'acc', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('air-booking-perf', 'air-booking', 'perf', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('air-booking-prod', 'air-booking', 'prod', 'aws-us-east-1a', true, 'aws-elb-001', true); 
+call create_service_instance('air-booking-dr', 'air-booking', 'dr', 'aws-us-west-1a', true, 'aws-elb-002', false); 
+
+call create_service_instance('car-shopping-int', 'car-shopping', 'int', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('car-shopping-acc', 'car-shopping', 'acc', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('car-shopping-perf', 'car-shopping', 'perf', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('car-shopping-prod', 'car-shopping', 'prod', 'aws-us-east-1a', true, 'aws-elb-001', false); 
+call create_service_instance('car-shopping-dr', 'car-shopping', 'dr', 'aws-us-west-1a', true, 'aws-elb-002', false); 
+
+call create_service_instance('car-booking-int', 'car-booking', 'int', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('car-booking-acc', 'car-booking', 'acc', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('car-booking-perf', 'car-booking', 'perf', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('car-booking-prod', 'car-booking', 'prod', 'aws-us-east-1a', true, 'aws-elb-001', false); 
+call create_service_instance('car-booking-dr', 'car-booking', 'dr', 'aws-us-west-1a', true, 'aws-elb-002', false); 
+
+call create_service_instance('cruise-shopping-int', 'cruise-shopping', 'int', 'do-us-east-1a', true, null, false); 
+call create_service_instance('cruise-shopping-acc', 'cruise-shopping', 'acc', 'do-us-east-1a', true, null, false); 
+call create_service_instance('cruise-shopping-perf', 'cruise-shopping', 'perf', 'do-us-east-1a', true, null, false); 
+call create_service_instance('cruise-shopping-prod', 'cruise-shopping', 'prod', 'internal-us-east-1a', true, null, false); 
+call create_service_instance('cruise-shopping-dr', 'cruise-shopping', 'dr', 'internal-us-west-1a', true, null, false); 
+
+call create_service_instance('cruise-booking-int', 'cruise-booking', 'int', 'do-us-east-1a', true, null, false); 
+call create_service_instance('cruise-booking-acc', 'cruise-booking', 'acc', 'do-us-east-1a', true, null, false); 
+call create_service_instance('cruise-booking-perf', 'cruise-booking', 'perf', 'do-us-east-1a', true, null, false); 
+call create_service_instance('cruise-booking-prod', 'cruise-booking', 'prod', 'internal-us-east-1a', true, null, false); 
+call create_service_instance('cruise-booking-dr', 'cruise-booking', 'dr', 'internal-us-west-1a', true, null, false); 
+
+call create_service_instance('hotel-shopping-int', 'hotel-shopping', 'int', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('hotel-shopping-acc', 'hotel-shopping', 'acc', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('hotel-shopping-perf', 'hotel-shopping', 'perf', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('hotel-shopping-prod', 'hotel-shopping', 'prod', 'aws-us-east-1a', true, 'aws-elb-001', false); 
+call create_service_instance('hotel-shopping-dr', 'hotel-shopping', 'dr', 'aws-us-west-1a', true, 'aws-elb-002', false); 
+
+call create_service_instance('hotel-booking-int', 'hotel-booking', 'int', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('hotel-booking-acc', 'hotel-booking', 'acc', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('hotel-booking-perf', 'hotel-booking', 'perf', 'aws-us-east-1a', true, null, false); 
+call create_service_instance('hotel-booking-prod', 'hotel-booking', 'prod', 'aws-us-east-1a', true, 'aws-elb-001', false); 
+call create_service_instance('hotel-booking-dr', 'hotel-booking', 'dr', 'aws-us-west-1a', true, 'aws-elb-002', false); 
 
 -- Autogenerate SIPs
 insert into
@@ -453,26 +592,18 @@ where
   and n.service_instance_id = si.id
   ;
 
-insert into dashboard (id, ukey, name, type, description, ui_uri, api_uri, source_id) values
-  (1, 'air-shopping-prod-metrics', 'Air Shopping System Metrics', 'Grafana', 'System metrics (CPU, memory, network, disk) for the Air Shopping production service instance.', 'https://dashboards.example.com/#/air-shopping-prod-metrics', 'https://dashboards.example.com/v1/air-shopping-prod-metrics', 1)
-  ;
+call create_dashboard('air-shopping-prod-metrics', 'Air Shopping System Metrics', 'Grafana', 'System metrics (CPU, memory, network, disk) for the Air Shopping production service instance.', 'https://dashboards.example.com/#/air-shopping-prod-metrics', 'https://dashboards.example.com/v1/air-shopping-prod-metrics', 'seiso-data-common');
 
-insert into service_instance_dashboard values
-  (1, 4, 1)
-  ;
+call create_service_instance_dashboard('air-shopping-prod', 'air-shopping-prod-metrics');
 
-insert into seyren_check (id, seyren_id, name, description, graphite_base_url, target, warn, error, enabled, state, source_id) values
-  (1, '548b6c1ee4b05461bb170982', 'Air Shopping Prod - CPU Load', 'Maximum CPU load average across all servers', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshopp.airshop*-prod.load.load.shortterm)', 6, 8, 1, 'OK', 2)
-, (2, '548b7a99e4b05461bb170ecc', 'Air Shopping Prod - Memory Free', 'Minimum free memory across all servers. If this drops too low then you may need to bounce the boxes.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.memory.memory-free)', 150000000, 100000000, 1, 'OK', 2)
-, (3, '548b7ed5e4b05461bb171058', 'Air Shopping Prod - Disk Free', 'Minimum disk free across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.df-mapper_VolGroup01-var--log.df_complex-free)', 10000000000, 5000000000, 1, 'WARN', 2)
-, (4, '548b88c9e4b013e35f320674', 'Air Shopping Prod - Network Rx', 'Maximum network packets received across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.interface-eth0.if_packets.rx)', 4000, 5000, 1, 'OK', 2)
-, (5, '548b8cf8e4b013e35f320816', 'Air Shopping Prod - Network Tx', 'Maximum network packets transmitted across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.interface-eth0.if_packets.tx)', 4000, 5000, 1, 'OK', 2)
-  ;
+call create_seyren_check('548b6c1ee4b05461bb170982', 'Air Shopping Prod - CPU Load', 'Maximum CPU load average across all servers', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshopp.airshop*-prod.load.load.shortterm)', 6, 8, 1, 'OK', 'seyren-prod');
+call create_seyren_check('548b7a99e4b05461bb170ecc', 'Air Shopping Prod - Memory Free', 'Minimum free memory across all servers. If this drops too low then you may need to bounce the boxes.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.memory.memory-free)', 150000000, 100000000, 1, 'OK', 'seyren-prod');
+call create_seyren_check('548b7ed5e4b05461bb171058', 'Air Shopping Prod - Disk Free', 'Minimum disk free across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.df-mapper_VolGroup01-var--log.df_complex-free)', 10000000000, 5000000000, 1, 'WARN', 'seyren-prod');
+call create_seyren_check('548b88c9e4b013e35f320674', 'Air Shopping Prod - Network Rx', 'Maximum network packets received across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.interface-eth0.if_packets.rx)', 4000, 5000, 1, 'OK', 'seyren-prod');
+call create_seyren_check('548b8cf8e4b013e35f320816', 'Air Shopping Prod - Network Tx', 'Maximum network packets transmitted across all servers.', 'https://graphite.example.com', 'maxSeries(collectd_metrics.airshop.airshop*-prod.interface-eth0.if_packets.tx)', 4000, 5000, 1, 'OK', 'seyren-prod');
 
-insert into service_instance_seyren_check values
-  (1, 4, 1)
-, (2, 4, 2)
-, (3, 4, 3)
-, (4, 4, 4)
-, (5, 4, 5)
-  ;
+call create_service_instance_seyren_check('air-shopping-prod', '548b6c1ee4b05461bb170982');
+call create_service_instance_seyren_check('air-shopping-prod', '548b7a99e4b05461bb170ecc');
+call create_service_instance_seyren_check('air-shopping-prod', '548b7ed5e4b05461bb171058');
+call create_service_instance_seyren_check('air-shopping-prod', '548b88c9e4b013e35f320674');
+call create_service_instance_seyren_check('air-shopping-prod', '548b8cf8e4b013e35f320816');

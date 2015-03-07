@@ -1,0 +1,17 @@
+<section>
+	<header>
+		<h1>
+			Service Instances
+			<span ng-show="serviceInstanceListStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span>
+			<span ng-show="serviceInstanceListStatus == 'loaded'">
+				<span ng-if="serviceInstanceMetadata.totalItems == 0">
+					<small>(0)</small>
+				</span>
+				<span ng-if="serviceInstanceMetadata.totalItems &gt; 0">
+					<small>({{serviceInstanceMetadata.pageLowIndex + 1}}-{{serviceInstanceMetadata.pageHighIndex + 1}} of {{serviceInstanceMetadata.totalItems}})</small>
+				</span>
+			</span>
+		</h1>
+	</header>
+	<ng-include src="'view/items/data-center/details/service-instance-list.html'"></ng-include>
+</section>

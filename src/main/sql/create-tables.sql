@@ -572,7 +572,6 @@ CREATE TABLE `seyren_check` (
   `error` bigint(20) NOT NULL,
   `enabled` tinyint(1) unsigned NOT NULL,
   `state` varchar(20) DEFAULT NULL,
-  `source_uri` varchar(255) DEFAULT NULL,
   `source_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `seyren_id` (`seyren_id`),

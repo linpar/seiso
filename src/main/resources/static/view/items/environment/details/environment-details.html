@@ -7,17 +7,17 @@
 			<li><a ng-href="{{uri()}}">Home</a></li>
 			<li><a ng-href="{{uri('environments')}}">Environments</a></li>
 		</ul>
-		<h1>{{environment.name}}</h1>
-		<div class="lead" ng-if="environment.description">{{environment.description}}</div>
+		<h1 ng-bind="environment.name"></h1>
+		<div class="lead" ng-if="environment.description" ng-bind="environment.description"></div>
 	</div>
 	<ul class="field-list">
 		<li>
 			<div>Key:</div>
-			<div>{{environment.key}}</div>
+			<div ng-bind="environment.key"></div>
 		</li>
 		<li>
 			<div>AKA:</div>
-			<div>{{environment.aka || '-'}}</div>
+			<div ng-bind="environment.aka || '-'"></div>
 		</li>
 	</ul>
 	<ng-include src="'view/items/environment/details/service-instance-pane.html'"></ng-include>

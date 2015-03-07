@@ -16,20 +16,13 @@
 				<pagination total-items="metadata.totalItems" ng-model="model.nodes.currentPage" ng-change="model.nodes.pageSelected()" />
 			</div>
 			<table class="table">
-				<colgroup>
-					<col style="width:20%">
-					<col style="width:20%">
-					<col style="width:20%">
-					<col style="width:25%">
-					<col style="width:15%">
-				</colgroup>
 				<thead>
 					<tr>
-						<th>Node</th>
-						<th>Version</th>
-						<th>Health</th>
-						<th>IP Address</th>
-						<th colspan="2">Rotation</th>
+						<th style="width:20%">Node</th>
+						<th style="width:20%">Version</th>
+						<th style="width:20%">Health</th>
+						<th style="width:25%">IP Address</th>
+						<th style="width:15%" colspan="2">Rotation</th>
 					</tr>
 				</thead>
 				<tbody>

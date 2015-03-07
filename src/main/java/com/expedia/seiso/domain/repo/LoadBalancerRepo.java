@@ -15,10 +15,9 @@
  */
 package com.expedia.seiso.domain.repo;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -35,9 +34,16 @@ public interface LoadBalancerRepo extends PagingAndSortingRepository<LoadBalance
 	
 	@FindByKey
 	LoadBalancer findByName(@Param("name") String name);
-
+	
+	// FIXME v1 sees the param name as "dataCenterKey", not "data-center".
+	// But production currently uses "data-center".
+//	@RestResource(path = "find-by-data-center")
+//	List<LoadBalancer> findByDataCenterKey(@Param("data-center") String dataCenterKey);
+	
+	// I replaced the above with this one. It may break the NetScaler sync job. I don't think so, but it might. [WLW]
 	@RestResource(path = "find-by-data-center")
-	List<LoadBalancer> findByDataCenterKey(@Param("data-center") String dataCenterKey);
+	@Query("from LoadBalancer lb where lb.dataCenter.key = :key")
+	Page<LoadBalancer> findByDataCenterKey(@Param("key") String key, Pageable pageable);
 	
 	@RestResource(path = "find-by-source")
 	Page<LoadBalancer> findBySourceKey(@Param("key") String key, Pageable pageable);

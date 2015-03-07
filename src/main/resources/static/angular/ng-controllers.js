@@ -161,19 +161,73 @@ var dataCenterListController = function() {
 }
 
 var dataCenterDetailsController = function() {
-	var controller = function($scope, $http, $routeParams) {
-		var successHandler = function(data) {
-			$scope.model.page.title = pageTitle(data.name);
-			$scope.dataCenter = data;
-			// FIXME Move to separate search per https://github.com/ExpediaDotCom/seiso/issues/76
-			$scope.serviceInstances = data.serviceInstances;
-			$scope.loadBalancers = data.loadBalancers;
+	var controller = function($scope, v2Api, $http, paginationConfig, $routeParams) {
+		(function getDataCenter() {
+			var successHandler = function(data) {
+				var dataCenter = data;
+				$scope.dataCenter = dataCenter;
+				$scope.serviceInstances = dataCenter._embedded.serviceInstances;
+				$scope.loadBalancers = dataCenter._embedded.loadBalancers;
+				$scope.model.page.title = pageTitle(dataCenter.name);
+			}
+			var errorHandler = function(data) { alert("Error while getting data center."); }
+			v2Api.get('/v2/data-centers/' + $routeParams.key, successHandler, errorHandler);
+		})();
+		
+		$scope.model.serviceInstances = {
+			currentPage: 1,
+			pageSelected: function() {
+				(function getServiceInstances(pageNumber) {
+					$scope.serviceInstanceListStatus = 'loading';
+					var apiPageNumber = pageNumber - 1;
+					var request = {
+							method: 'GET',
+							url: '/v2/service-instances/search/find-by-data-center?key=' + $routeParams.key
+							    + '&page=' + apiPageNumber + '&size=' + paginationConfig.itemsPerPage + '&sort=key',
+							headers: { 'Accept': 'application/hal+json' }
+					}
+					var successHandler = function(data) {
+						var page = data;
+						$scope.serviceInstances = page._embedded.items;
+						$scope.serviceInstanceMetadata = page.metadata;
+						$scope.serviceInstanceListStatus = 'loaded';
+					}
+					$http(request)
+							.success(successHandler)
+							.error(function() { $scope.serviceInstanceListStatus = 'error'; });
+				})();
+			}
 		}
-		$http.get('/v1/data-centers/' + $routeParams.key)
-				.success(successHandler)
-				.error(function() { alert('Error while getting data center.'); });
+		
+		$scope.model.loadBalancers = {
+			currentPage: 1,
+			pageSelected: function() {
+				(function getLoadBalancers(pageNumber) {
+					$scope.loadBalancerListStatus = 'loading';
+					var apiPageNumber = pageNumber - 1;
+					var request = {
+							method: 'GET',
+							url: '/v2/load-balancers/search/find-by-data-center?key=' + $routeParams.key
+							    + '&page=' + apiPageNumber + '&size=' + paginationConfig.itemsPerPage + '&sort=name',
+							headers: { 'Accept': 'application/hal+json' }
+					}
+					var successHandler = function(data) {
+						var page = data;
+						$scope.loadBalancers = page._embedded.items;
+						$scope.loadBalancerMetadata = page.metadata;
+						$scope.loadBalancerListStatus = 'loaded';
+					}
+					$http(request)
+							.success(successHandler)
+							.error(function() { $scope.loadBalancerListStatus = 'error'; });
+				})();
+			}
+		}
+		
+		$scope.model.serviceInstances.pageSelected();
+		$scope.model.loadBalancers.pageSelected();
 	}
-	return [ '$scope', '$http', '$routeParams', controller ];
+	return [ '$scope', 'v2Api', '$http', 'paginationConfig', '$routeParams', controller ];
 }
 
 var environmentListController = function() {
@@ -187,21 +241,15 @@ var environmentListController = function() {
 };
 
 var environmentDetailsController = function() {
-	var controller = function($scope, $http, paginationConfig, $routeParams) {
+	var controller = function($scope, v2Api, $http, paginationConfig, $routeParams) {
 		(function getEnvironment() {
-			var envRequest = {
-				method: 'GET',
-				url: '/v2/environments/' + $routeParams.key,
-				headers: { 'Accept': 'application/hal+json' }
-			}
-			var envSuccessHandler = function(data) {
+			var successHandler = function(data) {
 				var env = data;
 				$scope.environment = env;
 				$scope.model.page.title = pageTitle(env.name);
 			}
-			$http(envRequest)
-					.success(envSuccessHandler)
-					.error(function() { alert('Error while getting environment.'); });
+			var errorHandler = function() { alert("Error while getting environment."); }
+			v2Api.get('/v2/environments/' + $routeParams.key, successHandler, errorHandler);
 		})();
 		
 		$scope.model.serviceInstances = {
@@ -232,7 +280,7 @@ var environmentDetailsController = function() {
 		$scope.model.serviceInstances.pageSelected();
 	}
 	
-	return [ '$scope', '$http', 'paginationConfig', '$routeParams', controller ];
+	return [ '$scope', 'v2Api', '$http', 'paginationConfig', '$routeParams', controller ];
 }
 
 var loadBalancerDetailsController = function() {
@@ -326,18 +374,12 @@ var serviceDetailsController = function() {
 }
 
 var serviceInstanceDetailsController = function() {
-	var controller = function($scope, $http, paginationConfig, $routeParams) {
+	var controller = function($scope, v2Api, $http, paginationConfig, $routeParams) {
 		(function getServiceInstance() {
-			var serviceInstanceRequest = {
-				method: 'GET',
-				url: '/v2/service-instances/' + $routeParams.key,
-				headers: { 'Accept': 'application/hal+json' }
-			}
-			var serviceInstanceSuccessHandler = function(data) {
+			var successHandler = function(data) {
 				var serviceInstance = data;
 				var siEmbedded = serviceInstance._embedded;
 				var service = siEmbedded.service;
-				
 				$scope.serviceInstance = serviceInstance;
 				$scope.model.page.title = pageTitle(serviceInstance.key);
 				$scope.dataCenter = siEmbedded.dataCenter;
@@ -351,9 +393,8 @@ var serviceInstanceDetailsController = function() {
 				$scope.checks = siEmbedded.seyrenChecks;
 			}
 			// TODO Do better error handling, like the examples below.
-			$http(serviceInstanceRequest)
-					.success(serviceInstanceSuccessHandler)
-					.error(function() { alert('Error while getting service instance.'); });
+			var errorHandler = function(data) { alert("Error while getting service instance."); }
+			v2Api.get('/v2/service-instances/' + $routeParams.key, successHandler, errorHandler);
 		})();
 		
 		(function getNodeStats() {
@@ -401,7 +442,7 @@ var serviceInstanceDetailsController = function() {
 		$scope.model.nodes.pageSelected();
 	}
 	
-	return [ '$scope', '$http', 'paginationConfig', '$routeParams', controller ];
+	return [ '$scope', 'v2Api', '$http', 'paginationConfig', '$routeParams', controller ];
 }
 
 var statusListController = function() {

@@ -25,14 +25,20 @@ angular.module('seisoServices', [])
 		return v1ApiService;
 	}])
 	
-	// FIXME Don't block on the response
 	.factory('v2Api', ['$http', function($http) {
-		return {
-			get: function(path) {
-				return $http.get(path, { headers: { 'Accept': 'application/hal+json' } })
-						.success(function(data) { return data; });
+		var v2ApiService = {
+			get: function(path, successHandler, errorHandler) {
+				var request = {
+					method: 'GET',
+					url: path,
+					headers: { 'Accept': 'application/hal+json' }
+				}
+				$http(request)
+					.success(successHandler)
+					.error(errorHandler);
 			}
-		};
+		}
+		return v2ApiService;
 	}])
 	
 	.service('SearchService', [ '$http', function($http) {

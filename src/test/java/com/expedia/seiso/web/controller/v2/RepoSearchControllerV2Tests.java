@@ -36,14 +36,14 @@ import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.domain.repo.LoadBalancerRepo;
 import com.expedia.seiso.domain.repo.PersonRepo;
 import com.expedia.seiso.domain.repo.ServiceRepo;
+import com.expedia.seiso.domain.repo.StatusTypeRepo;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
-import com.expedia.seiso.web.hateoas.Resource;
 import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler
@@ -87,7 +87,7 @@ public class RepoSearchControllerV2Tests {
 		when(pagingItemMeta.isPagingRepo()).thenReturn(true);
 		
 		val searchMethodWithListResult =
-				ReflectionUtils.findMethod(LoadBalancerRepo.class, "findByDataCenterKey", String.class);
+				ReflectionUtils.findMethod(StatusTypeRepo.class, "findBySourceKey", String.class);
 		assert(searchMethodWithListResult != null);
 		when(nonPagingItemMeta.getRepositorySearchMethod(SEARCH)).thenReturn(searchMethodWithListResult);
 		

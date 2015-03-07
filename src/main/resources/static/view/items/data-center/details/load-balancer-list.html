@@ -1,0 +1,44 @@
+<section ng-switch="loadBalancerListStatus">
+	<!-- No need for spinner here since context already provides one -->
+	<div ng-switch-when="error">
+		<div class="alert alert-warning">
+			<i class="fa fa-times-circle"></i> Couldn't get load balancers.
+		</div>
+	</div>
+	<div ng-switch="loaded">
+		<div ng-if="loadBalancers.length == 0">
+			<div class="alert alert-info">
+				<i class="fa fa-info-circle"></i> No load balancers.
+			</div>
+		</div>
+		<div ng-if="loadBalancers.length &gt; 0">
+			<div class="pagination-wrapper" ng-if="loadBalancerMetadata.totalPages &gt; 1">
+				<pagination total-items="loadBalancerMetadata.totalItems" ng-model="model.loadBalancers.currentPage" ng-change="model.loadBalancers.pageSelected()" />
+			</div>
+			<table class="table">
+				<colgroup>
+					<col style="width:33%">
+					<col style="width:33%">
+					<col style="width:33%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th>Load Balancer</th>
+						<th>Type</th>
+						<th>IP Address</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="loadBalancer in loadBalancers">
+						<td><a ng-href="{{uri('load-balancers', loadBalancer.name)}}">{{loadBalancer.name}}</a></td>
+						<td>{{loadBalancer.type || '-'}}</a></td>
+						<td>{{loadBalancer.ipAddress || '-'}}</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="pagination-wrapper" ng-if="loadBalancerMetadata.totalPages &gt; 1">
+				<pagination total-items="loadBalancerMetadata.totalItems" ng-model="model.loadBalancers.currentPage" ng-change="model.loadBalancers.pageSelected()" />
+			</div>
+		</div>
+	</div>
+</section>
