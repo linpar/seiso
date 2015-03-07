@@ -195,7 +195,7 @@ var dataCenterDetailsController = function() {
 					$http(request)
 							.success(successHandler)
 							.error(function() { $scope.serviceInstanceListStatus = 'error'; });
-				})();
+				})($scope.model.serviceInstances.currentPage);
 			}
 		}
 		
@@ -220,7 +220,7 @@ var dataCenterDetailsController = function() {
 					$http(request)
 							.success(successHandler)
 							.error(function() { $scope.loadBalancerListStatus = 'error'; });
-				})();
+				})($scope.model.loadBalancers.currentPage);
 			}
 		}
 		
@@ -273,7 +273,7 @@ var environmentDetailsController = function() {
 					$http(siRequest)
 					.success(siSuccessHandler)
 					.error(function() { $scope.serviceInstanceListStatus = 'error'; });
-				})();
+				})($scope.model.serviceInstances.currentPage);
 			}
 		}
 		
