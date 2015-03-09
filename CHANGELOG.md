@@ -1,8 +1,8 @@
 # Change Log
 
-## [Unreleased](https://github.com/ExpediaDotCom/seiso/tree/HEAD)
+## [0.3.0](https://github.com/ExpediaDotCom/seiso/tree/0.3.0) (2015-03-09)
 
-[Full Changelog](https://github.com/ExpediaDotCom/seiso/compare/0.2.0...HEAD)
+[Full Changelog](https://github.com/ExpediaDotCom/seiso/compare/0.2.0...0.3.0)
 
 **Implemented enhancements:**
 
