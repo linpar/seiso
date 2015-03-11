@@ -5,7 +5,7 @@
 			<i class="fa fa-times-circle"></i> Couldn't get load balancers.
 		</div>
 	</div>
-	<div ng-switch="loaded">
+	<div ng-switch-when="loaded">
 		<div ng-if="loadBalancers.length == 0">
 			<div class="alert alert-info">
 				<i class="fa fa-info-circle"></i> No load balancers.
