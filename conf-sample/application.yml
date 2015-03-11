@@ -5,8 +5,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:23141/seiso?autoReconnect=true
-    username: root
-    password: 
+    username: seiso
+    password: seiso
     # TODO Add other data source settings here
   jpa:
     openInView: true
