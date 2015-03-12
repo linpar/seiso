@@ -14,9 +14,14 @@
 		</h1>
 	</div>
 	<div ng-if="items.length === 0">
-		<h3>No load balancers.</h3>
+		<div class="alert alert-info">
+			<i class="fa fa-info-circle"></i> No load balancers.
+		</div>
 	</div>
 	<div ng-if="items.length &gt; 0">
+		<div class="pagination-wrapper" ng-if="totalPages &gt; 1">
+			<pagination total-items="totalItems" ng-model="model.currentPage" ng-change="model.pageSelected()" />
+		</div>
 		<table class="table">
 			<colgroup>
 				<col style="width:25%">
@@ -41,5 +46,8 @@
 				</tr>
 			</tbody>
 		</table>
+		<div class="pagination-wrapper" ng-if="totalPages &gt; 1">
+			<pagination total-items="totalItems" ng-model="model.currentPage" ng-change="model.pageSelected()" />
+		</div>
 	</div>
 </div>
