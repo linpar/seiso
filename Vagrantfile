@@ -25,6 +25,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.omnibus.chef_version = :latest
   
   config.vm.define "db" do |db|
+    db.vm.network "forwarded_port", guest: 22, host: 12222, auto_correct: true
     db.vm.network "forwarded_port", guest: settings["db"]["port"]["guest"], host: settings["db"]["port"]["host"]
     db.vm.synced_folder settings["db"]["artifacts_dir"]["host"], settings["db"]["artifacts_dir"]["guest"]
     db.vm.provision "chef_solo" do |chef|
@@ -38,6 +39,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   
   config.vm.define "bus" do |bus|
+    bus.vm.network "forwarded_port", guest: 22, host: 12223, auto_correct: true
     bus.vm.network "forwarded_port", guest: settings["bus"]["port"]["guest"], host: settings["bus"]["port"]["host"]
     bus.vm.provision "chef_solo" do |chef|
       configure_chef(chef, "seiso_bus")
