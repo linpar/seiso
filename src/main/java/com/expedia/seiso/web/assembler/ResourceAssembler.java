@@ -200,7 +200,14 @@ public class ResourceAssembler {
 		
 		val itemClass = item.getClass();
 		val resource = new Resource();
-		val pEntity = repositories.getPersistentEntity(item.getClass());
+		val pEntity = repositories.getPersistentEntity(itemClass);
+		
+		if (pEntity == null) {
+			val msg = "No PersistentEntity for itemClass=" + itemClass.getName() +
+					". Is there an associated repository interface?";
+			throw new RuntimeException(msg);
+		}
+		
 		val itemWrapper = BeanWrapper.create(item, null);
 		
 		// All resources get a self link, whether top-level or not.
