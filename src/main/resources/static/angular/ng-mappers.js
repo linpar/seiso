@@ -50,7 +50,9 @@ var nodePageToNodeRows = function(nodePage) {
 			node._embedded.healthStatus = {
 				"key" : "unknown",
 				"name" : "Unknown",
-				"statusType" : { "key" : "warning" }
+				"_embedded" : {
+					"statusType" : { "key" : "warning" }
+				}
 			}
 		}
 		
