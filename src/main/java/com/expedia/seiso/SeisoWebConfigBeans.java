@@ -61,7 +61,7 @@ public class SeisoWebConfigBeans {
 	@Autowired private CustomProperties customProperties;
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private Repositories repositories;
-	
+
 	@Bean
 	public PEResourceResolver peResourceResolver() {
 		// FIXME DRY up. See com.expedia.seiso.web.converter, which repeats the same info.
