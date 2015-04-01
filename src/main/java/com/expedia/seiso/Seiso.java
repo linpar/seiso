@@ -15,19 +15,10 @@
  */
 package com.expedia.seiso;
 
-import lombok.val;
-
-import org.apache.catalina.Context;
-import org.apache.catalina.connector.Connector;
-import org.apache.tomcat.util.descriptor.web.SecurityCollection;
-import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -55,34 +46,5 @@ public class Seiso {
 	
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Seiso.class, args);
-	}
-
-	@Bean
-	public EmbeddedServletContainerFactory servletContainer() {
-		val tomcat = new TomcatEmbeddedServletContainerFactory() {
-			
-			@Override
-			protected void postProcessContext(Context context) {
-				val securityConstraint = new SecurityConstraint();
-				securityConstraint.setUserConstraint("CONFIDENTIAL");
-				val collection = new SecurityCollection();
-				collection.addPattern("/*");
-				securityConstraint.addCollection(collection);
-				context.addConstraint(securityConstraint);
-			}
-		};
-		tomcat.addAdditionalTomcatConnectors(createHttpConnector());
-		return tomcat;
-	}
-	
-	private Connector createHttpConnector() {
-		val connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
-//		val protocol = (Http11NioProtocol) connector.getProtocolHandler();
-//		protocol.setSSLEnabled(false);
-		connector.setScheme("http");
-		connector.setSecure(false);
-		connector.setPort(8080);
-		connector.setRedirectPort(8443);
-		return connector;
 	}
 }
