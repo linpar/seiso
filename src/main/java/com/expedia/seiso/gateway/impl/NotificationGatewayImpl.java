@@ -56,7 +56,7 @@ public class NotificationGatewayImpl implements NotificationGateway {
 		val exchange = customProperties.getChangeNotificationExchange();
 		val notification = new ItemNotification(itemType, itemResource, operation);
 		val routingKey = itemType + "." + operation;
-		log.info("Sending notification: itemType={}, itemKey={}, operation={}", itemType, item.itemKey(), operation);
+		log.trace("Sending notification: itemType={}, itemKey={}, operation={}", itemType, item.itemKey(), operation);
 		amqpTemplate.convertAndSend(exchange, routingKey, notification);
 	}
 }
