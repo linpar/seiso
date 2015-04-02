@@ -21,6 +21,11 @@
 			<div ng-if="!environment">-</div>
 		</li>
 		<li>
+			<div>Owner:</div>
+			<span ng-if="owner"><a ng-href="{{uri('people', owner.username)}}">{{owner.firstName}} {{owner.lastName}}</a></span>
+			<span ng-if="!owner">-</span>
+		</li>
+		<li>
 			<div>Data Center:</div>
 			<div ng-if="dataCenter"><a ng-href="{{uri('data-centers', dataCenter.key)}}">{{dataCenter.name}}</a></div>
 			<div ng-if="!dataCenter">-</div>
@@ -31,11 +36,15 @@
 			<div ng-if="!loadBalancer">-</div>
 		</li>
 		<li>
-			<div>Owner:</div>
-			<span ng-if="owner"><a ng-href="{{uri('people', owner.username)}}">{{owner.firstName}} {{owner.lastName}}</a></span>
-			<span ng-if="!owner">-</span>
+			<div>Min Deploy Capacity:</div>
+			<div ng-if="serviceInstance.minCapacityDeploy">{{serviceInstance.minCapacityDeploy}}%</div>
+			<div ng-if="!serviceInstance.minCapacityDeploy">-</div>
 		</li>
-		<!-- TODO Minimum deployment & ops capacity -->
+		<li>
+			<div>Min Ops Capacity:</div>
+			<div ng-if="serviceInstance.minCapacityOps">{{serviceInstance.minCapacityOps}}%</div>
+			<div ng-if="!serviceInstance.minCapacityOps">-</div>
+		</li>
 		<!-- Also Mike is going to want to see the Eos-enabled flag, but we need a way to do this without hardcoding it
 		     into Seiso. [WLW] -->
 	</ul>
