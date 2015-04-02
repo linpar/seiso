@@ -390,6 +390,24 @@ var serviceDetailsController = function() {
 	return [ '$scope', '$http', '$routeParams', controller ];
 }
 
+// This is a better way to do this stuff. Attach the controller to a specific piece of the page,
+// instead of having a single controller for the whole page.
+var serviceDocumentationController = function() {
+	var controller = function($scope, v2Api, $routeParams) {
+		$scope.serviceDocumentationStatus = 'loading';
+		var successHandler = function(data) {
+			$scope.docLinks = data._embedded.items;
+			$scope.serviceDocumentationStatus = 'loaded';
+		}
+		var errorHandler = function() {
+			$scope.serviceDocumentationStatus = 'error';
+		}
+		v2Api.get('/v2/doc-links/search/find-by-service?key=' + $routeParams.key, successHandler, errorHandler);
+	}
+	return [ '$scope', 'v2Api', '$routeParams', controller ];
+}
+
+// TODO Refactor as suggested above. (See serviceDocumentationController.)
 var serviceInstanceDetailsController = function() {
 	var controller = function($scope, v2Api, $http, paginationConfig, $routeParams) {
 		(function getServiceInstance() {
@@ -514,6 +532,7 @@ angular.module('seisoControllers', [])
 		.controller('PersonDetailsController', personDetailsController())
 		.controller('ServiceListController', pagingController('Services', '/v1/services', 'name'))
 		.controller('ServiceDetailsController', serviceDetailsController())
+		.controller('ServiceDocumentationController', serviceDocumentationController())
 		.controller('ServiceInstanceListController', pagingController('Service Instances', '/v1/service-instances', 'key'))
 		.controller('ServiceInstanceDetailsController', serviceInstanceDetailsController())
 		.controller('StatusListController', statusListController())

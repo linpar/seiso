@@ -1,0 +1,36 @@
+<section ng-controller="ServiceDocumentationController" ng-switch="serviceDocumentationStatus">
+	<header>
+		<h1>
+			External Documentation
+			<span ng-if="serviceDocumentationStatus == 'loaded'"><small>({{docLinks.length}})</small></span>
+			<span ng-if="serviceDocumentationStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span>
+		</h1>
+	</header>
+	<div ng-switch-when="error">
+		<div class="alert alert-warning">
+			<i class="fa fa-times-circle"></i> Couldn't get external documentation.
+		</div>
+	</div>
+	<div ng-switch-when="loaded">
+		<div ng-show="docLinks" ng-if="docLinks.length &gt; 0">
+			<table class="table">
+				<colgroup>
+					<col style="width:50%">
+					<col style="width:50%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="docLink in docLinks">
+						<td><a ng-href="{{docLink.href}}" target="_blank"><span ng-bind="docLink.title"></span> <i class="fa fa-external-link"></i></a></td>
+						<td ng-bind="docLink.description"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</section>

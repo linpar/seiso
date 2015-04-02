@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.Dashboard;
 import com.expedia.seiso.domain.entity.DataCenter;
+import com.expedia.seiso.domain.entity.DocLink;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Environment;
 import com.expedia.seiso.domain.entity.HealthStatus;
@@ -67,11 +68,10 @@ public class ItemPaths {
 				(Item item) -> new String[] { RepoKeys.DASHBOARDS, ((Dashboard) item).getKey() });
 		converters.put(DataCenter.class,
 				(Item item) -> new String[] { RepoKeys.DATA_CENTERS, ((DataCenter) item).getKey() });
-		
-		// FIXME This is the v1 path, but we don't want to use the database ID in the v2 path.
+		converters.put(DocLink.class,
+				(Item item) -> new String[] { RepoKeys.DOC_LINKS, String.valueOf(((DocLink) item).getId()) });
 		converters.put(Endpoint.class,
 				(Item item) -> new String[] { RepoKeys.ENDPOINTS, String.valueOf(((Endpoint) item).getId()) });
-		
 		converters.put(Environment.class,
 				(Item item) -> new String[] { RepoKeys.ENVIRONMENTS, ((Environment) item).getKey() });
 		converters.put(HealthStatus.class,
