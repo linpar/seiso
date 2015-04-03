@@ -32,9 +32,12 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.expedia.seiso.core.config.CustomProperties;
+import com.expedia.seiso.domain.entity.Dashboard;
+import com.expedia.seiso.domain.entity.DocLink;
 import com.expedia.seiso.domain.entity.IpAddressRole;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
+import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
@@ -65,11 +68,15 @@ public class SeisoWebConfigBeans {
 	@Bean
 	public PEResourceResolver peResourceResolver() {
 		// FIXME DRY up. See com.expedia.seiso.web.converter, which repeats the same info.
+		// FIXME Don't hardcode this stuff.
 		// @formatter:off
 		return new PEResourceResolver(Arrays.asList(
 				new SimplePropertyEntry(RepoKeys.NODES, "ip-addresses", NodeIpAddress.class),
+				new SimplePropertyEntry(RepoKeys.SERVICES, "doc-links", DocLink.class),
+				new SimplePropertyEntry(RepoKeys.SERVICE_INSTANCES, "dashboards", Dashboard.class),
 				new SimplePropertyEntry(RepoKeys.SERVICE_INSTANCES, "ip-address-roles", IpAddressRole.class),
-				new SimplePropertyEntry(RepoKeys.SERVICE_INSTANCES, "ports", ServiceInstancePort.class)));
+				new SimplePropertyEntry(RepoKeys.SERVICE_INSTANCES, "ports", ServiceInstancePort.class),
+				new SimplePropertyEntry(RepoKeys.SERVICE_INSTANCES, "seyren-checks", SeyrenCheck.class)));
 		// @formatter:on
 	}
 	

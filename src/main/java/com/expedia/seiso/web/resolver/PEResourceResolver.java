@@ -46,8 +46,9 @@ import com.expedia.seiso.web.hateoas.PEResource;
 public class PEResourceResolver implements HandlerMethodArgumentResolver {
 	
 	// FIXME DRY up. We're repeating info in com.expedia.seiso.web.converter.
-	private static final String SIMPLE_ITEM_FORMAT = "/{version}/{repoKey}/{itemKey}";
-	private static final String SIMPLE_PROPERTY_FORMAT = "/{version}/{repoKey}/{itemKey}/{propKey}/{propValue}";
+	private static final String ITEM_FORMAT = "/{version}/{repoKey}/{itemKey}";
+	private static final String PROPERTY_FORMAT = "/{version}/{repoKey}/{itemKey}/{propKey}";
+	private static final String COLLECTION_ELEMENT_FORMAT = "/{version}/{repoKey}/{itemKey}/{propKey}/{propValue}";
 
 	private List<SimplePropertyEntry> simplePropertyEntries;
 	
@@ -77,11 +78,16 @@ public class PEResourceResolver implements HandlerMethodArgumentResolver {
 
 		Class<?> itemClass = null;
 		val matcher = new AntPathMatcher();
-		if (matcher.match(SIMPLE_ITEM_FORMAT, path)) {
-			val variables = matcher.extractUriTemplateVariables(SIMPLE_ITEM_FORMAT, path);
+		if (matcher.match(ITEM_FORMAT, path)) {
+			val variables = matcher.extractUriTemplateVariables(ITEM_FORMAT, path);
 			itemClass = itemMetaLookup.getItemClass(variables.get("repoKey"));
-		} else if (matcher.match(SIMPLE_PROPERTY_FORMAT, path)) {
-			val variables = matcher.extractUriTemplateVariables(SIMPLE_PROPERTY_FORMAT, path);
+		} else if (matcher.match(PROPERTY_FORMAT, path)) {
+			val variables = matcher.extractUriTemplateVariables(PROPERTY_FORMAT, path);
+			val repoKey = variables.get("repoKey");
+			val propKey = variables.get("propKey");
+			itemClass = findPropertyClass(repoKey, propKey);
+		} else if (matcher.match(COLLECTION_ELEMENT_FORMAT, path)) {
+			val variables = matcher.extractUriTemplateVariables(COLLECTION_ELEMENT_FORMAT, path);
 			val repoKey = variables.get("repoKey");
 			val propKey = variables.get("propKey");
 			itemClass = findPropertyClass(repoKey, propKey);

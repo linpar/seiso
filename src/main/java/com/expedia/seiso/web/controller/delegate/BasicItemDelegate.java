@@ -27,22 +27,29 @@ import lombok.extern.slf4j.XSlf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 
 import com.expedia.seiso.core.ann.Projection;
+import com.expedia.seiso.domain.entity.DocLink;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.entity.key.EndpointKey;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.DynaItem;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.seiso.domain.repo.RepoKeys;
+import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.seiso.web.hateoas.PEResource;
 import com.expedia.seiso.web.hateoas.PEResources;
 import com.expedia.seiso.web.hateoas.PagedResources;
 import com.expedia.seiso.web.hateoas.Resource;
@@ -61,6 +68,7 @@ public class BasicItemDelegate {
 	@NonNull private ResourceAssembler resourceAssembler;
 	@Autowired @Setter private ItemMetaLookup itemMetaLookup;
 	@Autowired @Setter private ItemService itemService;
+	@Autowired private Repositories repositories;
 	
 	/**
 	 * Returns a {@link Resources} or {@link PagedResources}, depending on the repo type.
@@ -177,7 +185,7 @@ public class BasicItemDelegate {
 		if (Item.class.isAssignableFrom(propClass)) {
 			return getItemProperty(apiVersion, (Item) propValue, view);
 		} else if (List.class.isAssignableFrom(propClass)) {
-			// FIXME Need pagination here.
+			// FIXME Need pagination here!
 			// E.g., dataCenter.serviceInstances and environment.serviceInstances are too long.
 			// FIXME Also potentially need projections here.
 			// E.g., /service-instance/:key/nodes doesn't include embedded IP addresses, which the service instance
@@ -209,6 +217,32 @@ public class BasicItemDelegate {
 		//
 		// http://www.cowtowncoder.com/blog/archives/2012/03/entry_466.html [WLW]
 		return itemService.saveAll(itemClass, peResources, mergeAssociations);
+	}
+	
+	public void postCollectionPropertyElement(
+			@NonNull ApiVersion apiVersion,
+			@NonNull String repoKey,
+			@NonNull String itemKey,
+			@NonNull String propKey,
+			@NonNull PEResource peResource) {
+		
+		// We will assume that the element key is unique for the property type.
+		// If we just use the DB ID for the element key all the time then this is a safe assumption.
+		// I think we should do that. [WLW]
+		
+		if (apiVersion == ApiVersion.V2) {
+			val parentClass = itemMetaLookup.getItemClass(repoKey);
+			val parent = itemService.find(new SimpleItemKey(parentClass, itemKey));
+			val elem = peResource.getItem();
+			val elemMeta = itemMetaLookup.getItemMeta(elem.getClass());
+			val elemWrapper = new DynaItem(elem);
+			elemWrapper.setPropertyValue(elemMeta.getParentPropertyName(), parent);
+			
+			itemService.save(elem, true);
+		} else {
+			val msg = apiVersion + " doesn't support deleting collection property elements.";
+			throw new UnsupportedOperationException(msg);
+		}
 	}
 	
 	/**
@@ -268,6 +302,31 @@ public class BasicItemDelegate {
 	public void delete(@NonNull ItemKey itemKey) {
 		log.trace("Deleting item: {}", itemKey);
 		itemService.delete(itemKey);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void deleteCollectionPropertyElement(
+			@NonNull ApiVersion apiVersion,
+			@NonNull String repoKey,
+			@NonNull String itemKey,
+			@NonNull String propKey,
+			@NonNull Long elemId) {
+		
+		// We will assume that the element key is unique for the property type.
+		// If we just use the DB ID for the element key all the time then this is a safe assumption.
+		// I think we should do that. [WLW]
+		
+		if (apiVersion == ApiVersion.V2) {
+			val itemClass = itemMetaLookup.getItemClass(repoKey);
+			val itemMeta = itemMetaLookup.getItemMeta(itemClass);
+			val propName = itemMeta.getPropertyName(propKey);
+			val propType = itemMeta.getCollectionPropertyElementType(propName);
+			val repo = (CrudRepository) repositories.getRepositoryFor(propType);
+			repo.delete(elemId);
+		} else {
+			val msg = apiVersion + " doesn't support deleting collection property elements.";
+			throw new UnsupportedOperationException(msg);
+		}
 	}
 	
 	private Object getItemProperty(ApiVersion apiVersion, Item itemPropValue, String view) {

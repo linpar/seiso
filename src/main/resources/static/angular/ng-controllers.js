@@ -376,35 +376,36 @@ var personDetailsController = function() {
 }
 
 var serviceDetailsController = function() {
-	var controller = function($scope, $http, $routeParams) {
-		$http.get('/v1/services/' + $routeParams.key)
-				.success(function(data) {
-					$scope.model.page.title = pageTitle(data.name);
-					$scope.service = data;
-				})
-				.error(function() { alert('Error while getting service.'); });
-		$http.get('/v1/services/' + $routeParams.key + '?view=instances')
-				.success(function(data) { $scope.serviceInstances = data.serviceInstances; })
-				.error(function() { alert('Error while getting service instances.'); });
+	var controller = function($scope, v2Api, $http, $routeParams) {
+		(function getService() {
+			$http.get('/v1/services/' + $routeParams.key)
+					.success(function(data) {
+						$scope.model.page.title = pageTitle(data.name);
+						$scope.service = data;
+					})
+					.error(function() { alert('Error while getting service.'); });
+		})();
+		
+		(function getServiceInstances() {
+			$http.get('/v1/services/' + $routeParams.key + '?view=instances')
+					.success(function(data) { $scope.serviceInstances = data.serviceInstances; })
+					.error(function() { alert('Error while getting service instances.'); });
+		})();
+		
+		(function getServiceDocumentation() {
+			$scope.serviceDocumentationStatus = 'loading';
+			var successHandler = function(data) {
+				$scope.docLinks = data;
+				$scope.serviceDocumentationStatus = 'loaded';
+			}
+			var errorHandler = function() {
+				$scope.serviceDocumentationStatus = 'error';
+			}
+			v2Api.get('/v2/services/' + $routeParams.key + '/doc-links', successHandler, errorHandler);
+		})();
 	}
-	return [ '$scope', '$http', '$routeParams', controller ];
-}
-
-// This is a better way to do this stuff. Attach the controller to a specific piece of the page,
-// instead of having a single controller for the whole page.
-var serviceDocumentationController = function() {
-	var controller = function($scope, v2Api, $routeParams) {
-		$scope.serviceDocumentationStatus = 'loading';
-		var successHandler = function(data) {
-			$scope.docLinks = data._embedded.items;
-			$scope.serviceDocumentationStatus = 'loaded';
-		}
-		var errorHandler = function() {
-			$scope.serviceDocumentationStatus = 'error';
-		}
-		v2Api.get('/v2/doc-links/search/find-by-service?key=' + $routeParams.key, successHandler, errorHandler);
-	}
-	return [ '$scope', 'v2Api', '$routeParams', controller ];
+	
+	return [ '$scope', 'v2Api', '$http', '$routeParams', controller ];
 }
 
 // TODO Refactor as suggested above. (See serviceDocumentationController.)
@@ -532,7 +533,6 @@ angular.module('seisoControllers', [])
 		.controller('PersonDetailsController', personDetailsController())
 		.controller('ServiceListController', pagingController('Services', '/v1/services', 'name'))
 		.controller('ServiceDetailsController', serviceDetailsController())
-		.controller('ServiceDocumentationController', serviceDocumentationController())
 		.controller('ServiceInstanceListController', pagingController('Service Instances', '/v1/service-instances', 'key'))
 		.controller('ServiceInstanceDetailsController', serviceInstanceDetailsController())
 		.controller('StatusListController', statusListController())

@@ -29,10 +29,16 @@ import lombok.extern.slf4j.XSlf4j;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import com.expedia.seiso.core.ann.FindByKey;
+import com.expedia.seiso.core.ann.Parent;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.core.exception.NotFoundException;
+import com.expedia.seiso.domain.entity.Dashboard;
+import com.expedia.seiso.domain.entity.DocLink;
+import com.expedia.seiso.domain.entity.Service;
+import com.expedia.seiso.domain.entity.ServiceInstance;
+import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.assembler.ProjectionParser;
@@ -51,6 +57,7 @@ public class ItemMetaImpl implements ItemMeta {
 	private Method findByKeyMethod;
 	private final Map<Key, ProjectionNode> projections = new HashMap<>();
 	private final Map<String, String> propNamesByPropKey = new HashMap<>();
+	private String parentPropertyName;
 
 	public ItemMetaImpl(Class<?> itemClass, Class<?> repoInterface, boolean pagingRepo) {
 		log.trace("Initializing resource mapping for {}", itemClass);
@@ -111,12 +118,20 @@ public class ItemMetaImpl implements ItemMeta {
 	}
 
 	private void initPropertyNames() {
+		
 		// Annotations are on the fields, not the getters. [WLW]
 		val fields = itemClass.getDeclaredFields();
 		for (val field : fields) {
-			val ann = field.getAnnotation(RestResource.class);
-			if (ann != null) {
-				propNamesByPropKey.put(ann.path(), field.getName());
+			val fieldName = field.getName();
+			
+			val parentAnn = field.getAnnotation(Parent.class);
+			if (parentAnn != null) {
+				this.parentPropertyName = fieldName;
+			}
+			
+			val restResourceAnn = field.getAnnotation(RestResource.class);
+			if (restResourceAnn != null) {
+				propNamesByPropKey.put(restResourceAnn.path(), fieldName);
 			}
 		}
 	}
@@ -170,10 +185,37 @@ public class ItemMetaImpl implements ItemMeta {
 		}
 		return propName;
 	}
-
+	
+	@Override
+	public Class<?> getCollectionPropertyElementType(@NonNull String propName) {
+		
+		// FIXME For now I'm just hardcoding a few special cases we need right now. In the future we'll generalize this
+		// to handle other cases. Need to figure out exactly how we'll extract type information given type erasure.
+		// Might have to do explicit annotations, but hope not. [WLW]
+		if (itemClass == Service.class) {
+			if ("docLinks".equals(propName)) {
+				return DocLink.class;
+			}
+		} else if (itemClass == ServiceInstance.class) {
+			if ("dashboards".equals(propName)) {
+				return Dashboard.class;
+			} else if ("seyrenChecks".equals(propName)) {
+				return SeyrenCheck.class;
+			}
+		}
+		
+		val msg = "Collection property " + propName + " not yet supported.";
+		throw new UnsupportedOperationException(msg);
+	}
+	
 	@Override
 	public boolean isPagingRepo() {
 		return pagingRepo;
+	}
+	
+	@Override
+	public String getParentPropertyName() {
+		return parentPropertyName;
 	}
 
 	@Data

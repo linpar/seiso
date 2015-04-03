@@ -44,13 +44,22 @@ public interface ItemMeta {
 	Method getRepositorySearchMethod(String query);
 	
 	ProjectionNode getProjectionNode(ApiVersion apiVersion, Projection.Cardinality cardinality, String projectionKey);
-
+	
 	/**
 	 * @param propKey
 	 *            as defined by {@link RestResource}
 	 * @return
 	 */
 	String getPropertyName(String propKey);
-
+	
+	Class<?> getCollectionPropertyElementType(String propName);
+	
 	boolean isPagingRepo();
+	
+	/**
+	 * Returns the name of the item's parent's property, or <code>null</code> if the item doesn't have a parent.
+	 * 
+	 * @return parent property name or <code>null</code>
+	 */
+	String getParentPropertyName();
 }

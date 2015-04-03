@@ -13,22 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.repo;
+package com.expedia.seiso.core.ann;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
-
-import com.expedia.seiso.core.ann.RestResource;
-import com.expedia.seiso.domain.entity.DocLink;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * Marker annotation to identify an item's parent.
+ * 
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.DOC_LINKS)
-public interface DocLinkRepo extends PagingAndSortingRepository<DocLink, Long> {
-	
-	@RestResource(path = "find-by-source")
-	Page<DocLink> findBySourceKey(@Param("key") String key, Pageable pageable);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Parent {
+
 }

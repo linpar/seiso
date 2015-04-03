@@ -79,6 +79,8 @@ public class Endpoint extends AbstractItem {
 
 	@Override
 	public ItemKey itemKey() {
+		// TODO Make this more like DocLink's itemKey() method.
+		// And once we do, we can get rid of EndpointKey.
 		return new EndpointKey(getId());
 	}
 

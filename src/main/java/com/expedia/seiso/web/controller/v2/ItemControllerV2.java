@@ -16,6 +16,7 @@
 package com.expedia.seiso.web.controller.v2;
 
 import lombok.val;
+import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +56,9 @@ import com.expedia.seiso.web.hateoas.Resources;
 
 // TODO Support batch deleting of people. But require pagination.
 
+// http://stackoverflow.com/questions/2810652/how-to-design-a-restful-collection-resource
+// http://stackoverflow.com/questions/306271/bulk-collection-manipulation-through-a-rest-restful-api
+
 /**
  * Thin wrapper around the {@link BasicItemDelegate} to handle v2 API requests.
  * 
@@ -63,6 +67,7 @@ import com.expedia.seiso.web.hateoas.Resources;
 @RestController
 @RequestMapping("/v2")
 @Transactional
+@XSlf4j
 public class ItemControllerV2 {
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private BasicItemDelegate delegate;
@@ -108,6 +113,15 @@ public class ItemControllerV2 {
 		return delegate.getOne(ApiVersion.V2, repoKey, itemKey, view);
 	}
 	
+	/**
+	 * Returns the given property. This can be single- or collection-valued.
+	 * 
+	 * @param repoKey
+	 * @param itemKey
+	 * @param propKey
+	 * @param view
+	 * @return
+	 */
 	@RequestMapping(
 			value = "/{repoKey}/{itemKey}/{propKey}",
 			method = RequestMethod.GET,
@@ -117,7 +131,7 @@ public class ItemControllerV2 {
 			@PathVariable String itemKey,
 			@PathVariable String propKey,
 			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
-				
+		
 		return delegate.getProperty(ApiVersion.V2, repoKey, itemKey, propKey, view);
 	}
 	
@@ -133,6 +147,21 @@ public class ItemControllerV2 {
 //		val itemClass = itemMetaLookup.getItemClass(repoKey);
 //		return delegate.postAll(itemClass, peResources, true);
 //	}
+	
+	@RequestMapping(
+			value = "/{repoKey}/{itemKey}/{propKey}",
+			method = RequestMethod.POST,
+			consumes = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	@ResponseStatus(HttpStatus.CREATED)
+	// TODO Location header
+	public void postCollectionPropertyElement(
+			@PathVariable String repoKey,
+			@PathVariable String itemKey,
+			@PathVariable String propKey,
+			PEResource peResource) {
+		
+		delegate.postCollectionPropertyElement(ApiVersion.V2, repoKey, itemKey, propKey, peResource);
+	}
 	
 	/**
 	 * Handles HTTP PUT requests against top-level resources. Following HTTP semantics, this creates the resource if it
@@ -198,5 +227,17 @@ public class ItemControllerV2 {
 	public void delete(@PathVariable String repoKey, @PathVariable String itemKey) {
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
 		delegate.delete(new SimpleItemKey(itemClass, itemKey));
+	}
+	
+	@RequestMapping(
+			value = "/{repoKey}/{itemKey}/{propKey}/{elemId}",
+			method = RequestMethod.DELETE)
+	public void deleteCollectionPropertyElement(
+			@PathVariable String repoKey,
+			@PathVariable String itemKey,
+			@PathVariable String propKey,
+			@PathVariable Long elemId) {
+		
+		delegate.deleteCollectionPropertyElement(ApiVersion.V2, repoKey, itemKey, propKey, elemId);
 	}
 }

@@ -22,8 +22,10 @@ import javax.persistence.ManyToOne;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.val;
 import lombok.experimental.Accessors;
 
+import com.expedia.seiso.core.ann.Parent;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
@@ -46,6 +48,7 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 // @formatter:on
 public class DocLink extends AbstractItem {
 	
+	@Parent
 	@ManyToOne
 	@JoinColumn(name = "service_id", nullable = false)
 	private Service service;
@@ -56,6 +59,7 @@ public class DocLink extends AbstractItem {
 	
 	@Override
 	public ItemKey itemKey() {
-		return new SimpleItemKey(DocLink.class, getId());
+		val id = getId();
+		return (id == null ? null : new SimpleItemKey(DocLink.class, id));
 	}
 }

@@ -93,13 +93,19 @@ public class Service extends AbstractItem {
 	@JoinColumn(name = "owner_id")
 	@Fetch(FetchMode.JOIN)
 	private Person owner;
-
+	
 	@NonNull
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("key")
 	@RestResource(path = "service-instances")
 	private List<ServiceInstance> serviceInstances = new ArrayList<>();
-
+	
+	@NonNull
+	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("title")
+	@RestResource(path = "doc-links")
+	private List<DocLink> docLinks = new ArrayList<>();
+	
 	@Override
 	public ItemKey itemKey() {
 		return new SimpleItemKey(Service.class, key);
