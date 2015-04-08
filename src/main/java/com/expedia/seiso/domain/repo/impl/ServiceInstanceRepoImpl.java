@@ -50,12 +50,13 @@ public class ServiceInstanceRepoImpl implements ServiceInstanceRepoCustom {
 			"  sum(healthy * nip_enabled * all_endpoints_enabled) num_healthy_given_enabled " +
 			"from ( " +
 			"  select " +
-			"    if(hs.ukey = 'healthy', 1, 0) healthy, " +
+			"    if(st.ukey in ('success', 'info'), 1, 0) healthy, " +
 			"    if(sum(case nip_rs.ukey when 'enabled' then 0 else 1 end) = 0, 1, 0) nip_enabled, " +
 			"    if(sum(case e_rs.ukey when 'enabled' then 0 else 1 end) = 0, 1, 0) all_endpoints_enabled " +
 			"  from " +
 			"    node n " +
 			"    left outer join health_status hs on n.health_status_id = hs.id " +
+			"    left outer join status_type st on hs.status_type_id = st.id " +
 			"    left outer join node_ip_address nip on nip.node_id = n.id " +
 			"    left outer join rotation_status nip_rs on nip_rs.id = nip.rotation_status_id " +
 			"    left outer join endpoint e on e.node_ip_address_id = nip.id " +
