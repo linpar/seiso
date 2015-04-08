@@ -29,6 +29,7 @@ import lombok.val;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpInputMessage;
@@ -45,7 +46,7 @@ import com.expedia.seiso.web.converter.UriToItemKeyConverter;
 public class ItemKeyHttpMessageConverterTests {
 	
 	// Class under test
-	private ItemKeyHttpMessageConverter httpMessageConverter;
+	@InjectMocks private ItemKeyHttpMessageConverter httpMessageConverter;
 	
 	// Dependencies
 	@Mock private UriToItemKeyConverter uriToItemKeyConverter;
@@ -58,8 +59,8 @@ public class ItemKeyHttpMessageConverterTests {
 	
 	@Before
 	public void setUp() throws Exception {
+		this.httpMessageConverter = new ItemKeyHttpMessageConverter();
 		MockitoAnnotations.initMocks(this);
-		this.httpMessageConverter = new ItemKeyHttpMessageConverter(uriToItemKeyConverter);
 		setUpTestData();
 		setUpDependencies();
 	}
@@ -71,11 +72,6 @@ public class ItemKeyHttpMessageConverterTests {
 	
 	private void setUpDependencies() {
 		when(uriToItemKeyConverter.convert(anyString())).thenReturn(itemKey);
-	}
-	
-	@Test(expected = NullPointerException.class)
-	public void init_null() {
-		new ItemKeyHttpMessageConverter(null);
 	}
 	
 	@Test

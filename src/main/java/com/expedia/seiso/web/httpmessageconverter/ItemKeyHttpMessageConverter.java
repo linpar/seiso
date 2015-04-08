@@ -18,9 +18,9 @@ package com.expedia.seiso.web.httpmessageconverter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import lombok.NonNull;
 import lombok.val;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
@@ -38,11 +38,10 @@ import com.expedia.seiso.web.converter.UriToItemKeyConverter;
  */
 @Component
 public class ItemKeyHttpMessageConverter extends AbstractHttpMessageConverter<ItemKey> {
-	private UriToItemKeyConverter uriToItemKeyConverter;
+	@Autowired private UriToItemKeyConverter uriToItemKeyConverter;
 	
-	public ItemKeyHttpMessageConverter(@NonNull UriToItemKeyConverter uriToItemKeyConverter) {
+	public ItemKeyHttpMessageConverter() {
 		super(MediaTypes.TEXT_URI_LIST);
-		this.uriToItemKeyConverter = uriToItemKeyConverter;
 	}
 	
 	/* (non-Javadoc)

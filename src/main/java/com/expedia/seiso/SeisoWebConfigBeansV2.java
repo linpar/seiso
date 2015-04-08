@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import com.expedia.seiso.core.config.CustomProperties;
+import com.expedia.seiso.core.exception.ConfigurationException;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.controller.v2.ControllerV2Marker;
@@ -59,12 +60,19 @@ public class SeisoWebConfigBeansV2 {
 	
 	@Bean
 	public ItemKeyHttpMessageConverter itemKeyHttpMessageConverter() {
-		return new ItemKeyHttpMessageConverter(uriToItemKeyConverter());
+		return new ItemKeyHttpMessageConverter();
 	}
 	
 	private URI getVersionUri() {
+		val baseUri = customProperties.getBaseUri();
+		
+		if (baseUri == null) {
+			val msg = "baseUri is null. Be sure that you've defined custom.base-uri in application.yml.";
+			throw new ConfigurationException(msg);
+		}
+		
 		try {
-			return new URI(slashify(customProperties.getBaseUri()) + "v2");
+			return new URI(slashify(baseUri) + "v2");
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
