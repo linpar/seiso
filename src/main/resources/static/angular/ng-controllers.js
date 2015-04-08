@@ -339,7 +339,9 @@ var nodeDetailsController = function() {
 				if ($scope.serviceInstance != null) {
 					$scope.service = $scope.serviceInstance.service;
 					$scope.owner = $scope.service.owner;
-					$scope.owner.fullName = $scope.owner.firstName + " " + $scope.owner.lastName;
+					if ($scope.owner != null) {
+						$scope.owner.fullName = $scope.owner.firstName + " " + $scope.owner.lastName;
+					}
 					$scope.environment = $scope.serviceInstance.environment;
 					$scope.dataCenter = $scope.serviceInstance.dataCenter;
 					if ($scope.dataCenter != null) {
