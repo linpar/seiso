@@ -1,6 +1,6 @@
 insert into `role` (id, name) values
-  (1, 'admin'),
-  (2, 'user')
+  (1, 'ROLE_ADMIN'),
+  (2, 'ROLE_USER')
   ;
 
 insert into `status_type` (id, ukey, name) values
