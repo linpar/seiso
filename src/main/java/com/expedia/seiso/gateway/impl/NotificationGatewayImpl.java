@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.seiso.domain.meta.DynaItem;
+import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.gateway.NotificationGateway;
 import com.expedia.seiso.gateway.model.ItemNotification;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
@@ -45,11 +45,16 @@ public class NotificationGatewayImpl implements NotificationGateway {
 	// don't want Seiso to be unable to create/update/delete items.
 	@Async
 	public void notify(@NonNull Item item, @NonNull String operation) {
-		val itemType = item.getClass().getSimpleName();
-		val dynaItem = new DynaItem(item);
-		val exchange = customProperties.getChangeNotificationExchange();
-		val notification = new ItemNotification(itemType, dynaItem.getMetaKey().toString(), operation);
-		val routingKey = itemType + "." + operation;
-		amqpTemplate.convertAndSend(exchange, routingKey, notification);
+		val itemType = item.getClass();
+		
+		// TODO Currently just service instances. Suresh and I need to work out the details for a more general set of
+		// notifications. [WLW]
+		if (itemType == ServiceInstance.class) {
+			val serviceInstance = (ServiceInstance) item;
+			val exchange = customProperties.getChangeNotificationExchange();
+			val notification = new ItemNotification(itemType.getSimpleName(), serviceInstance.getKey(), operation);
+			val routingKey = itemType + "." + operation;
+			amqpTemplate.convertAndSend(exchange, routingKey, notification);
+		}
 	}
 }
