@@ -38,6 +38,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
   
+  # TODO Add management console port
   config.vm.define "bus" do |bus|
     bus.vm.network "forwarded_port", guest: 22, host: 12223, auto_correct: true
     bus.vm.network "forwarded_port", guest: settings["bus"]["port"]["guest"], host: settings["bus"]["port"]["host"]

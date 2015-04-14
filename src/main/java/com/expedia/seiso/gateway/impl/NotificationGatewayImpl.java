@@ -17,7 +17,6 @@ package com.expedia.seiso.gateway.impl;
 
 import lombok.NonNull;
 import lombok.val;
-import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,9 @@ import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.meta.DynaItem;
 import com.expedia.seiso.gateway.NotificationGateway;
 import com.expedia.seiso.gateway.model.ItemNotification;
-import com.expedia.seiso.web.ApiVersion;
-import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
 
 /**
@@ -38,7 +36,6 @@ import com.expedia.seiso.web.assembler.ResourceAssembler;
  * @author Willie Wheeler
  */
 @Component
-@XSlf4j
 public class NotificationGatewayImpl implements NotificationGateway {
 	@Autowired private AmqpTemplate amqpTemplate;
 	@Autowired private ResourceAssembler resourceAssembler;
@@ -49,14 +46,10 @@ public class NotificationGatewayImpl implements NotificationGateway {
 	@Async
 	public void notify(@NonNull Item item, @NonNull String operation) {
 		val itemType = item.getClass().getSimpleName();
-		
-		// Just go with V2 right now since nobody's using V1 here.
-		val itemResource = resourceAssembler.toResource(ApiVersion.V2, item, ProjectionNode.FLAT_PROJECTION_NODE);
-		
+		val dynaItem = new DynaItem(item);
 		val exchange = customProperties.getChangeNotificationExchange();
-		val notification = new ItemNotification(itemType, itemResource, operation);
+		val notification = new ItemNotification(itemType, dynaItem.getMetaKey().toString(), operation);
 		val routingKey = itemType + "." + operation;
-		log.trace("Sending notification: itemType={}, itemKey={}, operation={}", itemType, item.itemKey(), operation);
 		amqpTemplate.convertAndSend(exchange, routingKey, notification);
 	}
 }

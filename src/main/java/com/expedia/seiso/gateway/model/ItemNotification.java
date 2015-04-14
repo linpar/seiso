@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import com.expedia.seiso.web.hateoas.Resource;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
@@ -32,7 +31,9 @@ public class ItemNotification {
 	public static final String OP_UPDATE = "update";
 	public static final String OP_DELETE = "delete";
 	
+	// FIXME Temporary fix to restore function in Expedia environment.
+	// This will change, so don't rely on it. [WLW]
 	@NonNull private String itemType;
-	@NonNull private Resource item;
+	@NonNull private String itemKey;
 	@NonNull private String operation;
 }
