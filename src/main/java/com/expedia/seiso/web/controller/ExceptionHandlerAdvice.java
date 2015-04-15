@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
+import com.expedia.seiso.core.exception.NotFoundException;
 import com.expedia.seiso.core.exception.ResourceNotFoundException;
 import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.service.ErrorObject;
@@ -38,10 +39,17 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @XSlf4j
 public class ExceptionHandlerAdvice {
 
+	@ExceptionHandler(NotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ResponseBody
+	public ErrorObject handleNotFoundException(NotFoundException e, WebRequest request) {
+		return new ErrorObject(C.EC_RESOURCE_NOT_FOUND, e.getMessage());
+	}
+
 	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
-	public ErrorObject handleNoSuchItemException(ResourceNotFoundException e, WebRequest request) {
+	public ErrorObject handleResourceNotFoundException(ResourceNotFoundException e, WebRequest request) {
 		return new ErrorObject(C.EC_RESOURCE_NOT_FOUND, e.getMessage());
 	}
 

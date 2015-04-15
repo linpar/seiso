@@ -66,7 +66,7 @@ public class ExceptionHandlerAdviceTests {
 
 	@Test
 	public void handleNoSuchItemException() {
-		val result = advice.handleNoSuchItemException(resourceNotFoundException, webRequest);
+		val result = advice.handleResourceNotFoundException(resourceNotFoundException, webRequest);
 		assertNotNull(result);
 		assertEquals(C.EC_RESOURCE_NOT_FOUND, result.getCode());
 		assertNotNull(result.getMessage());
