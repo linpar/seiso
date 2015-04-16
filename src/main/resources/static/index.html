@@ -18,6 +18,16 @@
 	<div class="page-content">
 		<div class="container">
 			<div class="alert alert-info" ng-if="globals.motd" ng-bind-html="globals.motd.message"></div>
+		
+			<h1>Greeting</h1>
+			<div ng-show="authenticated">
+				<p>The ID is {{greeting.id}}</p>
+				<p>The content is {{greeting.content}}</p>
+			</div>
+			<div ng-show="!authenticated">
+				<p>Log in to see your greeting</p>
+			</div>
+		
 			<ng-view></ng-view>
 		</div>
 	</div>
