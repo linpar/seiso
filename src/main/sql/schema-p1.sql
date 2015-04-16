@@ -12,3 +12,8 @@ CREATE TABLE `doc_link` (
   CONSTRAINT `doc_link_service_id` FOREIGN KEY (`service_id`) REFERENCES `service` (`id`),
   CONSTRAINT `doc_link_source_id` FOREIGN KEY (`source_id`) REFERENCES `source` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Issue #94
+alter table node drop foreign key node_service_instance_id;
+alter table node modify column service_instance_id int(10) unsigned not null;
+alter table node add constraint node_service_instance_id foreign key (service_instance_id) references service_instance (id);
