@@ -2,8 +2,10 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoFilters
 	.config([ '$httpProvider', '$routeProvider', 'paginationConfig', function($httpProvider, $routeProvider, paginationConfig) {		
 		$httpProvider.defaults.headers.common = {
 			// TODO Migrate toward application/hal+json
-			'Accept' : 'application/json',
-			'X-User-Agent' : 'Seiso UI'
+			"Accept" : "application/json",
+			// https://spring.io/blog/2015/01/12/the-login-page-angular-js-and-spring-security-part-ii 
+			"X-Requested-With" : "XMLHttpRequest"
+//			"X-User-Agent" : "Seiso UI"
 		};
 		
 		var route = function(controllerName, viewName) {
@@ -22,6 +24,7 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoFilters
 		$routeProvider
 				.when('/', route('Home', 'home/home'))
 				.when('/search', route('Search', 'search/search'))
+				.when('/login', route('Login', 'login/login'))
 				.when('/admin', route('Admin', 'admin/index'))
 				.when('/mb', route('MB', 'mb/index'))
 				.when('/mb/:type', route('MBProfile', 'mb/profile'))
@@ -42,7 +45,7 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoFilters
 				.when('/statuses', route('StatusList', 'items/status/list/status-list'))
 				.when('/types', route('TypeList', 'items/type/list/type-list'))
 				.otherwise({ redirectTo : '/' });
-		
+				
 		// Pagination configuration. Is this the right place to do this?
 		paginationConfig.itemsPerPage = 50;
 		paginationConfig.maxSize = 7;

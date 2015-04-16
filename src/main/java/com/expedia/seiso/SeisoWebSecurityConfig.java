@@ -29,6 +29,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
+import com.expedia.seiso.core.security.Roles;
 import com.expedia.seiso.core.security.UserDetailsServiceImpl;
 
 // See http://blog.springsource.org/2013/07/03/spring-security-java-config-preview-web-security/
@@ -60,13 +61,26 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// @formatter:off
 		http
 			.authorizeRequests()
+				
+				// Admin console
+				// Spring Security prepends "ROLE_" to the role.
+				// So in the DB, the roles have to be of the form ROLE_XXX.
+				.antMatchers(HttpMethod.GET, "/health").hasRole(Roles.ROLE_ADMIN)
+				.antMatchers(HttpMethod.GET, "/metrics").hasRole(Roles.ROLE_ADMIN)
+				.antMatchers(HttpMethod.GET, "/env").hasRole(Roles.ROLE_ADMIN)
+				.antMatchers(HttpMethod.GET, "/dump").hasRole(Roles.ROLE_ADMIN)
+				
 				.antMatchers(HttpMethod.GET, "/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/v1/machines/search").permitAll()
 				
 				// For Eos commands
 				.antMatchers(HttpMethod.POST, "/internal/**").permitAll()
 				
+//				.anyRequest().hasRole(Roles.ROLE_USER)
+				
+				// FIXME Change to denyAll() (blacklist)
 				.anyRequest().authenticated()
+				
 				.and()
 			.httpBasic()
 				.authenticationEntryPoint(entryPoint())
