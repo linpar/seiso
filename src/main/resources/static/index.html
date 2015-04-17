@@ -16,7 +16,7 @@
 	<div class="page-content">
 		<div class="container">
 			<div ng-controller="MotdController">
-				<div class="alert alert-info" ng-if="motd" ng-bind="motd"></div>
+				<div class="alert alert-info" ng-if="motd" ng-bind-html="motd"></div>
 			</div>
 			<ng-view></ng-view>
 		</div>
