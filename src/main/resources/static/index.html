@@ -15,6 +15,9 @@
 	<ng-include src="'navbar.html'"></ng-include>
 	<div class="page-content">
 		<div class="container">
+			<div ng-controller="MotdController">
+				<div class="alert alert-info" ng-if="motd" ng-bind="motd"></div>
+			</div>
 			<ng-view></ng-view>
 		</div>
 	</div>
@@ -35,11 +38,13 @@
 	<!-- https://github.com/ocombe/ocLazyLoad -->
 	<!-- http://blog.getelementsbyidea.com/load-a-module-on-demand-with-angularjs/ -->
 	<script type="text/javascript" src="app.js"></script>
-	<script type="text/javascript" src="angular/ng-constants.js"></script>
-	<script type="text/javascript" src="angular/ng-directives.js"></script>
-	<script type="text/javascript" src="angular/ng-filters.js"></script>
-	<script type="text/javascript" src="angular/ng-services.js"></script>
-	<script type="text/javascript" src="angular/ng-mappers.js"></script>
-	<script type="text/javascript" src="angular/ng-controllers.js"></script>
+	<script type="text/javascript" src="angular/ng-constants.js?v=1"></script>
+	<script type="text/javascript" src="angular/ng-directives.js?v=1"></script>
+	<script type="text/javascript" src="angular/ng-filters.js?v=1"></script>
+	<script type="text/javascript" src="angular/ng-services.js?v=1"></script>
+	<script type="text/javascript" src="angular/ng-mappers.js?v=1"></script>
+	<script type="text/javascript" src="js/controllers/various-controllers.js?v=1"></script>
+	<script type="text/javascript" src="js/controllers/motd-controller.js?v=1"></script>
+	<script type="text/javascript" src="js/controllers/register-controllers.js?v=1"></script>
 </body>
 </html>

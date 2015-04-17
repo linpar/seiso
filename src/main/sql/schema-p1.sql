@@ -13,7 +13,17 @@ CREATE TABLE `doc_link` (
   CONSTRAINT `doc_link_source_id` FOREIGN KEY (`source_id`) REFERENCES `source` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Issue #94
+-- Issue #94: NOT NULL constraint on node.service_instance_id
 alter table node drop foreign key node_service_instance_id;
 alter table node modify column service_instance_id int(10) unsigned not null;
 alter table node add constraint node_service_instance_id foreign key (service_instance_id) references service_instance (id);
+
+-- Issue #104: Message of the Day
+drop table if exists conf_prop;
+create table conf_prop (
+  id int(10) unsigned not null auto_increment,
+  `pkey` varchar(80) not null,
+  `pvalue` text(4096),
+  primary key (id),
+  unique key `pkey` (`pkey`)
+) engine=InnoDB default charset=utf8;
