@@ -24,6 +24,7 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,9 +62,18 @@ public class SeisoRabbitConfig {
 	public Exchange seisoNotificationsExchange() {
 		return new TopicExchange(customProperties.getChangeNotificationExchange());
 	}
-
+	
+	@Bean
+	public Jackson2JsonMessageConverter jsonMessageConverter() {
+		val converter = new Jackson2JsonMessageConverter();
+//		converter.setJsonObjectMapper(halMapper);
+		return converter;
+	}
+	
 	@Bean
 	public AmqpTemplate amqpTemplate() {
-		return new RabbitTemplate(connectionFactory);
+		val template = new RabbitTemplate(connectionFactory);
+		template.setMessageConverter(jsonMessageConverter());
+		return template;
 	}
 }
