@@ -19,19 +19,23 @@ import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.expedia.seiso.core.config.CustomProperties;
-import com.expedia.seiso.web.jackson.hal.HalMapper;
+
+// Recent changes to this configuration:
+// 
+// 1. Removed actionRequestsExchange since we don't yet support such requests.
+// 2. Removed custom HAL mapper here since it's unclear whether we will actually use this.
+// 
+// In both cases, see git history for details. [WLW]
 
 // TODO Do we want this?
 //@EnableRabbit
@@ -43,7 +47,6 @@ import com.expedia.seiso.web.jackson.hal.HalMapper;
 @XSlf4j
 public class SeisoRabbitConfig {
 	@Autowired private CachingConnectionFactory connectionFactory;
-	@Autowired private HalMapper halMapper;
 	@Autowired private CustomProperties customProperties;
 	
 	@Bean
@@ -51,33 +54,16 @@ public class SeisoRabbitConfig {
 		log.trace("connectionFactory.host={}", connectionFactory.getHost());
 		val admin = new RabbitAdmin(connectionFactory);
 		admin.declareExchange(seisoNotificationsExchange());
-		admin.declareExchange(seisoActionRequestsExchange());
 		return admin;
 	}
 
 	@Bean
 	public Exchange seisoNotificationsExchange() {
 		return new TopicExchange(customProperties.getChangeNotificationExchange());
-		// exchange.setAdminsThatShouldDeclare(rabbitAdmin());
 	}
 
 	@Bean
-	public Exchange seisoActionRequestsExchange() {
-		// Use a direct exchange since we want to route requests according to their request codes.
-		return new DirectExchange(customProperties.getActionRequestExchange());
-	}
-	
-	@Bean
-	public Jackson2JsonMessageConverter jsonMessageConverter() {
-		val converter = new Jackson2JsonMessageConverter();
-		converter.setJsonObjectMapper(halMapper);
-		return converter;
-	}
-	
-	@Bean
 	public AmqpTemplate amqpTemplate() {
-		val template = new RabbitTemplate(connectionFactory);
-		template.setMessageConverter(jsonMessageConverter());
-		return template;
+		return new RabbitTemplate(connectionFactory);
 	}
 }

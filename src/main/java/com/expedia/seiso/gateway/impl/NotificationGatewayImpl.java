@@ -46,14 +46,15 @@ public class NotificationGatewayImpl implements NotificationGateway {
 	@Async
 	public void notify(@NonNull Item item, @NonNull String operation) {
 		val itemType = item.getClass();
+		val itemTypeName = itemType.getSimpleName();
 		
 		// TODO Currently just service instances. Suresh and I need to work out the details for a more general set of
 		// notifications. [WLW]
 		if (itemType == ServiceInstance.class) {
 			val serviceInstance = (ServiceInstance) item;
 			val exchange = customProperties.getChangeNotificationExchange();
-			val notification = new ItemNotification(itemType.getSimpleName(), serviceInstance.getKey(), operation);
-			val routingKey = itemType + "." + operation;
+			val notification = new ItemNotification(itemTypeName, serviceInstance.getKey(), operation);
+			val routingKey = itemTypeName + "." + operation;
 			amqpTemplate.convertAndSend(exchange, routingKey, notification);
 		}
 	}
