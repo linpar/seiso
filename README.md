@@ -60,18 +60,15 @@ in the other, just to parallelize the work.
 Common Configuration
 -------------
 
-Create copies of the following files from `conf-sample` and modify them as appropriate:
+Create a copy of `conf-sample/application.yml` and modify it as appropriate.
 
-* `application.yml`
-* `keystore-dev.jks`
-
-To run Seiso in development mode, you can place them directly in `src/main/resources`.
+To run Seiso in development mode, you can place it directly in `src/main/resources`.
 
 Patch the Database
 -------------
 
 * Connect to `localhost:3306/seiso` as `root` user
-* Run `src/main/sql/patch-0.0.2.1.sql`
+* Run any patch files.
 * Follow the instructions in that patch sql file (e.g. Run query: `update person set source='ldap-corp'`)
 
 
