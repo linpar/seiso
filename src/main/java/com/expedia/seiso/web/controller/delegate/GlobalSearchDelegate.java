@@ -22,11 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.domain.service.SearchEngine;
 import com.expedia.seiso.domain.service.search.SearchQuery;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler

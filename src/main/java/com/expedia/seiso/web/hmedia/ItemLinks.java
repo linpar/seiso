@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas.link;
+package com.expedia.seiso.web.hmedia;
 
 import java.net.URI;
 
@@ -27,13 +27,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.expedia.rf.hmedia.Link;
+import com.expedia.rf.hmedia.Relations;
 import com.expedia.seiso.domain.entity.Dashboard;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.hateoas.Link;
 
 /**
  * Various factory methods for creating item links. This does not include the repository search links, which
@@ -162,26 +162,26 @@ public class ItemLinks {
 	
 	public Link dashboardApiLink(@NonNull Dashboard dashboard) {
 		val href = dashboard.getApiUri();
-		return (href == null ? null : new Link(Relations.S_DASHBOARD_API, href));
+		return (href == null ? null : new Link(SeisoRelations.S_DASHBOARD_API, href));
 	}
 	
 	public Link dashboardUiLink(@NonNull Dashboard dashboard) {
 		val href = dashboard.getUiUri();
-		return (href == null ? null : new Link(Relations.S_DASHBOARD_API, href));
+		return (href == null ? null : new Link(SeisoRelations.S_DASHBOARD_API, href));
 	}
 	
 	public Link seyrenCheckApiLink(@NonNull SeyrenCheck check) {
 		val source = check.getSource();
 		assert (source != null);
 		val href = source.getBaseUri() + "/api/checks/" + check.getSeyrenId();
-		return new Link(Relations.S_SEYREN_CHECK_API, href);
+		return new Link(SeisoRelations.S_SEYREN_CHECK_API, href);
 	}
 	
 	public Link seyrenCheckUiLink(@NonNull SeyrenCheck check) {
 		val source = check.getSource();
 		assert (source != null);
 		val href = source.getBaseUri() + "/#/checks/" + check.getSeyrenId();
-		return new Link(Relations.S_SEYREN_CHECK_UI, href);
+		return new Link(SeisoRelations.S_SEYREN_CHECK_UI, href);
 	}
 	
 	

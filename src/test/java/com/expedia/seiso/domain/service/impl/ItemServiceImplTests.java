@@ -40,7 +40,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.util.ReflectionUtils;
 
-import com.expedia.seiso.core.exception.ResourceNotFoundException;
+import com.expedia.rf.exception.ResourceNotFoundException;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.entity.key.ItemKey;

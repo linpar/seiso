@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.filter;
+package com.expedia.rf.web.filter;
 
 import java.io.IOException;
 

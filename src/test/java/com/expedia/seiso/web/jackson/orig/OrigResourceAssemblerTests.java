@@ -27,11 +27,11 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-import com.expedia.seiso.web.hateoas.Link;
-import com.expedia.seiso.web.hateoas.PageMetadata;
-import com.expedia.seiso.web.hateoas.PagedResources;
-import com.expedia.seiso.web.hateoas.Resource;
-import com.expedia.seiso.web.hateoas.Resources;
+import com.expedia.rf.hmedia.Link;
+import com.expedia.rf.hmedia.PageMetadata;
+import com.expedia.rf.hmedia.PagedResources;
+import com.expedia.rf.hmedia.Resource;
+import com.expedia.rf.hmedia.Resources;
 
 /**
  * @author Willie Wheeler

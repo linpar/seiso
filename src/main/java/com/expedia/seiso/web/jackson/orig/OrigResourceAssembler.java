@@ -25,11 +25,11 @@ import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.hateoas.Link;
-import com.expedia.seiso.web.hateoas.PagedResources;
-import com.expedia.seiso.web.hateoas.Resource;
-import com.expedia.seiso.web.hateoas.Resources;
+import com.expedia.rf.hmedia.Link;
+import com.expedia.rf.hmedia.PagedResources;
+import com.expedia.rf.hmedia.Relations;
+import com.expedia.rf.hmedia.Resource;
+import com.expedia.rf.hmedia.Resources;
 
 /**
  * @author Willie Wheeler

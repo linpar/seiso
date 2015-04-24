@@ -42,9 +42,9 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import com.expedia.rf.hmedia.PEResources;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.hateoas.PEResources;
 import com.expedia.seiso.web.resolver.PEResourcesResolver;
 import com.expedia.seiso.web.resolver.ResolverUtils;
 

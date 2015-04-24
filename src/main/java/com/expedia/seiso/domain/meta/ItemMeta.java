@@ -17,8 +17,8 @@ package com.expedia.seiso.domain.meta;
 
 import java.lang.reflect.Method;
 
+import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 

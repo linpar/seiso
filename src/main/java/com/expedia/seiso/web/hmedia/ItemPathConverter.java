@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas;
+package com.expedia.seiso.web.hmedia;
 
-import lombok.Data;
-import lombok.NonNull;
+import org.springframework.core.convert.converter.Converter;
+
+import com.expedia.seiso.domain.entity.Item;
 
 /**
+ * Functional interface to map items to path segments.
+ * 
  * @author Willie Wheeler
  */
-@Data
-public class Link {
-	@NonNull private String rel;
-	@NonNull private String href;
-	private String title;
-	private Boolean templated;
-}
+@FunctionalInterface
+public interface ItemPathConverter extends Converter<Item, String[]> { }

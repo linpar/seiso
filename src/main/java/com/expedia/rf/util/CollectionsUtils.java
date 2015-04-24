@@ -13,24 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.core.util;
+package com.expedia.rf.util;
 
-import lombok.SneakyThrows;
+import java.util.ArrayList;
+import java.util.List;
+
+import lombok.NonNull;
+import lombok.val;
 import lombok.experimental.UtilityClass;
 
 /**
  * @author Willie Wheeler
  */
 @UtilityClass
-public class ReflectionUtils {
+public class CollectionsUtils {
 
-	@SneakyThrows
-	public static Class<?> classForName(String className) {
-		return Class.forName(className);
+	public static Class<?> getElementClass(@NonNull List<?> list) {
+		return (list.isEmpty() ? null : list.get(0).getClass());
 	}
 
-	@SneakyThrows
-	public static <T> T createInstance(Class<T> clazz) {
-		return clazz.newInstance();
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static List toList(Iterable iterable) {
+		val list = new ArrayList();
+		for (Object element : iterable) {
+			list.add(element);
+		}
+		return list;
 	}
 }

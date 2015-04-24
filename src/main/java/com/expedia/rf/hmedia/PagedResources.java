@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.core.ann;
+package com.expedia.rf.hmedia;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * @author Willie Wheeler
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
-public @interface RestResource {
-
-	boolean exported() default true;
-
-	String rel() default "";
-
-	String path() default "";
+@Data
+@AllArgsConstructor
+public class PagedResources {
+	private List<Link> links;
+	private PageMetadata metadata;
+	private List<Resource> items;
 }

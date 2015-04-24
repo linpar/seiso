@@ -31,12 +31,14 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.util.MultiValueMap;
 
+import com.expedia.rf.hmedia.Relations;
 import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.Relations;
+import com.expedia.seiso.web.hmedia.ItemLinks;
+import com.expedia.seiso.web.hmedia.ItemPaths;
 
 /**
  * @author Willie Wheeler

@@ -22,8 +22,8 @@ import lombok.val;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.hateoas.PagedResources;
+import com.expedia.rf.hmedia.PagedResources;
+import com.expedia.rf.hmedia.Relations;
 
 /**
  * @author Willie Wheeler

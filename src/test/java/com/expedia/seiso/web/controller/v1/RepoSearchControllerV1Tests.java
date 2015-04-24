@@ -30,11 +30,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 
+import com.expedia.rf.hmedia.PagedResources;
+import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
-import com.expedia.seiso.web.hateoas.Resource;
-import com.expedia.seiso.web.hateoas.PagedResources;
 
 /**
  * @author Willie Wheeler

@@ -37,9 +37,15 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
+import com.expedia.rf.ann.RestResource;
+import com.expedia.rf.hmedia.Link;
+import com.expedia.rf.hmedia.PageMetadata;
+import com.expedia.rf.hmedia.PagedResources;
+import com.expedia.rf.hmedia.Relations;
+import com.expedia.rf.hmedia.Resource;
+import com.expedia.rf.hmedia.Resources;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
-import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Dashboard;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
@@ -50,15 +56,10 @@ import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.SearchResults;
 import com.expedia.seiso.web.ApiVersion;
-import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.hateoas.Link;
-import com.expedia.seiso.web.hateoas.PageMetadata;
-import com.expedia.seiso.web.hateoas.PagedResources;
-import com.expedia.seiso.web.hateoas.Resource;
-import com.expedia.seiso.web.hateoas.Resources;
-import com.expedia.seiso.web.hateoas.link.ItemLinks;
-import com.expedia.seiso.web.hateoas.link.LinkFactory;
-import com.expedia.seiso.web.hateoas.link.RepoSearchLinks;
+import com.expedia.seiso.web.hmedia.ItemLinks;
+import com.expedia.seiso.web.hmedia.LinkFactory;
+import com.expedia.seiso.web.hmedia.RepoSearchLinks;
+import com.expedia.seiso.web.hmedia.SeisoRelations;
 
 /**
  * Assembles items into resources, which include links (in support of the REST HATEOAS principle). Subsequent
@@ -404,7 +405,7 @@ public class ResourceAssembler {
 	private List<Link> toRepoListLinks(ApiVersion apiVersion, Class<?> itemClass, List<?> itemList) {
 		val links = new ArrayList<Link>();
 		links.add(itemLinks(apiVersion).repoLink(itemClass, EMPTY_PARAMS));
-		links.add(repoSearchLinks(apiVersion).repoSearchListLink(Relations.S_SEARCH, itemClass));
+		links.add(repoSearchLinks(apiVersion).repoSearchListLink(SeisoRelations.S_SEARCH, itemClass));
 		return links;
 	}
 	
@@ -437,7 +438,7 @@ public class ResourceAssembler {
 			links.add(itemLinks(apiVersion).repoLastLink(itemClass, itemPage, params));
 		}
 		
-		links.add(repoSearchLinks(apiVersion).repoSearchListLink(Relations.S_SEARCH, itemClass));
+		links.add(repoSearchLinks(apiVersion).repoSearchListLink(SeisoRelations.S_SEARCH, itemClass));
 		return links;
 	}
 	

@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.core.exception;
 
+import com.expedia.rf.exception.ResourceNotFoundException;
+
 /**
  * General-purpose exception indicating that something couldn't be found. Prefer appropriate subclasses (e.g.
  * {@link ResourceNotFoundException} when available.

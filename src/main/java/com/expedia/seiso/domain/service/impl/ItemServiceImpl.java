@@ -38,8 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.expedia.seiso.core.exception.ResourceNotFoundException;
-import com.expedia.seiso.core.util.CollectionsUtils;
+import com.expedia.rf.exception.ResourceNotFoundException;
+import com.expedia.rf.util.CollectionsUtils;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.key.ItemKey;

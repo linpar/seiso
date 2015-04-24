@@ -26,35 +26,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.expedia.rf.hmedia.PEResource;
+import com.expedia.rf.hmedia.PagedResources;
+import com.expedia.rf.hmedia.Resource;
+import com.expedia.rf.hmedia.Resources;
+import com.expedia.rf.util.C;
+import com.expedia.rf.web.MediaTypes;
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.core.util.C;
-import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.ApiVersion;
-import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.PEResource;
-import com.expedia.seiso.web.hateoas.PagedResources;
-import com.expedia.seiso.web.hateoas.Resource;
-import com.expedia.seiso.web.hateoas.Resources;
-
-// TODO Support patching. The reason is that due to the recursive relationship between people and their managers, we
-// want to be able to update people in two passes:
-// 1) Create all people (need to do this first so we can resolve managers in pass #2)
-// 2) Link to managers
-// When updating people in pass #1, we don't want to null out their managers.
-
-// TODO Support batch linking of people to managers. But require pagination.
-
-// TODO Support batch deleting of people. But require pagination.
 
 // http://stackoverflow.com/questions/2810652/how-to-design-a-restful-collection-resource
 // http://stackoverflow.com/questions/306271/bulk-collection-manipulation-through-a-rest-restful-api
@@ -113,28 +101,6 @@ public class ItemControllerV2 {
 		return delegate.getOne(ApiVersion.V2, repoKey, itemKey, view);
 	}
 	
-	/**
-	 * Returns the given property. This can be single- or collection-valued.
-	 * 
-	 * @param repoKey
-	 * @param itemKey
-	 * @param propKey
-	 * @param view
-	 * @return
-	 */
-	@RequestMapping(
-			value = "/{repoKey}/{itemKey}/{propKey}",
-			method = RequestMethod.GET,
-			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public Object getProperty(
-			@PathVariable String repoKey,
-			@PathVariable String itemKey,
-			@PathVariable String propKey,
-			@RequestParam(defaultValue = Projection.DEFAULT) String view) {
-		
-		return delegate.getProperty(ApiVersion.V2, repoKey, itemKey, propKey, view);
-	}
-	
 //	@RequestMapping(
 //			value = "/{repoKey}",
 //			method = RequestMethod.POST,
@@ -147,21 +113,6 @@ public class ItemControllerV2 {
 //		val itemClass = itemMetaLookup.getItemClass(repoKey);
 //		return delegate.postAll(itemClass, peResources, true);
 //	}
-	
-	@RequestMapping(
-			value = "/{repoKey}/{itemKey}/{propKey}",
-			method = RequestMethod.POST,
-			consumes = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	@ResponseStatus(HttpStatus.CREATED)
-	// TODO Location header
-	public void postCollectionPropertyElement(
-			@PathVariable String repoKey,
-			@PathVariable String itemKey,
-			@PathVariable String propKey,
-			PEResource peResource) {
-		
-		delegate.postCollectionPropertyElement(ApiVersion.V2, repoKey, itemKey, propKey, peResource);
-	}
 	
 	/**
 	 * Handles HTTP PUT requests against top-level resources. Following HTTP semantics, this creates the resource if it
@@ -182,35 +133,8 @@ public class ItemControllerV2 {
 			consumes = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void put(@PathVariable String repoKey, @PathVariable String itemKey, PEResource peResource) {
-		// mergeAssociations = false because v2 treats associations as separate resources, and merging associations
-		// would null out the current item's associations.
-		delegate.put(peResource.getItem(), false);
-	}
-	
-	/**
-	 * Assigns an item to a given property.
-	 * 
-	 * @param repoKey
-	 *            Repository key
-	 * @param itemKey
-	 *            Item key
-	 * @param propKey
-	 *            Property key
-	 * @param propItemKey
-	 *            Key for the item to assign to the property
-	 */
-	@RequestMapping(
-			value = "/{repoKey}/{itemKey}/{propKey}",
-			method = RequestMethod.PUT,
-			consumes = MediaTypes.TEXT_URI_LIST_VALUE)
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void putProperty(
-			@PathVariable String repoKey,
-			@PathVariable String itemKey,
-			@PathVariable String propKey,
-			@RequestBody(required = false) ItemKey propItemKey) {
-		
-		delegate.putProperty(repoKey, itemKey, propKey, propItemKey);
+		log.trace("Putting /{}/{}", repoKey, itemKey);
+		delegate.put(peResource.getItem(), true);
 	}
 	
 	/**
@@ -227,17 +151,5 @@ public class ItemControllerV2 {
 	public void delete(@PathVariable String repoKey, @PathVariable String itemKey) {
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
 		delegate.delete(new SimpleItemKey(itemClass, itemKey));
-	}
-	
-	@RequestMapping(
-			value = "/{repoKey}/{itemKey}/{propKey}/{elemId}",
-			method = RequestMethod.DELETE)
-	public void deleteCollectionPropertyElement(
-			@PathVariable String repoKey,
-			@PathVariable String itemKey,
-			@PathVariable String propKey,
-			@PathVariable Long elemId) {
-		
-		delegate.deleteCollectionPropertyElement(ApiVersion.V2, repoKey, itemKey, propKey, elemId);
 	}
 }

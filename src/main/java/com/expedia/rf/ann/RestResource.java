@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.core.util;
+package com.expedia.rf.ann;
 
-import lombok.experimental.UtilityClass;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Constants.
- * 
  * @author Willie Wheeler
  */
-@UtilityClass
-public class C {
-	public static final int DEFAULT_PAGE_NUMBER = 0;
-	public static final int DEFAULT_PAGE_SIZE = 100;
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
+public @interface RestResource {
 
-	// Error codes
-	public static final String EC_INTERNAL_ERROR = "internal_error";
+	boolean exported() default true;
 
-	/** JSON syntax is fine, but semantics wrong (e.g. array passed where we expect a single value) */
-	public static final String EC_INVALID_REQUEST_JSON_PAYLOAD = "invalid_request_json_payload";
+	String rel() default "";
 
-	public static final String EC_RESOURCE_NOT_FOUND = "resource_not_found";
+	String path() default "";
 }

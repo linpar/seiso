@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas.link;
+package com.expedia.seiso.web.hmedia;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +25,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.hateoas.Link;
+import com.expedia.rf.hmedia.Link;
+import com.expedia.rf.hmedia.Relations;
 
 /**
  * Builder for pagination links (self, first, previous, next, last). This is for paging resources generally, not for any

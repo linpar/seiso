@@ -32,6 +32,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 
+import com.expedia.rf.hmedia.PEResource;
+import com.expedia.rf.hmedia.PEResources;
+import com.expedia.rf.hmedia.PagedResources;
+import com.expedia.rf.hmedia.Resource;
+import com.expedia.rf.hmedia.Resources;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.entity.key.ItemKey;
@@ -39,11 +44,6 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.PEResource;
-import com.expedia.seiso.web.hateoas.PEResources;
-import com.expedia.seiso.web.hateoas.PagedResources;
-import com.expedia.seiso.web.hateoas.Resource;
-import com.expedia.seiso.web.hateoas.Resources;
 
 /**
  * @author Willie Wheeler

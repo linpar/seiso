@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.expedia.seiso.web.filter.LogFilter;
+import com.expedia.rf.web.filter.LogFilter;
 
 public class LogFilterTests {
 

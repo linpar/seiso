@@ -26,10 +26,10 @@ import lombok.val;
 
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.web.hateoas.Link;
-import com.expedia.seiso.web.hateoas.PagedResources;
-import com.expedia.seiso.web.hateoas.Resource;
-import com.expedia.seiso.web.hateoas.Resources;
+import com.expedia.rf.hmedia.Link;
+import com.expedia.rf.hmedia.PagedResources;
+import com.expedia.rf.hmedia.Resource;
+import com.expedia.rf.hmedia.Resources;
 
 /**
  * Maps base resources to a HAL-specific representation to support HAL serialization.

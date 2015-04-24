@@ -35,7 +35,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.expedia.seiso.web.Relations;
+import com.expedia.rf.hmedia.Relations;
+import com.expedia.seiso.web.hmedia.PaginationLinkBuilder;
 
 /**
  * @author Willie Wheeler

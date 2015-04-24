@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.expedia.rf.hmedia.PEResource;
+import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.domain.entity.key.IpAddressRoleKey;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.PEResource;
-import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler

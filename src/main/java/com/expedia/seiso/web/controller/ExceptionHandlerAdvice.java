@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
+import com.expedia.rf.exception.ResourceNotFoundException;
+import com.expedia.rf.util.C;
 import com.expedia.seiso.core.exception.NotFoundException;
-import com.expedia.seiso.core.exception.ResourceNotFoundException;
-import com.expedia.seiso.core.util.C;
 import com.expedia.seiso.domain.service.ErrorObject;
 import com.fasterxml.jackson.databind.JsonMappingException;
 

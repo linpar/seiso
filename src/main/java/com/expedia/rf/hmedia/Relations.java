@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas.link;
-
-import org.springframework.core.convert.converter.Converter;
-
-import com.expedia.seiso.domain.entity.Item;
+package com.expedia.rf.hmedia;
 
 /**
- * Functional interface to map items to path segments.
- * 
  * @author Willie Wheeler
  */
-@FunctionalInterface
-public interface ItemPathConverter extends Converter<Item, String[]> { }
+public class Relations {
+	public static final String SELF = "self";
+	public static final String UP = "up";
+	public static final String FIRST = "first";
+	public static final String PREVIOUS = "prev";
+	public static final String NEXT = "next";
+	public static final String LAST = "last";
+}

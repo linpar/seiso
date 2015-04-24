@@ -22,8 +22,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.core.ann.FindByKey;
-import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.domain.entity.Machine;
 import com.expedia.seiso.domain.repo.custom.MachineRepoCustom;
 

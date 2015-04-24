@@ -39,6 +39,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 
+import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.meta.ItemMeta;
@@ -48,7 +49,6 @@ import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler

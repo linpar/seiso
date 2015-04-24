@@ -21,7 +21,7 @@ import lombok.NonNull;
 
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.web.hateoas.Resources;
+import com.expedia.rf.hmedia.Resources;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

@@ -27,10 +27,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
+import com.expedia.rf.web.MediaTypes;
 import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.core.exception.ConfigurationException;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.controller.v2.ControllerV2Marker;
 import com.expedia.seiso.web.converter.UriToItemKeyConverter;
 import com.expedia.seiso.web.httpmessageconverter.ItemKeyHttpMessageConverter;

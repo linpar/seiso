@@ -32,7 +32,7 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.controller.v1.ControllerV1Marker;
 import com.expedia.seiso.web.controller.v1.ResponseHeadersV1;
-import com.expedia.seiso.web.hateoas.link.ItemPaths;
+import com.expedia.seiso.web.hmedia.ItemPaths;
 import com.expedia.seiso.web.jackson.orig.OrigMapper;
 import com.expedia.seiso.web.jackson.orig.OrigModule;
 import com.expedia.seiso.web.jackson.orig.OrigPagedResourcesSerializer;

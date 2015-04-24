@@ -30,7 +30,7 @@ import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SearchEngine;
-import com.expedia.seiso.web.hateoas.link.ItemPaths;
+import com.expedia.seiso.web.hmedia.ItemPaths;
 import com.expedia.seiso.web.jackson.hal.HalMapper;
 
 /**

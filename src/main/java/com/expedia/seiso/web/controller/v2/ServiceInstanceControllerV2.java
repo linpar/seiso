@@ -24,12 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.expedia.rf.hmedia.Relations;
+import com.expedia.rf.hmedia.Resource;
+import com.expedia.rf.web.MediaTypes;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.repo.ServiceInstanceRepo;
-import com.expedia.seiso.web.MediaTypes;
-import com.expedia.seiso.web.Relations;
-import com.expedia.seiso.web.hateoas.Resource;
-import com.expedia.seiso.web.hateoas.link.LinkFactory;
+import com.expedia.seiso.web.hmedia.LinkFactory;
 
 /**
  * @author Willie Wheeler

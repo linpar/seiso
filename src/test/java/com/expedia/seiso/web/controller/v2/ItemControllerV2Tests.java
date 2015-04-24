@@ -30,6 +30,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 
+import com.expedia.rf.hmedia.PEResource;
+import com.expedia.rf.hmedia.PagedResources;
+import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.entity.key.ItemKey;
@@ -38,9 +41,6 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
-import com.expedia.seiso.web.hateoas.PEResource;
-import com.expedia.seiso.web.hateoas.Resource;
-import com.expedia.seiso.web.hateoas.PagedResources;
 
 /**
  * @author Willie Wheeler
@@ -128,28 +128,9 @@ public class ItemControllerV2Tests {
 	}
 	
 	@Test
-	public void getProperty() {
-		val result = controller.getProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, VIEW_KEY);
-		assertNotNull(result);
-		assertSame(propBaseResource, result);
-	}
-	
-	@Test
 	public void put() {
 		controller.put(PAGING_REPO_KEY, ITEM_KEY, itemPEResource);
-		verify(delegate).put(service, false);
-	}
-	
-	@Test
-	public void putProperty() {
-		controller.putProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, itemKey);
-		verify(delegate).putProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, itemKey);
-	}
-	
-	@Test
-	public void putProperty_null() {
-		controller.putProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, null);
-		verify(delegate).putProperty(PAGING_REPO_KEY, ITEM_KEY, PROP_KEY, null);
+		verify(delegate).put(service, true);
 	}
 	
 	@Test

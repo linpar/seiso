@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.repository.support.Repositories;
 
-import com.expedia.seiso.core.ann.RestResource;
+import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.core.exception.NotFoundException;
 
 /**

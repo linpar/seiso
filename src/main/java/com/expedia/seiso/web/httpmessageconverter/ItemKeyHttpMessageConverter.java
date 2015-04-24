@@ -29,8 +29,8 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
+import com.expedia.rf.web.MediaTypes;
 import com.expedia.seiso.domain.entity.key.ItemKey;
-import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.converter.UriToItemKeyConverter;
 
 /**

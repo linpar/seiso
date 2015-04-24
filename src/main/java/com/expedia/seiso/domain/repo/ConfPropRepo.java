@@ -18,7 +18,7 @@ package com.expedia.seiso.domain.repo;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.expedia.seiso.core.ann.RestResource;
+import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.domain.entity.ConfProp;
 
 /**

@@ -25,7 +25,7 @@ import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.SimplePropertyHandler;
 import org.springframework.data.mapping.model.BeanWrapper;
 
-import com.expedia.seiso.core.ann.RestResource;
+import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.domain.entity.Item;
 
 /**

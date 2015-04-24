@@ -27,7 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.expedia.seiso.core.exception.ResourceNotFoundException;
+import com.expedia.rf.exception.ResourceNotFoundException;
 import com.expedia.seiso.domain.entity.LoadBalancer;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.key.IpAddressRoleKey;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas.link;
+package com.expedia.seiso.web.hmedia;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -28,8 +28,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.expedia.rf.hmedia.Link;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.hateoas.Link;
 
 /**
  * @author Willie Wheeler

@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas;
+package com.expedia.rf.hmedia;
 
-import java.util.List;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 /**
  * @author Willie Wheeler
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Resources {
-	private List<Link> links;
-	private List<Resource> items;
+public class Link {
+	@NonNull private String rel;
+	@NonNull private String href;
+	private String title;
+	private Boolean templated;
 }

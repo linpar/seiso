@@ -22,6 +22,8 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.expedia.rf.hmedia.PageMetadata;
+
 /**
  * @author Willie Wheeler
  */

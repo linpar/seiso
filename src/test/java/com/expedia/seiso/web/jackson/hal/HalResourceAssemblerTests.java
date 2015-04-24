@@ -24,10 +24,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.expedia.seiso.web.hateoas.Resource;
-import com.expedia.seiso.web.hateoas.PagedResources;
-import com.expedia.seiso.web.hateoas.Link;
-import com.expedia.seiso.web.hateoas.PageMetadata;
+import com.expedia.rf.hmedia.Link;
+import com.expedia.rf.hmedia.PageMetadata;
+import com.expedia.rf.hmedia.PagedResources;
+import com.expedia.rf.hmedia.Resource;
 
 /**
  * @author Willie Wheeler

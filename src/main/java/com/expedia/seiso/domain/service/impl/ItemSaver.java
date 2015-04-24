@@ -25,7 +25,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.core.util.ReflectionUtils;
+import com.expedia.rf.util.ReflectionUtils;
 import com.expedia.seiso.domain.entity.Item;
 
 /**

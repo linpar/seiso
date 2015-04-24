@@ -23,7 +23,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
-import com.expedia.seiso.core.exception.ResourceNotFoundException;
+import com.expedia.rf.exception.ResourceNotFoundException;
 import com.expedia.seiso.domain.entity.key.IpAddressRoleKey;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.NodeIpAddressKey;

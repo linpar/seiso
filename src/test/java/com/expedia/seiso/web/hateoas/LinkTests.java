@@ -20,7 +20,8 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.expedia.seiso.web.Relations;
+import com.expedia.rf.hmedia.Link;
+import com.expedia.rf.hmedia.Relations;
 
 /**
  * This test exists primarily to exclude {@link Link} from the code coverage "missed instructions" count.

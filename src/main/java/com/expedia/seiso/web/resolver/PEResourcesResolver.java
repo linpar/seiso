@@ -32,11 +32,11 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import com.expedia.seiso.core.util.ReflectionUtils;
+import com.expedia.rf.hmedia.PEResources;
+import com.expedia.rf.util.ReflectionUtils;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.list.EntityListPackageMarker;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.hateoas.PEResources;
 
 /**
  * Reads a resource off the request, binds it to the relevant item metadata, and returns the result.

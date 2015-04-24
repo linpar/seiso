@@ -25,14 +25,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.expedia.rf.exception.ResourceNotFoundException;
+import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.core.exception.ResourceNotFoundException;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler

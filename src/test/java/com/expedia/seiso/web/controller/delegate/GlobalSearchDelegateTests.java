@@ -27,12 +27,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 
+import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.domain.service.SearchEngine;
 import com.expedia.seiso.domain.service.SearchResults;
 import com.expedia.seiso.domain.service.search.SearchQuery;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * @author Willie Wheeler

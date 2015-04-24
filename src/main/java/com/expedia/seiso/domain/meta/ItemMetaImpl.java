@@ -28,11 +28,11 @@ import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.core.annotation.AnnotationUtils;
 
+import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.core.ann.FindByKey;
 import com.expedia.seiso.core.ann.Parent;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projections;
-import com.expedia.seiso.core.ann.RestResource;
 import com.expedia.seiso.core.exception.NotFoundException;
 import com.expedia.seiso.domain.entity.Dashboard;
 import com.expedia.seiso.domain.entity.DocLink;

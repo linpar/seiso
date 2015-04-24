@@ -42,7 +42,7 @@ import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.entity.ServiceType;
 import com.expedia.seiso.domain.entity.StatusType;
-import com.expedia.seiso.web.hateoas.link.ItemPaths;
+import com.expedia.seiso.web.hmedia.ItemPaths;
 
 /**
  * @author Willie Wheeler

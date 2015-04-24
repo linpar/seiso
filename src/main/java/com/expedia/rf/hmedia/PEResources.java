@@ -13,44 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas;
+package com.expedia.rf.hmedia;
+
+import java.util.ArrayList;
 
 import lombok.ToString;
 
 import org.springframework.data.mapping.PersistentEntity;
 
 import com.expedia.seiso.domain.entity.Item;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * <p>
- * Resource that holds a reference to the entity's {@link PersistentEntity} metadata.
- * </p>
- * <p>
- * We use this class as the binding for incoming representations. We can use this as a handler method parameter since
- * it's a concrete class.
- * </p>
- * 
  * @author Willie Wheeler
  */
 @ToString
-public class PEResource {
-	private final PersistentEntity<?, ?> itemMeta;
-	private final Item item;
+@SuppressWarnings("serial")
+public class PEResources extends ArrayList<Item> {
+	private final PersistentEntity<?, ?> persistentEntity;
 
-	public PEResource(PersistentEntity<?, ?> itemMeta, Item item) {
-		this.itemMeta = itemMeta;
-		this.item = item;
+	public PEResources(PersistentEntity<?, ?> persistentEntity) {
+		this.persistentEntity = persistentEntity;
 	}
 
 	@JsonIgnore
-	public PersistentEntity<?, ?> getItemMeta() {
-		return itemMeta;
-	}
-
-	@JsonAnyGetter
-	public Item getItem() {
-		return item;
+	public PersistentEntity<?, ?> getPersistentEntity() {
+		return persistentEntity;
 	}
 }

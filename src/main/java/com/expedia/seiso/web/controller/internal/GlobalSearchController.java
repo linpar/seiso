@@ -30,12 +30,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.seiso.core.util.C;
+import com.expedia.rf.hmedia.Resource;
+import com.expedia.rf.util.C;
+import com.expedia.rf.web.MediaTypes;
 import com.expedia.seiso.domain.service.search.SearchQuery;
 import com.expedia.seiso.web.ApiVersion;
-import com.expedia.seiso.web.MediaTypes;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
-import com.expedia.seiso.web.hateoas.Resource;
 
 /**
  * Controller to perform global searches. This primarily supports the search box in the UI.

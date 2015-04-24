@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.core.exception;
+package com.expedia.rf.exception;
 
+import com.expedia.seiso.core.exception.NotFoundException;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 
 /**

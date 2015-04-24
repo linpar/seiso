@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.hateoas;
+package com.expedia.rf.util;
 
-import java.util.List;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.experimental.UtilityClass;
 
 /**
+ * Constants.
+ * 
  * @author Willie Wheeler
  */
-@Data
-@AllArgsConstructor
-public class PagedResources {
-	private List<Link> links;
-	private PageMetadata metadata;
-	private List<Resource> items;
+@UtilityClass
+public class C {
+	public static final int DEFAULT_PAGE_NUMBER = 0;
+	public static final int DEFAULT_PAGE_SIZE = 100;
+
+	// Error codes
+	public static final String EC_INTERNAL_ERROR = "internal_error";
+
+	/** JSON syntax is fine, but semantics wrong (e.g. array passed where we expect a single value) */
+	public static final String EC_INVALID_REQUEST_JSON_PAYLOAD = "invalid_request_json_payload";
+
+	public static final String EC_RESOURCE_NOT_FOUND = "resource_not_found";
 }
