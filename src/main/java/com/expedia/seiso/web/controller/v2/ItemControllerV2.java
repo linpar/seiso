@@ -32,17 +32,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.rf.hmedia.PEResource;
-import com.expedia.rf.hmedia.PagedResources;
-import com.expedia.rf.hmedia.Resource;
-import com.expedia.rf.hmedia.Resources;
-import com.expedia.rf.util.C;
-import com.expedia.rf.web.MediaTypes;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.serf.ann.SuppressBasePath;
+import com.expedia.serf.hmedia.PEResource;
+import com.expedia.serf.hmedia.PagedResources;
+import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hmedia.Resources;
+import com.expedia.serf.util.C;
+import com.expedia.serf.web.MediaTypes;
 
 // http://stackoverflow.com/questions/2810652/how-to-design-a-restful-collection-resource
 // http://stackoverflow.com/questions/306271/bulk-collection-manipulation-through-a-rest-restful-api
@@ -54,6 +55,7 @@ import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
  */
 @RestController
 @RequestMapping("/v2")
+@SuppressBasePath
 @Transactional
 @XSlf4j
 public class ItemControllerV2 {

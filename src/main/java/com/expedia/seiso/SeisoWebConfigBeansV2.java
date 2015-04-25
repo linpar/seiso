@@ -27,14 +27,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import com.expedia.rf.web.MediaTypes;
 import com.expedia.seiso.core.config.CustomProperties;
-import com.expedia.seiso.core.exception.ConfigurationException;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.seiso.web.ItemKeyHttpMessageConverter;
+import com.expedia.seiso.web.UriToItemKeyConverter;
 import com.expedia.seiso.web.controller.v2.ControllerV2Marker;
-import com.expedia.seiso.web.converter.UriToItemKeyConverter;
-import com.expedia.seiso.web.httpmessageconverter.ItemKeyHttpMessageConverter;
-import com.expedia.seiso.web.jackson.hal.HalMapper;
+import com.expedia.serf.SerfProperties;
+import com.expedia.serf.hmedia.hal.HalMapper;
+import com.expedia.serf.web.MediaTypes;
 
 /**
  * @author Willie Wheeler
@@ -42,6 +42,7 @@ import com.expedia.seiso.web.jackson.hal.HalMapper;
 @Configuration
 @ComponentScan(basePackageClasses = ControllerV2Marker.class)
 public class SeisoWebConfigBeansV2 {
+	@Autowired private SerfProperties serfProperties;
 	@Autowired private CustomProperties customProperties;
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private HalMapper halMapper;
@@ -64,7 +65,7 @@ public class SeisoWebConfigBeansV2 {
 	}
 	
 	private URI getVersionUri() {
-		val baseUri = customProperties.getBaseUri();
+		val baseUri = serfProperties.getBaseUri();
 		
 		if (baseUri == null) {
 			val msg = "baseUri is null. Be sure that you've defined custom.base-uri in application.yml.";

@@ -33,11 +33,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 
-import com.expedia.rf.hmedia.PEResource;
-import com.expedia.rf.hmedia.PEResources;
-import com.expedia.rf.hmedia.PagedResources;
-import com.expedia.rf.hmedia.Resource;
-import com.expedia.rf.hmedia.Resources;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.DocLink;
 import com.expedia.seiso.domain.entity.Endpoint;
@@ -54,6 +49,11 @@ import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.serf.hmedia.PEResource;
+import com.expedia.serf.hmedia.PEResources;
+import com.expedia.serf.hmedia.PagedResources;
+import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hmedia.Resources;
 
 /**
  * Handles basic REST requests, such as getting, putting and deleting items. This exists as a delegate object so we can

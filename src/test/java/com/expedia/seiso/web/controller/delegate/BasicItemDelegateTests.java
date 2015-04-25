@@ -34,10 +34,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 
-import com.expedia.rf.hmedia.PEResources;
-import com.expedia.rf.hmedia.PagedResources;
-import com.expedia.rf.hmedia.Resource;
-import com.expedia.rf.hmedia.Resources;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.entity.RotationStatus;
@@ -49,6 +45,10 @@ import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.serf.hmedia.PEResources;
+import com.expedia.serf.hmedia.PagedResources;
+import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hmedia.Resources;
 
 /**
  * @author Willie Wheeler

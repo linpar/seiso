@@ -26,17 +26,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.rf.hmedia.PEResource;
-import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.domain.entity.key.IpAddressRoleKey;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.serf.ann.SuppressBasePath;
+import com.expedia.serf.hmedia.PEResource;
+import com.expedia.serf.hmedia.Resource;
 
 /**
  * @author Willie Wheeler
  */
 @RestController
 @RequestMapping("/v1")
+@SuppressBasePath
 public class IpAddressRoleControllerV1 {
 	private static final String SINGLE_URI_TEMPLATE = "/service-instances/{serviceInstanceKey}/ip-address-roles/{name}";
 	

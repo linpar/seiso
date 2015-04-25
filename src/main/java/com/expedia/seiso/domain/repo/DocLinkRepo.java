@@ -20,8 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.domain.entity.DocLink;
+import com.expedia.serf.ann.RestResource;
 
 /**
  * @author Willie Wheeler

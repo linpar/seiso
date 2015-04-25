@@ -40,7 +40,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.util.ReflectionUtils;
 
-import com.expedia.rf.exception.ResourceNotFoundException;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.entity.key.ItemKey;
@@ -50,6 +49,7 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.PersonRepo;
 import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 import com.expedia.seiso.domain.repo.adapter.SimpleItemRepoAdapter;
+import com.expedia.serf.ResourceNotFoundException;
 
 /**
  * @author Willie Wheeler

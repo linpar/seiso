@@ -20,25 +20,25 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.rf.hmedia.PEResource;
-import com.expedia.rf.web.MediaTypes;
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.serf.ann.SuppressBasePath;
+import com.expedia.serf.hmedia.PEResource;
+import com.expedia.serf.web.MediaTypes;
 
 /**
  * @author Willie Wheeler
  */
 @RestController
-@RequestMapping("/v2")
+@RequestMapping("/v2/{repoKey}/{itemKey}/{propKey}")
+@SuppressBasePath
 @Transactional
 public class ItemPropertyControllerV2 {
 	@Autowired private BasicItemDelegate delegate;
@@ -53,7 +53,6 @@ public class ItemPropertyControllerV2 {
 	 * @return
 	 */
 	@RequestMapping(
-			value = "/{repoKey}/{itemKey}/{propKey}",
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	public Object getProperty(
@@ -66,7 +65,6 @@ public class ItemPropertyControllerV2 {
 	}
 	
 	@RequestMapping(
-			value = "/{repoKey}/{itemKey}/{propKey}",
 			method = RequestMethod.POST,
 			consumes = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
@@ -92,22 +90,21 @@ public class ItemPropertyControllerV2 {
 	 * @param propItemKey
 	 *            Key for the item to assign to the property
 	 */
-	@RequestMapping(
-			value = "/{repoKey}/{itemKey}/{propKey}",
-			method = RequestMethod.PUT,
-			consumes = MediaTypes.TEXT_URI_LIST_VALUE)
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void putProperty(
-			@PathVariable String repoKey,
-			@PathVariable String itemKey,
-			@PathVariable String propKey,
-			@RequestBody(required = false) ItemKey propItemKey) {
-		
-		delegate.putProperty(repoKey, itemKey, propKey, propItemKey);
-	}
+//	@RequestMapping(
+//			method = RequestMethod.PUT,
+//			consumes = MediaTypes.TEXT_URI_LIST_VALUE)
+//	@ResponseStatus(HttpStatus.NO_CONTENT)
+//	public void putProperty(
+//			@PathVariable String repoKey,
+//			@PathVariable String itemKey,
+//			@PathVariable String propKey,
+//			@RequestBody(required = false) ItemKey propItemKey) {
+//		
+//		delegate.putProperty(repoKey, itemKey, propKey, propItemKey);
+//	}
 	
 	@RequestMapping(
-			value = "/{repoKey}/{itemKey}/{propKey}/{elemId}",
+			value = "/{elemId}",
 			method = RequestMethod.DELETE)
 	public void deleteCollectionPropertyElement(
 			@PathVariable String repoKey,

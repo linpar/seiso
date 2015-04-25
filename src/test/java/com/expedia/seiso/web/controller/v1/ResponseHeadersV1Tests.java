@@ -25,11 +25,11 @@ import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.expedia.rf.hmedia.Link;
-import com.expedia.rf.hmedia.PageMetadata;
-import com.expedia.rf.hmedia.PagedResources;
-import com.expedia.rf.hmedia.Relations;
-import com.expedia.rf.hmedia.Resource;
+import com.expedia.serf.hmedia.Link;
+import com.expedia.serf.hmedia.PageMetadata;
+import com.expedia.serf.hmedia.PagedResources;
+import com.expedia.serf.hmedia.Relations;
+import com.expedia.serf.hmedia.Resource;
 
 /**
  * @author Willie Wheeler

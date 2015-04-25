@@ -28,8 +28,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.expedia.rf.hmedia.Link;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.serf.hmedia.Link;
 
 /**
  * @author Willie Wheeler

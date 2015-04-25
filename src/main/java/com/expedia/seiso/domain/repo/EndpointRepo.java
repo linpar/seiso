@@ -23,10 +23,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Machine;
 import com.expedia.seiso.domain.entity.ServiceInstance;
+import com.expedia.serf.ann.RestResource;
 
 // FIXME Decouple the REST params from the JPA params. The JPA params use camelCase wheres the REST params ought to use
 // hyphenated-lowercase. [WLW]

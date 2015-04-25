@@ -17,10 +17,10 @@ package com.expedia.seiso.domain.meta;
 
 import java.lang.reflect.Method;
 
-import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
+import com.expedia.serf.ann.RestResource;
 
 // TODO Consider adding getSingleResourceRel() method here (e.g. people vs person)
 

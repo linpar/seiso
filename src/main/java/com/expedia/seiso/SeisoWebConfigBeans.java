@@ -40,6 +40,10 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.RepoKeys;
+import com.expedia.seiso.web.PEResourceResolver;
+import com.expedia.seiso.web.PEResourcesResolver;
+import com.expedia.seiso.web.ResolverUtils;
+import com.expedia.seiso.web.SimplePropertyEntry;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.controller.ExceptionHandlerAdvice;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
@@ -48,10 +52,7 @@ import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.controller.internal.ControllerInternalMarker;
 import com.expedia.seiso.web.hmedia.ItemPaths;
 import com.expedia.seiso.web.hmedia.LinkFactory;
-import com.expedia.seiso.web.resolver.PEResourceResolver;
-import com.expedia.seiso.web.resolver.PEResourcesResolver;
-import com.expedia.seiso.web.resolver.ResolverUtils;
-import com.expedia.seiso.web.resolver.SimplePropertyEntry;
+import com.expedia.serf.SerfProperties;
 
 /**
  * Web configuration beans common to both v1 and v2.
@@ -61,6 +62,7 @@ import com.expedia.seiso.web.resolver.SimplePropertyEntry;
 @Configuration
 @ComponentScan(basePackageClasses = ControllerInternalMarker.class)
 public class SeisoWebConfigBeans {
+	@Autowired private SerfProperties serfProperties;
 	@Autowired private CustomProperties customProperties;
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private Repositories repositories;
@@ -143,10 +145,10 @@ public class SeisoWebConfigBeans {
 	
 	@Bean
 	public ExceptionHandlerAdvice exceptionHandlerAdvice() { return new ExceptionHandlerAdvice(); }
-
+	
 	private URI getVersionUri(String version) {
 		try {
-			return new URI(slashify(customProperties.getBaseUri()) + version);
+			return new URI(slashify(serfProperties.getBaseUri()) + version);
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}

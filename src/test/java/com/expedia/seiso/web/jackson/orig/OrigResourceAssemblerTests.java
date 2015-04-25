@@ -27,11 +27,11 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-import com.expedia.rf.hmedia.Link;
-import com.expedia.rf.hmedia.PageMetadata;
-import com.expedia.rf.hmedia.PagedResources;
-import com.expedia.rf.hmedia.Resource;
-import com.expedia.rf.hmedia.Resources;
+import com.expedia.serf.hmedia.Link;
+import com.expedia.serf.hmedia.PageMetadata;
+import com.expedia.serf.hmedia.PagedResources;
+import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hmedia.Resources;
 
 /**
  * @author Willie Wheeler

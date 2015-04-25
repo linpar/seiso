@@ -30,20 +30,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.rf.hmedia.PagedResources;
-import com.expedia.rf.hmedia.Resource;
-import com.expedia.rf.hmedia.Resources;
-import com.expedia.rf.util.C;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
+import com.expedia.serf.ann.SuppressBasePath;
+import com.expedia.serf.hmedia.PagedResources;
+import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hmedia.Resources;
+import com.expedia.serf.util.C;
 
 /**
  * @author Willie Wheeler
  */
 @RestController
 @RequestMapping("/v1")
+@SuppressBasePath
 public class RepoSearchControllerV1 {
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private RepoSearchDelegate delegate;

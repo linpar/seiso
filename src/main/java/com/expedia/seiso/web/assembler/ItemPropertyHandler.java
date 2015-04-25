@@ -25,8 +25,8 @@ import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.SimplePropertyHandler;
 import org.springframework.data.mapping.model.BeanWrapper;
 
-import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.serf.ann.RestResource;
 
 /**
  * Implemented as a standalone class (rather than as an anonymous inner class) to facilitate unit testing.

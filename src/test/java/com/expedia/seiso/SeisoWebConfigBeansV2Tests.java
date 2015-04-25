@@ -31,7 +31,8 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SearchEngine;
 import com.expedia.seiso.web.hmedia.ItemPaths;
-import com.expedia.seiso.web.jackson.hal.HalMapper;
+import com.expedia.serf.SerfProperties;
+import com.expedia.serf.hmedia.hal.HalMapper;
 
 /**
  * @author Willie Wheeler
@@ -42,6 +43,7 @@ public class SeisoWebConfigBeansV2Tests {
 	@InjectMocks private SeisoWebConfigBeansV2 beans;
 	
 	// Dependencies
+	@Mock private SerfProperties serfProperties;
 	@Mock private CustomProperties customProperties;
 	@Mock private ItemMetaLookup itemMetaLookup;
 	@Mock private Repositories repositories;
@@ -59,7 +61,7 @@ public class SeisoWebConfigBeansV2Tests {
 	}
 	
 	private void setUpDependencies() {
-		when(customProperties.getBaseUri()).thenReturn("https://seiso.example.com/v2");
+		when(serfProperties.getBaseUri()).thenReturn("https://seiso.example.com/v2");
 	}
 	
 	/**

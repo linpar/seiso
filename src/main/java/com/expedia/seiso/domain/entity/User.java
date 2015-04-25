@@ -28,10 +28,10 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.serf.ann.RestResource;
 
 // TODO Currently implements Serializable because the servlet container wants to save this out on shutdown. But don't
 // really want this to be transient (none of the other entities are), and it just makes sense to disable the saveout in

@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import lombok.NonNull;
 
-import com.expedia.rf.hmedia.Resources;
+import com.expedia.serf.hmedia.Resources;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

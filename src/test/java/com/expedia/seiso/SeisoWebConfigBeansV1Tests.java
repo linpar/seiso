@@ -30,6 +30,7 @@ import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.hmedia.ItemPaths;
+import com.expedia.serf.SerfProperties;
 
 /**
  * @author Willie Wheeler
@@ -40,6 +41,7 @@ public class SeisoWebConfigBeansV1Tests {
 	@InjectMocks private SeisoWebConfigBeansV1 beans;
 	
 	// Dependencies
+	@Mock private SerfProperties serfProperties;
 	@Mock private CustomProperties customProperties;
 	@Mock private ItemMetaLookup itemMetaLookup;
 	@Mock private Repositories repositories;
@@ -55,7 +57,7 @@ public class SeisoWebConfigBeansV1Tests {
 	}
 	
 	private void setUpDependencies() {
-		when(customProperties.getBaseUri()).thenReturn("https://seiso.example.com/v1");
+		when(serfProperties.getBaseUri()).thenReturn("https://seiso.example.com/v1");
 	}
 	
 	/**

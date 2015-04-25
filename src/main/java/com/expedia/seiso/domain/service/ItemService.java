@@ -20,9 +20,9 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.expedia.rf.exception.ResourceNotFoundException;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.key.ItemKey;
+import com.expedia.serf.ResourceNotFoundException;
 
 /**
  * Essentially a generic item CRUD repository that puts a fixed API in front of repositories that can have differing

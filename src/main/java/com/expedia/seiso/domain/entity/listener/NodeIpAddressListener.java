@@ -26,7 +26,7 @@ import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.context.ApplicationContext;
 
-import com.expedia.seiso.core.util.ApplicationContextProvider;
+import com.expedia.seiso.ApplicationContextProvider;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.User;

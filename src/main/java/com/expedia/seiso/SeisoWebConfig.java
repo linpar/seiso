@@ -25,12 +25,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.serf.SerfProperties;
+import com.expedia.serf.web.BasePathAwareHandlerMapping;
 
 // Don't use @EnableWebMvc here since we are using WebMvcConfigurationSupport directly. [WLW]
 
@@ -41,6 +44,7 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
  */
 @Configuration
 public class SeisoWebConfig extends WebMvcConfigurationSupport {
+	@Autowired private SerfProperties serfProperties;
 	@Autowired private ItemMetaLookup itemMetaLookup;
 	@Autowired private List<HandlerMethodArgumentResolver> argumentResolvers;
 	@Autowired private List<HttpMessageConverter<?>> httpMessageConverters;
@@ -69,7 +73,13 @@ public class SeisoWebConfig extends WebMvcConfigurationSupport {
 	protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 		converters.addAll(httpMessageConverters);
 	}
-
+	
+	@Override
+	public void configurePathMatch(PathMatchConfigurer configurer) {
+		// Turn this off for now since NodeIpAddresses currently have an IP address as part of the key.
+		configurer.setUseSuffixPatternMatch(false);
+	}
+	
 	@Override
 	protected void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
@@ -83,12 +93,32 @@ public class SeisoWebConfig extends WebMvcConfigurationSupport {
 
 	@Override
 	public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-		val mapping = new RequestMappingHandlerMapping();
+		
+		// This replaces the default handler mapping with one that knows about the configured base path.
+		val mapping = new BasePathAwareHandlerMapping(serfProperties.getBasePath());
+		
+		// The rest is the same as what we're overriding.
 		mapping.setOrder(0);
 		mapping.setInterceptors(getInterceptors());
 		mapping.setContentNegotiationManager(mvcContentNegotiationManager());
-		// Suppress suffix pattern matching since machine names can have periods. [WLW]
-		mapping.setUseSuffixPatternMatch(false);
+		
+		val configurer = getPathMatchConfigurer();
+		if (configurer.isUseSuffixPatternMatch() != null) {
+			mapping.setUseSuffixPatternMatch(configurer.isUseSuffixPatternMatch());
+		}
+		if (configurer.isUseRegisteredSuffixPatternMatch() != null) {
+			mapping.setUseRegisteredSuffixPatternMatch(configurer.isUseRegisteredSuffixPatternMatch());
+		}
+		if (configurer.isUseTrailingSlashMatch() != null) {
+			mapping.setUseTrailingSlashMatch(configurer.isUseTrailingSlashMatch());
+		}
+		if (configurer.getPathMatcher() != null) {
+			mapping.setPathMatcher(configurer.getPathMatcher());
+		}
+		if (configurer.getUrlPathHelper() != null) {
+			mapping.setUrlPathHelper(configurer.getUrlPathHelper());
+		}
+		
 		return mapping;
 	}
 }

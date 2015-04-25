@@ -26,11 +26,11 @@ import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.SimpleAssociationHandler;
 import org.springframework.data.mapping.model.BeanWrapper;
 
-import com.expedia.rf.ann.RestResource;
-import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.hmedia.ItemLinks;
+import com.expedia.serf.ann.RestResource;
+import com.expedia.serf.hmedia.Resource;
 
 /**
  * @author Willie Wheeler

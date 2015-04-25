@@ -28,19 +28,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.rf.hmedia.PEResource;
-import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.key.NodeIpAddressKey;
 import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.serf.ann.SuppressBasePath;
+import com.expedia.serf.hmedia.PEResource;
+import com.expedia.serf.hmedia.Resource;
 
 /**
  * @author Willie Wheeler
  */
 @RestController
 @RequestMapping("/v1")
+@SuppressBasePath
 @Transactional
 public class NodeIpAddressControllerV1 {
 	private static final String NODE_IP_ADDRESS_URI_TEMPLATE = "/nodes/{nodeName}/ip-addresses/{ipAddress}";

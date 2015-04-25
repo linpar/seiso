@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.rf.web.MediaTypes;
 import com.expedia.seiso.domain.repo.ConfPropRepo;
 import com.expedia.seiso.web.dto.Motd;
+import com.expedia.serf.web.MediaTypes;
 
 /**
  * @author Willie Wheeler

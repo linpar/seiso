@@ -27,13 +27,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.expedia.rf.hmedia.Link;
-import com.expedia.rf.hmedia.Relations;
 import com.expedia.seiso.domain.entity.Dashboard;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.serf.hmedia.Link;
+import com.expedia.serf.hmedia.Relations;
 
 /**
  * Various factory methods for creating item links. This does not include the repository search links, which

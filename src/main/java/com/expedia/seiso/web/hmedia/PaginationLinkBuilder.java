@@ -25,8 +25,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.expedia.rf.hmedia.Link;
-import com.expedia.rf.hmedia.Relations;
+import com.expedia.serf.hmedia.Link;
+import com.expedia.serf.hmedia.Relations;
 
 /**
  * Builder for pagination links (self, first, previous, next, last). This is for paging resources generally, not for any

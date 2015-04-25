@@ -21,9 +21,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.core.ann.FindByKey;
 import com.expedia.seiso.domain.entity.ServiceGroup;
+import com.expedia.serf.ann.RestResource;
 
 /**
  * @author Willie Wheeler

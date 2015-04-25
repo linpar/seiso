@@ -44,8 +44,12 @@ endpoints:
   health:
     sensitive: false
 
+serf:
+  # No trailing slash!
+  base-uri: http://localhost:8080
+  base-path: api
+
 custom:
   # No trailing slash!
-  base-uri: http://localhost:8443
   change-notification-exchange: seiso.notifications.v2
   action-request-exchange: seiso.action_requests.v2

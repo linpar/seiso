@@ -33,13 +33,13 @@ import lombok.val;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.XSlf4j;
 
-import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.ServiceInstancePortKey;
 import com.expedia.seiso.domain.entity.listener.ServiceInstancePortListener;
+import com.expedia.serf.ann.RestResource;
 
 /**
  * @author Willie Wheeler

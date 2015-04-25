@@ -31,8 +31,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 
-import com.expedia.rf.hmedia.PagedResources;
-import com.expedia.rf.hmedia.Resource;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.entity.Service;
@@ -44,6 +42,8 @@ import com.expedia.seiso.domain.repo.StatusTypeRepo;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
+import com.expedia.serf.hmedia.PagedResources;
+import com.expedia.serf.hmedia.Resource;
 
 /**
  * @author Willie Wheeler

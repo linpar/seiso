@@ -29,20 +29,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.rf.hmedia.Resource;
-import com.expedia.rf.util.C;
-import com.expedia.rf.web.MediaTypes;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
+import com.expedia.serf.ann.SuppressBasePath;
+import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.util.C;
+import com.expedia.serf.web.MediaTypes;
 
 /**
  * @author Willie Wheeler
  */
 @RestController
 @RequestMapping("/v2")
+@SuppressBasePath
 @Transactional
 public class RepoSearchControllerV2 {
 	@Autowired private ItemMetaLookup itemMetaLookup;

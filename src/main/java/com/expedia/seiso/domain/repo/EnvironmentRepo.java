@@ -21,10 +21,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.expedia.rf.ann.RestResource;
 import com.expedia.seiso.core.ann.FindByKey;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Environment;
+import com.expedia.serf.ann.RestResource;
 
 // TODO This might need to be pageable, at least with the way we've been creating these things at Expedia. :-)
 

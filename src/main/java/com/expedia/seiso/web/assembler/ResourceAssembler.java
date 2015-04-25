@@ -37,13 +37,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
-import com.expedia.rf.ann.RestResource;
-import com.expedia.rf.hmedia.Link;
-import com.expedia.rf.hmedia.PageMetadata;
-import com.expedia.rf.hmedia.PagedResources;
-import com.expedia.rf.hmedia.Relations;
-import com.expedia.rf.hmedia.Resource;
-import com.expedia.rf.hmedia.Resources;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.domain.entity.Dashboard;
@@ -60,6 +53,13 @@ import com.expedia.seiso.web.hmedia.ItemLinks;
 import com.expedia.seiso.web.hmedia.LinkFactory;
 import com.expedia.seiso.web.hmedia.RepoSearchLinks;
 import com.expedia.seiso.web.hmedia.SeisoRelations;
+import com.expedia.serf.ann.RestResource;
+import com.expedia.serf.hmedia.Link;
+import com.expedia.serf.hmedia.PageMetadata;
+import com.expedia.serf.hmedia.PagedResources;
+import com.expedia.serf.hmedia.Relations;
+import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hmedia.Resources;
 
 /**
  * Assembles items into resources, which include links (in support of the REST HATEOAS principle). Subsequent

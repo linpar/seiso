@@ -44,7 +44,6 @@ import org.springframework.data.repository.support.Repositories;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 
-import com.expedia.rf.hmedia.Link;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Person;
 import com.expedia.seiso.domain.entity.Service;
@@ -56,6 +55,7 @@ import com.expedia.seiso.web.hmedia.ItemLinks;
 import com.expedia.seiso.web.hmedia.LinkFactory;
 import com.expedia.seiso.web.hmedia.PaginationLinkBuilder;
 import com.expedia.seiso.web.hmedia.RepoSearchLinks;
+import com.expedia.serf.hmedia.Link;
 
 /**
  * @author Willie Wheeler

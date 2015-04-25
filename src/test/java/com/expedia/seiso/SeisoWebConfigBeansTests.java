@@ -26,8 +26,9 @@ import org.mockito.MockitoAnnotations;
 
 import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.web.converter.UriToItemKeyConverter;
-import com.expedia.seiso.web.jackson.hal.HalMapper;
+import com.expedia.seiso.web.UriToItemKeyConverter;
+import com.expedia.serf.SerfProperties;
+import com.expedia.serf.hmedia.hal.HalMapper;
 
 /**
  * @author Willie Wheeler
@@ -38,6 +39,7 @@ public class SeisoWebConfigBeansTests {
 	@InjectMocks private SeisoWebConfigBeans beans;
 	
 	// Dependencies
+	@Mock private SerfProperties serfProperties;
 	@Mock private CustomProperties customProperties;
 	@Mock private ItemMetaLookup itemMetaLookup;
 	@Mock private HalMapper hapMapper;
@@ -51,7 +53,7 @@ public class SeisoWebConfigBeansTests {
 	}
 	
 	private void setUpDependencies() {
-		when(customProperties.getBaseUri()).thenReturn("https://seiso.example.com/v42");
+		when(serfProperties.getBaseUri()).thenReturn("https://seiso.example.com/v42");
 	}
 	
 	/**

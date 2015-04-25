@@ -21,13 +21,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.expedia.seiso.core.config.CustomProperties;
-import com.expedia.seiso.core.util.ApplicationContextProvider;
-import com.expedia.seiso.web.jackson.hal.HalMapper;
-import com.expedia.seiso.web.jackson.hal.HalModule;
-import com.expedia.seiso.web.jackson.hal.HalPagedResourcesSerializer;
-import com.expedia.seiso.web.jackson.hal.HalResourceAssembler;
-import com.expedia.seiso.web.jackson.hal.HalResourceSerializer;
-import com.expedia.seiso.web.jackson.hal.HalResourcesSerializer;
+import com.expedia.serf.hmedia.hal.HalMapper;
+import com.expedia.serf.hmedia.hal.HalModule;
+import com.expedia.serf.hmedia.hal.HalPagedResourcesSerializer;
+import com.expedia.serf.hmedia.hal.HalResourceAssembler;
+import com.expedia.serf.hmedia.hal.HalResourceSerializer;
+import com.expedia.serf.hmedia.hal.HalResourcesSerializer;
 
 /**
  * @author Willie Wheeler
