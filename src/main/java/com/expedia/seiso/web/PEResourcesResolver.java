@@ -35,8 +35,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.list.EntityListPackageMarker;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.serf.hmedia.PEResources;
 import com.expedia.serf.util.ReflectionUtils;
+import com.expedia.serf.util.ResolverUtils;
 
 /**
  * Reads a resource off the request, binds it to the relevant item metadata, and returns the result.

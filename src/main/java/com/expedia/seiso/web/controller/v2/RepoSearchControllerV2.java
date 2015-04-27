@@ -35,7 +35,7 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.serf.ann.SuppressBasePath;
-import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.util.C;
 import com.expedia.serf.web.MediaTypes;
 

@@ -26,10 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.repo.ServiceInstanceRepo;
-import com.expedia.seiso.web.hmedia.LinkFactory;
+import com.expedia.seiso.hypermedia.LinkFactory;
 import com.expedia.serf.ann.SuppressBasePath;
-import com.expedia.serf.hmedia.Relations;
-import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hypermedia.Relations;
+import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.web.MediaTypes;
 
 /**

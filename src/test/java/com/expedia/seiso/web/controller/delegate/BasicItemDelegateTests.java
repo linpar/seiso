@@ -43,12 +43,12 @@ import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.ApiVersion;
+import com.expedia.seiso.web.PEResources;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.serf.hmedia.PEResources;
-import com.expedia.serf.hmedia.PagedResources;
-import com.expedia.serf.hmedia.Resource;
-import com.expedia.serf.hmedia.Resources;
+import com.expedia.serf.hypermedia.PagedResources;
+import com.expedia.serf.hypermedia.Resource;
+import com.expedia.serf.hypermedia.Resources;
 
 /**
  * @author Willie Wheeler

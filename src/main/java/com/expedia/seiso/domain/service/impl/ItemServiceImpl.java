@@ -46,7 +46,7 @@ import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SaveAllError;
 import com.expedia.seiso.domain.service.SaveAllResponse;
-import com.expedia.serf.ResourceNotFoundException;
+import com.expedia.serf.exception.ResourceNotFoundException;
 import com.expedia.serf.util.CollectionsUtils;
 
 /**

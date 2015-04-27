@@ -26,7 +26,7 @@ import com.expedia.seiso.domain.service.SearchEngine;
 import com.expedia.seiso.domain.service.search.SearchQuery;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hypermedia.Resource;
 
 /**
  * @author Willie Wheeler

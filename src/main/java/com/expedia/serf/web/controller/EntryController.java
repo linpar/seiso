@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.serf.PathBuilder;
-import com.expedia.serf.hmedia.Relations;
-import com.expedia.serf.hmedia.Resources;
+import com.expedia.serf.hypermedia.PathBuilder;
+import com.expedia.serf.hypermedia.Relations;
+import com.expedia.serf.hypermedia.Resources;
 import com.expedia.serf.web.MediaTypes;
 
 /**

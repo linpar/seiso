@@ -31,9 +31,9 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.serf.ResourceNotFoundException;
 import com.expedia.serf.ann.SuppressBasePath;
-import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.exception.ResourceNotFoundException;
+import com.expedia.serf.hypermedia.Resource;
 
 /**
  * @author Willie Wheeler

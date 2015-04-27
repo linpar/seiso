@@ -28,10 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.domain.entity.key.ServiceInstancePortKey;
 import com.expedia.seiso.web.ApiVersion;
+import com.expedia.seiso.web.PEResource;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.serf.ann.SuppressBasePath;
-import com.expedia.serf.hmedia.PEResource;
-import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hypermedia.Resource;
 
 /**
  * @author Willie Wheeler

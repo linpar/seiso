@@ -30,9 +30,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
+import com.expedia.seiso.hypermedia.ItemPaths;
 import com.expedia.seiso.web.controller.v1.ControllerV1Marker;
 import com.expedia.seiso.web.controller.v1.ResponseHeadersV1;
-import com.expedia.seiso.web.hmedia.ItemPaths;
 import com.expedia.seiso.web.jackson.orig.OrigMapper;
 import com.expedia.seiso.web.jackson.orig.OrigModule;
 import com.expedia.seiso.web.jackson.orig.OrigPagedResourcesSerializer;

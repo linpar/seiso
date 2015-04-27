@@ -15,7 +15,7 @@
  */
 package com.expedia.seiso;
 
-import com.expedia.serf.ResourceNotFoundException;
+import com.expedia.serf.exception.ResourceNotFoundException;
 
 /**
  * General-purpose exception indicating that something couldn't be found. Prefer appropriate subclasses (e.g.

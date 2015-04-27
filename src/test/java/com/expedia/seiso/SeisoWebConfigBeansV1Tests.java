@@ -29,7 +29,7 @@ import org.springframework.data.repository.support.Repositories;
 import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
-import com.expedia.seiso.web.hmedia.ItemPaths;
+import com.expedia.seiso.hypermedia.ItemPaths;
 import com.expedia.serf.SerfProperties;
 
 /**

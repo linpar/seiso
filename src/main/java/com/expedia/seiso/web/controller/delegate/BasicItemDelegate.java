@@ -48,12 +48,12 @@ import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.ApiVersion;
+import com.expedia.seiso.web.PEResource;
+import com.expedia.seiso.web.PEResources;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.serf.hmedia.PEResource;
-import com.expedia.serf.hmedia.PEResources;
-import com.expedia.serf.hmedia.PagedResources;
-import com.expedia.serf.hmedia.Resource;
-import com.expedia.serf.hmedia.Resources;
+import com.expedia.serf.hypermedia.PagedResources;
+import com.expedia.serf.hypermedia.Resource;
+import com.expedia.serf.hypermedia.Resources;
 
 /**
  * Handles basic REST requests, such as getting, putting and deleting items. This exists as a delegate object so we can

@@ -21,7 +21,7 @@ import lombok.NonNull;
 
 import org.springframework.stereotype.Component;
 
-import com.expedia.serf.hmedia.PagedResources;
+import com.expedia.serf.hypermedia.PagedResources;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

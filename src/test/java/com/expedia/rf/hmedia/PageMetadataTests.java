@@ -22,7 +22,7 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.expedia.serf.hmedia.PageMetadata;
+import com.expedia.serf.hypermedia.PageMetadata;
 
 /**
  * @author Willie Wheeler

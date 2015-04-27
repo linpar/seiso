@@ -48,7 +48,7 @@ import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hypermedia.Resource;
 
 /**
  * @author Willie Wheeler

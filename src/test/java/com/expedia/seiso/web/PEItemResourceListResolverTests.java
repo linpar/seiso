@@ -45,8 +45,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.PEResourcesResolver;
-import com.expedia.seiso.web.ResolverUtils;
-import com.expedia.serf.hmedia.PEResources;
+import com.expedia.serf.util.ResolverUtils;
 
 /**
  * @author Willie Wheeler

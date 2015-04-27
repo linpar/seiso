@@ -42,8 +42,8 @@ import com.expedia.seiso.domain.repo.StatusTypeRepo;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
-import com.expedia.serf.hmedia.PagedResources;
-import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hypermedia.PagedResources;
+import com.expedia.serf.hypermedia.Resource;
 
 /**
  * @author Willie Wheeler

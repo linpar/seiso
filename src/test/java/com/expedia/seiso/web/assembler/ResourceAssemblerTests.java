@@ -50,12 +50,12 @@ import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.domain.service.SearchResults;
+import com.expedia.seiso.hypermedia.ItemLinks;
+import com.expedia.seiso.hypermedia.LinkFactory;
+import com.expedia.seiso.hypermedia.PaginationLinkBuilder;
+import com.expedia.seiso.hypermedia.RepoSearchLinks;
 import com.expedia.seiso.web.ApiVersion;
-import com.expedia.seiso.web.hmedia.ItemLinks;
-import com.expedia.seiso.web.hmedia.LinkFactory;
-import com.expedia.seiso.web.hmedia.PaginationLinkBuilder;
-import com.expedia.seiso.web.hmedia.RepoSearchLinks;
-import com.expedia.serf.hmedia.Link;
+import com.expedia.serf.hypermedia.Link;
 
 /**
  * @author Willie Wheeler

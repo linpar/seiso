@@ -35,7 +35,7 @@ import com.expedia.seiso.domain.entity.key.ServiceInstancePortKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.seiso.web.UriToItemKeyConverter;
-import com.expedia.serf.ResourceNotFoundException;
+import com.expedia.serf.exception.ResourceNotFoundException;
 
 /**
  * @author Willie Wheeler

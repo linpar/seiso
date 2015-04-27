@@ -33,7 +33,8 @@ import com.expedia.seiso.web.ItemKeyHttpMessageConverter;
 import com.expedia.seiso.web.UriToItemKeyConverter;
 import com.expedia.seiso.web.controller.v2.ControllerV2Marker;
 import com.expedia.serf.SerfProperties;
-import com.expedia.serf.hmedia.hal.HalMapper;
+import com.expedia.serf.exception.ConfigurationException;
+import com.expedia.serf.hypermedia.hal.HalMapper;
 import com.expedia.serf.web.MediaTypes;
 
 /**

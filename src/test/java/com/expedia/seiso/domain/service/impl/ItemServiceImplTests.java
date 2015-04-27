@@ -49,7 +49,7 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.PersonRepo;
 import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 import com.expedia.seiso.domain.repo.adapter.SimpleItemRepoAdapter;
-import com.expedia.serf.ResourceNotFoundException;
+import com.expedia.serf.exception.ResourceNotFoundException;
 
 /**
  * @author Willie Wheeler

@@ -40,9 +40,10 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.RepoKeys;
+import com.expedia.seiso.hypermedia.ItemPaths;
+import com.expedia.seiso.hypermedia.LinkFactory;
 import com.expedia.seiso.web.PEResourceResolver;
 import com.expedia.seiso.web.PEResourcesResolver;
-import com.expedia.seiso.web.ResolverUtils;
 import com.expedia.seiso.web.SimplePropertyEntry;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.seiso.web.controller.ExceptionHandlerAdvice;
@@ -50,9 +51,8 @@ import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.controller.internal.ControllerInternalMarker;
-import com.expedia.seiso.web.hmedia.ItemPaths;
-import com.expedia.seiso.web.hmedia.LinkFactory;
 import com.expedia.serf.SerfProperties;
+import com.expedia.serf.util.ResolverUtils;
 
 /**
  * Web configuration beans common to both v1 and v2.

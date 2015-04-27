@@ -42,9 +42,9 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.serf.hmedia.Link;
-import com.expedia.serf.hmedia.Resource;
-import com.expedia.serf.hmedia.Resources;
+import com.expedia.serf.hypermedia.Link;
+import com.expedia.serf.hypermedia.Resource;
+import com.expedia.serf.hypermedia.Resources;
 
 // TODO Handle the case where a repo search method returns a unique result (e.g., PersonRepo.findByEmail()). [WLW]
 

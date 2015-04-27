@@ -36,8 +36,8 @@ import com.expedia.serf.SerfConfig;
 	SeisoWebConfigBeans.class,
 	SeisoWebConfigBeansV1.class,
 	SeisoWebConfigBeansV2.class,
-	SeisoWebConfig.class,
-	SeisoWebSecurityConfig.class
+	SeisoWebConfig.class //,
+//	SeisoWebSecurityConfig.class
 })
 
 // Exclude HTTP message converters since they expect a single ObjectMapper, while we have two.

@@ -23,6 +23,7 @@ import lombok.NonNull;
 import lombok.val;
 
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -42,6 +43,7 @@ import com.expedia.serf.ann.SuppressBasePath;
  * @author Oliver Gierke
  * @author Willie Wheeler
  */
+@Component
 public class BasePathAwareHandlerMapping extends RequestMappingHandlerMapping {
 	private final String basePath;
 	

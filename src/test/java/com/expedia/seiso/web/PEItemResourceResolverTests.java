@@ -46,8 +46,8 @@ import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.seiso.web.PEResourceResolver;
-import com.expedia.seiso.web.ResolverUtils;
 import com.expedia.seiso.web.SimplePropertyEntry;
+import com.expedia.serf.util.ResolverUtils;
 
 /**
  * @author Willie Wheeler

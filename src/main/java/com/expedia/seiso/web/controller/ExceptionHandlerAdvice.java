@@ -28,7 +28,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.expedia.seiso.NotFoundException;
 import com.expedia.seiso.domain.service.ErrorObject;
-import com.expedia.serf.ResourceNotFoundException;
+import com.expedia.serf.exception.ResourceNotFoundException;
 import com.expedia.serf.util.C;
 import com.fasterxml.jackson.databind.JsonMappingException;
 

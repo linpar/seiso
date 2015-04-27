@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
+import com.expedia.seiso.web.PEResource;
 import com.expedia.serf.ann.SuppressBasePath;
-import com.expedia.serf.hmedia.PEResource;
 import com.expedia.serf.web.MediaTypes;
 
 /**

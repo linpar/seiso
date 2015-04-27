@@ -48,18 +48,18 @@ import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.SearchResults;
+import com.expedia.seiso.hypermedia.ItemLinks;
+import com.expedia.seiso.hypermedia.LinkFactory;
+import com.expedia.seiso.hypermedia.RepoSearchLinks;
+import com.expedia.seiso.hypermedia.SeisoRelations;
 import com.expedia.seiso.web.ApiVersion;
-import com.expedia.seiso.web.hmedia.ItemLinks;
-import com.expedia.seiso.web.hmedia.LinkFactory;
-import com.expedia.seiso.web.hmedia.RepoSearchLinks;
-import com.expedia.seiso.web.hmedia.SeisoRelations;
 import com.expedia.serf.ann.RestResource;
-import com.expedia.serf.hmedia.Link;
-import com.expedia.serf.hmedia.PageMetadata;
-import com.expedia.serf.hmedia.PagedResources;
-import com.expedia.serf.hmedia.Relations;
-import com.expedia.serf.hmedia.Resource;
-import com.expedia.serf.hmedia.Resources;
+import com.expedia.serf.hypermedia.Link;
+import com.expedia.serf.hypermedia.PageMetadata;
+import com.expedia.serf.hypermedia.PagedResources;
+import com.expedia.serf.hypermedia.Relations;
+import com.expedia.serf.hypermedia.Resource;
+import com.expedia.serf.hypermedia.Resources;
 
 /**
  * Assembles items into resources, which include links (in support of the REST HATEOAS principle). Subsequent

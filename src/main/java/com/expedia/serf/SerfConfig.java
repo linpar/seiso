@@ -20,6 +20,10 @@ import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.expedia.serf.hypermedia.PathBuilder;
+import com.expedia.serf.meta.RepoMetaRegistry;
+import com.expedia.serf.web.PersistentEntityResourceResolver;
+import com.expedia.serf.web.controller.EntityController;
 import com.expedia.serf.web.controller.EntryController;
 
 /**
@@ -29,7 +33,19 @@ import com.expedia.serf.web.controller.EntryController;
 public class SerfConfig {
 	
 	@Bean
-	public SerfProperties serfProperties() { return new SerfProperties(); }
+	public SerfProperties serfProperties() {
+		return new SerfProperties();
+	}
+	
+	@Bean
+	public RepoMetaRegistry repoMetaRegistry() {
+		return new RepoMetaRegistry();
+	}
+	
+	@Bean
+	public PersistentEntityResourceResolver persistentEntityResourceResolver() {
+		return new PersistentEntityResourceResolver();
+	}
 	
 	@Bean
 	public PathBuilder pathBuilder() {
@@ -38,5 +54,12 @@ public class SerfConfig {
 	}
 	
 	@Bean
-	public EntryController entryController() { return new EntryController(); }
+	public EntryController entryController() {
+		return new EntryController();
+	}
+	
+	@Bean
+	public EntityController entityController() {
+		return new EntityController();
+	}
 }

@@ -25,11 +25,11 @@ import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.stereotype.Component;
 
-import com.expedia.serf.hmedia.Link;
-import com.expedia.serf.hmedia.PagedResources;
-import com.expedia.serf.hmedia.Relations;
-import com.expedia.serf.hmedia.Resource;
-import com.expedia.serf.hmedia.Resources;
+import com.expedia.serf.hypermedia.Link;
+import com.expedia.serf.hypermedia.PagedResources;
+import com.expedia.serf.hypermedia.Relations;
+import com.expedia.serf.hypermedia.Resource;
+import com.expedia.serf.hypermedia.Resources;
 
 /**
  * @author Willie Wheeler

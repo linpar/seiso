@@ -24,11 +24,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.expedia.serf.hmedia.Link;
-import com.expedia.serf.hmedia.PageMetadata;
-import com.expedia.serf.hmedia.PagedResources;
-import com.expedia.serf.hmedia.Resource;
-import com.expedia.serf.hmedia.hal.HalResourceAssembler;
+import com.expedia.serf.hypermedia.Link;
+import com.expedia.serf.hypermedia.PageMetadata;
+import com.expedia.serf.hypermedia.PagedResources;
+import com.expedia.serf.hypermedia.Resource;
+import com.expedia.serf.hypermedia.hal.HalResourceAssembler;
 
 /**
  * @author Willie Wheeler

@@ -32,7 +32,7 @@ import org.springframework.data.domain.Pageable;
 import com.expedia.seiso.domain.service.search.SearchQuery;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
-import com.expedia.serf.hmedia.Resource;
+import com.expedia.serf.hypermedia.Resource;
 
 /**
  * @author Willie Wheeler
