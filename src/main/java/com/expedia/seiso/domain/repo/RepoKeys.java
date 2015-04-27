@@ -21,6 +21,7 @@ package com.expedia.seiso.domain.repo;
 public interface RepoKeys {
 	
 	// Core repos
+	public static final String CONF_PROPS = "conf-props";
 	public static final String DASHBOARDS = "dashboards";
 	public static final String DATA_CENTERS = "data-centers";
 	public static final String DOC_LINKS = "doc-links";

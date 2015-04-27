@@ -31,7 +31,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.SERVICES)
+@RestResource(rel = RepoKeys.SERVICES, path = RepoKeys.SERVICES)
 public interface ServiceRepo extends PagingAndSortingRepository<Service, Long>, ServiceRepoCustom {
 
 	@Query("from Service order by name")

@@ -18,7 +18,6 @@ package com.expedia.serf.web.controller;
 import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.support.Repositories;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expedia.serf.hypermedia.PathBuilder;
 import com.expedia.serf.hypermedia.Relations;
 import com.expedia.serf.hypermedia.Resources;
+import com.expedia.serf.meta.RepoMetaRegistry;
 import com.expedia.serf.web.MediaTypes;
 
 /**
@@ -33,16 +33,20 @@ import com.expedia.serf.web.MediaTypes;
  */
 @RestController
 public class EntryController {
+	@Autowired private RepoMetaRegistry repoMetaRegistry;
 	@Autowired private PathBuilder pathBuilder;
-	@Autowired private Repositories repositories;
 	
 	@RequestMapping(
 			value = "",
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	public Resources getEntryResource() {
+		val repoMetas = repoMetaRegistry.getRepoMetasForExportedRepos();
 		val resources = new Resources();
 		resources.addLink(Relations.SELF, pathBuilder.entryPath());
+		repoMetas.forEach(m -> {
+			resources.addLink(m.getRel(), pathBuilder.repoPath(m.getPath()));
+		});
 		return resources;
 	}
 }

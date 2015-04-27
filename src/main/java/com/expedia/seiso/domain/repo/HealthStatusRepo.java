@@ -27,7 +27,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.HEALTH_STATUSES)
+@RestResource(rel = RepoKeys.HEALTH_STATUSES, path = RepoKeys.HEALTH_STATUSES)
 public interface HealthStatusRepo extends PagingAndSortingRepository<HealthStatus, Long> {
 
 	@FindByKey

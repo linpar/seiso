@@ -24,6 +24,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
+@RestResource(rel = RepoKeys.CONF_PROPS, path = RepoKeys.CONF_PROPS)
 public interface ConfPropRepo extends CrudRepository<ConfProp, Long> {
 	
 	@RestResource(rel = "find-by-key", path = "find-by-key")

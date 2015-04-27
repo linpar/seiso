@@ -28,7 +28,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.DATA_CENTERS)
+@RestResource(rel = RepoKeys.DATA_CENTERS, path = RepoKeys.DATA_CENTERS)
 public interface DataCenterRepo extends CrudRepository<DataCenter, Long> {
 
 	@Query("from DataCenter order by name")

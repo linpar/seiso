@@ -28,7 +28,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.SERVICE_GROUPS)
+@RestResource(rel = RepoKeys.SERVICE_GROUPS, path = RepoKeys.SERVICE_GROUPS)
 public interface ServiceGroupRepo extends CrudRepository<ServiceGroup, Long> {
 
 	@Query("from ServiceGroup order by name")

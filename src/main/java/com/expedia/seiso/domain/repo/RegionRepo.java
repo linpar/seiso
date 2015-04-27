@@ -30,7 +30,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.REGIONS)
+@RestResource(rel = RepoKeys.REGIONS, path = RepoKeys.REGIONS)
 public interface RegionRepo extends PagingAndSortingRepository<Region, Long> {
 
 	@Query("from Region order by name")

@@ -31,7 +31,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.NODES)
+@RestResource(rel = RepoKeys.NODES, path = RepoKeys.NODES)
 public interface NodeRepo extends PagingAndSortingRepository<Node, Long>, NodeRepoCustom {
 	
 	@FindByKey

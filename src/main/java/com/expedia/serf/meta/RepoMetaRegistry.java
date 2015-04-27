@@ -16,7 +16,9 @@
 package com.expedia.serf.meta;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -38,6 +40,7 @@ import com.expedia.serf.exception.JavaConfigurationException;
 public class RepoMetaRegistry {
 	@Autowired private Repositories repositories;
 	
+	private Map<Class<?>, RepoMeta> repoMetas = new HashMap<>();
 	private Map<String, Class<?>> entityClassesByRepoPath = new HashMap<>();
 	
 	@PostConstruct
@@ -47,18 +50,34 @@ public class RepoMetaRegistry {
 			val repoClass = repo.getClass();
 			val restResourceAnn = AnnotationUtils.findAnnotation(repoClass, RestResource.class);
 			
-			if (restResourceAnn == null || !restResourceAnn.exported()) {
+			if (restResourceAnn == null) {
 				continue;
 			}
 			
-			if (restResourceAnn.path() == null) {
-				val errMsg = String.format(
-						"%s has a @RestResource with exported=true, but the path isn't set",
-						repoClass.getName());
-				throw new JavaConfigurationException(errMsg);
-			}
+			val repoMeta = toRepoMeta(restResourceAnn);
+			repoMetas.put(entityClass, repoMeta);
 			
-			entityClassesByRepoPath.put(restResourceAnn.path(), entityClass);
+			if (repoMeta.isExported()) {
+				val rel = repoMeta.getRel();
+				if (rel == null) {
+					// repoClass.getName() returns (e.g.) "com.sun.proxy.$Proxy110",
+					// so do entityClass.getName() instead.
+					val errMsg = String.format(
+							"%s repo has a @RestResource with exported=true, but the rel isn't set",
+							entityClass.getName());
+					throw new JavaConfigurationException(errMsg);
+				}
+				
+				val path = repoMeta.getPath();
+				if (path == null) {
+					val errMsg = String.format(
+							"%s repo has a @RestResource with exported=true, but the path isn't set",
+							entityClass.getName());
+					throw new JavaConfigurationException(errMsg);
+				}
+				
+				entityClassesByRepoPath.put(path, entityClass);
+			}
 		}
 	}
 	
@@ -71,5 +90,38 @@ public class RepoMetaRegistry {
 		}
 		
 		return entityClass;
+	}
+	
+	public List<RepoMeta> getRepoMetasForExportedRepos() {
+		// @formatter:off
+		return repoMetas
+				.values()
+				.stream()
+				.filter(m -> m.isExported())
+				.sorted()
+				.collect(Collectors.toList());
+		// @formatter:on
+	}
+	
+	public RepoMeta getRepoMeta(@NonNull Class<?> entityClass) {
+		val repoMeta = repoMetas.get(entityClass);
+		
+		if (repoMeta == null) {
+			val errMsg = String.format("Illegal entityClass: %s", entityClass.getName());
+			throw new IllegalArgumentException(errMsg);
+		}
+		
+		return repoMeta;
+	}
+	
+	private static RepoMeta toRepoMeta(RestResource ann) {
+		val exported = ann.exported();
+		val rel = emptyToNull(ann.rel());
+		val path = emptyToNull(ann.path());
+		return new RepoMeta(exported, rel, path);
+	}
+	
+	private static String emptyToNull(String s) {
+		return ("".equals(s) ? null : s); 
 	}
 }

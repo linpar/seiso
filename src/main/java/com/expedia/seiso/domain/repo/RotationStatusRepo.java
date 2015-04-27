@@ -27,7 +27,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.ROTATION_STATUSES)
+@RestResource(rel = RepoKeys.ROTATION_STATUSES, path = RepoKeys.ROTATION_STATUSES)
 public interface RotationStatusRepo extends CrudRepository<RotationStatus, Long> {
 
 	@FindByKey

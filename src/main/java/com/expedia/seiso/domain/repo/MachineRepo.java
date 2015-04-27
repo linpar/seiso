@@ -30,8 +30,9 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
+@RestResource(rel = RepoKeys.MACHINES, path = RepoKeys.MACHINES)
+// TODO Do we need this?
 @Transactional(readOnly = true)
-@RestResource(path = RepoKeys.MACHINES)
 public interface MachineRepo extends PagingAndSortingRepository<Machine, Long>, MachineRepoCustom {
 
 	@Query("from Machine m order by m.name")

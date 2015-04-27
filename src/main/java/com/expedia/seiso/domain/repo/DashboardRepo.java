@@ -27,7 +27,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.SEYREN_CHECKS)
+@RestResource(rel = RepoKeys.DASHBOARDS, path = RepoKeys.DASHBOARDS)
 public interface DashboardRepo extends PagingAndSortingRepository<Dashboard, Long> {
 	
 	@FindByKey

@@ -28,7 +28,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.INFRASTRUCTURE_PROVIDERS)
+@RestResource(rel = RepoKeys.INFRASTRUCTURE_PROVIDERS, path = RepoKeys.INFRASTRUCTURE_PROVIDERS)
 public interface InfrastructureProviderRepo extends CrudRepository<InfrastructureProvider, Long> {
 
 	@Query("from InfrastructureProvider order by name")

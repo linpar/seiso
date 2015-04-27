@@ -36,7 +36,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.ENDPOINTS)
+@RestResource(rel = RepoKeys.ENDPOINTS, path = RepoKeys.ENDPOINTS)
 public interface EndpointRepo extends PagingAndSortingRepository<Endpoint, Long> {
 
 	@RestResource(path = "find-by-service-instance")

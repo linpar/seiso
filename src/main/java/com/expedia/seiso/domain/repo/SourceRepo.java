@@ -28,7 +28,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = "data-sources")
+@RestResource(rel = RepoKeys.SOURCES, path = RepoKeys.SOURCES)
 public interface SourceRepo extends PagingAndSortingRepository<Source, Long> {
 
 	@Query("from Source order by key")

@@ -32,4 +32,15 @@ public class PathBuilder {
 	public String entryPath() {
 		return baseUri + "/" + baseApi;
 	}
+	
+	public String repoPath(@NonNull String path) {
+		// @formatter:off
+		return new StringBuilder(baseUri)
+				.append("/")
+				.append(baseApi)
+				.append("/")
+				.append(path)
+				.toString();
+		// @formatter:on
+	}
 }

@@ -28,7 +28,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.SERVICE_TYPES)
+@RestResource(rel = RepoKeys.SERVICE_TYPES, path = RepoKeys.SERVICE_TYPES)
 public interface ServiceTypeRepo extends CrudRepository<ServiceType, Long> {
 
 	@Query("from ServiceType order by name")

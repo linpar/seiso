@@ -31,7 +31,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.ENVIRONMENTS)
+@RestResource(rel = RepoKeys.ENVIRONMENTS, path = RepoKeys.ENVIRONMENTS)
 public interface EnvironmentRepo extends CrudRepository<Environment, Long> {
 
 	@Query("from Environment order by name")

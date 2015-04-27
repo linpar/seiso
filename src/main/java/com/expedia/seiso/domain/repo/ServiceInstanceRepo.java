@@ -30,7 +30,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.SERVICE_INSTANCES)
+@RestResource(rel = RepoKeys.SERVICE_INSTANCES, path = RepoKeys.SERVICE_INSTANCES)
 public interface ServiceInstanceRepo
 		extends PagingAndSortingRepository<ServiceInstance, Long>, ServiceInstanceRepoCustom {
 

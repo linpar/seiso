@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.repo;
+package com.expedia.serf.meta;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
-
-import com.expedia.seiso.domain.entity.DocLink;
-import com.expedia.serf.ann.RestResource;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * @author Willie Wheeler
  */
-@RestResource(rel = RepoKeys.DOC_LINKS, path = RepoKeys.DOC_LINKS)
-public interface DocLinkRepo extends PagingAndSortingRepository<DocLink, Long> {
+@Data
+@AllArgsConstructor
+public class RepoMeta implements Comparable<RepoMeta> {
+	private boolean exported;
+	private String rel;
+	private String path;
 	
-	@RestResource(path = "find-by-source")
-	Page<DocLink> findBySourceKey(@Param("key") String key, Pageable pageable);
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(RepoMeta that) {
+		return rel.compareTo(that.rel);
+	}
 }

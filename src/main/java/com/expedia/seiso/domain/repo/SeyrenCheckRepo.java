@@ -27,7 +27,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.SEYREN_CHECKS)
+@RestResource(rel = RepoKeys.SEYREN_CHECKS, path = RepoKeys.SEYREN_CHECKS)
 public interface SeyrenCheckRepo extends PagingAndSortingRepository<SeyrenCheck, Long> {
 	
 	@FindByKey

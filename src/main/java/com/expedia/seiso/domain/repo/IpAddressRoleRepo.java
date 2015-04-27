@@ -29,7 +29,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.IP_ADDRESS_ROLES)
+@RestResource(rel = RepoKeys.IP_ADDRESS_ROLES, path = RepoKeys.IP_ADDRESS_ROLES)
 public interface IpAddressRoleRepo extends PagingAndSortingRepository<IpAddressRole, Long> {
 
 	IpAddressRole findByServiceInstanceAndName(ServiceInstance serviceInstance, String name);

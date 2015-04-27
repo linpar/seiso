@@ -27,7 +27,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.STATUS_TYPES)
+@RestResource(rel = RepoKeys.STATUS_TYPES, path = RepoKeys.STATUS_TYPES)
 public interface StatusTypeRepo extends CrudRepository<StatusType, Long> {
 
 	@FindByKey

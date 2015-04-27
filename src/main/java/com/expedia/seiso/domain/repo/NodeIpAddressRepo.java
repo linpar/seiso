@@ -29,7 +29,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.NODE_IP_ADDRESSES)
+@RestResource(rel = RepoKeys.NODE_IP_ADDRESSES, path = RepoKeys.NODE_IP_ADDRESSES)
 public interface NodeIpAddressRepo extends PagingAndSortingRepository<NodeIpAddress, Long> {
 
 	@Query("from NodeIpAddress nip where nip.node.name = :nodeName and nip.ipAddress = :ipAddress")

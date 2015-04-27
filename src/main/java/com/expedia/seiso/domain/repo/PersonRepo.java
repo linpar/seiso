@@ -27,7 +27,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.PEOPLE)
+@RestResource(rel = RepoKeys.PEOPLE, path = RepoKeys.PEOPLE)
 public interface PersonRepo extends PagingAndSortingRepository<Person, Long> {
 
 	Person findByLdapDn(@Param("dn") String ldapDn);

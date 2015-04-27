@@ -29,7 +29,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.SERVICE_INSTANCE_PORTS)
+@RestResource(rel = RepoKeys.SERVICE_INSTANCE_PORTS, path = RepoKeys.SERVICE_INSTANCE_PORTS)
 public interface ServiceInstancePortRepo extends PagingAndSortingRepository<ServiceInstancePort, Long> {
 
 	ServiceInstancePort findByServiceInstanceAndNumber(ServiceInstance serviceInstance, Integer number);

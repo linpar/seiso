@@ -29,7 +29,7 @@ import com.expedia.serf.ann.RestResource;
 /**
  * @author Willie Wheeler
  */
-@RestResource(path = RepoKeys.LOAD_BALANCERS)
+@RestResource(rel = RepoKeys.LOAD_BALANCERS, path = RepoKeys.LOAD_BALANCERS)
 public interface LoadBalancerRepo extends PagingAndSortingRepository<LoadBalancer, Long>, LoadBalancerRepoCustom {
 	
 	@FindByKey
