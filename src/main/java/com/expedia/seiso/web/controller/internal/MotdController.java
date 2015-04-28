@@ -15,7 +15,6 @@
  */
 package com.expedia.seiso.web.controller.internal;
 
-import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +22,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.expedia.seiso.domain.entity.ConfProp;
 import com.expedia.seiso.domain.repo.ConfPropRepo;
 import com.expedia.seiso.web.dto.Motd;
+import com.expedia.serf.ann.SuppressBasePath;
 import com.expedia.serf.web.MediaTypes;
 
 /**
  * @author Willie Wheeler
  */
 @RestController
+@SuppressBasePath
 @RequestMapping("/internal/motd")
 @XSlf4j
 public class MotdController {
@@ -39,7 +41,7 @@ public class MotdController {
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	public Motd motd() {
 		log.trace("Getting motd");
-		val motdProp = confPropRepo.findByKey("motd");
+		ConfProp motdProp = confPropRepo.findByKey("motd");
 		return (motdProp == null ? null : new Motd(motdProp.getValue()));
 	}
 }

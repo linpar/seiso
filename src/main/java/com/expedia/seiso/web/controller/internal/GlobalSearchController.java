@@ -18,7 +18,6 @@ package com.expedia.seiso.web.controller.internal;
 import java.util.HashSet;
 import java.util.Set;
 
-import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,7 @@ import com.expedia.seiso.domain.service.search.SearchQuery;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
 import com.expedia.serf.C;
+import com.expedia.serf.ann.SuppressBasePath;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.web.MediaTypes;
 
@@ -44,6 +44,7 @@ import com.expedia.serf.web.MediaTypes;
  * @author Willie Wheeler
  */
 @RestController
+@SuppressBasePath
 @RequestMapping("/internal/search")
 @XSlf4j
 public class GlobalSearchController {
@@ -64,16 +65,16 @@ public class GlobalSearchController {
 		log.trace("Doing global search: keywords={}", keywords);
 		
 		// TODO Use a handler method arg resolver instead. [WLW]
-		val query = new SearchQuery(keywords, toKeywordSet(keywords));
+		SearchQuery query = new SearchQuery(keywords, toKeywordSet(keywords));
 		
 		// V2, since this isn't available in V1.
 		return delegate.globalSearch(ApiVersion.V2, query, pageable);
 	}
 	
 	private Set<String> toKeywordSet(String keywords) {
-		val keywordSet = new HashSet<String>();
-		val keywordArr = keywords.split(" ");
-		for (val keyword : keywordArr) { keywordSet.add("%" + keyword + "%"); }
+		Set<String> keywordSet = new HashSet<>();
+		String[] keywordArr = keywords.split(" ");
+		for (String keyword : keywordArr) { keywordSet.add("%" + keyword + "%"); }
 		return keywordSet;
 	}
 }
