@@ -1,3 +1,5 @@
+ALTER TABLE service MODIFY COLUMN ukey varchar(40) NOT NULL;
+
 DROP TABLE IF EXISTS `doc_link`;
 CREATE TABLE `doc_link` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

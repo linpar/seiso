@@ -26,7 +26,7 @@ import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.serf.util.ReflectionUtils;
+import com.expedia.serf.util.SerfReflectionUtils;
 
 /**
  * Service delegate to save items to the database.
@@ -42,7 +42,7 @@ public class ItemSaver {
 	
 	public void create(@NonNull Item item, boolean mergeAssociations) {
 		val itemClass = item.getClass();
-		val itemToSave = ReflectionUtils.createInstance(itemClass);
+		val itemToSave = SerfReflectionUtils.createInstance(itemClass);
 		doSave(item, itemToSave, mergeAssociations);
 	}
 	

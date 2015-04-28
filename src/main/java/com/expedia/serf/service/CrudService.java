@@ -20,5 +20,10 @@ package com.expedia.serf.service;
  */
 public interface CrudService {
 	
-	void save(Object entity);
+	/**
+	 * @param entity
+	 * @param includeProps Fields to include. {@literal null} means include everything.
+	 * @param excludeProps Fields to exclude. {@literal null} means exclude nothing.
+	 */
+	void save(Object entity, String[] includeProps, String[] excludeProps);
 }

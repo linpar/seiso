@@ -25,8 +25,7 @@ import lombok.experimental.UtilityClass;
 /**
  * @author Willie Wheeler
  */
-@UtilityClass
-public class CollectionsUtils {
+public class SerfCollectionUtils {
 
 	public static Class<?> getElementClass(@NonNull List<?> list) {
 		return (list.isEmpty() ? null : list.get(0).getClass());

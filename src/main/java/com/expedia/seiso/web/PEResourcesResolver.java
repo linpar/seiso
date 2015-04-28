@@ -35,7 +35,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.list.EntityListPackageMarker;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.serf.util.ReflectionUtils;
+import com.expedia.serf.util.SerfReflectionUtils;
 import com.expedia.serf.util.ResolverUtils;
 
 /**
@@ -103,6 +103,6 @@ public class PEResourcesResolver implements HandlerMethodArgumentResolver {
 	private Class<?> toItemListClass(Class<?> itemClass) {
 		val packageName = EntityListPackageMarker.class.getPackage().getName();
 		val itemListClassName = packageName + "." + itemClass.getSimpleName() + "List";
-		return ReflectionUtils.classForName(itemListClassName);
+		return SerfReflectionUtils.classForName(itemListClassName);
 	}
 }

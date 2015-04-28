@@ -16,13 +16,11 @@
 package com.expedia.serf.util;
 
 import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
 
 /**
  * @author Willie Wheeler
  */
-@UtilityClass
-public class ReflectionUtils {
+public class SerfReflectionUtils {
 
 	@SneakyThrows
 	public static Class<?> classForName(String className) {

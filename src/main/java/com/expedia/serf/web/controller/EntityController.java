@@ -25,6 +25,7 @@ import org.springframework.data.repository.support.Repositories;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.serf.hypermedia.Resource;
@@ -79,13 +80,16 @@ public class EntityController {
 			consumes = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	public void post(
 			@PathVariable("repo") String repoPath,
+			@RequestParam(value = "include", required = false) String include,
+			@RequestParam(value = "exclude", required = false) String exclude,
 			PersistentEntityResource peResource) {
 		
 		log.trace("POST /{}/{}", basePath, repoPath);
 		val entity = peResource.getEntity();
 		val dynaEntity = new DynaEntity(entity);
 		dynaEntity.setId(null);
-		crudService.save(entity);
+		crudService.save(entity, parseList(include), parseList(exclude));
+		
 		// TODO Return 201 CREATED
 	}
 	
@@ -96,17 +100,24 @@ public class EntityController {
 	public void put(
 			@PathVariable("repo") String repoPath,
 			@PathVariable("id") Long entityId,
+			@RequestParam(value = "include", required = false) String include,
+			@RequestParam(value = "exclude", required = false) String exclude,
 			PersistentEntityResource peResource) {
 		
 		log.trace("PUT /{}/{}/{}", basePath, repoPath, entityId);
 		val entity = peResource.getEntity();
 		val dynaEntity = new DynaEntity(entity);
 		dynaEntity.setId(entityId);
-		crudService.save(entity);
+		crudService.save(entity, parseList(include), parseList(exclude));
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private CrudRepository getRepo(String repoPath) {
 		val entityClass = repoMetaRegistry.getEntityClass(repoPath);
 		return (CrudRepository) repositories.getRepositoryFor(entityClass);
+	}
+	
+	private String[] parseList(String listExpr) {
+		return (listExpr == null ? null : listExpr.split(","));
 	}
 }

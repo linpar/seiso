@@ -47,7 +47,7 @@ import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SaveAllError;
 import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.serf.exception.ResourceNotFoundException;
-import com.expedia.serf.util.CollectionsUtils;
+import com.expedia.serf.util.SerfCollectionUtils;
 
 /**
  * <p>
@@ -186,7 +186,7 @@ public class ItemServiceImpl implements ItemService {
 	public List findAll(@NonNull Class itemClass) {
 		val repo = getRepositoryFor(itemClass);
 		val items = repo.findAll();
-		return CollectionsUtils.toList(items);
+		return SerfCollectionUtils.toList(items);
 	}
 
 	@Override
