@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso;
-
-import com.expedia.serf.exception.ResourceNotFoundException;
+package com.expedia.serf.service;
 
 /**
- * General-purpose exception indicating that something couldn't be found. Prefer appropriate subclasses (e.g.
- * {@link ResourceNotFoundException} when available.
- * 
  * @author Willie Wheeler
  */
-@SuppressWarnings("serial")
-public class NotFoundException extends RuntimeException {
+public class ErrorObject {
+	private String code;
+	private String message;
 
-	public NotFoundException() {
+	public ErrorObject(String code, String message) {
+		this.code = code;
+		this.message = message;
 	}
 
-	public NotFoundException(String message) {
-		super(message);
+	public String getCode() {
+		return code;
+	}
+
+	public String getMessage() {
+		return message;
 	}
 }

@@ -43,11 +43,11 @@ import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.PEResource;
 import com.expedia.seiso.web.PEResources;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.serf.C;
 import com.expedia.serf.ann.SuppressBasePath;
 import com.expedia.serf.hypermedia.PagedResources;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
-import com.expedia.serf.util.C;
 
 /**
  * Thin wrapper around the {@link BasicItemDelegate} to handle v1 API requests.

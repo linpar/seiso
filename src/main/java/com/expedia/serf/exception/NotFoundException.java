@@ -15,26 +15,20 @@
  */
 package com.expedia.serf.exception;
 
-import com.expedia.seiso.domain.entity.key.ItemKey;
 
 /**
- * Exception indicating that either the requested resource doesn't exist, or else the client doesn't have permission to
- * access it. We don't indicate which of the two is the case since revealing existence to unauthorized clients can
- * create security risks (e.g., client trying to guess protected resources).
+ * General-purpose exception indicating that something couldn't be found. Prefer appropriate subclasses (e.g.
+ * {@link ResourceNotFoundException} when available.
  * 
  * @author Willie Wheeler
  */
 @SuppressWarnings("serial")
-public class ResourceNotFoundException extends NotFoundException {
+public class NotFoundException extends RuntimeException {
 
-	public ResourceNotFoundException() {
+	public NotFoundException() {
 	}
 
-	public ResourceNotFoundException(String message) {
+	public NotFoundException(String message) {
 		super(message);
-	}
-
-	public ResourceNotFoundException(ItemKey itemKey) {
-		super(itemKey.toString());
 	}
 }

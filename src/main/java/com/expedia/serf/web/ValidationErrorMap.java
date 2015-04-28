@@ -13,25 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.service;
+package com.expedia.serf.web;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * @author Willie Wheeler
+ * @author Ken van Eyk
  */
-public class ErrorObject {
-	private String code;
-	private String message;
+public class ValidationErrorMap {
+	public Map<String, List<String>> errorMap;
 
-	public ErrorObject(String code, String message) {
-		this.code = code;
-		this.message = message;
+	public ValidationErrorMap() {
+		this.errorMap = new HashMap<String, List<String>>();
 	}
 
-	public String getCode() {
-		return code;
-	}
+	public void addError(String name, String message) {
+		List<String> errorsForName = this.errorMap.get(name);
+		if (errorsForName == null) {
+			errorsForName = new ArrayList<String>();
+			this.errorMap.put(name, errorsForName);
+		}
 
-	public String getMessage() {
-		return message;
+		errorsForName.add(message);
 	}
 }

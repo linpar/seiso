@@ -29,8 +29,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.context.request.WebRequest;
 
+import com.expedia.serf.C;
 import com.expedia.serf.exception.ResourceNotFoundException;
-import com.expedia.serf.util.C;
+import com.expedia.serf.web.ValidationErrorMap;
+import com.expedia.serf.web.controller.ExceptionHandlerAdvice;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**

@@ -28,7 +28,6 @@ import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.core.annotation.AnnotationUtils;
 
-import com.expedia.seiso.NotFoundException;
 import com.expedia.seiso.core.ann.FindByKey;
 import com.expedia.seiso.core.ann.Parent;
 import com.expedia.seiso.core.ann.Projection;
@@ -42,6 +41,7 @@ import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.assembler.ProjectionParser;
 import com.expedia.serf.ann.RestResource;
+import com.expedia.serf.exception.NotFoundException;
 
 /**
  * @author Willie Wheeler

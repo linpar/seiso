@@ -28,8 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.repository.support.Repositories;
 
-import com.expedia.seiso.NotFoundException;
 import com.expedia.serf.ann.RestResource;
+import com.expedia.serf.exception.NotFoundException;
 
 /**
  * Item metadata lookup.

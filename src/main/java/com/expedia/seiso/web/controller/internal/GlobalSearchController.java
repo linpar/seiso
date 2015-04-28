@@ -33,8 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expedia.seiso.domain.service.search.SearchQuery;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
+import com.expedia.serf.C;
 import com.expedia.serf.hypermedia.Resource;
-import com.expedia.serf.util.C;
 import com.expedia.serf.web.MediaTypes;
 
 /**

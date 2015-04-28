@@ -25,10 +25,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.repository.support.Repositories;
 
-import com.expedia.seiso.NotFoundException;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
+import com.expedia.serf.exception.NotFoundException;
 
 /**
  * @author Willie Wheeler

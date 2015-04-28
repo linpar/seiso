@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
 import com.expedia.serf.meta.RepoMetaRegistry;
+import com.expedia.serf.service.CrudService;
+import com.expedia.serf.service.impl.DynaEntity;
 import com.expedia.serf.web.MediaTypes;
 import com.expedia.serf.web.PersistentEntityResource;
 
@@ -45,6 +47,7 @@ public class EntityController {
 	
 	@Autowired private RepoMetaRegistry repoMetaRegistry;
 	@Autowired private Repositories repositories;
+	@Autowired private CrudService crudService;
 	
 	@RequestMapping(
 			value = "/{repo}",
@@ -65,15 +68,29 @@ public class EntityController {
 			@PathVariable("id") Long entityId) {
 		
 		log.trace("GET /{}/{}/{}", basePath, repoPath, entityId);
-		val entityClass = repoMetaRegistry.getEntityClass(repoPath);
-		val repo = (CrudRepository) repositories.getRepositoryFor(entityClass);
+		val repo = getRepo(repoPath);
 		val entity = repo.findOne(entityId);
-		log.trace("entity={}", entity);
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	
 	@RequestMapping(
-			value = "{repo}/{id}",
+			value = "/{repo}",
+			method = RequestMethod.POST,
+			consumes = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	public void post(
+			@PathVariable("repo") String repoPath,
+			PersistentEntityResource peResource) {
+		
+		log.trace("POST /{}/{}", basePath, repoPath);
+		val entity = peResource.getEntity();
+		val dynaEntity = new DynaEntity(entity);
+		dynaEntity.setId(null);
+		crudService.save(entity);
+		// TODO Return 201 CREATED
+	}
+	
+	@RequestMapping(
+			value = "/{repo}/{id}",
 			method = RequestMethod.PUT,
 			consumes = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	public void put(
@@ -82,7 +99,14 @@ public class EntityController {
 			PersistentEntityResource peResource) {
 		
 		log.trace("PUT /{}/{}/{}", basePath, repoPath, entityId);
-		log.trace("peResource={}", peResource);
-		throw new UnsupportedOperationException("Not yet implemented");
+		val entity = peResource.getEntity();
+		val dynaEntity = new DynaEntity(entity);
+		dynaEntity.setId(entityId);
+		crudService.save(entity);
+	}
+	
+	private CrudRepository getRepo(String repoPath) {
+		val entityClass = repoMetaRegistry.getEntityClass(repoPath);
+		return (CrudRepository) repositories.getRepositoryFor(entityClass);
 	}
 }

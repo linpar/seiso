@@ -38,11 +38,11 @@ import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.PEResource;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
+import com.expedia.serf.C;
 import com.expedia.serf.ann.SuppressBasePath;
 import com.expedia.serf.hypermedia.PagedResources;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
-import com.expedia.serf.util.C;
 import com.expedia.serf.web.MediaTypes;
 
 // http://stackoverflow.com/questions/2810652/how-to-design-a-restful-collection-resource

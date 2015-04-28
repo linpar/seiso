@@ -44,7 +44,8 @@ import com.expedia.serf.util.ResolverUtils;
 @Component
 @XSlf4j
 public class PersistentEntityResourceResolver implements HandlerMethodArgumentResolver {
-	private static final String ENTITY_FORMAT = "/{basePath}/{repoPath}/{entityId}";
+	private static final String POST_ENTITY_FORMAT = "/{basePath}/{repoPath}";
+	private static final String PUT_ENTITY_FORMAT = "/{basePath}/{repoPath}/{entityId}";
 	
 	@Autowired private RepoMetaRegistry repoMetaRegistry;
 	@Autowired private Repositories repositories;
@@ -76,12 +77,15 @@ public class PersistentEntityResourceResolver implements HandlerMethodArgumentRe
 		val nativeRequest = webRequest.getNativeRequest(HttpServletRequest.class);
 		val requestUri = nativeRequest.getRequestURI();
 		
-		// Currently supporting only ENTITY_FORMAT.
-		// Probably need to support some others in the future.
+		// Probably need to add other entity formats in the future, like for collection properties.
 		Class<?> entityClass = null;
 		val matcher = new AntPathMatcher();
-		if (matcher.match(ENTITY_FORMAT, requestUri)) {
-			val vars = matcher.extractUriTemplateVariables(ENTITY_FORMAT, requestUri);
+		if (matcher.match(POST_ENTITY_FORMAT, requestUri)) {
+			val vars = matcher.extractUriTemplateVariables(POST_ENTITY_FORMAT, requestUri);
+			val repoPath = vars.get("repoPath");
+			entityClass = repoMetaRegistry.getEntityClass(repoPath);
+		} else if (matcher.match(PUT_ENTITY_FORMAT, requestUri)) {
+			val vars = matcher.extractUriTemplateVariables(PUT_ENTITY_FORMAT, requestUri);
 			val repoPath = vars.get("repoPath");
 			entityClass = repoMetaRegistry.getEntityClass(repoPath);
 		} else {

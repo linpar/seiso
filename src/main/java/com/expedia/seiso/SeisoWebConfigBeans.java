@@ -46,13 +46,13 @@ import com.expedia.seiso.web.PEResourceResolver;
 import com.expedia.seiso.web.PEResourcesResolver;
 import com.expedia.seiso.web.SimplePropertyEntry;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
-import com.expedia.seiso.web.controller.ExceptionHandlerAdvice;
 import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.controller.delegate.GlobalSearchDelegate;
 import com.expedia.seiso.web.controller.delegate.RepoSearchDelegate;
 import com.expedia.seiso.web.controller.internal.ControllerInternalMarker;
 import com.expedia.serf.SerfProperties;
 import com.expedia.serf.util.ResolverUtils;
+import com.expedia.serf.web.controller.ExceptionHandlerAdvice;
 
 /**
  * Web configuration beans common to both v1 and v2.

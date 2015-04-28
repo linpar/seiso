@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.controller;
+package com.expedia.serf.web.controller;
 
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,10 +27,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
-import com.expedia.seiso.NotFoundException;
-import com.expedia.seiso.domain.service.ErrorObject;
+import com.expedia.serf.C;
+import com.expedia.serf.exception.NotFoundException;
 import com.expedia.serf.exception.ResourceNotFoundException;
-import com.expedia.serf.util.C;
+import com.expedia.serf.service.ErrorObject;
+import com.expedia.serf.web.ValidationErrorMap;
+import com.expedia.serf.web.ValidationErrorMapFactory;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
@@ -62,6 +65,16 @@ public class ExceptionHandlerAdvice {
 	public ErrorObject handleJsonMappingException(JsonMappingException e, WebRequest request) {
 		return new ErrorObject(C.EC_INVALID_REQUEST_JSON_PAYLOAD, e.getMessage());
 	}
+	
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	@ResponseStatus(value = HttpStatus.CONFLICT)
+	@ResponseBody
+	public ErrorObject handleDataIntegrityViolationException(DataIntegrityViolationException e, WebRequest request) {
+		val message = "Database constraint violation. " +
+				"This could be a missing required field, a duplicate value for a unique field, " +
+				"a bad foreign key, etc.";		
+		return new ErrorObject(C.EC_DATA_INTEGRITY_VIOLATION_ERROR, message);
+	}
 
 	@ExceptionHandler(RuntimeException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -74,10 +87,8 @@ public class ExceptionHandlerAdvice {
 
 	@ExceptionHandler(BindException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	public @ResponseBody ValidationErrorMap handleBindException(BindException bindException) {
-
-		ValidationErrorMap validationErrorMap = ValidationErrorMapFactory.buildFrom(bindException);
-
-		return validationErrorMap;
+	@ResponseBody
+	public ValidationErrorMap handleBindException(BindException bindException) {
+		return ValidationErrorMapFactory.buildFrom(bindException);
 	}
 }
