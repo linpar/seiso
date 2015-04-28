@@ -25,18 +25,12 @@ logging:
 #  file: /var/log/seiso/seiso.log
   level:
     com.expedia.seiso: TRACE
+    com.expedia.serf: TRACE
     org.springframework: INFO
 
 security:
   basic:
     enabled: false
-
-server:
-  port: 8443
-  session-timeout: 1200
-  ssl:
-    key-store: classpath:keystore-dev.jks
-    key-store-password: seisoapi
 
 # IMPORTANT: This is a potential security risk, so use discretion.
 # The admin panel currently assumes that endpoints.health.sensitive is false.
@@ -50,6 +44,4 @@ serf:
   base-path: api
 
 custom:
-  # No trailing slash!
   change-notification-exchange: seiso.notifications.v2
-  action-request-exchange: seiso.action_requests.v2

@@ -13,11 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.rf.hmedia;
+package com.expedia.serf.web.controller;
+
+import org.junit.Before;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.repository.support.Repositories;
+
+import com.expedia.serf.web.controller.EntryController;
 
 /**
  * @author Willie Wheeler
  */
-public class PagedResourceTests {
-
+public class EntryControllerTests {
+	
+	// Class under test
+	@InjectMocks private EntryController controller;
+	
+	// Dependencies
+	@Mock private Repositories repositories;
+	
+	@Before
+	public void setUp() throws Exception {
+		this.controller = new EntryController();
+		MockitoAnnotations.initMocks(this);
+	}
 }

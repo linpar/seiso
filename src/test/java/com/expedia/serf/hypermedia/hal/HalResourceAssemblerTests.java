@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.rf.hmedia.hal;
+package com.expedia.serf.hypermedia.hal;
 
 import java.util.Arrays;
 

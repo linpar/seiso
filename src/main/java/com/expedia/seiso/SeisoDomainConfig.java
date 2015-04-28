@@ -38,7 +38,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.expedia.seiso.SeisoDomainConfig.RepoConfig;
 import com.expedia.seiso.SeisoDomainConfig.ServiceConfig;
-import com.expedia.seiso.core.config.DataSourceProperties;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.EndpointRepo;
 import com.expedia.seiso.domain.repo.IpAddressRoleRepo;
@@ -61,7 +60,7 @@ import com.expedia.seiso.domain.service.impl.ItemSaver;
 import com.expedia.seiso.domain.service.impl.ItemServiceImpl;
 import com.expedia.seiso.domain.service.impl.SearchEngineImpl;
 import com.expedia.seiso.gateway.NotificationGateway;
-import com.expedia.seiso.gateway.aop.NotificationAspect;
+import com.expedia.seiso.gateway.impl.NotificationAspect;
 import com.expedia.seiso.gateway.impl.NotificationGatewayImpl;
 import com.zaxxer.hikari.HikariDataSource;
 

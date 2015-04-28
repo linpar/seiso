@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.core.config;
+package com.expedia.seiso;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,5 +28,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "custom")
 public class CustomProperties {
 	@NonNull private String changeNotificationExchange;
-	@NonNull private String actionRequestExchange;
 }

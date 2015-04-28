@@ -24,7 +24,7 @@ import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.seiso.gateway.aop.NotificationAspect;
+import com.expedia.seiso.gateway.impl.NotificationAspect;
 
 /**
  * Implemented as a separate component to support {@link NotificationAspect} proxying.

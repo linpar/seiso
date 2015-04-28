@@ -29,8 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.expedia.seiso.core.config.CustomProperties;
-
 // Recent changes to this configuration:
 // 
 // 1. Removed actionRequestsExchange since we don't yet support such requests.

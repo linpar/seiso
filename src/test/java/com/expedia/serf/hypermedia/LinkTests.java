@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.rf.hmedia;
+package com.expedia.serf.hypermedia;
 
 import static org.junit.Assert.*;
 import lombok.val;

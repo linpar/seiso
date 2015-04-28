@@ -13,11 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.rf.hmedia;
+package com.expedia.seiso;
+
+import javax.validation.constraints.NotNull;
+
+import lombok.Data;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * Data source configuration properties.
+ * 
  * @author Willie Wheeler
  */
-public class ResourceTests {
+@Data
+@ConfigurationProperties(prefix = "spring.datasource")
+public class DataSourceProperties {
+	@NotNull private String driverClassName;
+	@NotNull private String url;
+	@NotNull private String username;
+	@NotNull private String password;
 
+	// TODO Add other data source settings here. [WLW]
 }

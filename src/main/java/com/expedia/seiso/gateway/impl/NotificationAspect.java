@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.gateway.aop;
+package com.expedia.seiso.gateway.impl;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

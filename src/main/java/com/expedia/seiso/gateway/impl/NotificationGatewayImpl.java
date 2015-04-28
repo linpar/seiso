@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.core.config.CustomProperties;
+import com.expedia.seiso.CustomProperties;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.gateway.NotificationGateway;

@@ -31,7 +31,6 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.expedia.seiso.core.config.CustomProperties;
 import com.expedia.seiso.domain.entity.Dashboard;
 import com.expedia.seiso.domain.entity.DocLink;
 import com.expedia.seiso.domain.entity.IpAddressRole;
