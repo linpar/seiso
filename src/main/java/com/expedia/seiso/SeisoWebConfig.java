@@ -90,7 +90,8 @@ public class SeisoWebConfig extends WebMvcConfigurationSupport {
 		// Lifted from org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration. [WLW]
 		registry.addViewController("/").setViewName("forward:/index.html");
 	}
-
+	
+	/*
 	@Override
 	public RequestMappingHandlerMapping requestMappingHandlerMapping() {
 		
@@ -121,4 +122,5 @@ public class SeisoWebConfig extends WebMvcConfigurationSupport {
 		
 		return mapping;
 	}
+	*/
 }

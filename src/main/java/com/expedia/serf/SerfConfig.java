@@ -39,34 +39,34 @@ public class SerfConfig {
 		return new SerfProperties();
 	}
 	
-	@Bean
-	public CrudService crudService() {
-		return new CrudServiceImpl();
-	}
+//	@Bean
+//	public CrudService crudService() {
+//		return new CrudServiceImpl();
+//	}
 	
-	@Bean
-	public RepoMetaRegistry repoMetaRegistry() {
-		return new RepoMetaRegistry();
-	}
+//	@Bean
+//	public RepoMetaRegistry repoMetaRegistry() {
+//		return new RepoMetaRegistry();
+//	}
 	
-	@Bean
-	public PersistentEntityResourceResolver persistentEntityResourceResolver() {
-		return new PersistentEntityResourceResolver();
-	}
+//	@Bean
+//	public PersistentEntityResourceResolver persistentEntityResourceResolver() {
+//		return new PersistentEntityResourceResolver();
+//	}
 	
-	@Bean
-	public PathBuilder pathBuilder() {
-		val props = serfProperties();
-		return new PathBuilder(props.getBaseUri(), props.getBasePath());
-	}
+//	@Bean
+//	public PathBuilder pathBuilder() {
+//		val props = serfProperties();
+//		return new PathBuilder(props.getBaseUri(), props.getBasePath());
+//	}
 	
-	@Bean
-	public EntryController entryController() {
-		return new EntryController();
-	}
-	
-	@Bean
-	public EntityController entityController() {
-		return new EntityController();
-	}
+//	@Bean
+//	public EntryController entryController() {
+//		return new EntryController();
+//	}
+//	
+//	@Bean
+//	public EntityController entityController() {
+//		return new EntityController();
+//	}
 }
