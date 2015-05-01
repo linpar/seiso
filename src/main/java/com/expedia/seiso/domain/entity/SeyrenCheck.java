@@ -16,6 +16,9 @@
 package com.expedia.seiso.domain.entity;
 
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -49,14 +52,37 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 })
 // @formatter:on
 public class SeyrenCheck extends AbstractItem {
-	@Key private String seyrenId;
+	
+	@NotNull
+	@Size(min = 1, max = 40)
+	@Key
+	private String seyrenId;
+	
+	@NotNull
+	@Size(min = 1, max = 250)
 	private String name;
+	
+	@Size(min = 1, max = 1000)
 	private String description;
+	
+	@NotNull
+	@Size(min = 1, max = 250)
 	private String graphiteBaseUrl;
+	
+	@NotNull
+	@Size(min = 1, max = 1000)
 	private String target;
+	
+	@NotNull
 	private Long warn;
+	
+	@NotNull
 	private Long error;
+	
+	@NotNull
 	private Boolean enabled;
+	
+	@Size(min = 1, max = 20)
 	private String state;
 	
 	@Override

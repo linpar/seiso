@@ -21,6 +21,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 
@@ -36,9 +38,12 @@ public class ConfProp {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
+	@NotNull
+	@Size(min = 1, max = 80)
 	@Column(name = "pkey")
 	private String key;
 	
+	@Size(max = 4000)
 	@Column(name = "pvalue")
 	private String value;
 }

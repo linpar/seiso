@@ -17,6 +17,9 @@ package com.expedia.seiso.domain.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -56,10 +59,15 @@ public class StatusType extends AbstractItem {
 	public static final StatusType WARNING = new StatusType("warning", "Warning");
 	public static final StatusType DANGER = new StatusType("danger", "Danger");
 
+	@NotNull
+	@Size(min = 1, max = 20)
+	@Pattern(regexp = "[a-z0-9-]+")
 	@Key
 	@Column(name = "ukey")
 	private String key;
 
+	@NotNull
+	@Size(min = 1, max = 80)
 	@Column(name = "name")
 	private String name;
 

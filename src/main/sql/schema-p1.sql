@@ -1,5 +1,9 @@
 ALTER TABLE service MODIFY COLUMN ukey varchar(40) NOT NULL;
 
+ALTER TABLE node_ip_address MODIFY COLUMN ip_address varchar(20) NOT NULL;
+
+ALTER TABLE person DROP COLUMN mingle_user_id;
+
 DROP TABLE IF EXISTS `doc_link`;
 CREATE TABLE `doc_link` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

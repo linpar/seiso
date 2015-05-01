@@ -18,6 +18,7 @@ package com.expedia.seiso.domain.entity;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -62,12 +63,14 @@ import com.expedia.serf.ann.RestResource;
 	})
 //@formatter:on
 public class Endpoint extends AbstractItem {
-
+	
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "node_ip_address_id")
 	@RestResource(path = "ip-address")
 	private NodeIpAddress ipAddress;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "service_instance_port_id")
 	private ServiceInstancePort port;

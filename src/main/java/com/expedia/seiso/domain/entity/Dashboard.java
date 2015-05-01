@@ -17,6 +17,9 @@ package com.expedia.seiso.domain.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -51,14 +54,28 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 // @formatter:on
 public class Dashboard extends AbstractItem {
 	
+	@NotNull
+	@Size(min = 1, max = 80)
+	@Pattern(regexp = "[a-z0-9-]+")
 	@Key
 	@Column(name = "ukey")
 	private String key;
 	
+	@NotNull
+	@Size(min = 1, max = 250)
 	private String name;
+	
+	@Size(max = 80)
+	@Pattern(regexp = "[a-z0-9-]+")
 	private String type;
+	
+	@Size(max = 1000)
 	private String description;
+	
+	@Size(max = 255)
 	private String apiUri;
+	
+	@Size(max = 255)
 	private String uiUri;
 	
 	@Override

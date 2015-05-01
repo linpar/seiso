@@ -18,6 +18,8 @@ package com.expedia.seiso.domain.entity;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -48,13 +50,22 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 // @formatter:on
 public class DocLink extends AbstractItem {
 	
+	@NotNull
 	@Parent
 	@ManyToOne
 	@JoinColumn(name = "service_id", nullable = false)
 	private Service service;
 	
+	@NotNull
+	@Size(min = 1, max = 250)
 	private String title;
+	
+	@NotNull
+	@Size(min = 1, max = 250)
 	private String href;
+	
+	@NotNull
+	@Size(min = 1, max = 250)
 	private String description;
 	
 	@Override

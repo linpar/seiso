@@ -22,11 +22,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+
+import org.hibernate.validator.constraints.Email;
 
 import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
@@ -53,23 +57,47 @@ import com.expedia.serf.ann.RestResource;
 //@formatter:on
 public class Person extends AbstractItem {
 	
+	@NotNull
+	@Size(min = 1, max = 40)
 	@Key
 	private String username;
 	
+	@Size(max = 40)
 	private String firstName;
+	
+	@Size(max = 40)
 	private String lastName;
+	
+	@Size(max = 80)
 	private String title;
+	
+	@Size(max = 80)
 	private String company;
+	
+	@Size(max = 80)
 	private String department;
+	
+	@Size(max = 80)
 	private String division;
+	
+	@Size(max = 80)
 	private String subdivision;
+	
+	@Size(max = 80)
 	private String location;
+	
+	@Size(max = 160)
 	private String streetAddress;
+	
+	@Size(max = 40)
 	private String workPhone;
+	
+	@Email
 	private String email;
 
 	// Not sure we want this here for the long term, but maybe. After all we will want to store Amazon instance IDs
-	// with our own machines. [WLW]
+	// with our own machines. [WLW]	
+	@Size(max = 240)
 	private String ldapDn;
 
 	// Setting this lazy. Otherwise Hibernate is issuing a separate select for it. :-O

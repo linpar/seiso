@@ -32,6 +32,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -72,16 +74,20 @@ import com.expedia.serf.ann.RestResource;
 	})
 //@formatter:on
 public class NodeIpAddress extends AbstractItem {
-
+	
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "node_id")
 	private Node node;
-
+	
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ip_address_role_id")
 	@RestResource(path = "ip-address-role")
 	private IpAddressRole ipAddressRole;
-
+	
+	@NotNull
+	@Size(min = 1, max = 20)
 	private String ipAddress;
 
 	@NonNull

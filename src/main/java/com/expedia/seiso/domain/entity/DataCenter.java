@@ -24,6 +24,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -69,12 +72,18 @@ import com.expedia.serf.ann.RestResource;
 //@formatter:on
 public class DataCenter extends AbstractItem {
 
+	@NotNull
+	@Size(min = 1, max = 40)
+	@Pattern(regexp = "[a-z0-9-]+")
 	@Key
 	@Column(name = "ukey", nullable = false, unique = true)
 	private String key;
 
+	@NotNull
+	@Size(min = 1, max = 80)
 	private String name;
-
+	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "region_id", nullable = false)
 	private Region region;

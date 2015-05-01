@@ -22,6 +22,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,13 +49,18 @@ import com.expedia.serf.ann.RestResource;
 	})
 //@formatter:on
 public class IpAddressRole extends AbstractItem {
-
+	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "service_instance_id")
 	@RestResource(path = "service-instance")
 	private ServiceInstance serviceInstance;
 
+	@NotNull
+	@Size(min = 1, max = 80)
 	private String name;
+	
+	@Size(max = 250)
 	private String description;
 
 	@OneToMany(mappedBy = "ipAddressRole", cascade = CascadeType.ALL, orphanRemoval = true)

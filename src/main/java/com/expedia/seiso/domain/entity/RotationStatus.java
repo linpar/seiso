@@ -23,6 +23,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,8 +36,8 @@ import lombok.experimental.Accessors;
 
 import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
+import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.serf.ann.RestResource;
@@ -66,13 +69,19 @@ public class RotationStatus extends AbstractItem {
 	public static final RotationStatus PARTIAL = new RotationStatus("partial", "Partial", WARNING);
 	public static final RotationStatus UNKNOWN = new RotationStatus("unknown", "Unknown", WARNING);
 
+	@NotNull
+	@Size(min = 1, max = 20)
+	@Pattern(regexp = "[a-z0-9-]+")
 	@Key
 	@Column(name = "ukey")
 	private String key;
 
+	@NotNull
+	@Size(min = 1, max = 80)
 	@Column(name = "name")
 	private String name;
-
+	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "status_type_id")
 	@RestResource(path = "status-type")

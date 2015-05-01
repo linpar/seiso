@@ -24,6 +24,10 @@ import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -69,14 +73,22 @@ import com.expedia.serf.ann.RestResource;
 //@formatter:on
 @XSlf4j
 public class ServiceInstancePort extends AbstractItem {
-
+	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "service_instance_id")
 	@RestResource(path = "service-instance")
 	private ServiceInstance serviceInstance;
-
+	
+	@NotNull
+	@Min(0)
+	@Max(65535)
 	private Integer number;
+	
+	@Size(max = 40)
 	private String protocol;
+	
+	@Size(max = 250) 
 	private String description;
 
 	// FIXME For some reason, this is not cascade deleting endpoints. I get a constraint violation when calling it from

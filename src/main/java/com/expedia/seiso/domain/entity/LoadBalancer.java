@@ -24,6 +24,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -64,6 +66,8 @@ import com.expedia.serf.ann.RestResource;
 //@formatter:on
 public class LoadBalancer extends AbstractItem {
 
+	@NotNull
+	@Size(min = 1, max = 80)
 	@Key
 	@Column(name = "name", nullable = false, unique = true)
 	private String name;
@@ -81,12 +85,16 @@ public class LoadBalancer extends AbstractItem {
 	@RestResource(path = "load-balancer")
 	private List<ServiceInstance> serviceInstances = new ArrayList<>();
 
+	@NotNull
+	@Size(min = 1, max = 80)
 	@Column(name = "type")
 	private String type;
-
+	
+	@Size(max = 20)
 	@Column(name = "ip_address")
 	private String ipAddress;
 
+	@Size(max = 250)
 	@Column(name = "api_url")
 	private String apiUrl;
 

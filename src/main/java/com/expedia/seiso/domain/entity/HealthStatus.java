@@ -19,6 +19,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,8 +29,8 @@ import lombok.experimental.Accessors;
 
 import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
+import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 
@@ -45,12 +47,18 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 //@formatter:on
 public class HealthStatus extends AbstractItem {
 
+	@NotNull
+	@Size(min = 1, max = 20)
+//	@Pattern(regexp = "[a-z0-9-]+")
 	@Key
 	@Column(name = "ukey")
 	private String key;
 
+	@NotNull
+	@Size(min = 1, max = 80)
 	private String name;
-
+	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "status_type_id")
 	private StatusType statusType;
