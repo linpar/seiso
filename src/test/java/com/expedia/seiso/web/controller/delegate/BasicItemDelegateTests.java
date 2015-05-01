@@ -33,6 +33,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.Validator;
 
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.Person;
@@ -71,6 +72,7 @@ public class BasicItemDelegateTests {
 	private BasicItemDelegate delegate;
 	
 	// Dependencies
+	@Mock private Validator validator;
 	@Mock private ItemMetaLookup itemMetaLookup;
 	@Mock private ItemService itemService;
 	@Mock private ResourceAssembler resourceAssembler;
@@ -98,6 +100,7 @@ public class BasicItemDelegateTests {
 		this.delegate = new BasicItemDelegate(resourceAssembler);
 		delegate.setItemMetaLookup(itemMetaLookup);
 		delegate.setItemService(itemService);
+		delegate.setValidator(validator);
 		
 	}
 	

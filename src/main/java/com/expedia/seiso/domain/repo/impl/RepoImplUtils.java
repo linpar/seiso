@@ -15,13 +15,13 @@
  */
 package com.expedia.seiso.domain.repo.impl;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
 import lombok.NonNull;
-import lombok.val;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -47,10 +47,10 @@ public class RepoImplUtils {
 			Pageable pageable) {
 		
 		// Set max results to avoid huge search queries.
-		val items = new QueryFactory()
-			.buildQuery(entityName, entityManager, fieldNames, searchTokens)
-			.setMaxResults(50)
-			.getResultList();
+		List<T> items = new QueryFactory()
+				.buildQuery(entityName, entityManager, fieldNames, searchTokens)
+				.setMaxResults(50)
+				.getResultList();
 		return new PageImpl<T>(items);
 	}
 }

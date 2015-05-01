@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.serf.web;
+package com.expedia.serf.exception;
 
-import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
+import com.expedia.serf.util.ValidationErrorMap;
 
 /**
- * @author Ken van Eyk
+ * @author Willie Wheeler
  */
-public class ValidationErrorMapFactory {
+@SuppressWarnings("serial")
+@RequiredArgsConstructor
+public class ValidationException extends RuntimeException {
 	
-	public static ValidationErrorMap buildFrom(BindException bindException) {
-		ValidationErrorMap validationErrorMap = new ValidationErrorMap();
-
-		if (bindException != null) {
-			for (ObjectError objectError : bindException.getAllErrors()) {
-				validationErrorMap.addError(objectError.getObjectName(), objectError.getDefaultMessage());
-			}
-		}
-
-		return validationErrorMap;
-	}
+	@NonNull
+	@Getter
+	private ValidationErrorMap errors;
 }

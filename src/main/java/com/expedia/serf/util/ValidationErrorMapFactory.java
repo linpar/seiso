@@ -13,30 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.serf.web;
+package com.expedia.serf.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import lombok.NonNull;
+
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 
 /**
  * @author Ken van Eyk
+ * @author Willie Wheeler
  */
-public class ValidationErrorMap {
-	public Map<String, List<String>> errorMap;
-
-	public ValidationErrorMap() {
-		this.errorMap = new HashMap<String, List<String>>();
-	}
-
-	public void addError(String name, String message) {
-		List<String> errorsForName = this.errorMap.get(name);
-		if (errorsForName == null) {
-			errorsForName = new ArrayList<String>();
-			this.errorMap.put(name, errorsForName);
+public class ValidationErrorMapFactory {
+	
+	public static ValidationErrorMap buildFrom(@NonNull Errors errors) {
+		ValidationErrorMap validationErrorMap = new ValidationErrorMap();
+		
+		List<FieldError> fieldErrors = errors.getFieldErrors();
+		for (FieldError fieldError : fieldErrors) {
+			validationErrorMap.addFieldError(fieldError.getField(), fieldError.getDefaultMessage());
 		}
 
-		errorsForName.add(message);
+		return validationErrorMap;
 	}
 }

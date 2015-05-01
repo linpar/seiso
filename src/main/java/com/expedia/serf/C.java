@@ -28,7 +28,7 @@ public class C {
 	public static final int DEFAULT_PAGE_SIZE = 100;
 
 	// Error codes
-	public static final String EC_DATA_INTEGRITY_VIOLATION_ERROR = "data_integrity_violation_error";
+	public static final String EC_VALIDATION_ERROR = "validation_error";
 	public static final String EC_INTERNAL_ERROR = "internal_error";
 
 	/** JSON syntax is fine, but semantics wrong (e.g. array passed where we expect a single value) */

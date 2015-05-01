@@ -9,6 +9,11 @@
 			</tr>
 		</thead>
 		<tbody>
+			<tr>
+				<td>{{ipAddress.ipAddress}}</td>
+				<td>-</td>
+				<td><span class="label label-{{ipAddress.rotationStatus.statusType.key}}">{{ipAddress.rotationStatus.name}}</a></td>
+			</tr>
 			<tr ng-repeat="endpoint in ipAddress.endpoints">
 				<td>{{ipAddress.ipAddress}}</td>
 				<td>{{endpoint.port.number}}</td>

@@ -157,7 +157,11 @@ public class ItemControllerV1 {
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void put(@PathVariable String repoKey, @PathVariable String itemKey, PEResource peResource) {
+	public void put(
+			@PathVariable String repoKey,
+			@PathVariable String itemKey,
+			PEResource peResource) {
+		
 		delegate.put(peResource.getItem(), true);
 	}
 

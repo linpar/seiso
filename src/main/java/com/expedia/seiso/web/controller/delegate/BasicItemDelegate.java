@@ -32,28 +32,29 @@ import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Validator;
 
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.domain.entity.DocLink;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.entity.key.EndpointKey;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.DynaItem;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.domain.repo.RepoKeys;
-import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.PEResource;
 import com.expedia.seiso.web.PEResources;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.serf.exception.ValidationException;
 import com.expedia.serf.hypermedia.PagedResources;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
+import com.expedia.serf.util.ValidationErrorMap;
+import com.expedia.serf.util.ValidationErrorMapFactory;
 
 /**
  * Handles basic REST requests, such as getting, putting and deleting items. This exists as a delegate object so we can
@@ -68,6 +69,7 @@ public class BasicItemDelegate {
 	@NonNull private ResourceAssembler resourceAssembler;
 	@Autowired @Setter private ItemMetaLookup itemMetaLookup;
 	@Autowired @Setter private ItemService itemService;
+	@Autowired @Setter private Validator validator;
 	@Autowired private Repositories repositories;
 	
 	/**
@@ -257,6 +259,17 @@ public class BasicItemDelegate {
 	 */
 	public void put(@NonNull Item item, boolean mergeAssociations) {
 		log.trace("Putting item: {}", item.itemKey());
+		
+		// Hibernate already performs this validation, but do it here instead to avoid having to unwrap a
+		// TransactionSystemException and a RollbackException. This makes processing by ExceptionHandlerAdvice more
+		// robust.
+		BindException bindException = new BindException(item, "item");
+		validator.validate(item, bindException);
+		if (bindException.hasErrors()) {
+			ValidationErrorMap vem = ValidationErrorMapFactory.buildFrom(bindException);
+			throw new ValidationException(vem);
+		}
+		
 		itemService.save(item, mergeAssociations);
 	}
 	

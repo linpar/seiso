@@ -30,9 +30,10 @@ import org.springframework.web.context.request.WebRequest;
 import com.expedia.serf.C;
 import com.expedia.serf.exception.NotFoundException;
 import com.expedia.serf.exception.ResourceNotFoundException;
-import com.expedia.serf.service.ErrorObject;
-import com.expedia.serf.web.ValidationErrorMap;
-import com.expedia.serf.web.ValidationErrorMapFactory;
+import com.expedia.serf.exception.ValidationException;
+import com.expedia.serf.util.ErrorObject;
+import com.expedia.serf.util.ValidationErrorMap;
+import com.expedia.serf.util.ValidationErrorMapFactory;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
@@ -66,6 +67,14 @@ public class ExceptionHandlerAdvice {
 		return new ErrorObject(C.EC_INVALID_REQUEST_JSON_PAYLOAD, e.getMessage());
 	}
 	
+	@ExceptionHandler(ValidationException.class)
+	@ResponseStatus(value = HttpStatus.CONFLICT)
+	@ResponseBody
+	public ValidationErrorMap handleValidationException(ValidationException e, WebRequest request) {
+		// TODO Harmonize the response body with that of other errors
+		return e.getErrors();
+	}
+	
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	@ResponseStatus(value = HttpStatus.CONFLICT)
 	@ResponseBody
@@ -73,9 +82,9 @@ public class ExceptionHandlerAdvice {
 		val message = "Database constraint violation. " +
 				"This could be a missing required field, a duplicate value for a unique field, " +
 				"a bad foreign key, etc.";		
-		return new ErrorObject(C.EC_DATA_INTEGRITY_VIOLATION_ERROR, message);
+		return new ErrorObject(C.EC_VALIDATION_ERROR, message);
 	}
-
+	
 	@ExceptionHandler(RuntimeException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody
