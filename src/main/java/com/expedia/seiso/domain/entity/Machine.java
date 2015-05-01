@@ -23,6 +23,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -55,27 +57,57 @@ import com.expedia.serf.ann.RestResource;
 	})
 //@formatter:on
 public class Machine extends AbstractItem {
-
+	
+	// TODO Figure out the right regex @Pattern here, if any.
+	@NotNull
+	@Size(min = 1, max = 250)
 	@Key
 	private String name;
 
+	@Size(max = 80)
 	private String os;
+	
+	@Size(max = 80)
 	private String osVersion;
+	
+	@Size(max = 80)
 	private String platform;
+	
+	@Size(max = 80)
 	private String platformVersion;
+	
+	@Size(max = 250)
 	private String hostname;
+	
+	@Size(max = 250)
 	private String domain;
+	
+	@Size(max = 250)
 	private String fqdn;
+	
+	@Size(max = 20)
 	private String ipAddress;
-
+	
+	@Size(max = 80)
 	@Column(name = "ip6_address")
 	private String ip6Address;
-
+	
+	@Size(max = 80)
 	private String macAddress;
+	
+	@Size(max = 250)
 	private String nativeMachineId;
+	
+	@Size(max = 250)
 	private String machineType;
+	
+	@Size(max = 250)
 	private String chefRole;
+	
+	@Size(max = 250)
 	private String virtualSystem;
+	
+	@Size(max = 250)
 	private String virtualRole;
 
 	@ManyToOne

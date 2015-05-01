@@ -27,6 +27,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -109,16 +112,22 @@ import com.expedia.serf.ann.RestResource;
 	})
 //@formatter:on
 public class ServiceInstance extends AbstractItem {
-
+	
+	// TODO Lock this down to lowercase, but let people update first. [WLW]
+	@NotNull
+	@Pattern(regexp = "[A-Za-z0-9-]+")
+	@Size(min = 1, max = 40)
 	@Key
 	@Column(name = "ukey")
 	private String key;
-
+	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "service_id")
 	@RestResource(path = "service")
 	private Service service;
-
+	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "environment_id")
 	@RestResource(path = "environment")

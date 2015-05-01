@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.serf.exception.ResourceNotFoundException;
+import com.expedia.serf.util.SaveAllResult;
 
 /**
  * Essentially a generic item CRUD repository that puts a fixed API in front of repositories that can have differing
@@ -42,7 +43,7 @@ public interface ItemService {
 	 * @param mergeAssociations
 	 *            Flag indicating whether we merge the item's associations, or simply ignore them
 	 */
-	SaveAllResponse saveAll(Class itemClass, List<? extends Item> items, boolean mergeAssociations);
+	SaveAllResult saveAll(Class itemClass, List<? extends Item> items, boolean mergeAssociations);
 
 	/**
 	 * Saves the given item to the database, either creating or updating as necessary. In the case of updates, this

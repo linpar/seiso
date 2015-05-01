@@ -20,17 +20,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+
 /**
  * Data transfer object containing the results following a failed bean validation.
  * 
  * @author Ken van Eyk
  * @author Willie Wheeler
  */
-public class ValidationErrorMap extends ErrorObject {
-	public Map<String, List<String>> fieldErrors;
-
-	public ValidationErrorMap() {
-		super("validation_error", "Invalid data. See fieldErrors for detailed per-field information.");
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class ResourceValidationError extends ErrorObject {
+	private String uri;
+	private Map<String, List<String>> fieldErrors;
+	
+	/**
+	 * @param uri
+	 *            Resource URI, or attempted resource URI.
+	 */
+	public ResourceValidationError(@NonNull String uri) {
+		super("resource_validation_error", "See fieldErrors for detailed per-field information.");
+		this.uri = uri;
 		this.fieldErrors = new HashMap<String, List<String>>();
 	}
 	

@@ -36,7 +36,6 @@ import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.PEResource;
 import com.expedia.seiso.web.PEResources;
@@ -44,6 +43,7 @@ import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.serf.hypermedia.PagedResources;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
+import com.expedia.serf.util.SaveAllResult;
 
 /**
  * @author Willie Wheeler
@@ -74,7 +74,7 @@ public class ItemControllerV1Tests {
 	@Mock private Resources resources;
 	@Mock private PagedResources pagedResources;
 	@Mock private Resource resource;
-	@Mock private SaveAllResponse saveAllResponse;
+	@Mock private SaveAllResult saveAllResponse;
 	
 	@Before
 	public void setUp() {

@@ -13,29 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.serf.util;
+package com.expedia.serf.exception;
 
-import java.util.List;
-
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
+import com.expedia.serf.util.SaveAllResult;
 
 /**
- * @author Ken van Eyk
  * @author Willie Wheeler
  */
-public class ValidationErrorMapFactory {
+@SuppressWarnings("serial")
+@RequiredArgsConstructor
+public class SaveAllException extends RuntimeException {
 	
-	public static ValidationErrorMap buildFrom(@NonNull Errors errors) {
-		ValidationErrorMap validationErrorMap = new ValidationErrorMap();
-		
-		List<FieldError> fieldErrors = errors.getFieldErrors();
-		for (FieldError fieldError : fieldErrors) {
-			validationErrorMap.addFieldError(fieldError.getField(), fieldError.getDefaultMessage());
-		}
-
-		return validationErrorMap;
-	}
+	@NonNull
+	@Getter
+	private SaveAllResult saveAllResult;
 }

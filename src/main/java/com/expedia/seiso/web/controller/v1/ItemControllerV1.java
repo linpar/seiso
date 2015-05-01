@@ -38,7 +38,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.domain.service.SaveAllResponse;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.PEResource;
 import com.expedia.seiso.web.PEResources;
@@ -48,6 +47,7 @@ import com.expedia.serf.ann.SuppressBasePath;
 import com.expedia.serf.hypermedia.PagedResources;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
+import com.expedia.serf.util.SaveAllResult;
 
 /**
  * Thin wrapper around the {@link BasicItemDelegate} to handle v1 API requests.
@@ -133,7 +133,7 @@ public class ItemControllerV1 {
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	@Transactional(propagation = Propagation.NEVER)
-	public SaveAllResponse postAll(@PathVariable String repoKey, PEResources peResources) {
+	public SaveAllResult postAll(@PathVariable String repoKey, PEResources peResources) {
 		log.trace("Batch saving {} items: repoKey={}", peResources.size(), repoKey);
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
 		return delegate.postAll(itemClass, peResources, true);

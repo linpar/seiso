@@ -26,6 +26,7 @@ import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.support.Repositories;
@@ -44,17 +45,20 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.DynaItem;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
-import com.expedia.seiso.domain.service.SaveAllResponse;
+import com.expedia.seiso.hypermedia.ItemLinks;
+import com.expedia.seiso.hypermedia.LinkFactory;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.PEResource;
 import com.expedia.seiso.web.PEResources;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.serf.exception.SaveAllException;
 import com.expedia.serf.exception.ValidationException;
 import com.expedia.serf.hypermedia.PagedResources;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
-import com.expedia.serf.util.ValidationErrorMap;
-import com.expedia.serf.util.ValidationErrorMapFactory;
+import com.expedia.serf.util.ResourceValidationError;
+import com.expedia.serf.util.ResourceValidationErrorFactory;
+import com.expedia.serf.util.SaveAllResult;
 
 /**
  * Handles basic REST requests, such as getting, putting and deleting items. This exists as a delegate object so we can
@@ -71,6 +75,8 @@ public class BasicItemDelegate {
 	@Autowired @Setter private ItemService itemService;
 	@Autowired @Setter private Validator validator;
 	@Autowired private Repositories repositories;
+	@Autowired @Qualifier("linkFactoryV1") private LinkFactory linkFactoryV1;
+//	@Autowired @Qualifier("linkFactoryV2") private LinkFactory linkFactoryV2;
 	
 	/**
 	 * Returns a {@link Resources} or {@link PagedResources}, depending on the repo type.
@@ -203,12 +209,12 @@ public class BasicItemDelegate {
 		// such as a service instance with hundreds of nodes.
 	}
 	
-	public SaveAllResponse postAll(
+	public SaveAllResult postAll(
 			@NonNull Class<?> itemClass,
 			@NonNull PEResources peResources,
 			boolean mergeAssociations) {
 		
-		// FIXME The SaveAllResponse contains a SaveAllError, which in turn contains an Item. If the Item has a cycle,
+		// FIXME The SaveAllResult contains a SaveAllError, which in turn contains an Item. If the Item has a cycle,
 		// then JSON serialization results in a stack overflow exception. [WLW]
 		//
 		// See
@@ -218,7 +224,11 @@ public class BasicItemDelegate {
 		// returning ID info. [WLW]
 		//
 		// http://www.cowtowncoder.com/blog/archives/2012/03/entry_466.html [WLW]
-		return itemService.saveAll(itemClass, peResources, mergeAssociations);
+		SaveAllResult result = itemService.saveAll(itemClass, peResources, mergeAssociations);
+		if (result.getNumErrors() > 0) {
+			throw new SaveAllException(result);
+		}
+		return result;
 	}
 	
 	public void postCollectionPropertyElement(
@@ -266,7 +276,9 @@ public class BasicItemDelegate {
 		BindException bindException = new BindException(item, "item");
 		validator.validate(item, bindException);
 		if (bindException.hasErrors()) {
-			ValidationErrorMap vem = ValidationErrorMapFactory.buildFrom(bindException);
+			ItemLinks itemLinks = linkFactoryV1.getItemLinks();
+			String itemUri = itemLinks.itemLink(item).getHref();
+			ResourceValidationError vem = ResourceValidationErrorFactory.buildFrom(itemUri, bindException);
 			throw new ValidationException(vem);
 		}
 		

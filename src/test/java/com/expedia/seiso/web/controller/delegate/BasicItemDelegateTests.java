@@ -17,6 +17,7 @@ package com.expedia.seiso.web.controller.delegate;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,6 +51,7 @@ import com.expedia.seiso.web.assembler.ResourceAssembler;
 import com.expedia.serf.hypermedia.PagedResources;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
+import com.expedia.serf.util.SaveAllResult;
 
 /**
  * @author Willie Wheeler
@@ -91,6 +93,7 @@ public class BasicItemDelegateTests {
 	@Mock private PagedResources pagedResources;
 	@Mock private PEResources peResources;
 	@Mock private ItemKey itemKey;
+	@Mock private SaveAllResult saveAllResult;
 	
 	@Before
 	public void setUp() {
@@ -114,6 +117,8 @@ public class BasicItemDelegateTests {
 		when(pagingRepoMeta.getPropertyName(PAGING_ITEM_PROPERTY_KEY)).thenReturn(PAGING_ITEM_PROPERTY_NAME);
 		when(pagingRepoMeta.getPropertyName(PAGING_LIST_PROPERTY_KEY)).thenReturn(PAGING_LIST_PROPERTY_NAME);
 		
+		when(saveAllResult.getNumErrors()).thenReturn(0);
+		
 		// @formatter:off
 		this.socrates = new Person()
 				.setUsername("socrates");
@@ -132,6 +137,8 @@ public class BasicItemDelegateTests {
 		when(itemMetaLookup.getItemMeta(NONPAGING_ITEM_CLASS)).thenReturn(nonPagingRepoMeta);
 		when(itemMetaLookup.getItemMeta(PAGING_ITEM_CLASS)).thenReturn(pagingRepoMeta);
 		
+		when(itemService.saveAll((Class) anyObject(), (PEResources) anyObject(), anyBoolean()))
+				.thenReturn(saveAllResult);
 		when(itemService.findAll(NONPAGING_ITEM_CLASS)).thenReturn(itemList);
 		when(itemService.findAll(PAGING_ITEM_CLASS, pageable)).thenReturn(itemPage);
 		when(itemService.find((SimpleItemKey) anyObject())).thenReturn(plato);

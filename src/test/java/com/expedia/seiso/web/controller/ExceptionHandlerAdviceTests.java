@@ -32,7 +32,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.expedia.serf.C;
 import com.expedia.serf.exception.ResourceNotFoundException;
-import com.expedia.serf.util.ValidationErrorMap;
+import com.expedia.serf.util.ResourceValidationError;
 import com.expedia.serf.web.controller.ExceptionHandlerAdvice;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -91,18 +91,18 @@ public class ExceptionHandlerAdviceTests {
 		assertNotNull(result.getMessage());
 	}
 
-	@Test
-	@Ignore
-	public void handleBindExceptionException() throws Exception {
-
-		ObjectError expectedError = new ObjectError("name", "message");
-		ValidationErrorMap expected = new ValidationErrorMap();
-		expected.addFieldError(expectedError.getObjectName(), expectedError.getDefaultMessage());
-
-		BindException bindException = new BindException(this, "foo");
-		bindException.addError(expectedError);
-		val actual = advice.handleBindException(bindException);
-
-		Assert.assertEquals(expected.fieldErrors, actual.fieldErrors);
-	}
+//	@Test
+//	@Ignore
+//	public void handleBindExceptionException() throws Exception {
+//
+//		ObjectError expectedError = new ObjectError("name", "message");
+//		ResourceValidationError expected = new ResourceValidationError();
+//		expected.addFieldError(expectedError.getObjectName(), expectedError.getDefaultMessage());
+//
+//		BindException bindException = new BindException(this, "foo");
+//		bindException.addError(expectedError);
+//		val actual = advice.handleBindException(bindException);
+//
+//		Assert.assertEquals(expected.fieldErrors, actual.fieldErrors);
+//	}
 }

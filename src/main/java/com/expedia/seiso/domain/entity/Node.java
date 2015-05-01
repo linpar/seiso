@@ -23,6 +23,9 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -104,22 +107,32 @@ import com.expedia.serf.ann.RestResource;
 	})
 //@formatter:on
 public class Node extends AbstractItem {
-	@Key private String name;
+	
+	// TODO Lock this down to lowercase, but let people update first. [WLW]
+	// Also some people have periods in their nodes.
+	@NotNull
+//	@Pattern(regexp = "[A-Za-z0-9-]+")
+	@Size(min = 1, max = 80)
+	@Key
+	private String name;
 
 	/**
 	 * Optional description to support cases where service instance nodes aren't entirely interchangeable. For instance
 	 * we have Splunk service instances where each service instance has its own purpose (ad hoc searches, summary
 	 * searches, alerts, dashboards, etc.).
 	 */
+	@Size(max = 250)
 	private String description;
-
+	
+	@Size(max = 128)
 	private String version;
-
+	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "service_instance_id")
 	@RestResource(path = "service-instance")
 	private ServiceInstance serviceInstance;
-
+	
 	@ManyToOne
 	@JoinColumn(name = "machine_id")
 	@RestResource(path = "machine")

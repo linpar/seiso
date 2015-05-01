@@ -26,6 +26,7 @@ import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
@@ -37,6 +38,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Validator;
 
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Node;
@@ -44,9 +47,11 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 import com.expedia.seiso.domain.service.ItemService;
-import com.expedia.seiso.domain.service.SaveAllError;
-import com.expedia.seiso.domain.service.SaveAllResponse;
+import com.expedia.seiso.hypermedia.LinkFactory;
 import com.expedia.serf.exception.ResourceNotFoundException;
+import com.expedia.serf.util.ErrorObject;
+import com.expedia.serf.util.ResourceValidationErrorFactory;
+import com.expedia.serf.util.SaveAllResult;
 import com.expedia.serf.util.SerfCollectionUtils;
 
 /**
@@ -71,6 +76,9 @@ public class ItemServiceImpl implements ItemService {
 	@Autowired private ItemDeleter itemDeleter;
 	@Autowired private ItemSaver itemSaver;
 	@Autowired private TransactionTemplate txTemplate;
+	@Autowired private Validator validator;
+	@Autowired @Qualifier("linkFactoryV1") private LinkFactory linkFactoryV1;
+//	@Autowired @Qualifier("linkFactoryV2") private LinkFactory linkFactoryV2;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -80,7 +88,7 @@ public class ItemServiceImpl implements ItemService {
 	 */
 	@Override
 	@Transactional(propagation = Propagation.NEVER)
-	public SaveAllResponse saveAll(
+	public SaveAllResult saveAll(
 			@NonNull Class itemClass,
 			@NonNull List<? extends Item> items,
 			boolean mergeAssociations) {
@@ -89,9 +97,26 @@ public class ItemServiceImpl implements ItemService {
 		val itemClassName = itemClass.getSimpleName();
 		log.info("Batch saving {} items ({})", numItems, itemClass.getSimpleName());
 		
-		val errors = new ArrayList<SaveAllError>();
+		val errors = new ArrayList<ErrorObject>();
 
 		for (val item : items) {
+			val itemKey = item.itemKey();
+			
+			// First validate the item. If this fails then don't try to save it.
+			// Not sure that we want the URIs inside the service here. Am thinking that once we get
+			// into the service, we're not dealing with resources anymore. But we're doing just-in-time
+			// validation here, and when there's an issue we have to be able to report the issue in
+			// terms the user understands (i.e. URIs, resources). Might want to do a translation from item
+			// to URI. [WLW]
+			BindException bindException = new BindException(item, itemKey.toString());
+			validator.validate(item, bindException);
+			if (bindException.hasErrors()) {
+				val itemLinks = linkFactoryV1.getItemLinks();
+				val itemUri = itemLinks.itemLink(item).getHref();
+				errors.add(ResourceValidationErrorFactory.buildFrom(itemUri, bindException));
+				continue;
+			}
+			
 			try {
 				// Have to doInTransaction() since calling save() happens behind the transactional proxy.
 				// Also, see http://stackoverflow.com/questions/5568409/java-generics-void-void-types
@@ -106,7 +131,7 @@ public class ItemServiceImpl implements ItemService {
 			} catch (RuntimeException e) {
 				e.printStackTrace();
 				val message = e.getClass() + ": " + e.getMessage();
-				errors.add(new SaveAllError(item.itemKey(), message));
+				errors.add(new ErrorObject(itemKey.toString(), message));
 			}
 		}
 
@@ -114,10 +139,10 @@ public class ItemServiceImpl implements ItemService {
 		if (numErrors == 0) {
 			log.info("Batch saved {} items ({}) with no errors", numItems, itemClassName);
 		} else {
-			log.warn("Batch saved {} items ({}) with {} errors: {}", numItems, itemClassName, numErrors, errors);
+			log.warn("Batch saved {} items ({}) with {} errors", numItems, itemClassName, numErrors);
 		}
 
-		return new SaveAllResponse(numItems, numErrors, errors);
+		return new SaveAllResult(numItems, errors);
 	}
 
 	@Override

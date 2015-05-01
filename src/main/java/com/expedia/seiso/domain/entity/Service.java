@@ -73,8 +73,9 @@ import com.expedia.serf.ann.RestResource;
 //@formatter:on
 public class Service extends AbstractItem {
 	
+	// TODO Lock this down to lowercase, but let people update first. [WLW]
 	@NotNull
-	@Pattern(regexp = "[a-z0-9-]+")
+	@Pattern(regexp = "[A-Za-z0-9-]+")
 	@Size(min = 1, max = 40)
 	@Key
 	@Column(name = "ukey")

@@ -30,10 +30,12 @@ import org.springframework.web.context.request.WebRequest;
 import com.expedia.serf.C;
 import com.expedia.serf.exception.NotFoundException;
 import com.expedia.serf.exception.ResourceNotFoundException;
+import com.expedia.serf.exception.SaveAllException;
 import com.expedia.serf.exception.ValidationException;
 import com.expedia.serf.util.ErrorObject;
-import com.expedia.serf.util.ValidationErrorMap;
-import com.expedia.serf.util.ValidationErrorMapFactory;
+import com.expedia.serf.util.SaveAllResult;
+import com.expedia.serf.util.ResourceValidationError;
+import com.expedia.serf.util.ResourceValidationErrorFactory;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
@@ -70,7 +72,7 @@ public class ExceptionHandlerAdvice {
 	@ExceptionHandler(ValidationException.class)
 	@ResponseStatus(value = HttpStatus.CONFLICT)
 	@ResponseBody
-	public ValidationErrorMap handleValidationException(ValidationException e, WebRequest request) {
+	public ResourceValidationError handleValidationException(ValidationException e, WebRequest request) {
 		// TODO Harmonize the response body with that of other errors
 		return e.getErrors();
 	}
@@ -85,6 +87,14 @@ public class ExceptionHandlerAdvice {
 		return new ErrorObject(C.EC_VALIDATION_ERROR, message);
 	}
 	
+	@ExceptionHandler(SaveAllException.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public SaveAllResult handleSaveAllException(SaveAllException e, WebRequest request) {
+		// TODO Harmonize the response body with that of other errors
+		return e.getSaveAllResult();
+	}
+	
 	@ExceptionHandler(RuntimeException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody
@@ -94,10 +104,10 @@ public class ExceptionHandlerAdvice {
 		return new ErrorObject(C.EC_INTERNAL_ERROR, fullMsg);
 	}
 
-	@ExceptionHandler(BindException.class)
-	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	@ResponseBody
-	public ValidationErrorMap handleBindException(BindException bindException) {
-		return ValidationErrorMapFactory.buildFrom(bindException);
-	}
+//	@ExceptionHandler(BindException.class)
+//	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+//	@ResponseBody
+//	public ResourceValidationError handleBindException(BindException bindException) {
+//		return ResourceValidationErrorFactory.buildFrom(bindException);
+//	}
 }

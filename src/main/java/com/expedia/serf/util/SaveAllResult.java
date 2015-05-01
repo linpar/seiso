@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.service;
+package com.expedia.serf.util;
 
 import java.util.List;
 
@@ -24,8 +24,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SaveAllResponse {
+public class SaveAllResult {
 	private int numSaved;
-	private int numErrors;
-	private List<SaveAllError> errors;
+	private List<ErrorObject> errors;
+	
+	public int getNumErrors() {
+		return errors.size();
+	}
 }

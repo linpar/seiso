@@ -13,22 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.serf.exception;
+package com.expedia.serf.util;
 
-import lombok.Getter;
+import java.util.List;
+
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
-import com.expedia.serf.util.ResourceValidationError;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+
 
 /**
+ * @author Ken van Eyk
  * @author Willie Wheeler
  */
-@SuppressWarnings("serial")
-@RequiredArgsConstructor
-public class ValidationException extends RuntimeException {
+public class ResourceValidationErrorFactory {
 	
-	@NonNull
-	@Getter
-	private ResourceValidationError errors;
+	public static ResourceValidationError buildFrom(String uri, @NonNull Errors errors) {
+		ResourceValidationError validationErrorMap = new ResourceValidationError(uri);
+		
+		List<FieldError> fieldErrors = errors.getFieldErrors();
+		for (FieldError fieldError : fieldErrors) {
+			validationErrorMap.addFieldError(fieldError.getField(), fieldError.getDefaultMessage());
+		}
+
+		return validationErrorMap;
+	}
 }

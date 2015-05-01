@@ -21,6 +21,9 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -53,11 +56,18 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 // @formatter:on
 public class ServiceGroup extends AbstractItem {
 
+	@NotNull
+	@Pattern(regexp = "[a-z0-9-]+")
+	@Size(min = 1, max = 40)
 	@Key
 	@Column(name = "ukey")
 	private String key;
 
+	@NotNull
+	@Size(min = 1, max = 200)
 	private String name;
+	
+	@Size(min = 1, max = 250)
 	private String description;
 	
 	// Don't want cascading here. If we delete a service group, then the former members are simply orphaned rather than
