@@ -87,7 +87,7 @@ public class ServiceInstanceServiceImpl implements ServiceInstanceService {
 		String nodeKey = null;
 		
 		for (NodeIpAddress nip : nips) {
-			String nipKey = nip.getRotationStatus().getKey();
+			String nipKey = nip.getAggregateRotationStatus().getKey();
 			if ("enabled".equals(nipKey)) {
 				numEnabled++;
 			} else if ("disabled".equals(nipKey)) {
