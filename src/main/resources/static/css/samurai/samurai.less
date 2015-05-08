@@ -69,6 +69,10 @@ h1 small {
   color: @silver4;
 }
 
+p {
+  font-size: @font-size-large;
+}
+
 ul {
   line-height: 2.0;
 }
@@ -500,10 +504,15 @@ label,
   padding-right: 1em;
   border-radius: 0;
   font-weight: 300;
+//  text-transform: uppercase;
 
   &-default {
     background-color: @btn-default-bg;
     color: @btn-default-color;
+  }
+  
+  &-warning {
+    color: @black;
   }
 }
 
@@ -559,6 +568,30 @@ label,
 
 
 /* ICONS ============================================================================================================ */
+
+.fa-circle-success {
+  color: @brand-success;
+}
+
+.fa-circle-primary {
+  color: @brand-primary;
+}
+
+.fa-circle-info {
+  color: @brand-info;
+}
+
+.fa-circle-warning {
+  color: @brand-warning;
+}
+
+.fa-circle-danger {
+  color: @brand-danger;
+}
+
+.fa-info-circle {
+  color: @brand-info;
+}
 
 .fa-github {
   margin-right: 4px;

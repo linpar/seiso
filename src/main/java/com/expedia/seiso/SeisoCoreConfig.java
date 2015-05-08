@@ -36,11 +36,6 @@ public class SeisoCoreConfig {
 	@Bean
 	public CustomProperties customProperties() { return new CustomProperties(); }
 	
-	@Bean
-	public ApplicationContextProvider applicationContextProvider() {
-		return new ApplicationContextProvider();
-	}
-	
 	// Putting this here since both AMQP and REST API need it.
 	// Actually the NotificationGatewayImpl uses the ResourceAssembler too, so we may need to move that here.
 	@Bean

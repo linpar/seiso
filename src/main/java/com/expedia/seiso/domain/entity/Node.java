@@ -73,10 +73,12 @@ import com.expedia.serf.ann.RestResource;
 	// N.B. v2 uses lowercase-and-hyphens rather than camelCase.
 	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.COLLECTION, name = "service-instance-nodes", paths = {
 			"machine",
+			"healthStatus.statusType",
+			"aggregateRotationStatus.statusType",
 			"ipAddresses.ipAddressRole",
 			"ipAddresses.endpoints.port",
 			"ipAddresses.endpoints.rotationStatus",
-			"healthStatus.statusType"
+			"ipAddresses.aggregateRotationStatus.statusType"
 	}),
 	
 	// TODO Hm, maybe we should make the default single view show what we expect users to provide on a put. GET/PUT
@@ -147,7 +149,13 @@ public class Node extends AbstractItem {
 	@JoinColumn(name = "health_status_id")
 	@RestResource(path = "health-status")
 	private HealthStatus healthStatus;
-
+	
+	// We use this primarily to find node alerts. See NodeRepo.
+	@ManyToOne
+	@JoinColumn(name = "aggregate_rotation_status_id")
+	@RestResource(path = "aggregate-rotation-status")
+	private RotationStatus aggregateRotationStatus;
+	
 	@Override
 	public ItemKey itemKey() {
 		return new SimpleItemKey(Node.class, name);

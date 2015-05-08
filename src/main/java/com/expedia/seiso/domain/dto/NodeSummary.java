@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.entity;
+package com.expedia.seiso.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +23,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class NodeStats {
+public class NodeSummary {
 	private Integer numNodes;
 	private Integer numHealthy;
 	private Integer numEnabled;

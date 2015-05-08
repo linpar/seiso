@@ -13,26 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso;
+package com.expedia.seiso.domain.dto;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author Willie Wheeler
  */
-@Component
-public class ApplicationContextProvider implements ApplicationContextAware {
-	private static ApplicationContext applicationContext;
-
-	public static ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
-
-	@Override
-	public void setApplicationContext(ApplicationContext appContext) throws BeansException {
-		applicationContext = appContext;
-	}
+@Data
+@NoArgsConstructor
+@RequiredArgsConstructor
+public class BreakdownItem {
+	@NonNull private String statusName;
+	@NonNull private String statusType;
+	@NonNull private Integer count;
 }

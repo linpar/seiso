@@ -57,7 +57,6 @@ var nodePageToNodeRows = function(nodePage) {
 		}
 		
 		var ipAddresses = node._embedded.ipAddresses;
-		var nodeEnabled = true;
 		
 		if (ipAddresses.length == 0) {
 			// Handle special case where there aren't any IP addresses.
@@ -69,7 +68,6 @@ var nodePageToNodeRows = function(nodePage) {
 				"showActions" : true
 			}
 			nodeRows.push(nodeRow);
-			nodeEnabled = false;
 		} else {
 			// Handle case where there are IP addresses.
 			for (j = 0; j < ipAddresses.length; j++) {
@@ -79,21 +77,16 @@ var nodePageToNodeRows = function(nodePage) {
 					"ipAddress" : ipAddress.ipAddress,
 					"ipAddressRole" : ipAddress._embedded.ipAddressRole.name,
 					"endpoints" : ipAddress._embedded.endpoints,
-					"aggregateRotationStatus" : ipAddress._embedded.aggregateRotationStatus
+					"ipAggregateRotationStatus" : ipAddress._embedded.aggregateRotationStatus
 				};
 				if (j == 0) {
-					// Distinguish name from display name. We want to filter by name, but display by
-					// displayName.
+					// Distinguish name from display name. We want to filter by name, but display by displayName.
 					nodeRow.displayName = node.name;
 					nodeRow.version = node.version,
 					nodeRow.healthStatus = node._embedded.healthStatus;
-					nodeRow.showActions = true;
+					nodeRow.nodeAggregateRotationStatus = node._embedded.aggregateRotationStatus;
 				}
 				nodeRows.push(nodeRow);
-				
-				if (ipAddress._embedded.aggregateRotationStatus.key != "enabled") {
-					nodeEnabled = false;
-				}
 			}
 		}
 	}

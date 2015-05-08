@@ -1,11 +1,13 @@
 <section>
 	<header>
 		<h1>
-			<i class="fa fa-area-chart"></i>
 			Dashboards
 			<small>({{dashboards.length}})</small>
 		</h1>
 	</header>
+	<div ng-if="dashboards.length == 0">
+		<p><i class="fa fa-info-circle"></i> No dashboards.</p>
+	</div>
 	<div ng-if="dashboards.length &gt; 0">
 		<table class="table">
 			<colgroup>

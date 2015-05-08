@@ -151,12 +151,36 @@ public class ItemLinks {
 	// Special item links
 	// =================================================================================================================
 	
-	public Link serviceInstanceNodeStatsLink(String rel, @NonNull ServiceInstance serviceInstance) {
+	public Link serviceInstanceNodeSummaryLink(String rel, @NonNull ServiceInstance serviceInstance) {
+		// @formatter:off
 		val href = repoUri(ServiceInstance.class, EMPTY_PARAMS)
 				.pathSegment(itemPathSegment(serviceInstance))
-				.pathSegment("node-stats")
+				.pathSegment("node-summary")
 				.build()
 				.toString();
+		// @formatter:on
+		return new Link(rel, href);
+	}
+	
+	public Link serviceInstanceHealthBreakdownLink(String rel, @NonNull ServiceInstance serviceInstance) {
+		// @formatter:off
+		val href = repoUri(ServiceInstance.class, EMPTY_PARAMS)
+				.pathSegment(itemPathSegment(serviceInstance))
+				.pathSegment("health-breakdown")
+				.build()
+				.toString();
+		// @formatter:on
+		return new Link(rel, href);
+	}
+	
+	public Link serviceInstanceRotationBreakdownLink(String rel, @NonNull ServiceInstance serviceInstance) {
+		// @formatter:off
+		val href = repoUri(ServiceInstance.class, EMPTY_PARAMS)
+				.pathSegment(itemPathSegment(serviceInstance))
+				.pathSegment("rotation-breakdown")
+				.build()
+				.toString();
+		// @formatter:on
 		return new Link(rel, href);
 	}
 	

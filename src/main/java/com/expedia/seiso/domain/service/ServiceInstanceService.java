@@ -13,37 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.repo.custom;
+package com.expedia.seiso.domain.service;
 
 import java.util.List;
 
 import com.expedia.seiso.domain.dto.BreakdownItem;
 import com.expedia.seiso.domain.dto.NodeSummary;
-import com.expedia.seiso.domain.entity.ServiceInstance;
+import com.expedia.seiso.domain.entity.Node;
+import com.expedia.seiso.domain.entity.NodeIpAddress;
 
 /**
  * @author Willie Wheeler
  */
-public interface ServiceInstanceRepoCustom extends SearchableRepository<ServiceInstance> {
-	
-	/**
-	 * @param key
-	 *            Service instance key.
-	 * @return service instance node stats
-	 */
-	NodeSummary getServiceInstanceNodeSummary(String key);
+public interface ServiceInstanceService {
 	
 	/**
 	 * @param key
 	 *            Service instance key.
 	 * @return
 	 */
-	List<BreakdownItem> getServiceInstanceHealthBreakdown(String key);
+	NodeSummary getNodeSummary(String key);
 	
 	/**
 	 * @param key
 	 *            Service instance key.
 	 * @return
 	 */
-	List<BreakdownItem> getServiceInstanceRotationBreakdown(String key);
+	List<BreakdownItem> getHealthBreakdown(String key);
+	
+	/**
+	 * @param key
+	 *            Service instance key.
+	 * @return
+	 */
+	List<BreakdownItem> getRotationBreakdown(String key);
+	
+	void recalculateAggregateRotationStatus(Node node);
+	
+	void recalculateAggregateRotationStatus(NodeIpAddress nip);
 }

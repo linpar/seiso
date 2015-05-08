@@ -31,6 +31,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
@@ -68,7 +69,27 @@ public class RotationStatus extends AbstractItem {
 	public static final RotationStatus NO_ENDPOINTS = new RotationStatus("no-endpoints", "No endpoints", INFO);
 	public static final RotationStatus PARTIAL = new RotationStatus("partial", "Partial", WARNING);
 	public static final RotationStatus UNKNOWN = new RotationStatus("unknown", "Unknown", WARNING);
-
+	
+	public static final RotationStatus getRotationStatus(@NonNull String key) {
+		// FIXME This sucks. Figure out a better way.
+		switch (key) {
+		case "enabled":
+			return ENABLED;
+		case "disabled":
+			return DISABLED;
+		case "excluded":
+			return EXCLUDED;
+		case "no-endponits":
+			return NO_ENDPOINTS;
+		case "partial":
+			return PARTIAL;
+		case "unknown":
+			return UNKNOWN;
+		default:
+			throw new IllegalArgumentException("Illegal rotation state: " + key);
+		}
+	}
+	
 	@NotNull
 	@Size(min = 1, max = 20)
 	@Pattern(regexp = "[a-z0-9-]+")

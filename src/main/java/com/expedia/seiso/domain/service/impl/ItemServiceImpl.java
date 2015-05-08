@@ -60,7 +60,7 @@ import com.expedia.serf.util.SerfCollectionUtils;
  * </p>
  * <p>
  * To avoid polluting domain code with integration code, notifications don't happen here. Instead,
- * {@link com.expedia.seiso.gateway.impl.NotificationAspect} handles those.
+ * {@link com.expedia.seiso.aop.NotificationAspect} handles those.
  * </p>
  * 
  * @author Willie Wheeler

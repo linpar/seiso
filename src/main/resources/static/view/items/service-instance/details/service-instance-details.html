@@ -1,63 +1,67 @@
-<div id="page-spinner-panel" ng-hide="serviceInstance">
-	<i class="fa fa-spinner fa-spin fa-5x"></i>
-</div>
-<div ng-show="serviceInstance">
-	<div class="page-header">
-		<ul class="breadcrumb">
-			<li><a ng-href="{{uri()}}">Home</a></li>
-			<li><a ng-href="{{uri('service-instances')}}">Service Instances</a></li>
-		</ul>
-		<h1>{{serviceInstance.key}}</h1>
+<!-- This supports both the node alerts and node list. -->
+<!-- http://stackoverflow.com/questions/21362712/html-file-as-content-in-bootstrap-popover-in-angularjs-directive -->
+<script id="rotationDetailsPopover.html" type="text/ng-template">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>IP Address</th>
+				<th>Port</th>
+				<th>Rotation</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{ipAddress.ipAddress}}</td>
+				<td></td>
+				<td>
+					<i class="fa fa-circle fa-circle-{{ipAddress.rotationStatus.statusType.key}}" ng-if="ipAddress.rotationStatus.statusType.key != 'success'"></i>
+					{{ipAddress.rotationStatus.name}}
+				</td>
+			</tr>
+			<tr ng-repeat="endpoint in ipAddress.endpoints" ng-init="rotationStatusTypeKey = endpoint.rotationStatus.statusType.key">
+				<td>{{ipAddress.ipAddress}}</td>
+				<td>{{endpoint.port.number}}</td>
+				<td>
+					<i class="fa fa-circle fa-circle-{{rotationStatusTypeKey}}" ng-if="rotationStatusTypeKey != 'success'"></i>
+					{{endpoint.rotationStatus.name}}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</script>
+
+<div ng-controller="ServiceInstanceDetailsController">
+	<div id="page-spinner-panel" ng-hide="serviceInstance">
+		<i class="fa fa-spinner fa-spin fa-5x"></i>
 	</div>
-	<ul class="field-list">
-		<li>
-			<div>Service:</div>
-			<div ng-if="service"><a ng-href="{{uri('services', service.key)}}">{{service.name}}</a></div>
-			<div ng-if="!service">-</div>
-		</li>
-		<li>
-			<div>Environment:</div>
-			<div ng-if="environment"><a ng-href="{{uri('environments', environment.key)}}">{{environment.name}}</a></div>
-			<div ng-if="!environment">-</div>
-		</li>
-		<li>
-			<div>Owner:</div>
-			<span ng-if="owner"><a ng-href="{{uri('people', owner.username)}}">{{owner.firstName}} {{owner.lastName}}</a></span>
-			<span ng-if="!owner">-</span>
-		</li>
-		<li>
-			<div>Data Center:</div>
-			<div ng-if="dataCenter"><a ng-href="{{uri('data-centers', dataCenter.key)}}">{{dataCenter.name}}</a></div>
-			<div ng-if="!dataCenter">-</div>
-		</li>
-		<li>
-			<div>Load Balancer:</div>
-			<div ng-if="loadBalancer"><a ng-href="{{uri('load-balancers', loadBalancer.name)}}">{{loadBalancer.name}}</a></div>
-			<div ng-if="!loadBalancer">-</div>
-		</li>
-		<li>
-			<div>Min Deploy Capacity:</div>
-			<div ng-if="serviceInstance.minCapacityDeploy">{{serviceInstance.minCapacityDeploy}}%</div>
-			<div ng-if="!serviceInstance.minCapacityDeploy">-</div>
-		</li>
-		<li>
-			<div>Min Ops Capacity:</div>
-			<div ng-if="serviceInstance.minCapacityOps">{{serviceInstance.minCapacityOps}}%</div>
-			<div ng-if="!serviceInstance.minCapacityOps">-</div>
-		</li>
-		<!-- Also Mike is going to want to see the Eos-enabled flag, but we need a way to do this without hardcoding it
-		     into Seiso. [WLW] -->
-	</ul>
-	<tabset>
-		<tab heading="Nodes">
-			<ng-include src="'view/items/service-instance/details/node-pane.html'"></ng-include>
-		</tab>
-		<tab heading="Endpoint Info">
-			<ng-include src="'view/items/service-instance/details/endpoint-info-pane.html'"></ng-include>
-		</tab>
-		<!--tab heading="Monitoring" ng-if="serviceInstance.enableSeyren"-->
-		<tab heading="Monitoring">
-			<ng-include src="'view/items/service-instance/details/monitoring-pane.html'"></ng-include>
-		</tab>
-	</tabset>
+	<div ng-show="serviceInstance">
+		<div class="page-header">
+			<ul class="breadcrumb">
+				<li><a ng-href="{{uri()}}">Home</a></li>
+				<li><a ng-href="{{uri('services')}}">Services</a></li>
+				<li><a ng-href="{{uri('services', service.key)}}" ng-bind="service.name"></a></li>
+			</ul>
+			<h1 ng-bind="serviceInstance.key"></h1>
+			<p class="lead">
+				<a ng-href="{{uri('services', service.key)}}" ng-bind="service.name"></a> |
+				<a ng-href="{{uri('environments', environment.key)}}" ng-bind="environment.name"></a>
+			</p>
+		</div>
+		<tabset>
+			<tab heading="Dashboard">
+				<ng-include src="'view/items/service-instance/details/dashboard/node-summary.html'"></ng-include>
+				<ng-include src="'view/items/service-instance/details/dashboard/node-breakdowns.html'"></ng-include>
+				<ng-include src="'view/items/service-instance/details/dashboard/node-alerts.html'"></ng-include>
+			</tab>
+			<tab heading="Nodes">
+				<ng-include src="'view/items/service-instance/details/nodes/node-pane.html'"></ng-include>
+			</tab>
+			<tab heading="Details">
+				<ng-include src="'view/items/service-instance/details/details/service-instance-props.html'"></ng-include>
+				<ng-include src="'view/items/service-instance/details/details/endpoints-pane.html'"></ng-include>
+				<ng-include src="'view/items/service-instance/details/details/dashboards-pane.html'"></ng-include>
+				<ng-include src="'view/items/service-instance/details/details/seyren-pane.html'"></ng-include>
+			</tab>
+		</tabset>
+	</div>
 </div>

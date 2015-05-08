@@ -34,11 +34,27 @@ import com.expedia.serf.ann.RestResource;
 @RestResource(rel = RepoKeys.NODES, path = RepoKeys.NODES)
 public interface NodeRepo extends PagingAndSortingRepository<Node, Long>, NodeRepoCustom {
 	
+	public static final String FIND_NODE_ALERTS_JPQL =
+			"select " +
+			"  n " +
+			"from " +
+			"  Node n " +
+			"  join n.healthStatus hs " +
+			"  join hs.statusType hst " +
+			"where " +
+			"  n.serviceInstance.key = :key " +
+			"  and (hst.key in ('warning', 'danger')" +
+			"      or n.aggregateRotationStatus.statusType.key in ('warning', 'danger'))";
+	
 	@FindByKey
 	Node findByName(@Param("name") String name);
 	
 	@RestResource(path = "find-by-service-instance")
 	Page<Node> findByServiceInstanceKey(@Param("key") String key, Pageable pageable);
+	
+	@RestResource(path = "find-node-alerts-by-service-instance")
+	@Query(FIND_NODE_ALERTS_JPQL)
+	Page<Node> findNodeAlertsByServiceInstance(@Param("key") String key, Pageable pageable);
 	
 	// FIXME Shouldn't this return a unique result?
 	@RestResource(path = "find-by-ip-address-and-port")

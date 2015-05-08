@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -42,7 +41,6 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.ServiceInstancePortKey;
-import com.expedia.seiso.domain.entity.listener.ServiceInstancePortListener;
 import com.expedia.serf.ann.RestResource;
 
 /**
@@ -53,7 +51,6 @@ import com.expedia.serf.ann.RestResource;
 @EqualsAndHashCode(callSuper = false, of = { "serviceInstance", "number" })
 @ToString(of = { "serviceInstance", "number", "protocol", "description" })
 @Entity
-@EntityListeners(ServiceInstancePortListener.class)
 //@formatter:off
 @Projections({
 

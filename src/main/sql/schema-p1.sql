@@ -33,3 +33,40 @@ create table conf_prop (
   primary key (id),
   unique key `pkey` (`pkey`)
 ) engine=InnoDB default charset=utf8;
+
+-- Support node alerts, and really just make it easier to query for aggregate rotation status. Instead of computing this
+-- dynamically on read, we compute it dynamically at write, store the result in the database, and now we can more simply
+-- query for it. Think we have to do something like this to support node alert pagination, because otherwise we would
+-- have to embed the complicated aggregation logic in the JPQL or the SQL.
+-- 
+-- Hm, but I don't want clients setting this stuff. Well I guess they already can't do it? Maybe have a read-only
+-- annotation?
+-- http://stackoverflow.com/questions/4939985/restful-api-design-should-unchangable-data-in-an-update-put-be-optional
+-- http://stackoverflow.com/questions/28322376/exclude-some-fields-of-spring-data-rest-resource
+-- http://stackoverflow.com/questions/16019834/ignoring-property-when-deserializing
+
+-- Force an explicit "Unknown" status since we need to render this visually in a certain way, and we don't want to have
+-- to hardcode that all over the UI.
+
+-- 6 = unknown in local environment. need to check in prod
+update endpoint set rotation_status_id = 6 where rotation_status_id is null;
+alter table endpoint modify column rotation_status_id tinyint unsigned not null;
+
+-- 6 = unknown in local environment. need to check in prod
+update node_ip_address set rotation_status_id = 6 where rotation_status_id is null;
+alter table node_ip_address modify column rotation_status_id tinyint unsigned not null;
+alter table node_ip_address add column aggregate_rotation_status_id tinyint unsigned not null after rotation_status_id;
+alter table node_ip_address add key aggregate_rotation_status_id (aggregate_rotation_status_id);
+alter table node_ip_address add constraint node_ip_address_aggregate_rotation_status_id foreign key (aggregate_rotation_status_id) references rotation_status (id);
+-- Remove default value that was formerly deployed.
+alter table node_ip_address modify column aggregate_rotation_status_id tinyint unsigned not null;
+
+alter table node add column aggregate_rotation_status_id tinyint unsigned not null after health_status_id;
+alter table node add key aggregate_rotation_status_id (aggregate_rotation_status_id);
+alter table node add constraint node_aggregate_rotation_status_id foreign key (aggregate_rotation_status_id) references rotation_status (id);
+-- Remove default value that was formerly deployed.
+alter table node modify column aggregate_rotation_status_id tinyint unsigned not null;
+
+-- 1 = unknown
+update node set health_status_id = 1 where health_status_id is null;
+alter table node modify column health_status_id tinyint unsigned not null;

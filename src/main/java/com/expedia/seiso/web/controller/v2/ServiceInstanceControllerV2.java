@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.domain.entity.ServiceInstance;
-import com.expedia.seiso.domain.repo.ServiceInstanceRepo;
+import com.expedia.seiso.domain.service.ServiceInstanceService;
 import com.expedia.seiso.hypermedia.LinkFactory;
 import com.expedia.serf.ann.SuppressBasePath;
 import com.expedia.serf.hypermedia.Relations;
@@ -39,28 +39,60 @@ import com.expedia.serf.web.MediaTypes;
 @RequestMapping("/v2/service-instances")
 @SuppressBasePath
 public class ServiceInstanceControllerV2 {
-	@Autowired private ServiceInstanceRepo serviceInstanceRepo;
+	@Autowired private ServiceInstanceService serviceInstanceService;
 	@Autowired @Qualifier("linkFactoryV2") private LinkFactory linkFactoryV2;
 	
 	@RequestMapping(
-			value = "/{key}/node-stats",
+			value = "/{key}/node-summary",
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public Resource getNodeStats(@PathVariable String key) {
-		val itemLinksV2 = linkFactoryV2.getItemLinks();
-		
+	public Resource getNodeSummary(@PathVariable String key) {
+		val links = linkFactoryV2.getItemLinks();
+		val serviceInstance = getServiceInstance(key);
+		val data = serviceInstanceService.getNodeSummary(key);
+		val resource = new Resource();
+		resource.addLink(links.serviceInstanceNodeSummaryLink(Relations.SELF, serviceInstance));
+		resource.addLink(links.itemLink(Relations.UP, serviceInstance));
+		resource.setProperty("numNodes", data.getNumNodes());
+		resource.setProperty("numHealthy", data.getNumHealthy());
+		resource.setProperty("numEnabled", data.getNumEnabled());
+		resource.setProperty("numHealthyGivenEnabled", data.getNumHealthyGivenEnabled());
+		return resource;
+	}
+	
+	@RequestMapping(
+			value = "/{key}/health-breakdown",
+			method = RequestMethod.GET,
+			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	public Resource getHealthBreakdown(@PathVariable String key) {
+		val links = linkFactoryV2.getItemLinks();
+		val serviceInstance = getServiceInstance(key);
+		val data = serviceInstanceService.getHealthBreakdown(key);
+		val resource = new Resource();
+		resource.addLink(links.serviceInstanceHealthBreakdownLink(Relations.SELF, serviceInstance));
+		resource.addLink(links.itemLink(Relations.UP, serviceInstance));
+		resource.setProperty("items",  data);
+		return resource;
+	}
+	
+	@RequestMapping(
+			value = "/{key}/rotation-breakdown",
+			method = RequestMethod.GET,
+			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	public Resource getRotationBreakdown(@PathVariable String key) {
+		val links = linkFactoryV2.getItemLinks();
+		val serviceInstance = getServiceInstance(key);
+		val data = serviceInstanceService.getRotationBreakdown(key);
+		val resource = new Resource();
+		resource.addLink(links.serviceInstanceRotationBreakdownLink(Relations.SELF, serviceInstance));
+		resource.addLink(links.itemLink(Relations.UP, serviceInstance));
+		resource.setProperty("items",  data);
+		return resource;
+	}
+	
+	private ServiceInstance getServiceInstance(String key) {
 		val dummy = new ServiceInstance();
 		dummy.setKey(key);
-
-		val statsData = serviceInstanceRepo.getServiceInstanceNodeStats(key);
-		
-		val statsResource = new Resource();
-		statsResource.addLink(itemLinksV2.serviceInstanceNodeStatsLink(Relations.SELF, dummy));
-		statsResource.addLink(itemLinksV2.itemLink(Relations.UP, dummy));
-		statsResource.setProperty("numNodes", statsData.getNumNodes());
-		statsResource.setProperty("numHealthy", statsData.getNumHealthy());
-		statsResource.setProperty("numEnabled", statsData.getNumEnabled());
-		statsResource.setProperty("numHealthyGivenEnabled", statsData.getNumHealthyGivenEnabled());
-		return statsResource;
+		return dummy;
 	}
 }

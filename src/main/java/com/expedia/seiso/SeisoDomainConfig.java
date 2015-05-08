@@ -38,6 +38,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.expedia.seiso.SeisoDomainConfig.RepoConfig;
 import com.expedia.seiso.SeisoDomainConfig.ServiceConfig;
+import com.expedia.seiso.aop.AdvisorOrder;
+import com.expedia.seiso.aop.NotificationAspect;
+import com.expedia.seiso.aop.SetAggregateRotationStatusAspect;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.EndpointRepo;
 import com.expedia.seiso.domain.repo.IpAddressRoleRepo;
@@ -54,13 +57,14 @@ import com.expedia.seiso.domain.repo.adapter.SimpleItemRepoAdapter;
 import com.expedia.seiso.domain.repo.impl.RepoImplUtils;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SearchEngine;
+import com.expedia.seiso.domain.service.ServiceInstanceService;
 import com.expedia.seiso.domain.service.impl.ItemDeleter;
 import com.expedia.seiso.domain.service.impl.ItemMerger;
 import com.expedia.seiso.domain.service.impl.ItemSaver;
 import com.expedia.seiso.domain.service.impl.ItemServiceImpl;
 import com.expedia.seiso.domain.service.impl.SearchEngineImpl;
+import com.expedia.seiso.domain.service.impl.ServiceInstanceServiceImpl;
 import com.expedia.seiso.gateway.NotificationGateway;
-import com.expedia.seiso.gateway.impl.NotificationAspect;
 import com.expedia.seiso.gateway.impl.NotificationGatewayImpl;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -132,7 +136,7 @@ public class SeisoDomainConfig {
 	
 	@Configuration
 	@EnableAspectJAutoProxy
-	@EnableTransactionManagement
+	@EnableTransactionManagement(order = AdvisorOrder.TRANSACTION_ADVISOR_ORDER)
 	public static class ServiceConfig {
 		@Autowired private PlatformTransactionManager txManager;
 		@Autowired private Repositories repositories;
@@ -166,13 +170,16 @@ public class SeisoDomainConfig {
 		public ItemMerger itemMerger() { return new ItemMerger(repoAdapterLookup()); }
 		
 		@Bean
-		public ItemSaver itemSaver() { return new ItemSaver(repositories, itemMerger()); }
+		public ItemSaver itemSaver() { return new ItemSaver(); }
 		
 		@Bean
 		public ItemDeleter itemDeleter() { return new ItemDeleter(repositories); }
 		
 		@Bean
 		public ItemService itemService() { return new ItemServiceImpl(); }
+		
+		@Bean
+		public ServiceInstanceService serviceInstanceService() { return new ServiceInstanceServiceImpl(); }
 		
 		@Bean
 		public SearchEngine searchEngine() { return new SearchEngineImpl(repositories); }
@@ -183,8 +190,13 @@ public class SeisoDomainConfig {
 		}
 		
 		@Bean
+		public SetAggregateRotationStatusAspect setAggregateRotationStatusAspect() {
+			return new SetAggregateRotationStatusAspect();
+		}
+		
+		@Bean
 		public NotificationAspect notificationAspect() {
-			return new NotificationAspect(notificationGateway());
+			return new NotificationAspect();
 		}
 	}
 }

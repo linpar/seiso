@@ -1,0 +1,78 @@
+<section ng-controller="ServiceInstanceNodesController">
+	<header>
+		<h1>
+			Nodes
+			<span ng-show="nodeListStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span>
+			<span ng-show="nodeListStatus == 'loaded'">
+				<!-- TODO Scope metadata to the node list, since we could conceivably have other pages here as well. -->
+				<span ng-if="metadata.totalItems == 0">
+					<small>(0)</small>
+				</span>
+				<span ng-if="metadata.totalItems &gt; 0">
+					<small>({{metadata.pageLowIndex + 1}}-{{metadata.pageHighIndex + 1}} of {{metadata.totalItems}})</small>
+				</span>
+			</span>
+		</h1>
+	</header>
+	<div ng-switch="nodeListStatus">
+		<!-- No need for spinner here since context already provides one -->
+		<div ng-switch-when="error">
+			<div class="alert alert-warning">
+				<i class="fa fa-times-circle"></i> Couldn't get nodes.
+			</div>
+		</div>
+		<div ng-switch-when="loaded">
+			<div ng-if="nodeRows.length == 0">
+				<div class="alert alert-info">
+					<i class="fa fa-info-circle"></i> No nodes.
+				</div>
+			</div>
+			<div ng-if="nodeRows.length &gt; 0">
+				<!-- TODO Refactor this and node-alerts.html, which are almost exactly the same. -->
+				<div class="pagination-wrapper" ng-if="metadata.totalPages &gt; 1">
+					<pagination total-items="metadata.totalItems" ng-model="model.nodes.currentPage" ng-change="model.nodes.pageSelected()" />
+				</div>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th style="width:17%">Node</th>
+							<th style="width:17%">Version</th>
+							<th style="width:17%">Health</th>
+							<th style="width:17%">Node Rotation <a href="" tooltip="Node rotation status, aggregated across all IPs and ports."><i class="fa fa-question-circle fa-lg"></i></a></th>
+							<th style="width:17%" colspan="2">IP Address</th>
+							<th style="width:17%">IP Rotation <a href="" tooltip="IP rotation status, aggregated across all ports."><i class="fa fa-question-circle fa-lg"></i></a></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="nodeRow in nodeRows" ng-init="
+								healthStatusTypeKey = nodeRow.healthStatus._embedded.statusType.key;
+								nodeAggregateRotationStatusTypeKey = nodeRow.nodeAggregateRotationStatus._embedded.statusType.key;
+								ipAggregateRotationStatusTypeKey = nodeRow.ipAggregateRotationStatus._embedded.statusType.key;">
+								
+							<td><a ng-href="{{uri('nodes', nodeRow.name)}}">{{nodeRow.displayName}}</a></td>
+							<td><span ng-show="nodeRow.version != null">{{nodeRow.version}}</span></td>
+	
+							<td style="white-space:nowrap;">
+								<i class="fa fa-circle fa-circle-{{healthStatusTypeKey}}" ng-if="healthStatusTypeKey != 'success'"></i>
+								{{nodeRow.healthStatus.name}}
+							</td>
+							<td style="white-space:nowrap;">
+								<i class="fa fa-circle fa-circle-{{nodeAggregateRotationStatusTypeKey}}" ng-if="nodeAggregateRotationStatusTypeKey != 'success'"></i>
+								{{nodeRow.nodeAggregateRotationStatus.name}}
+							</td>
+							<td>{{nodeRow.ipAddress}}</td>
+							<td><span ng-if="ipAddressRoles.length &gt; 1" ng-bind="nodeRow.ipAddressRole"></span></td>
+							<td style="white-space:nowrap;">
+								<i class="fa fa-circle fa-circle-{{ipAggregateRotationStatusTypeKey}}" ng-if="ipAggregateRotationStatusTypeKey != 'success'"></i>
+								<a rotation-details-popover="/v1/nodes/{{nodeRow.name}}/ip-addresses/{{nodeRow.ipAddress}}">{{nodeRow.ipAggregateRotationStatus.name}}</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="pagination-wrapper" ng-if="metadata.totalPages &gt; 1">
+					<pagination total-items="metadata.totalItems" ng-model="model.nodes.currentPage" ng-change="model.nodes.pageSelected()" />
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

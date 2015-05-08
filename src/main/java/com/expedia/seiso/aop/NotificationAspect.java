@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.gateway.impl;
+package com.expedia.seiso.aop;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.XSlf4j;
 
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.gateway.NotificationGateway;
@@ -33,44 +34,35 @@ import com.expedia.seiso.gateway.model.ItemNotification;
  * @author Willie Wheeler
  */
 @Aspect
-@Component
-@RequiredArgsConstructor
+@Order(AdvisorOrder.NOTIFICATION_ADVISOR_ORDER)
+@XSlf4j
 public class NotificationAspect {
-	private static final String CREATE_ITEM_POINTCUT =
-			"execution(* com.expedia.seiso.domain.service.impl.ItemSaver" +
-			".create(com.expedia.seiso.domain.entity.Item, boolean))";
+	@Autowired private NotificationGateway notificationGateway;
 	
-	private static final String UPDATE_ITEM_POINTCUT =
-			"execution(* com.expedia.seiso.domain.service.impl.ItemSaver" +
-			".update(com.expedia.seiso.domain.entity.Item, com.expedia.seiso.domain.entity.Item, boolean))";
-	
-	private static final String DELETE_ITEM_POINTCUT =
-			"execution(* com.expedia.seiso.domain.service.impl.ItemDeleter" +
-			".delete(com.expedia.seiso.domain.entity.Item))";
-	
-	@NonNull private NotificationGateway notificationGateway;
-	
-	@Pointcut(CREATE_ITEM_POINTCUT)
+	@Pointcut(Pointcuts.CREATE_ITEM_POINTCUT)
 	private void createItemOps() { }
 	
-	@Pointcut(UPDATE_ITEM_POINTCUT)
+	@Pointcut(Pointcuts.UPDATE_ITEM_POINTCUT)
 	private void updateItemOps() { }
 	
-	@Pointcut(DELETE_ITEM_POINTCUT)
+	@Pointcut(Pointcuts.DELETE_ITEM_POINTCUT)
 	private void deleteItemOps() { }
 	
 	@AfterReturning(pointcut = "createItemOps() && args(item, mergeAssociations)")
 	public void notifyCreate(@NonNull Item item, boolean mergeAssociations) {
+		log.trace("Sending create notification: item={}", item.itemKey());
 		notificationGateway.notify(item, ItemNotification.OP_CREATE);
 	}
 	
 	@AfterReturning(pointcut = "updateItemOps() && args(srcItem, destItem, mergeAssociations)")
 	public void notifyUpdate(@NonNull Item srcItem, @NonNull Item destItem, boolean mergeAssociations) {
+		log.trace("Sending update notification: item={}", srcItem.itemKey());
 		notificationGateway.notify(destItem, ItemNotification.OP_UPDATE);
 	}
 
 	@AfterReturning(pointcut = "deleteItemOps() && args(item)")
 	public void notifyDelete(@NonNull Item item) {
+		log.trace("Sending delete notification: item={}", item.itemKey());
 		notificationGateway.notify(item, ItemNotification.OP_DELETE);
 	}
 }

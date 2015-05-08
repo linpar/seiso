@@ -47,10 +47,10 @@ public class ItemSaverTests {
 	
 	@Before
 	public void setUp() {
+		this.itemSaver = new ItemSaver();
 		MockitoAnnotations.initMocks(this);
 		setUpTestData();
 		setUpDependencies();
-		this.itemSaver = new ItemSaver(repositories, itemMerger);
 	}
 	
 	private void setUpTestData() {
@@ -71,16 +71,6 @@ public class ItemSaverTests {
 	
 	private void setUpDependencies() {
 		when(repositories.getRepositoryFor(Person.class)).thenReturn(personRepo);
-	}
-	
-	@Test(expected = NullPointerException.class)
-	public void init_nullRepositories() {
-		new ItemSaver(null, itemMerger);
-	}
-	
-	@Test(expected = NullPointerException.class)
-	public void init_nullItemMerger() {
-		new ItemSaver(repositories, null);
 	}
 	
 	@Test

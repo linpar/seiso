@@ -18,6 +18,7 @@ package com.expedia.seiso.domain.repo.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -31,7 +32,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.expedia.seiso.domain.entity.NodeStats;
+import com.expedia.seiso.domain.dto.BreakdownItem;
+import com.expedia.seiso.domain.dto.NodeSummary;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.repo.custom.ServiceInstanceRepoCustom;
 
@@ -42,7 +44,9 @@ public class ServiceInstanceRepoImpl implements ServiceInstanceRepoCustom {
 	private static final String ENTITY_NAME = "ServiceInstance";
 	private static final Set<String> FIELD_NAMES = Collections.singleton("key");
 	
-	private static final String NODE_STATS_SQL =
+	// It might make more sense to move this into ServiceInstanceServiceImpl.
+	// But there's not really much domain logic going on so maybe it's OK here.
+	private static final String NODE_SUMMARY_SQL =
 			"select " +
 			"  count(*) num_nodes, " +
 			"  sum(healthy) num_healthy, " +
@@ -68,6 +72,38 @@ public class ServiceInstanceRepoImpl implements ServiceInstanceRepoCustom {
 			"  group by " +
 			"    nip.id) nip_stats";
 	
+	private static final String HEALTH_BREAKDOWN_SQL = 
+			"select " +
+			"  if(n.health_status_id is null, 'Unknown', hs.name) status, " +
+			"  if(n.health_status_id is null, 'warning', st.ukey) type, " +
+			"  count(*) num_nodes " +
+			"from " +
+			"  node n " +
+			"  left outer join health_status hs on n.health_status_id = hs.id " +
+			"  left outer join status_type st on hs.status_type_id = st.id, " +
+			"  service_instance si " +
+			"where " +
+			"  n.service_instance_id = si.id " +
+			"  and si.ukey = ? " +
+			"group by " +
+			"  if(n.health_status_id is null, 0, n.health_status_id)";
+	
+	private static final String ROTATION_BREAKDOWN_SQL = 
+			"select " +
+			"  if(n.aggregate_rotation_status_id is null, 'Unknown', rs.name) status, " +
+			"  if(n.aggregate_rotation_status_id is null, 'warning', st.ukey) type, " +
+			"  count(*) num_nodes " +
+			"from " +
+			"  node n " +
+			"  left outer join rotation_status rs on n.aggregate_rotation_status_id = rs.id " +
+			"  left outer join status_type st on rs.status_type_id = st.id, " +
+			"  service_instance si " +
+			"where " +
+			"  n.service_instance_id = si.id " +
+			"  and si.ukey = ? " +
+			"group by " +
+			"  if(n.aggregate_rotation_status_id is null, 0, n.aggregate_rotation_status_id)";
+		
 	@PersistenceContext private EntityManager entityManager;
 	
 	@Autowired private JdbcTemplate jdbcTemplate;
@@ -85,13 +121,38 @@ public class ServiceInstanceRepoImpl implements ServiceInstanceRepoCustom {
 	 * @see com.expedia.seiso.domain.repo.custom.ServiceInstanceRepoCustom#getServiceInstanceNodeStats(java.lang.String)
 	 */
 	@Override
-	public NodeStats getServiceInstanceNodeStats(@NonNull String key) {
-		return jdbcTemplate.query(NODE_STATS_SQL, new String[] { key }, new RowMapper<NodeStats>() {
-			
+	public NodeSummary getServiceInstanceNodeSummary(@NonNull String key) {
+		return jdbcTemplate.query(NODE_SUMMARY_SQL, new String[] { key }, new RowMapper<NodeSummary>() {
 			@Override
-			public NodeStats mapRow(ResultSet rs, int rowNum) throws SQLException {
-				return new NodeStats(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4));
+			public NodeSummary mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return new NodeSummary(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4));
 			}
 		}).get(0);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.expedia.seiso.domain.repo.custom.ServiceInstanceRepoCustom#getHealthStats(java.lang.String)
+	 */
+	@Override
+	public List<BreakdownItem> getServiceInstanceHealthBreakdown(@NonNull String key) {
+		return jdbcTemplate.query(HEALTH_BREAKDOWN_SQL, new String[] { key }, new RowMapper<BreakdownItem>() {
+			@Override
+			public BreakdownItem mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return new BreakdownItem(rs.getString(1), rs.getString(2), rs.getInt(3));
+			}
+		});
+	}
+
+	/* (non-Javadoc)
+	 * @see com.expedia.seiso.domain.repo.custom.ServiceInstanceRepoCustom#getServiceInstanceRotationBreakdown(java.lang.String)
+	 */
+	@Override
+	public List<BreakdownItem> getServiceInstanceRotationBreakdown(String key) {
+		return jdbcTemplate.query(ROTATION_BREAKDOWN_SQL, new String[] { key }, new RowMapper<BreakdownItem>() {
+			@Override
+			public BreakdownItem mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return new BreakdownItem(rs.getString(1), rs.getString(2), rs.getInt(3));
+			}
+		});
 	}
 }
