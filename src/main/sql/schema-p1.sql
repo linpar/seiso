@@ -69,4 +69,6 @@ alter table node modify column aggregate_rotation_status_id tinyint unsigned not
 
 -- 1 = unknown
 update node set health_status_id = 1 where health_status_id is null;
+alter table node drop foreign key node_health_status_id;
 alter table node modify column health_status_id tinyint unsigned not null;
+alter table node add constraint node_health_status_id foreign key (health_status_id) references health_status (id);
