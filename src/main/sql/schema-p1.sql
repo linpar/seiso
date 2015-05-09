@@ -34,6 +34,11 @@ create table conf_prop (
   unique key `pkey` (`pkey`)
 ) engine=InnoDB default charset=utf8;
 
+
+-- =====================================================================================================================
+-- Status changes
+-- =====================================================================================================================
+
 -- Support node alerts, and really just make it easier to query for aggregate rotation status. Instead of computing this
 -- dynamically on read, we compute it dynamically at write, store the result in the database, and now we can more simply
 -- query for it. Think we have to do something like this to support node alert pagination, because otherwise we would
@@ -48,27 +53,58 @@ create table conf_prop (
 -- Force an explicit "Unknown" status since we need to render this visually in a certain way, and we don't want to have
 -- to hardcode that all over the UI.
 
--- 6 = unknown in local environment. need to check in prod
+-- 1 = unknown health status
+-- 6 = unknown rotation status
+update node set health_status_id = 1 where health_status_id is null;
 update endpoint set rotation_status_id = 6 where rotation_status_id is null;
-alter table endpoint modify column rotation_status_id tinyint unsigned not null;
-
--- 6 = unknown in local environment. need to check in prod
 update node_ip_address set rotation_status_id = 6 where rotation_status_id is null;
+
+alter table endpoint drop foreign key endpoint_rotation_status_id;
+alter table endpoint modify column rotation_status_id tinyint unsigned not null;
+alter table endpoint add constraint endpoint_rotation_status_id foreign key (rotation_status_id) references rotation_status (id);
+
+alter table node_ip_address drop foreign key node_ip_address_rotation_status_id;
 alter table node_ip_address modify column rotation_status_id tinyint unsigned not null;
+alter table node_ip_address add constraint node_ip_address_rotation_status_id foreign key (rotation_status_id) references rotation_status (id);
+
 alter table node_ip_address add column aggregate_rotation_status_id tinyint unsigned not null after rotation_status_id;
 alter table node_ip_address add key aggregate_rotation_status_id (aggregate_rotation_status_id);
+update node_ip_address set aggregate_rotation_status_id = 6;
 alter table node_ip_address add constraint node_ip_address_aggregate_rotation_status_id foreign key (aggregate_rotation_status_id) references rotation_status (id);
--- Remove default value that was formerly deployed.
-alter table node_ip_address modify column aggregate_rotation_status_id tinyint unsigned not null;
 
 alter table node add column aggregate_rotation_status_id tinyint unsigned not null after health_status_id;
 alter table node add key aggregate_rotation_status_id (aggregate_rotation_status_id);
+update node set aggregate_rotation_status_id = 6;
 alter table node add constraint node_aggregate_rotation_status_id foreign key (aggregate_rotation_status_id) references rotation_status (id);
--- Remove default value that was formerly deployed.
-alter table node modify column aggregate_rotation_status_id tinyint unsigned not null;
 
--- 1 = unknown
-update node set health_status_id = 1 where health_status_id is null;
 alter table node drop foreign key node_health_status_id;
 alter table node modify column health_status_id tinyint unsigned not null;
+alter table node add constraint node_health_status_id foreign key (health_status_id) references health_status (id);
+
+
+
+-- =====================================================================================================================
+-- ROLLBACK
+-- =====================================================================================================================
+
+alter table endpoint drop foreign key endpoint_rotation_status_id;
+alter table endpoint modify column rotation_status_id tinyint unsigned;
+alter table endpoint add constraint endpoint_rotation_status_id foreign key (rotation_status_id) references rotation_status (id);
+
+alter table node_ip_address drop foreign key node_ip_address_rotation_status_id;
+alter table node_ip_address modify column rotation_status_id tinyint unsigned;
+alter table node_ip_address add constraint node_ip_address_rotation_status_id foreign key (rotation_status_id) references rotation_status (id);
+
+alter table node_ip_address drop foreign key node_ip_address_aggregate_rotation_status_id;
+alter table node_ip_address modify column aggregate_rotation_status_id tinyint unsigned;
+alter table node_ip_address add constraint node_ip_address_aggregate_rotation_status_id foreign key (aggregate_rotation_status_id) references rotation_status (id);
+
+alter table node drop foreign key node_aggregate_rotation_status_id;
+alter table node modify column aggregate_rotation_status_id tinyint unsigned;
+alter table node add constraint node_aggregate_rotation_status_id foreign key (aggregate_rotation_status_id) references rotation_status (id);
+
+alter table node drop foreign key node_health_status_id;
+alter table node drop key health_status_id;
+alter table node modify column health_status_id tinyint unsigned;
+alter table node add key health_status_id (health_status_id);
 alter table node add constraint node_health_status_id foreign key (health_status_id) references health_status (id);

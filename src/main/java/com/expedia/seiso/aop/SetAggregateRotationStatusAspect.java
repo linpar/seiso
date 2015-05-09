@@ -16,6 +16,7 @@
 package com.expedia.seiso.aop;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.XSlf4j;
 
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -63,8 +64,9 @@ import com.expedia.seiso.domain.service.ServiceInstanceService;
  * 
  * @author Willie Wheeler
  */
-@Aspect
-@Order(AdvisorOrder.SET_AGGREGATE_ROTATION_STATUS_ADVISOR_ORDER)
+//@Aspect
+//@Order(AdvisorOrder.SET_AGGREGATE_ROTATION_STATUS_ADVISOR_ORDER)
+@XSlf4j
 public class SetAggregateRotationStatusAspect {
 	@Autowired private ServiceInstanceService serviceInstanceService;
 	@Autowired private RotationStatusRepo rotationStatusRepo;
@@ -121,8 +123,7 @@ public class SetAggregateRotationStatusAspect {
 		if (destItem instanceof Endpoint) {
 			recalcNipAndNode(((Endpoint) destItem).getIpAddress());
 		} else if (destItem instanceof NodeIpAddress) {
-			NodeIpAddress nip = (NodeIpAddress) destItem;
-			recalcNipAndNode(nip);
+			recalcNipAndNode((NodeIpAddress) destItem);
 		}
 	}
 	
@@ -140,11 +141,13 @@ public class SetAggregateRotationStatusAspect {
 	}
 	
 	private void recalcNipAndNode(NodeIpAddress nip) {
+		log.trace("Recalculating NIP");
 		serviceInstanceService.recalculateAggregateRotationStatus(nip);
 		recalcNode(nip.getNode());
 	}
 	
 	private void recalcNode(Node node) {
+		log.trace("Recalculating node");
 		serviceInstanceService.recalculateAggregateRotationStatus(node);
 	}
 }

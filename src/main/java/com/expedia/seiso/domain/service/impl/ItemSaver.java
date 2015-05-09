@@ -36,6 +36,7 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.repo.HealthStatusRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
 import com.expedia.seiso.domain.service.ItemService;
+import com.expedia.seiso.domain.service.ServiceInstanceService;
 import com.expedia.serf.util.SerfReflectionUtils;
 
 // TODO Use pluggable interceptors instead of pre/post create/update. [WLW]
@@ -50,7 +51,9 @@ import com.expedia.serf.util.SerfReflectionUtils;
 @XSlf4j
 public class ItemSaver {
 	@Autowired private ItemService itemService;
+	@Autowired private ServiceInstanceService serviceInstanceService;
 	@Autowired private Repositories repositories;
+	@Autowired private RotationStatusRepo rotationStatusRepo;
 	@Autowired private ItemMerger itemMerger;
 	
 	public void create(@NonNull Item item, boolean mergeAssociations) {
@@ -77,10 +80,40 @@ public class ItemSaver {
 	}
 	
 	private void postCreate(Item item) {
+		
+		// endpoints
 		if (item instanceof NodeIpAddress) {
 			createEndpointsForNodeIpAddress((NodeIpAddress) item);
 		} else if (item instanceof ServiceInstancePort) {
 			createEndpointsForPort((ServiceInstancePort) item);
+		}
+		
+		// aggregate rotation status
+		if (item instanceof Endpoint) {
+			recalcNipAndNode(((Endpoint) item).getIpAddress());
+			
+		} else if (item instanceof NodeIpAddress) {
+			NodeIpAddress nip = (NodeIpAddress) item;
+			
+			// This is a new NIP so the rotation status is unknown. 
+			nip.setRotationStatus(getUnknownRotationStatus());
+			
+			// This must result in the aggregate rotation status being non-null.
+			recalcNipAndNode(nip);
+			
+			if (nip.getAggregateRotationStatus() == null) {
+				throw new IllegalStateException("nip.aggregateRotationStatus is unexpectedly null");
+			}
+			
+		} else if (item instanceof Node) {
+			Node node = (Node) item;
+			
+			// This must result in the aggregate rotation status being non-null.
+			recalcNode(node);
+			
+			if (node.getAggregateRotationStatus() == null) {
+				throw new IllegalStateException("node.aggregateRotationStatus is unexpectedly null");
+			}
 		}
 	}
 	
@@ -89,6 +122,11 @@ public class ItemSaver {
 	}
 	
 	private void postUpdate(Item item) {
+		if (item instanceof Endpoint) {
+			recalcNipAndNode(((Endpoint) item).getIpAddress());
+		} else if (item instanceof NodeIpAddress) {
+			recalcNipAndNode((NodeIpAddress) item);
+		}
 	}
 	
 	private void replaceNullStatusesWithUnknown(Item item) {
@@ -166,5 +204,20 @@ public class ItemSaver {
 				itemService.save(endpoint, true);
 			}
 		}
+	}
+	
+	private RotationStatus getUnknownRotationStatus() {
+		return rotationStatusRepo.findByKey("unknown");
+	}
+	
+	private void recalcNipAndNode(NodeIpAddress nip) {
+		log.trace("Recalculating NIP");
+		serviceInstanceService.recalculateAggregateRotationStatus(nip);
+		recalcNode(nip.getNode());
+	}
+	
+	private void recalcNode(Node node) {
+		log.trace("Recalculating node");
+		serviceInstanceService.recalculateAggregateRotationStatus(node);
 	}
 }
