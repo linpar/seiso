@@ -15,31 +15,23 @@
  */
 package com.expedia.seiso.domain.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.transaction.Transactional;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
-import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.domain.entity.Endpoint;
-import com.expedia.seiso.domain.entity.HealthStatus;
 import com.expedia.seiso.domain.entity.Item;
-import com.expedia.seiso.domain.entity.Node;
-import com.expedia.seiso.domain.entity.NodeIpAddress;
-import com.expedia.seiso.domain.entity.RotationStatus;
-import com.expedia.seiso.domain.entity.ServiceInstancePort;
-import com.expedia.seiso.domain.repo.HealthStatusRepo;
-import com.expedia.seiso.domain.repo.RotationStatusRepo;
-import com.expedia.seiso.domain.service.ItemService;
-import com.expedia.seiso.domain.service.ServiceInstanceService;
+import com.expedia.serf.service.PersistenceInterceptor;
 import com.expedia.serf.util.SerfReflectionUtils;
-
-// TODO Use pluggable interceptors instead of pre/post create/update. [WLW]
 
 /**
  * Service delegate to save items to the database.
@@ -48,176 +40,45 @@ import com.expedia.serf.util.SerfReflectionUtils;
  */
 @Component
 @Transactional
-@XSlf4j
 public class ItemSaver {
-	@Autowired private ItemService itemService;
-	@Autowired private ServiceInstanceService serviceInstanceService;
-	@Autowired private Repositories repositories;
-	@Autowired private RotationStatusRepo rotationStatusRepo;
 	@Autowired private ItemMerger itemMerger;
+	@Autowired private Repositories repositories;
 	
+	@Getter
+	private final Map<Class<?>, PersistenceInterceptor> persistenceInterceptorMap = new HashMap<>();
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void create(@NonNull Item item, boolean mergeAssociations) {
 		val itemClass = item.getClass();
+		val persistenceInterceptor = persistenceInterceptorMap.get(itemClass);
+		val repo = (CrudRepository) repositories.getRepositoryFor(itemClass);
+		
 		val itemToSave = SerfReflectionUtils.createInstance(itemClass);
 		itemMerger.merge(item, itemToSave, mergeAssociations);
-		preCreate(itemToSave);
-		val repo = (CrudRepository) repositories.getRepositoryFor(itemClass);
-		repo.save(itemToSave);
-		postCreate(itemToSave);
+		
+		if (persistenceInterceptor == null) {
+			repo.save(itemToSave);
+		} else {
+			persistenceInterceptor.preCreate(itemToSave);
+			repo.save(itemToSave);
+			persistenceInterceptor.postCreate(itemToSave);
+		}
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void update(@NonNull Item itemData, @NonNull Item itemToSave, boolean mergeAssociations) {
-		itemMerger.merge(itemData, itemToSave, mergeAssociations);
-		preUpdate(itemToSave);
 		val itemClass = itemData.getClass();
+		val persistenceInterceptor = persistenceInterceptorMap.get(itemClass);
 		val repo = (CrudRepository) repositories.getRepositoryFor(itemClass);
-		repo.save(itemToSave);
-		postUpdate(itemToSave);
-	}
-	
-	private void preCreate(Item item) {
-		replaceNullStatusesWithUnknown(item);
-	}
-	
-	private void postCreate(Item item) {
 		
-		// endpoints
-		if (item instanceof NodeIpAddress) {
-			createEndpointsForNodeIpAddress((NodeIpAddress) item);
-		} else if (item instanceof ServiceInstancePort) {
-			createEndpointsForPort((ServiceInstancePort) item);
-		}
+		itemMerger.merge(itemData, itemToSave, mergeAssociations);
 		
-		// aggregate rotation status
-		if (item instanceof Endpoint) {
-			recalcNipAndNode(((Endpoint) item).getIpAddress());
-			
-		} else if (item instanceof NodeIpAddress) {
-			NodeIpAddress nip = (NodeIpAddress) item;
-			
-			// This is a new NIP so the rotation status is unknown. 
-			nip.setRotationStatus(getUnknownRotationStatus());
-			
-			// This must result in the aggregate rotation status being non-null.
-			recalcNipAndNode(nip);
-			
-			if (nip.getAggregateRotationStatus() == null) {
-				throw new IllegalStateException("nip.aggregateRotationStatus is unexpectedly null");
-			}
-			
-		} else if (item instanceof Node) {
-			Node node = (Node) item;
-			
-			// This must result in the aggregate rotation status being non-null.
-			recalcNode(node);
-			
-			if (node.getAggregateRotationStatus() == null) {
-				throw new IllegalStateException("node.aggregateRotationStatus is unexpectedly null");
-			}
+		if (persistenceInterceptor == null) {
+			repo.save(itemToSave);
+		} else {
+			persistenceInterceptor.preUpdate(itemToSave);
+			repo.save(itemToSave);
+			persistenceInterceptor.postUpdate(itemToSave);
 		}
-	}
-	
-	private void preUpdate(Item item) {
-		replaceNullStatusesWithUnknown(item);
-	}
-	
-	private void postUpdate(Item item) {
-		if (item instanceof Endpoint) {
-			recalcNipAndNode(((Endpoint) item).getIpAddress());
-		} else if (item instanceof NodeIpAddress) {
-			recalcNipAndNode((NodeIpAddress) item);
-		}
-	}
-	
-	private void replaceNullStatusesWithUnknown(Item item) {
-		if (item instanceof Node) {
-			Node node = (Node) item;
-			if (node.getHealthStatus() == null) {
-				node.setHealthStatus(unknownHealthStatus());
-			}
-			if (node.getAggregateRotationStatus() == null) {
-				node.setAggregateRotationStatus(unknownRotationStatus());
-			}
-		} else if (item instanceof NodeIpAddress) {
-			NodeIpAddress nip = (NodeIpAddress) item;
-			if (nip.getRotationStatus() == null) {
-				nip.setRotationStatus(unknownRotationStatus());
-			}
-			if (nip.getAggregateRotationStatus() == null) {
-				nip.setAggregateRotationStatus(unknownRotationStatus());
-			}
-		} else if (item instanceof Endpoint) {
-			Endpoint endpoint = (Endpoint) item;
-			if (endpoint.getRotationStatus() == null) {
-				endpoint.setRotationStatus(unknownRotationStatus());
-			}
-		}
-	}
-	
-	private HealthStatus unknownHealthStatus() {
-		val healthStatusRepo = (HealthStatusRepo) repositories.getRepositoryFor(HealthStatus.class);
-		return healthStatusRepo.findByKey("unknown");
-	}
-	
-	private RotationStatus unknownRotationStatus() {
-		val rotationStatusRepo = (RotationStatusRepo) repositories.getRepositoryFor(RotationStatus.class);
-		return rotationStatusRepo.findByKey("unknown");
-	}
-	
-	private void createEndpointsForNodeIpAddress(NodeIpAddress nodeIpAddress) {
-		log.info("Post-processing node IP address: {}", nodeIpAddress);
-
-		// val user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//		val user = (User) null;
-//		val now = new Date();
-
-		// For some reason, when we save the endpoint, it doesn't see the NIP ID (even though we're able to see it
-		// here). So we use a reference instead. [WLW]
-		val nipRef = new NodeIpAddress();
-		nipRef.setId(nodeIpAddress.getId());
-
-		val ports = nodeIpAddress.getNode().getServiceInstance().getPorts();
-		log.trace("Found {} ports", ports.size());
-		ports.forEach(port -> {
-			Endpoint endpoint = new Endpoint().setIpAddress(nipRef).setPort(port);
-			log.info("Creating endpoint: {}", endpoint);
-//			endpointRepo.save(endpoint);
-			itemService.save(endpoint, true);
-		});
-	}
-	
-	private void createEndpointsForPort(ServiceInstancePort port) {
-		log.info("Post-processing port insertion: id={}", port.getId());
-		val nodes = port.getServiceInstance().getNodes();
-
-		// For some reason, when we save the endpoint, it doesn't see the port ID (even though we're able to see it
-		// here). So we use a reference instead. [WLW]
-		val portRef = new ServiceInstancePort();
-		portRef.setId(port.getId());
-
-		for (val node : nodes) {
-			val nodeIpAddresses = node.getIpAddresses();
-			for (val nodeIpAddress : nodeIpAddresses) {
-				val endpoint = new Endpoint().setIpAddress(nodeIpAddress).setPort(portRef);
-				log.info("Creating endpoint: {}", endpoint);
-//				endpointRepo.save(endpoint);
-				itemService.save(endpoint, true);
-			}
-		}
-	}
-	
-	private RotationStatus getUnknownRotationStatus() {
-		return rotationStatusRepo.findByKey("unknown");
-	}
-	
-	private void recalcNipAndNode(NodeIpAddress nip) {
-		log.trace("Recalculating NIP");
-		serviceInstanceService.recalculateAggregateRotationStatus(nip);
-		recalcNode(nip.getNode());
-	}
-	
-	private void recalcNode(Node node) {
-		log.trace("Recalculating node");
-		serviceInstanceService.recalculateAggregateRotationStatus(node);
 	}
 }

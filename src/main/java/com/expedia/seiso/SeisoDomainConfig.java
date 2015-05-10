@@ -18,6 +18,7 @@ package com.expedia.seiso;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import lombok.val;
 
@@ -41,6 +42,10 @@ import com.expedia.seiso.SeisoDomainConfig.ServiceConfig;
 import com.expedia.seiso.aop.AdvisorOrder;
 import com.expedia.seiso.aop.NotificationAspect;
 import com.expedia.seiso.aop.SetAggregateRotationStatusAspect;
+import com.expedia.seiso.domain.entity.Endpoint;
+import com.expedia.seiso.domain.entity.Node;
+import com.expedia.seiso.domain.entity.NodeIpAddress;
+import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.EndpointRepo;
 import com.expedia.seiso.domain.repo.IpAddressRoleRepo;
@@ -58,14 +63,19 @@ import com.expedia.seiso.domain.repo.impl.RepoImplUtils;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SearchEngine;
 import com.expedia.seiso.domain.service.ServiceInstanceService;
+import com.expedia.seiso.domain.service.impl.EndpointPersistenceInterceptor;
 import com.expedia.seiso.domain.service.impl.ItemDeleter;
 import com.expedia.seiso.domain.service.impl.ItemMerger;
 import com.expedia.seiso.domain.service.impl.ItemSaver;
 import com.expedia.seiso.domain.service.impl.ItemServiceImpl;
+import com.expedia.seiso.domain.service.impl.NodeIpAddressPersistenceInterceptor;
+import com.expedia.seiso.domain.service.impl.NodePersistenceInterceptor;
 import com.expedia.seiso.domain.service.impl.SearchEngineImpl;
+import com.expedia.seiso.domain.service.impl.ServiceInstancePortPersistenceInterceptor;
 import com.expedia.seiso.domain.service.impl.ServiceInstanceServiceImpl;
 import com.expedia.seiso.gateway.NotificationGateway;
 import com.expedia.seiso.gateway.impl.NotificationGatewayImpl;
+import com.expedia.serf.service.PersistenceInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
@@ -170,10 +180,38 @@ public class SeisoDomainConfig {
 		public ItemMerger itemMerger() { return new ItemMerger(repoAdapterLookup()); }
 		
 		@Bean
-		public ItemSaver itemSaver() { return new ItemSaver(); }
+		public ItemSaver itemSaver() {
+			ItemSaver itemSaver = new ItemSaver();
+			Map<Class<?>, PersistenceInterceptor> map = itemSaver.getPersistenceInterceptorMap();
+			map.put(Endpoint.class, endpointPersistenceInterceptor());
+			map.put(Node.class, nodePersistenceInterceptor());
+			map.put(NodeIpAddress.class, nodeIpAddressPersistenceInterceptor());
+			map.put(ServiceInstancePort.class, serviceInstancePortPersistenceInterceptor());
+			return itemSaver;
+		}
 		
 		@Bean
 		public ItemDeleter itemDeleter() { return new ItemDeleter(repositories); }
+		
+		@Bean
+		public EndpointPersistenceInterceptor endpointPersistenceInterceptor() {
+			return new EndpointPersistenceInterceptor();
+		}
+		
+		@Bean
+		public NodePersistenceInterceptor nodePersistenceInterceptor() {
+			return new NodePersistenceInterceptor();
+		}
+		
+		@Bean
+		public NodeIpAddressPersistenceInterceptor nodeIpAddressPersistenceInterceptor() {
+			return new NodeIpAddressPersistenceInterceptor();
+		}
+		
+		@Bean
+		public ServiceInstancePortPersistenceInterceptor serviceInstancePortPersistenceInterceptor() {
+			return new ServiceInstancePortPersistenceInterceptor();
+		}
 		
 		@Bean
 		public ItemService itemService() { return new ItemServiceImpl(); }
