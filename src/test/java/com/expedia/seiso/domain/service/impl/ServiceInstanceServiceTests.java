@@ -138,6 +138,8 @@ public class ServiceInstanceServiceTests {
 		doTestRecalcNode(NO_ENDPOINTS);
 		doTestRecalcNode(NO_ENDPOINTS, NO_ENDPOINTS);
 		doTestRecalcNode(NO_ENDPOINTS, NO_ENDPOINTS, NO_ENDPOINTS);
+		doTestRecalcNode(NO_ENDPOINTS, NO_ENDPOINTS);
+		doTestRecalcNode(NO_ENDPOINTS, NO_ENDPOINTS, NO_ENDPOINTS);
 		
 		doTestRecalcNode(ENABLED, ENABLED);
 		doTestRecalcNode(ENABLED, ENABLED, ENABLED);
@@ -153,9 +155,6 @@ public class ServiceInstanceServiceTests {
 		doTestRecalcNode(PARTIAL, ENABLED, DISABLED);
 		doTestRecalcNode(PARTIAL, ENABLED, PARTIAL);
 		doTestRecalcNode(PARTIAL, PARTIAL, UNKNOWN);
-		
-		doTestRecalcNode(NO_ENDPOINTS, NO_ENDPOINTS);
-		doTestRecalcNode(NO_ENDPOINTS, NO_ENDPOINTS, NO_ENDPOINTS);
 		
 		doTestRecalcNode(UNKNOWN, UNKNOWN);
 		doTestRecalcNode(UNKNOWN, UNKNOWN, UNKNOWN);
