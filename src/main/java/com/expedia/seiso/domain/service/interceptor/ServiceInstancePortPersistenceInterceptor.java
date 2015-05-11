@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.service.impl;
+package com.expedia.seiso.domain.service.interceptor;
 
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;

@@ -15,6 +15,13 @@
  */
 package com.expedia.seiso.domain.service.impl;
 
+import static com.expedia.seiso.domain.entity.RotationStatus.DISABLED;
+import static com.expedia.seiso.domain.entity.RotationStatus.ENABLED;
+import static com.expedia.seiso.domain.entity.RotationStatus.EXCLUDED;
+import static com.expedia.seiso.domain.entity.RotationStatus.NO_ENDPOINTS;
+import static com.expedia.seiso.domain.entity.RotationStatus.PARTIAL;
+import static com.expedia.seiso.domain.entity.RotationStatus.UNKNOWN;
+
 import java.util.List;
 
 import lombok.NonNull;
@@ -30,6 +37,7 @@ import com.expedia.seiso.domain.dto.NodeSummary;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
+import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
 import com.expedia.seiso.domain.repo.ServiceInstanceRepo;
 import com.expedia.seiso.domain.service.ServiceInstanceService;
@@ -75,53 +83,54 @@ public class ServiceInstanceServiceImpl implements ServiceInstanceService {
 	public void recalculateAggregateRotationStatus(@NonNull Node node) {
 		log.trace("Recalculating node aggregate rotation status");
 		
+		RotationStatus nodeStatus = null;
+		
 		val nips = node.getIpAddresses();
-		int numNips = nips.size();
-		int numEnabled = 0;
-		int numDisabled = 0;
-		int numExcluded = 0;
-		int numPartial = 0;
-		int numNoEndpoints = 0;
-		int numUnknown = 0;
 		
-		String nodeKey = null;
-		
-		for (NodeIpAddress nip : nips) {
-			String nipKey = nip.getAggregateRotationStatus().getKey();
-			if ("enabled".equals(nipKey)) {
-				numEnabled++;
-			} else if ("disabled".equals(nipKey)) {
-				numDisabled++;
-			} else if ("excluded".equals(nipKey)) {
-				numExcluded++;
-			} else if ("partial".equals(nipKey)) {
-				numPartial++;
-			} else if ("no-endpoints".equals(nipKey)) {
-				numNoEndpoints++;
+		if (nips.isEmpty()) {
+			nodeStatus = NO_ENDPOINTS;
+		} else {
+			int numNips = nips.size();
+			int numEnabled = 0;
+			int numDisabled = 0;
+			int numExcluded = 0;
+			int numPartial = 0;
+			int numNoEndpoints = 0;
+					
+			for (NodeIpAddress nip : nips) {
+				RotationStatus nipStatus = nip.getAggregateRotationStatus();
+				if (ENABLED.equals(nipStatus)) {
+					numEnabled++;
+				} else if (DISABLED.equals(nipStatus)) {
+					numDisabled++;
+				} else if (EXCLUDED.equals(nipStatus)) {
+					numExcluded++;
+				} else if (PARTIAL.equals(nipStatus)) {
+					numPartial++;
+				} else if (NO_ENDPOINTS.equals(nipStatus)) {
+					numNoEndpoints++;
+				}
+			}
+			
+			if (numEnabled == numNips) {
+				nodeStatus = ENABLED;
+			} else if (numDisabled == numNips) {
+				nodeStatus = DISABLED;
+			} else if (numExcluded == numNips) {
+				nodeStatus = EXCLUDED;
+			} else if (numNoEndpoints == numNips) {
+				nodeStatus = NO_ENDPOINTS;
+			} else if (numEnabled > 0 || numPartial > 0) {
+				nodeStatus = PARTIAL;
 			} else {
-				numUnknown++;
+				nodeStatus = UNKNOWN;
 			}
 		}
 		
-		if (numEnabled == numNips) {
-			nodeKey = "enabled";
-		} else if (numDisabled == numNips) {
-			nodeKey = "disabled";
-		} else if (numExcluded == numNips) {
-			nodeKey = "excluded";
-		} else if (numNoEndpoints == numNips) {
-			nodeKey = "no-endpoints";
-		} else if (numEnabled > 0 || numPartial > 0) {
-			nodeKey = "partial";
-		} else if (numDisabled > 0) {
-			nodeKey = "disabled";
-		} else {
-			nodeKey = "unknown";
-		}
-		
-		log.trace("Setting node rotation status to {}", nodeKey);
-		val nodeStatus = rotationStatusRepo.findByKey(nodeKey);
-		node.setAggregateRotationStatus(nodeStatus);
+		String nodeStatusKey = nodeStatus.getKey();
+		log.trace("Setting node rotation status to {}", nodeStatusKey);
+		val persistentNodeStatus = rotationStatusRepo.findByKey(nodeStatusKey);
+		node.setAggregateRotationStatus(persistentNodeStatus);
 	}
 
 	/* (non-Javadoc)
@@ -138,17 +147,16 @@ public class ServiceInstanceServiceImpl implements ServiceInstanceService {
 			throw new IllegalStateException("nipRotStatus can't be null");
 		}
 		
-		val nipRotStatusKey = nipRotStatus.getKey();
+		RotationStatus nipAggRotStatus = null;
+		
 		val endpoints = nip.getEndpoints();
 		
-		String nipAggRotStatusKey = null;
-		
-		if ("disabled".equals(nipRotStatusKey)) {
-			nipAggRotStatusKey = "disabled";
-		} else if ("excluded".equals(nipRotStatusKey)) {
-			nipAggRotStatusKey = "excluded";
-		} else if (endpoints.isEmpty()) {
-			nipAggRotStatusKey = "no-endpoints";
+		if (endpoints.isEmpty()) {
+			nipAggRotStatus = NO_ENDPOINTS;
+		} else if (DISABLED.equals(nipRotStatus)) {
+			nipAggRotStatus = DISABLED;
+		} else if (EXCLUDED.equals(nipRotStatus)) {
+			nipAggRotStatus = EXCLUDED;
 		} else {
 			int numEndpoints = endpoints.size();
 			int numEnabled = 0;
@@ -156,45 +164,44 @@ public class ServiceInstanceServiceImpl implements ServiceInstanceService {
 			int numExcluded = 0;
 			
 			for (Endpoint endpoint : endpoints) {
-				val endpointRotStatusKey = endpoint.getRotationStatus().getKey();
-				if ("enabled".equals(endpointRotStatusKey)) {
+				RotationStatus endpointRotStatus = endpoint.getRotationStatus();
+				if (ENABLED.equals(endpointRotStatus)) {
 					numEnabled++;
-				} else if ("disabled".equals(endpointRotStatusKey)) {
+				} else if (DISABLED.equals(endpointRotStatus)) {
 					numDisabled++;
-				} else if ("excluded".equals(endpointRotStatusKey)) {
+				} else if (EXCLUDED.equals(endpointRotStatus)) {
 					numExcluded++;
 				}
 			}
 			
-			if ("enabled".equals(nipRotStatusKey)) {
+			if (ENABLED.equals(nipRotStatus)) {
 				if (numEnabled == numEndpoints) {
-					nipAggRotStatusKey = "enabled";
+					nipAggRotStatus = ENABLED;
 				} else if (numDisabled == numEndpoints) {
-					nipAggRotStatusKey = "disabled";
+					nipAggRotStatus = DISABLED;
 				} else if (numExcluded == numEndpoints) {
-					nipAggRotStatusKey = "excluded";
+					nipAggRotStatus = EXCLUDED;
 				} else if (numEnabled > 0) {
-					nipAggRotStatusKey = "partial";
+					nipAggRotStatus = PARTIAL;
 				} else {
-					nipAggRotStatusKey = "unknown";
+					nipAggRotStatus = UNKNOWN;
 				}
-			} else if ("unknown".equals(nipRotStatusKey)) {
-				if (numDisabled == numEndpoints) {
-					nipAggRotStatusKey = "disabled";
-				} else if (numExcluded == numEndpoints) {
-					nipAggRotStatusKey = "excluded";
+			} else if (UNKNOWN.equals(nipRotStatus)) {
+				if (numExcluded == numEndpoints) {
+					nipAggRotStatus = EXCLUDED;
 				} else {
-					nipAggRotStatusKey = "unknown";
+					nipAggRotStatus = UNKNOWN;
 				}
 			} else {
 				// This count occur if somebody adds or renames rotation statuses.
 				// But we don't expect it.
-				nipAggRotStatusKey = "unknown";
+				nipAggRotStatus = UNKNOWN;
 			}
 		}
 		
+		String nipAggRotStatusKey = nipAggRotStatus.getKey();
 		log.trace("Setting node IP address aggregate rotation status to {}", nipAggRotStatusKey);
-		val nipAggRotStatus = rotationStatusRepo.findByKey(nipAggRotStatusKey);
-		nip.setAggregateRotationStatus(nipAggRotStatus);
+		RotationStatus persistentNipAggRotStatus = rotationStatusRepo.findByKey(nipAggRotStatusKey);
+		nip.setAggregateRotationStatus(persistentNipAggRotStatus);
 	}
 }

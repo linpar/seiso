@@ -68,7 +68,7 @@ public class SeisoWebConfigBeansV2 {
 		val baseUri = serfProperties.getBaseUri();
 		
 		if (baseUri == null) {
-			val msg = "baseUri is null. Be sure that you've defined custom.base-uri in application.yml.";
+			val msg = "baseUri is null. Be sure that you've defined serf.base-uri in application.yml.";
 			throw new ConfigurationException(msg);
 		}
 		

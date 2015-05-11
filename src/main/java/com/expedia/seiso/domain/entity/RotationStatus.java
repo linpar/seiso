@@ -51,7 +51,7 @@ import com.expedia.serf.ann.RestResource;
 @AllArgsConstructor
 @Accessors(chain = true)
 @ToString(of = { "key", "name", "statusType" })
-@EqualsAndHashCode(callSuper = false, of = { "key", "name" })
+@EqualsAndHashCode(callSuper = false, of = { "key" })
 @Entity
 //@formatter:off
 @Projections({

@@ -41,7 +41,6 @@ import com.expedia.seiso.SeisoDomainConfig.RepoConfig;
 import com.expedia.seiso.SeisoDomainConfig.ServiceConfig;
 import com.expedia.seiso.aop.AdvisorOrder;
 import com.expedia.seiso.aop.NotificationAspect;
-import com.expedia.seiso.aop.SetAggregateRotationStatusAspect;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
@@ -63,16 +62,16 @@ import com.expedia.seiso.domain.repo.impl.RepoImplUtils;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.SearchEngine;
 import com.expedia.seiso.domain.service.ServiceInstanceService;
-import com.expedia.seiso.domain.service.impl.EndpointPersistenceInterceptor;
 import com.expedia.seiso.domain.service.impl.ItemDeleter;
 import com.expedia.seiso.domain.service.impl.ItemMerger;
 import com.expedia.seiso.domain.service.impl.ItemSaver;
 import com.expedia.seiso.domain.service.impl.ItemServiceImpl;
-import com.expedia.seiso.domain.service.impl.NodeIpAddressPersistenceInterceptor;
-import com.expedia.seiso.domain.service.impl.NodePersistenceInterceptor;
 import com.expedia.seiso.domain.service.impl.SearchEngineImpl;
-import com.expedia.seiso.domain.service.impl.ServiceInstancePortPersistenceInterceptor;
 import com.expedia.seiso.domain.service.impl.ServiceInstanceServiceImpl;
+import com.expedia.seiso.domain.service.interceptor.EndpointPersistenceInterceptor;
+import com.expedia.seiso.domain.service.interceptor.NodeIpAddressPersistenceInterceptor;
+import com.expedia.seiso.domain.service.interceptor.NodePersistenceInterceptor;
+import com.expedia.seiso.domain.service.interceptor.ServiceInstancePortPersistenceInterceptor;
 import com.expedia.seiso.gateway.NotificationGateway;
 import com.expedia.seiso.gateway.impl.NotificationGatewayImpl;
 import com.expedia.serf.service.PersistenceInterceptor;
@@ -225,11 +224,6 @@ public class SeisoDomainConfig {
 		@Bean
 		public NotificationGateway notificationGateway() {
 			return new NotificationGatewayImpl();
-		}
-		
-		@Bean
-		public SetAggregateRotationStatusAspect setAggregateRotationStatusAspect() {
-			return new SetAggregateRotationStatusAspect();
 		}
 		
 		@Bean

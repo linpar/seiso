@@ -28,5 +28,4 @@ public class AdvisorOrder {
 	// close following the ItemSaver notification).
 	public static final int NOTIFICATION_ADVISOR_ORDER = 0;
 	public static final int TRANSACTION_ADVISOR_ORDER = 100;
-	public static final int SET_AGGREGATE_ROTATION_STATUS_ADVISOR_ORDER = 400;
 }

@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.service.impl;
+package com.expedia.seiso.domain.service.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.domain.entity.HealthStatus;
+import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Node;
+import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.RotationStatus;
-import com.expedia.seiso.domain.repo.HealthStatusRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
 import com.expedia.seiso.domain.service.ServiceInstanceService;
 import com.expedia.serf.service.AbstractPersistenceInterceptor;
@@ -30,8 +30,7 @@ import com.expedia.serf.service.AbstractPersistenceInterceptor;
  * @author Willie Wheeler
  */
 @Component
-public class NodePersistenceInterceptor extends AbstractPersistenceInterceptor {
-	@Autowired private HealthStatusRepo healthStatusRepo;
+public class EndpointPersistenceInterceptor extends AbstractPersistenceInterceptor {
 	@Autowired private RotationStatusRepo rotationStatusRepo;
 	@Autowired private ServiceInstanceService serviceInstanceService;
 	
@@ -41,28 +40,33 @@ public class NodePersistenceInterceptor extends AbstractPersistenceInterceptor {
 	}
 	
 	@Override
-	public void postCreate(Object entity) {
-		Node node = (Node) entity;
-		serviceInstanceService.recalculateAggregateRotationStatus(node);
-	}
-	
-	@Override
 	public void preUpdate(Object entity) {
 		replaceNullStatusesWithUnknown(entity);
 	}
 	
+	@Override
+	public void postCreate(Object entity) {
+		recalcAggregateRotationStatuses(entity);
+	}
+	
+	@Override
+	public void postUpdate(Object entity) {
+		recalcAggregateRotationStatuses(entity);
+	}
+	
 	private void replaceNullStatusesWithUnknown(Object entity) {
-		Node node = (Node) entity;
-		if (node.getHealthStatus() == null) {
-			node.setHealthStatus(unknownHealthStatus());
-		}
-		if (node.getAggregateRotationStatus() == null) {
-			node.setAggregateRotationStatus(unknownRotationStatus());
+		Endpoint endpoint = (Endpoint) entity;
+		if (endpoint.getRotationStatus() == null) {
+			endpoint.setRotationStatus(unknownRotationStatus());
 		}
 	}
 	
-	private HealthStatus unknownHealthStatus() {
-		return healthStatusRepo.findByKey("unknown");
+	private void recalcAggregateRotationStatuses(Object entity) {
+		Endpoint endpoint = (Endpoint) entity;
+		NodeIpAddress nip = endpoint.getIpAddress();
+		Node node = nip.getNode();
+		serviceInstanceService.recalculateAggregateRotationStatus(nip);
+		serviceInstanceService.recalculateAggregateRotationStatus(node);
 	}
 	
 	private RotationStatus unknownRotationStatus() {
