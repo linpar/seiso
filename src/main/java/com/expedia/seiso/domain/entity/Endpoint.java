@@ -82,9 +82,15 @@ public class Endpoint extends AbstractItem {
 
 	@Override
 	public ItemKey itemKey() {
+		
 		// TODO Make this more like DocLink's itemKey() method.
 		// And once we do, we can get rid of EndpointKey.
-		return new EndpointKey(getId());
+		
+		// TODO I think we actually want this logic up in the AbstractItem, but to avoid unintended consequences I'm
+		// currently limiting it to this location, where I need it.
+		Long theId = (getId() == null ? 0L : getId());
+		
+		return new EndpointKey(theId);
 	}
 
 	// TODO Adopt this pattern for bidirectional associations throughout. [WLW]
