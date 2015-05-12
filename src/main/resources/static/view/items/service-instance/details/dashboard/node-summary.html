@@ -14,31 +14,52 @@
 			<div class="row">
 				<div class="col-md-4">
 					<div class="well well-sm">
-						<div class="metric">
-							<div class="metric-count">{{nodeStats.numHealthy}} of {{nodeStats.numNodes}}</div>
-							<div class="metric-percentage">{{nodeStats.percentHealthy | number : 1}}%</div>
-							<div class="metric-name">Healthy</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="well well-sm">
-						<div class="metric">
-							<div class="metric-count">{{nodeStats.numEnabled}} of {{nodeStats.numNodes}}</div>
-							<div class="metric-percentage">{{nodeStats.percentEnabled | number : 1}}%</div>
-							<div class="metric-name">Enabled</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="well well-sm">
-						<div class="metric">
-							<div class="metric-count">{{nodeStats.numHealthyGivenEnabled}} of {{nodeStats.numEnabled}}</div>
-							<div class="metric-percentage">
-								<span ng-if="nodeStats.numEnabled == 0">N/A</span>
-								<span ng-if="nodeStats.numEnabled &gt; 0">{{nodeStats.percentHealthyGivenEnabled | number : 1}}%</span>
+						<div class="row vcenter">
+							<div class="col-md-6">
+								<pie-chart id="healthy-chart" chart-data="healthDataset"></pie-chart>
 							</div>
-							<div class="metric-name">Healthy, given enabled</div>
+							<div class="col-md-6">
+								<div class="metric">
+									<div class="metric-count">{{nodeStats.numHealthy}} of {{nodeStats.numNodes}}</div>
+									<div class="metric-percentage">{{nodeStats.percentHealthy | number : 1}}%</div>
+									<div class="metric-name">Healthy</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="well well-sm">
+						<div class="row vcenter">
+							<div class="col-md-6">
+								<pie-chart id="enabled-chart" chart-data="enabledDataset"></pie-chart>
+							</div>
+							<div class="col-md-6">
+								<div class="metric">
+									<div class="metric-count">{{nodeStats.numEnabled}} of {{nodeStats.numNodes}}</div>
+									<div class="metric-percentage">{{nodeStats.percentEnabled | number : 1}}%</div>
+									<div class="metric-name">Enabled</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="well well-sm">
+						<div class="row vcenter">
+							<div class="col-md-6">
+								<pie-chart id="healthy-given-enabled-chart" chart-data="healthyGivenEnabledDataset"></pie-chart>
+							</div>
+							<div class="col-md-6">
+								<div class="metric">
+									<div class="metric-count">{{nodeStats.numHealthyGivenEnabled}} of {{nodeStats.numEnabled}}</div>
+									<div class="metric-percentage">
+										<span ng-if="nodeStats.numEnabled == 0">N/A</span>
+										<span ng-if="nodeStats.numEnabled &gt; 0">{{nodeStats.percentHealthyGivenEnabled | number : 1}}%</span>
+									</div>
+									<div class="metric-name">Healthy, given enabled</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

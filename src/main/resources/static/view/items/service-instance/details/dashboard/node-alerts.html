@@ -54,14 +54,18 @@
 								{{nodeRow.healthStatus.name}}
 							</td>
 							<td style="white-space:nowrap;">
-								<i class="fa fa-circle fa-circle-{{nodeAggregateRotationStatusTypeKey}}" ng-if="nodeAggregateRotationStatusTypeKey != 'success'"></i>
-								{{nodeRow.nodeAggregateRotationStatus.name}}
+								<span ng-if="nodeRow.ipAddress">
+									<i class="fa fa-circle fa-circle-{{nodeAggregateRotationStatusTypeKey}}" ng-if="nodeAggregateRotationStatusTypeKey != 'success'"></i>
+									{{nodeRow.nodeAggregateRotationStatus.name}}
+								</span>
 							</td>
-							<td>{{nodeRow.ipAddress}}</td>
+							<td><span ng-if="nodeRow.ipAddress" ng-bind="nodeRow.ipAddress"></span></td>
 							<td><span ng-if="ipAddressRoles.length &gt; 1" ng-bind="nodeRow.ipAddressRole"></span></td>
 							<td style="white-space:nowrap;">
-								<i class="fa fa-circle fa-circle-{{ipAggregateRotationStatusTypeKey}}" ng-if="ipAggregateRotationStatusTypeKey != 'success'"></i>
-								<a rotation-details-popover="/v1/nodes/{{nodeRow.name}}/ip-addresses/{{nodeRow.ipAddress}}">{{nodeRow.ipAggregateRotationStatus.name}}</a>
+								<span ng-if="nodeRow.ipAddress">
+									<i class="fa fa-circle fa-circle-{{ipAggregateRotationStatusTypeKey}}" ng-if="ipAggregateRotationStatusTypeKey != 'success'"></i>
+									<a rotation-details-popover="/v1/nodes/{{nodeRow.name}}/ip-addresses/{{nodeRow.ipAddress}}">{{nodeRow.ipAggregateRotationStatus.name}}</a>
+								</span>
 							</td>
 						</tr>
 					</tbody>

@@ -40,13 +40,13 @@ public class EndpointPersistenceInterceptor extends AbstractPersistenceIntercept
 	}
 	
 	@Override
-	public void preUpdate(Object entity) {
-		replaceNullStatusesWithUnknown(entity);
+	public void postCreate(Object entity) {
+		recalcAggregateRotationStatuses(entity);
 	}
 	
 	@Override
-	public void postCreate(Object entity) {
-		recalcAggregateRotationStatuses(entity);
+	public void preUpdate(Object entity) {
+		replaceNullStatusesWithUnknown(entity);
 	}
 	
 	@Override
@@ -61,15 +61,15 @@ public class EndpointPersistenceInterceptor extends AbstractPersistenceIntercept
 		}
 	}
 	
+	private RotationStatus unknownRotationStatus() {
+		return rotationStatusRepo.findByKey("unknown");
+	}
+	
 	private void recalcAggregateRotationStatuses(Object entity) {
 		Endpoint endpoint = (Endpoint) entity;
 		NodeIpAddress nip = endpoint.getIpAddress();
 		Node node = nip.getNode();
 		serviceInstanceService.recalculateAggregateRotationStatus(nip);
 		serviceInstanceService.recalculateAggregateRotationStatus(node);
-	}
-	
-	private RotationStatus unknownRotationStatus() {
-		return rotationStatusRepo.findByKey("unknown");
 	}
 }

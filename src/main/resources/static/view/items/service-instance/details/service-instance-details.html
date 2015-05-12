@@ -1,35 +1,3 @@
-<!-- This supports both the node alerts and node list. -->
-<!-- http://stackoverflow.com/questions/21362712/html-file-as-content-in-bootstrap-popover-in-angularjs-directive -->
-<script id="rotationDetailsPopover.html" type="text/ng-template">
-	<table class="table">
-		<thead>
-			<tr>
-				<th>IP Address</th>
-				<th>Port</th>
-				<th>Rotation</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>{{ipAddress.ipAddress}}</td>
-				<td></td>
-				<td>
-					<i class="fa fa-circle fa-circle-{{ipAddress.rotationStatus.statusType.key}}" ng-if="ipAddress.rotationStatus.statusType.key != 'success'"></i>
-					{{ipAddress.rotationStatus.name}}
-				</td>
-			</tr>
-			<tr ng-repeat="endpoint in ipAddress.endpoints" ng-init="rotationStatusTypeKey = endpoint.rotationStatus.statusType.key">
-				<td>{{ipAddress.ipAddress}}</td>
-				<td>{{endpoint.port.number}}</td>
-				<td>
-					<i class="fa fa-circle fa-circle-{{rotationStatusTypeKey}}" ng-if="rotationStatusTypeKey != 'success'"></i>
-					{{endpoint.rotationStatus.name}}
-				</td>
-			</tr>
-		</tbody>
-	</table>
-</script>
-
 <div ng-controller="ServiceInstanceDetailsController">
 	<div id="page-spinner-panel" ng-hide="serviceInstance">
 		<i class="fa fa-spinner fa-spin fa-5x"></i>
@@ -65,3 +33,35 @@
 		</tabset>
 	</div>
 </div>
+
+<!-- This supports both the node alerts and node list. -->
+<!-- http://stackoverflow.com/questions/21362712/html-file-as-content-in-bootstrap-popover-in-angularjs-directive -->
+<script id="rotationDetailsPopover.html" type="text/ng-template">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>IP Address</th>
+				<th>Port</th>
+				<th>Rotation</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{ipAddress.ipAddress}}</td>
+				<td></td>
+				<td>
+					<i class="fa fa-circle fa-circle-{{ipAddress.rotationStatus.statusType.key}}" ng-if="ipAddress.rotationStatus.statusType.key != 'success'"></i>
+					{{ipAddress.rotationStatus.name}}
+				</td>
+			</tr>
+			<tr ng-repeat="endpoint in ipAddress.endpoints" ng-init="rotationStatusTypeKey = endpoint.rotationStatus.statusType.key">
+				<td>{{ipAddress.ipAddress}}</td>
+				<td>{{endpoint.port.number}}</td>
+				<td>
+					<i class="fa fa-circle fa-circle-{{rotationStatusTypeKey}}" ng-if="rotationStatusTypeKey != 'success'"></i>
+					{{endpoint.rotationStatus.name}}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</script>

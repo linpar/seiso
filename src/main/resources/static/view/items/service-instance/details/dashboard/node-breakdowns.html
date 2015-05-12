@@ -19,9 +19,7 @@
 					<div ng-if="healthBreakdown.items.length &gt; 0">
 						<ul class="list-inline well well-sm">
 							<li ng-repeat="item in healthBreakdown.items" style="margin-right:10px">
-								<span ng-if="item.statusType != 'success'">
-									<i class="fa fa-circle fa-circle-{{item.statusType}}"></i>
-								</span>
+								<i class="fa fa-circle fa-circle-{{item.statusType}}"></i>
 								<span ng-bind="item.count"></span>
 								<span ng-bind="item.statusName"></span>
 							</li>
@@ -50,9 +48,7 @@
 					<div ng-if="rotationBreakdown.items.length &gt; 0">
 						<ul class="list-inline well well-sm">
 							<li ng-repeat="item in rotationBreakdown.items" style="margin-right:10px">
-								<span ng-if="item.statusType != 'success'">
-									<i class="fa fa-circle fa-circle-{{item.statusType}}"></i>
-								</span>
+								<i class="fa fa-circle fa-circle-{{item.statusType}}"></i>
 								<span ng-bind="item.count"></span>
 								<span ng-bind="item.statusName"></span>
 							</li>
