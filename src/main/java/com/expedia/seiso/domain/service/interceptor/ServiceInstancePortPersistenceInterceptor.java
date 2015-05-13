@@ -22,8 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.Endpoint;
+import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
-import com.expedia.seiso.domain.service.ItemService;
+import com.expedia.seiso.domain.repo.EndpointRepo;
+import com.expedia.seiso.domain.repo.RotationStatusRepo;
+import com.expedia.seiso.domain.service.ServiceInstanceService;
 import com.expedia.serf.service.AbstractPersistenceInterceptor;
 
 /**
@@ -32,7 +35,10 @@ import com.expedia.serf.service.AbstractPersistenceInterceptor;
 @Component
 @XSlf4j
 public class ServiceInstancePortPersistenceInterceptor extends AbstractPersistenceInterceptor {
-	@Autowired private ItemService itemService;
+	@Autowired private RotationStatusRepo rotationStatusRepo;
+	@Autowired private EndpointRepo endpointRepo;
+//	@Autowired private ItemService itemService;
+	@Autowired private ServiceInstanceService serviceInstanceService;
 	
 	@Override
 	public void postCreate(Object entity) {
@@ -41,6 +47,14 @@ public class ServiceInstancePortPersistenceInterceptor extends AbstractPersisten
 	
 	private void createEndpointsForPort(ServiceInstancePort port) {
 		log.info("Post-processing port insertion: id={}", port.getId());
+		
+		// Need to load the unknown rotation status and set it on the endpoint.
+		// This is because Hibernate can decide to flush the persistence context at any time (e.g., before executing
+		// queries) and we need to make sure that we don't make the endpoint persistent until it's ready to go.
+		// I *think* the call to setIpAddress() ends up making the endpoint persistent because it adds the endpoint to
+		// the NIP's list of endpoints, but I'm not positive.
+		val unknownRotationStatus = rotationStatusRepo.findByKey(RotationStatus.UNKNOWN.getKey());
+		
 		val nodes = port.getServiceInstance().getNodes();
 
 		// For some reason, when we save the endpoint, it doesn't see the port ID (even though we're able to see it
@@ -51,10 +65,20 @@ public class ServiceInstancePortPersistenceInterceptor extends AbstractPersisten
 		for (val node : nodes) {
 			val nodeIpAddresses = node.getIpAddresses();
 			for (val nodeIpAddress : nodeIpAddresses) {
-				val endpoint = new Endpoint().setIpAddress(nodeIpAddress).setPort(portRef);
+				// @formatter:off
+				val endpoint = new Endpoint()
+						.setRotationStatus(unknownRotationStatus)
+						.setIpAddress(nodeIpAddress)
+						.setPort(portRef);
+				// @formatter:on
 				log.info("Creating endpoint: {}", endpoint);
-				itemService.save(endpoint, true);
+//				itemService.save(endpoint, true);
+				endpointRepo.save(endpoint);
+				serviceInstanceService.recalculateAggregateRotationStatus(nodeIpAddress);
 			}
+			serviceInstanceService.recalculateAggregateRotationStatus(node);
 		}
+		
+		
 	}
 }

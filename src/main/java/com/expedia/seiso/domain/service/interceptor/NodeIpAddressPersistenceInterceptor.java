@@ -24,8 +24,8 @@ import org.springframework.stereotype.Component;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.RotationStatus;
+import com.expedia.seiso.domain.repo.EndpointRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
-import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.domain.service.ServiceInstanceService;
 import com.expedia.serf.service.AbstractPersistenceInterceptor;
 
@@ -36,7 +36,8 @@ import com.expedia.serf.service.AbstractPersistenceInterceptor;
 @XSlf4j
 public class NodeIpAddressPersistenceInterceptor extends AbstractPersistenceInterceptor {
 	@Autowired private RotationStatusRepo rotationStatusRepo;
-	@Autowired private ItemService itemService;
+	@Autowired private EndpointRepo endpointRepo;
+//	@Autowired private ItemService itemService;
 	@Autowired private ServiceInstanceService serviceInstanceService;
 	
 	@Override
@@ -73,20 +74,37 @@ public class NodeIpAddressPersistenceInterceptor extends AbstractPersistenceInte
 	}
 	
 	private void createEndpointsForNodeIpAddress(NodeIpAddress nip) {
-		log.info("Post-processing node IP address: {}", nip);
-
-		// For some reason, when we save the endpoint, it doesn't see the NIP ID (even though we're able to see it
-		// here). So we use a reference instead. [WLW]
-		val nipRef = new NodeIpAddress();
-		nipRef.setId(nip.getId());
-
+		
+		// Need to load the unknown rotation status and set it on the endpoint.
+		// This is because Hibernate can decide to flush the persistence context at any time (e.g., before executing
+		// queries) and we need to make sure that we don't save the endpoint unless it's actually ready to go.
+		// I *think* the call to setIpAddress() ends up making the endpoint persistent because it adds the endpoint to
+		// the NIP's list of endpoints, but I'm not positive.
+		val unknownRotationStatus = rotationStatusRepo.findByKey(RotationStatus.UNKNOWN.getKey());
+		
 		val ports = nip.getNode().getServiceInstance().getPorts();
-		log.trace("Found {} ports", ports.size());
+		log.info("Creating endpoints for nip={} and each of {} ports", nip.getIpAddress(), ports.size());
 		ports.forEach(port -> {
-			Endpoint endpoint = new Endpoint().setIpAddress(nipRef).setPort(port);
-			log.info("Creating endpoint: {}", endpoint);
-			itemService.save(endpoint, true);
+			
+			// The call to setIpAddress() in particular needs to result in updating *both* sides of the relationship.
+			// Otherwise, when ServiceInstanceServiceImpl recalculates the aggregate rotation statuses, it won't see
+			// that the NIP has endpoints, and will assign the "no-endpoints" status. [WLW]
+			
+			log.info("Creating endpoint: nip={}, port={}", nip.getIpAddress(), port.getNumber());
+			// @formatter:off
+			Endpoint endpoint = new Endpoint()
+					.setRotationStatus(unknownRotationStatus)
+					.setIpAddress(nip)
+					.setPort(port);
+			// @formatter:on
+			
+			log.trace("nip={} has {} endpoints", nip.getIpAddress(), nip.getEndpoints().size());
+//			itemService.save(endpoint, true);
+			endpointRepo.save(endpoint);
 		});
+		
+		serviceInstanceService.recalculateAggregateRotationStatus(nip);
+		serviceInstanceService.recalculateAggregateRotationStatus(nip.getNode());
 	}
 	
 	private RotationStatus unknownRotationStatus() {

@@ -149,8 +149,10 @@ public class ItemServiceImpl implements ItemService {
 	@Transactional(readOnly = false)
 	public void save(@NonNull Item itemData, boolean mergeAssociations) {
 		val itemKey = itemData.itemKey();
+		
 		if (itemKey == null) {
 			// No key, so the item is new.
+			// Endpoint behaves this way. Not sure if anything else does. [WLW]
 			itemSaver.create(itemData, mergeAssociations);
 		} else {
 			val itemToSave = doFind(itemKey);
@@ -160,6 +162,8 @@ public class ItemServiceImpl implements ItemService {
 			} else {
 				// Item already exists in database.
 				if (itemData instanceof Node) {
+					
+					// TODO Move this into NodePersistenceInterceptor? [WLW]
 					
 					// Special logic to handle diamond dependencies per https://github.com/ExpediaDotCom/seiso/issues/33.
 					// When moving a node, we need to delete the old node and create the new node. The deletion and creation

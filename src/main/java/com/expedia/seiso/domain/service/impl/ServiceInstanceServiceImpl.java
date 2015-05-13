@@ -81,7 +81,7 @@ public class ServiceInstanceServiceImpl implements ServiceInstanceService {
 	 */
 	@Override
 	public void recalculateAggregateRotationStatus(@NonNull Node node) {
-		log.trace("Recalculating node aggregate rotation status");
+		log.trace("Recalculating node aggregate rotation status: node={}", node.getName());
 		
 		RotationStatus nodeStatus = null;
 		
@@ -139,7 +139,7 @@ public class ServiceInstanceServiceImpl implements ServiceInstanceService {
 	@Override
 	@Transactional
 	public void recalculateAggregateRotationStatus(@NonNull NodeIpAddress nip) {
-		log.trace("Recalculating node IP address aggregate rotation status");
+		log.trace("Recalculating node IP address aggregate rotation status: nip={}", nip.getIpAddress());
 		
 		val nipRotStatus = nip.getRotationStatus();
 		
@@ -150,6 +150,7 @@ public class ServiceInstanceServiceImpl implements ServiceInstanceService {
 		RotationStatus nipAggRotStatus = null;
 		
 		val endpoints = nip.getEndpoints();
+		log.trace("Found {} endpoints", endpoints.size());
 		
 		if (endpoints.isEmpty()) {
 			nipAggRotStatus = NO_ENDPOINTS;

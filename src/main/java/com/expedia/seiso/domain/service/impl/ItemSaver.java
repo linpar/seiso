@@ -18,6 +18,8 @@ package com.expedia.seiso.domain.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import lombok.Getter;
@@ -44,6 +46,8 @@ public class ItemSaver {
 	@Autowired private ItemMerger itemMerger;
 	@Autowired private Repositories repositories;
 	
+	@PersistenceContext private EntityManager entityManager;
+	
 	@Getter
 	private final Map<Class<?>, PersistenceInterceptor> persistenceInterceptorMap = new HashMap<>();
 	
@@ -63,6 +67,8 @@ public class ItemSaver {
 			repo.save(itemToSave);
 			persistenceInterceptor.postCreate(itemToSave);
 		}
+		
+		entityManager.flush();
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -80,5 +86,7 @@ public class ItemSaver {
 			repo.save(itemToSave);
 			persistenceInterceptor.postUpdate(itemToSave);
 		}
+		
+		entityManager.flush();
 	}
 }

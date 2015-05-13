@@ -113,10 +113,10 @@ public class ItemMerger {
 	@SuppressWarnings("rawtypes")
 	private void mergeSingleAssociation(Item src, Item dest, Class assocClass, String assocName) {
 		val itemDesc = BeanUtils.getPropertyDescriptor(src.getClass(), assocName);
-		log.trace("src.class={}, dest.class={}, itemDesc={}",
-				src.getClass().getName(),
-				dest.getClass().getName(),
-				itemDesc);
+//		log.trace("src.class={}, dest.class={}, itemDesc={}",
+//				src.getClass().getName(),
+//				dest.getClass().getName(),
+//				itemDesc);
 
 		val getter = itemDesc.getReadMethod();
 		val setter = itemDesc.getWriteMethod();
@@ -127,7 +127,7 @@ public class ItemMerger {
 		}
 
 		val assocData = (Item) getter.invoke(src);
-		log.trace("assocData={}", assocData);
+//		log.trace("assocData={}", assocData);
 
 		Item persistentAssoc = null;
 		if (assocData != null) {

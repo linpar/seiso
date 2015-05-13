@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.domain.entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -86,21 +88,21 @@ public class Endpoint extends AbstractItem {
 		// TODO Make this more like DocLink's itemKey() method.
 		// And once we do, we can get rid of EndpointKey.
 		
-		// TODO I think we actually want this logic up in the AbstractItem, but to avoid unintended consequences I'm
-		// currently limiting it to this location, where I need it.
-		Long theId = (getId() == null ? 0L : getId());
-		
-		return new EndpointKey(theId);
+		// ItemServiceImpl behavior depends upon this being null. [WLW]
+		boolean newEndpoint = (getId() == null || getId() == 0);
+		return (newEndpoint ? null : new EndpointKey(getId()));
 	}
 
 	// TODO Adopt this pattern for bidirectional associations throughout. [WLW]
-	// public Endpoint setIpAddress(NodeIpAddress ipAddress) {
-	// this.ipAddress = ipAddress;
-	// if (ipAddress != null) {
-	// // TODO Use a Set instead of a List so we don't have to do this check. [WLW]
-	// val endpoints = ipAddress.getEndpoints();
-	// if (!endpoints.contains(this)) { endpoints.add(this); }
-	// }
-	// return this;
-	// }
+	public Endpoint setIpAddress(NodeIpAddress ipAddress) {
+		this.ipAddress = ipAddress;
+		if (ipAddress != null) {
+			// TODO Use a Set instead of a List so we don't have to do this check. [WLW]
+			List<Endpoint> endpoints = ipAddress.getEndpoints();
+			if (!endpoints.contains(this)) {
+				endpoints.add(this);
+			}
+		}
+		return this;
+	}
 }

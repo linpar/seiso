@@ -28,3 +28,46 @@ group by
   nip.id,
   ers.id
   ;
+
+
+-- =====================================================================================================================
+-- Work
+-- =====================================================================================================================
+
+  expweb-trunk-linux-5551 has service instance ID 405.
+
+its nodes:
+Node ID 981: chelwbttqau001-5551
+Node ID 982: chelwbttqau002-5551
+Node ID 983: chelwbttqau003-5551
+Node ID 984: chelwbttqau004-5551
+
+NIPS:
+
+select
+  nip.*
+from
+  node_ip_address nip,
+  node n,
+  service_instance si
+where
+  nip.node_id = n.id
+  and n.service_instance_id = si.id
+  and si.ukey = 'expweb-trunk-linux-5551'
+  ;
+
+ENDPOINTS:
+
+select
+  e.*
+from
+  endpoint e,
+  node_ip_address nip,
+  node n,
+  service_instance si
+where
+  e.node_ip_address_id = nip.id
+  and nip.node_id = n.id
+  and n.service_instance_id = si.id
+  and si.ukey = 'expweb-trunk-linux-5551'
+  ;
