@@ -37,7 +37,6 @@ import com.expedia.serf.service.AbstractPersistenceInterceptor;
 public class ServiceInstancePortPersistenceInterceptor extends AbstractPersistenceInterceptor {
 	@Autowired private RotationStatusRepo rotationStatusRepo;
 	@Autowired private EndpointRepo endpointRepo;
-//	@Autowired private ItemService itemService;
 	@Autowired private ServiceInstanceService serviceInstanceService;
 	
 	@Override
@@ -72,7 +71,6 @@ public class ServiceInstancePortPersistenceInterceptor extends AbstractPersisten
 						.setPort(portRef);
 				// @formatter:on
 				log.info("Creating endpoint: {}", endpoint);
-//				itemService.save(endpoint, true);
 				endpointRepo.save(endpoint);
 				serviceInstanceService.recalculateAggregateRotationStatus(nodeIpAddress);
 			}

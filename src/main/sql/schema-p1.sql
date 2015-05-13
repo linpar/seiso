@@ -34,6 +34,12 @@ create table conf_prop (
   unique key `pkey` (`pkey`)
 ) engine=InnoDB default charset=utf8;
 
+-- Issue #107: Add not null constraint to endpoint.node_ip_address_id
+alter table endpoint drop foreign key endpoint_node_ip_address_id;
+alter table endpoint modify column node_ip_address_id int unsigned not null;
+alter table endpoint add constraint endpoint_node_ip_address_id foreign key (node_ip_address_id) references node_ip_address (id);
+
+
 
 -- =====================================================================================================================
 -- Status changes
@@ -81,6 +87,14 @@ alter table node drop foreign key node_health_status_id;
 alter table node modify column health_status_id tinyint unsigned not null;
 alter table node add constraint node_health_status_id foreign key (health_status_id) references health_status (id);
 
+
+-- =====================================================================================================================
+-- ADD NOT NULL CONSTRAINTS
+-- =====================================================================================================================
+
+alter table endpoint drop foreign key endpoint_rotation_status_id;
+alter table endpoint modify column rotation_status_id tinyint unsigned not null;
+alter table endpoint add constraint endpoint_rotation_status_id foreign key (rotation_status_id) references rotation_status (id);
 
 
 -- =====================================================================================================================
