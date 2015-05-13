@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.seiso.domain.entity.Endpoint;
+import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.serf.ann.SuppressBasePath;
 
@@ -38,12 +38,12 @@ public class RefreshStatusesController {
 	
 	@RequestMapping("/internal/refresh")
 	public void refresh() {
-		List<Endpoint> endpoints = itemService.findAll(Endpoint.class);
-		int numEndpoints = endpoints.size();
-		for (int i = 0; i < numEndpoints; i++) {
-			Endpoint endpoint = endpoints.get(i);
-			log.info("Refreshing node " + (i + 1) + " of " + numEndpoints);
-			itemService.save(endpoint, true);
+		List<NodeIpAddress> nips = itemService.findAll(NodeIpAddress.class);
+		int numNips = nips.size();
+		for (int i = 0; i < numNips; i++) {
+			NodeIpAddress nip = nips.get(i);
+			log.info("Refreshing node IP address " + (i + 1) + " of " + numNips);
+			itemService.save(nip, true);
 		}
 	}
 }

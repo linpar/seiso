@@ -96,6 +96,22 @@ alter table endpoint drop foreign key endpoint_rotation_status_id;
 alter table endpoint modify column rotation_status_id tinyint unsigned not null;
 alter table endpoint add constraint endpoint_rotation_status_id foreign key (rotation_status_id) references rotation_status (id);
 
+alter table node_ip_address drop foreign key node_ip_address_rotation_status_id;
+alter table node_ip_address modify column rotation_status_id tinyint unsigned not null;
+alter table node_ip_address add constraint node_ip_address_rotation_status_id foreign key (rotation_status_id) references rotation_status (id);
+
+alter table node_ip_address drop foreign key node_ip_address_aggregate_rotation_status_id;
+alter table node_ip_address modify column aggregate_rotation_status_id tinyint unsigned not null;
+alter table node_ip_address add constraint node_ip_address_aggregate_rotation_status_id foreign key (aggregate_rotation_status_id) references rotation_status (id);
+
+alter table node drop foreign key node_aggregate_rotation_status_id;
+alter table node modify column aggregate_rotation_status_id tinyint unsigned not null;
+alter table node add constraint node_aggregate_rotation_status_id foreign key (aggregate_rotation_status_id) references rotation_status (id);
+
+alter table node drop foreign key node_health_status_id;
+alter table node modify column health_status_id tinyint unsigned not null;
+alter table node add constraint node_health_status_id foreign key (health_status_id) references health_status (id);
+
 
 -- =====================================================================================================================
 -- ROLLBACK
