@@ -29,7 +29,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Component;
 
+import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.entity.Node;
+import com.expedia.seiso.domain.entity.NodeIpAddress;
+import com.expedia.seiso.domain.service.ServiceInstanceService;
 import com.expedia.serf.service.PersistenceInterceptor;
 import com.expedia.serf.util.SerfReflectionUtils;
 
@@ -43,6 +47,9 @@ import com.expedia.serf.util.SerfReflectionUtils;
 public class ItemSaver {
 	@Autowired private ItemMerger itemMerger;
 	@Autowired private Repositories repositories;
+	
+	// FIXME Temporary
+	@Autowired private ServiceInstanceService serviceInstanceService;
 	
 	@Getter
 	private final Map<Class<?>, PersistenceInterceptor> persistenceInterceptorMap = new HashMap<>();
@@ -73,7 +80,15 @@ public class ItemSaver {
 		
 		itemMerger.merge(itemData, itemToSave, mergeAssociations);
 		
-		if (persistenceInterceptor == null) {
+		// FIXME Don't hardcode treatment of endpoints
+		if (itemClass == Endpoint.class) {
+			Endpoint endpoint = (Endpoint) itemToSave;
+			NodeIpAddress nip = endpoint.getIpAddress();
+			Node node = nip.getNode();
+			serviceInstanceService.recalculateAggregateRotationStatus(nip);
+			serviceInstanceService.recalculateAggregateRotationStatus(node);
+			repo.save(itemToSave);
+		} else if (persistenceInterceptor == null) {
 			repo.save(itemToSave);
 		} else {
 			persistenceInterceptor.preUpdate(itemToSave);
