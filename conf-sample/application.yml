@@ -44,4 +44,11 @@ serf:
   base-path: api
 
 custom:
+  nav:
+    seiso-instances:
+      - name: Test
+        href: https://seiso.test.example.com
+      - name: Production/DR
+        href: https://seiso.prod.example.com
+    current-seiso-instance: Test
   change-notification-exchange: seiso.notifications.v2

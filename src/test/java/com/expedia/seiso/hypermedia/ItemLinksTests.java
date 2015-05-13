@@ -31,7 +31,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.util.MultiValueMap;
 
-import com.expedia.seiso.CustomProperties;
+import com.expedia.seiso.conf.CustomProperties;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMeta;

@@ -4,6 +4,7 @@ angular.module('seisoControllers', [])
 		.controller('HomeController', homeController())
 		.controller('SearchController', searchController())
 		.controller('MotdController', motdController())
+		.controller('NavController', navController())
 		.controller('AdminController', adminController())
 		
 		// Items

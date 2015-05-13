@@ -1,4 +1,4 @@
-<div class="navbar navbar-inverse navbar-fixed-top" style="margin-bottom: 0">
+<div ng-controller="NavController" class="navbar navbar-inverse navbar-fixed-top" style="margin-bottom: 0">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -10,6 +10,16 @@
       <a class="navbar-brand" ng-href="{{uri()}}" style="margin-top:-8px"><img src="images/seiso-logo-white.png"></a>
     </div>
     <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav" ng-if="nav.seisoInstances.length &gt; 1">
+        <li class="dropdown">
+          <a class="dropdown-toggle"><span ng-bind="nav.currentSeisoInstance"></span> <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li ng-repeat="inst in nav.seisoInstances">
+            	<a href="{{inst.href}}" ng-bind="inst.name"></a>
+            </li>
+          </ul>
+        </li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
           <form name="searchForm" class="navbar-form navbar-left form-group" role="search" ng-controller="SearchController">

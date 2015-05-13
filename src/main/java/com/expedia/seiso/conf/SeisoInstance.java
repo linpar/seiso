@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso;
+package com.expedia.seiso.conf;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
+/**
+ * @author Willie Wheeler
+ */
 @Data
-@NoArgsConstructor
-@Component
-@ConfigurationProperties(prefix = "custom")
-public class CustomProperties {
-	@NonNull private String changeNotificationExchange;
+public class SeisoInstance {
+	private String name;
+	private String href;
 }

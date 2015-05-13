@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso;
+package com.expedia.seiso.conf;
 
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Data;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
- * Data source configuration properties.
- * 
  * @author Willie Wheeler
  */
 @Data
-@ConfigurationProperties(prefix = "spring.datasource")
-public class DataSourceProperties {
-	@NotNull private String driverClassName;
-	@NotNull private String url;
-	@NotNull private String username;
-	@NotNull private String password;
-
-	// TODO Add other data source settings here. [WLW]
+public class SeisoNav {
+	private List<SeisoInstance> seisoInstances = new ArrayList<>();
+	private String currentSeisoInstance;
 }

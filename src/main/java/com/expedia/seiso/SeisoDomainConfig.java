@@ -41,6 +41,7 @@ import com.expedia.seiso.SeisoDomainConfig.RepoConfig;
 import com.expedia.seiso.SeisoDomainConfig.ServiceConfig;
 import com.expedia.seiso.aop.AdvisorOrder;
 import com.expedia.seiso.aop.NotificationAspect;
+import com.expedia.seiso.conf.DataSourceProperties;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;

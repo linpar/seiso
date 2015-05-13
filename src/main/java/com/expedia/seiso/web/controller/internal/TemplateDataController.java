@@ -15,35 +15,48 @@
  */
 package com.expedia.seiso.web.controller.internal;
 
-import java.util.List;
-
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.seiso.domain.entity.NodeIpAddress;
-import com.expedia.seiso.domain.service.ItemService;
+import com.expedia.seiso.conf.CustomProperties;
+import com.expedia.seiso.conf.SeisoNav;
+import com.expedia.seiso.domain.entity.ConfProp;
+import com.expedia.seiso.domain.repo.ConfPropRepo;
+import com.expedia.seiso.web.dto.Motd;
 import com.expedia.serf.ann.SuppressBasePath;
+import com.expedia.serf.web.MediaTypes;
 
 /**
  * @author Willie Wheeler
  */
 @RestController
 @SuppressBasePath
+@RequestMapping("/internal")
 @XSlf4j
-public class RefreshStatusesController {
-	@Autowired private ItemService itemService;
+public class TemplateDataController {
+	@Autowired private CustomProperties customProperties;
+	@Autowired private ConfPropRepo confPropRepo;
 	
-	@RequestMapping("/internal/refresh")
-	public void refresh() {
-		List<NodeIpAddress> nips = itemService.findAll(NodeIpAddress.class);
-		int numNips = nips.size();
-		for (int i = 0; i < numNips; i++) {
-			NodeIpAddress nip = nips.get(i);
-			log.info("Refreshing node IP address " + (i + 1) + " of " + numNips);
-			itemService.save(nip, true);
-		}
+	@RequestMapping(
+			value = "/motd",
+			method = RequestMethod.GET,
+			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	public Motd motd() {
+		log.trace("Getting MotD");
+		ConfProp motdProp = confPropRepo.findByKey("motd");
+		return (motdProp == null ? null : new Motd(motdProp.getValue()));
+	}
+	
+	@RequestMapping(
+			value = "/nav",
+			method = RequestMethod.GET,
+			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	public SeisoNav seisoNav() {
+		log.trace("Getting Seiso nav");
+		return customProperties.getNav();
 	}
 }

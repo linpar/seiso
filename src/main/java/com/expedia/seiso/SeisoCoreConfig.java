@@ -20,6 +20,7 @@ import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.expedia.seiso.conf.CustomProperties;
 import com.expedia.serf.hypermedia.hal.HalMapper;
 import com.expedia.serf.hypermedia.hal.HalModule;
 import com.expedia.serf.hypermedia.hal.HalPagedResourcesSerializer;
