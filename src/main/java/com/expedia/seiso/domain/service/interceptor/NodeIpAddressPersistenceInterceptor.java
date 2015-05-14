@@ -22,9 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.Endpoint;
+import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.repo.EndpointRepo;
+import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
+import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
 import com.expedia.seiso.domain.service.ServiceInstanceService;
 import com.expedia.serf.service.AbstractPersistenceInterceptor;
@@ -37,7 +40,8 @@ import com.expedia.serf.service.AbstractPersistenceInterceptor;
 public class NodeIpAddressPersistenceInterceptor extends AbstractPersistenceInterceptor {
 	@Autowired private RotationStatusRepo rotationStatusRepo;
 	@Autowired private EndpointRepo endpointRepo;
-//	@Autowired private ItemService itemService;
+	@Autowired private NodeRepo nodeRepo;
+	@Autowired private NodeIpAddressRepo nodeIpAddressRepo;
 	@Autowired private ServiceInstanceService serviceInstanceService;
 	
 	@Override
@@ -59,8 +63,11 @@ public class NodeIpAddressPersistenceInterceptor extends AbstractPersistenceInte
 	@Override
 	public void postUpdate(Object entity) {
 		NodeIpAddress nip = (NodeIpAddress) entity;
+		Node node = nip.getNode();
 		serviceInstanceService.recalculateAggregateRotationStatus(nip);
+		nodeIpAddressRepo.save(nip);
 		serviceInstanceService.recalculateAggregateRotationStatus(nip.getNode());
+		nodeRepo.save(node);
 	}
 	
 	private void replaceNullStatusesWithUnknown(Object entity) {
@@ -74,6 +81,7 @@ public class NodeIpAddressPersistenceInterceptor extends AbstractPersistenceInte
 	}
 	
 	private void createEndpointsForNodeIpAddress(NodeIpAddress nip) {
+		Node node = nip.getNode();
 		
 		// Need to load the unknown rotation status and set it on the endpoint.
 		// This is because Hibernate can decide to flush the persistence context at any time (e.g., before executing
@@ -99,12 +107,13 @@ public class NodeIpAddressPersistenceInterceptor extends AbstractPersistenceInte
 			// @formatter:on
 			
 			log.trace("nip={} has {} endpoints", nip.getIpAddress(), nip.getEndpoints().size());
-//			itemService.save(endpoint, true);
 			endpointRepo.save(endpoint);
 		});
 		
 		serviceInstanceService.recalculateAggregateRotationStatus(nip);
-		serviceInstanceService.recalculateAggregateRotationStatus(nip.getNode());
+		nodeIpAddressRepo.save(nip);
+		serviceInstanceService.recalculateAggregateRotationStatus(node);
+		nodeRepo.save(node);
 	}
 	
 	private RotationStatus unknownRotationStatus() {

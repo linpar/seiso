@@ -69,6 +69,7 @@ import com.expedia.seiso.domain.service.impl.ItemSaver;
 import com.expedia.seiso.domain.service.impl.ItemServiceImpl;
 import com.expedia.seiso.domain.service.impl.SearchEngineImpl;
 import com.expedia.seiso.domain.service.impl.ServiceInstanceServiceImpl;
+import com.expedia.seiso.domain.service.interceptor.EndpointPersistenceInterceptor;
 import com.expedia.seiso.domain.service.interceptor.NodeIpAddressPersistenceInterceptor;
 import com.expedia.seiso.domain.service.interceptor.NodePersistenceInterceptor;
 import com.expedia.seiso.domain.service.interceptor.ServiceInstancePortPersistenceInterceptor;
@@ -182,6 +183,7 @@ public class SeisoDomainConfig {
 		public ItemSaver itemSaver() {
 			ItemSaver itemSaver = new ItemSaver();
 			Map<Class<?>, PersistenceInterceptor> map = itemSaver.getPersistenceInterceptorMap();
+			map.put(Endpoint.class, endpointPersistenceInterceptor());
 			map.put(Node.class, nodePersistenceInterceptor());
 			map.put(NodeIpAddress.class, nodeIpAddressPersistenceInterceptor());
 			map.put(ServiceInstancePort.class, serviceInstancePortPersistenceInterceptor());
@@ -190,6 +192,11 @@ public class SeisoDomainConfig {
 		
 		@Bean
 		public ItemDeleter itemDeleter() { return new ItemDeleter(repositories); }
+		
+		@Bean
+		public EndpointPersistenceInterceptor endpointPersistenceInterceptor() {
+			return new EndpointPersistenceInterceptor();
+		}
 		
 		@Bean
 		public NodePersistenceInterceptor nodePersistenceInterceptor() {
