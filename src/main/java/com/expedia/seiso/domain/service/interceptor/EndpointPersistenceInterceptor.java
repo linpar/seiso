@@ -18,6 +18,7 @@ package com.expedia.seiso.domain.service.interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
@@ -36,7 +37,8 @@ public class EndpointPersistenceInterceptor extends AbstractPersistenceIntercept
 	
 	@Override
 	public void postUpdate(Object entity) {
-		NodeIpAddress nip = (NodeIpAddress) entity;
+		Endpoint endpoint = (Endpoint) entity;
+		NodeIpAddress nip = endpoint.getIpAddress();
 		Node node = nip.getNode();
 		serviceInstanceService.recalculateAggregateRotationStatus(nip);
 		nodeIpAddressRepo.save(nip);
