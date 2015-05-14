@@ -42,28 +42,37 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat="nodeRow in nodeRows" ng-init="
+								firstRow = nodeRow.displayName;
 								healthStatusTypeKey = nodeRow.healthStatus._embedded.statusType.key;
 								nodeAggregateRotationStatusTypeKey = nodeRow.nodeAggregateRotationStatus._embedded.statusType.key;
 								ipAggregateRotationStatusTypeKey = nodeRow.ipAggregateRotationStatus._embedded.statusType.key;">
 								
-							<td><a ng-href="{{uri('nodes', nodeRow.name)}}">{{nodeRow.displayName}}</a></td>
-							<td><span ng-show="nodeRow.version != null">{{nodeRow.version}}</span></td>
+							<td>
+								<div ng-if="firstRow">
+									<a ng-href="{{uri('nodes', nodeRow.name)}}">{{nodeRow.displayName}}</a>
+								</div>
+							</td>
+							<td>
+								<div ng-if="firstRow">{{nodeRow.version}}</div>
+							</td>
 	
 							<td style="white-space:nowrap;">
-								<i class="fa fa-circle fa-circle-{{healthStatusTypeKey}}" ng-if="healthStatusTypeKey != 'success'"></i>
-								{{nodeRow.healthStatus.name}}
+								<div ng-if="firstRow">
+									<i class="fa fa-circle fa-circle-{{healthStatusTypeKey}}"></i>
+									{{nodeRow.healthStatus.name}}
+								</div>
 							</td>
 							<td style="white-space:nowrap;">
-								<span ng-if="nodeRow.ipAddress">
-									<i class="fa fa-circle fa-circle-{{nodeAggregateRotationStatusTypeKey}}" ng-if="nodeAggregateRotationStatusTypeKey != 'success'"></i>
+								<div ng-if="firstRow">
+									<i class="fa fa-circle fa-circle-{{nodeAggregateRotationStatusTypeKey}}"></i>
 									{{nodeRow.nodeAggregateRotationStatus.name}}
-								</span>
+								</div>
 							</td>
 							<td><span ng-if="nodeRow.ipAddress" ng-bind="nodeRow.ipAddress"></span></td>
 							<td><span ng-if="ipAddressRoles.length &gt; 1" ng-bind="nodeRow.ipAddressRole"></span></td>
 							<td style="white-space:nowrap;">
 								<span ng-if="nodeRow.ipAddress">
-									<i class="fa fa-circle fa-circle-{{ipAggregateRotationStatusTypeKey}}" ng-if="ipAggregateRotationStatusTypeKey != 'success'"></i>
+									<i class="fa fa-circle fa-circle-{{ipAggregateRotationStatusTypeKey}}"></i>
 									<a rotation-details-popover="/v1/nodes/{{nodeRow.name}}/ip-addresses/{{nodeRow.ipAddress}}">{{nodeRow.ipAggregateRotationStatus.name}}</a>
 								</span>
 							</td>
