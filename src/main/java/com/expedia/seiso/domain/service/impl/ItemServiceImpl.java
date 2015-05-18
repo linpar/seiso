@@ -195,8 +195,8 @@ public class ItemServiceImpl implements ItemService {
 						// session to force the deletes to happen. See https://forum.hibernate.org/viewtopic.php?t=934483.
 						// Note that Gavin says that usually when you delete and then reinsert, you're usually doing it
 						// wrong, but I don't think that's the case here. Our delete cascades down to node IP addresses and
-						// endpoints, and our reinsertion creates new entities through JPA listeners. So we really do want
-						// to wipe out the old entity (or at least its dependencies). [WLW]
+						// endpoints, and our reinsertion creates new entities. So we really do want to wipe out the old
+						// entity (or at least its dependencies). [WLW]
 						entityManager.flush();
 						
 						log.trace("Creating node: {}", newNode.getId());

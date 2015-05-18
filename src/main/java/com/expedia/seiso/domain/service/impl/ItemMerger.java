@@ -84,7 +84,9 @@ public class ItemMerger {
 
 	private boolean isMergeable(String propName) {
 		// Prevent clients from supplying IDs.
-		return !("class".equals(propName) || "id".equals(propName));
+		return !("class".equals(propName)
+				|| "id".equals(propName)
+				|| "aggregateRotationStatus".equals(propName));
 	}
 
 	@SneakyThrows

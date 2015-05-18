@@ -66,7 +66,7 @@ public class NodeIpAddressPersistenceInterceptor extends AbstractPersistenceInte
 		Node node = nip.getNode();
 		serviceInstanceService.recalculateAggregateRotationStatus(nip);
 		nodeIpAddressRepo.save(nip);
-		serviceInstanceService.recalculateAggregateRotationStatus(nip.getNode());
+		serviceInstanceService.recalculateAggregateRotationStatus(node);
 		nodeRepo.save(node);
 	}
 	
