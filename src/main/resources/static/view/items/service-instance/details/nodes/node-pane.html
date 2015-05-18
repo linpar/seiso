@@ -35,12 +35,12 @@
 				<table class="table table-striped">
 					<thead>
 						<tr>
-							<th style="width:17%">Node</th>
-							<th style="width:17%">Version</th>
-							<th style="width:17%">Health</th>
-							<th style="width:17%">Node Rotation <a href="" tooltip="Node rotation status, aggregated across all IPs and ports."><i class="fa fa-question-circle fa-lg"></i></a></th>
-							<th style="width:17%" colspan="2">IP Address</th>
-							<th style="width:17%">IP Rotation <a href="" tooltip="IP rotation status, aggregated across all ports."><i class="fa fa-question-circle fa-lg"></i></a></th>
+							<th style="width:20%">Node</th>
+							<th style="width:20%">Version</th>
+							<th style="width:20%">Health</th>
+							<!--th style="width:17%">Node Rotation <a href="" tooltip="Node rotation status, aggregated across all IPs and ports."><i class="fa fa-question-circle fa-lg"></i></a></th-->
+							<th style="width:20%" colspan="2">IP Address</th>
+							<th style="width:20%">IP Rotation <a href="" tooltip="IP rotation status, aggregated across all ports."><i class="fa fa-question-circle fa-lg"></i></a></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -65,12 +65,14 @@
 									{{nodeRow.healthStatus.name}}
 								</div>
 							</td>
+							<!--
 							<td style="white-space:nowrap;">
 								<div ng-if="firstRow">
 									<i class="fa fa-circle fa-circle-{{nodeAggregateRotationStatusTypeKey}}"></i>
 									{{nodeRow.nodeAggregateRotationStatus.name}}
 								</div>
 							</td>
+							-->
 							<td><span ng-if="nodeRow.ipAddress" ng-bind="nodeRow.ipAddress"></span></td>
 							<td><span ng-if="ipAddressRoles.length &gt; 1" ng-bind="nodeRow.ipAddressRole"></span></td>
 							<td style="white-space:nowrap;">
