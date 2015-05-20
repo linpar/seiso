@@ -16,6 +16,7 @@
 package com.expedia.serf.web.controller;
 
 import lombok.val;
+import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,7 @@ import com.expedia.serf.web.MediaTypes;
  * @author Willie Wheeler
  */
 @RestController
+@XSlf4j
 public class EntryController {
 	@Autowired private RepoMetaRegistry repoMetaRegistry;
 	@Autowired private PathBuilder pathBuilder;
@@ -41,6 +43,7 @@ public class EntryController {
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	public Resources getEntryResource() {
+		log.trace("Getting entry page");
 		val repoMetas = repoMetaRegistry.getRepoMetasForExportedRepos();
 		val resources = new Resources();
 		resources.addLink(Relations.SELF, pathBuilder.entryPath());

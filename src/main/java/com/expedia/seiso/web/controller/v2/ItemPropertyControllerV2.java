@@ -105,6 +105,20 @@ public class ItemPropertyControllerV2 {
 	
 	@RequestMapping(
 			value = "/{elemId}",
+			method = RequestMethod.PUT,
+			consumes = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	public void putCollectionPropertyElement(
+			@PathVariable String repoKey,
+			@PathVariable String itemKey,
+			@PathVariable String propKey,
+			@PathVariable Long elemId,
+			PEResource peResource) {
+		
+		delegate.putCollectionPropertyElement(ApiVersion.V2, repoKey, itemKey, propKey, elemId, peResource);
+	}
+	
+	@RequestMapping(
+			value = "/{elemId}",
 			method = RequestMethod.DELETE)
 	public void deleteCollectionPropertyElement(
 			@PathVariable String repoKey,

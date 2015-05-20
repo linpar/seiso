@@ -318,6 +318,38 @@ public class BasicItemDelegate {
 		itemService.save(item, true);
 	}
 	
+	public void putCollectionPropertyElement(
+			@NonNull ApiVersion apiVersion,
+			@NonNull String repoKey,
+			@NonNull String itemKey,
+			@NonNull String propKey,
+			@NonNull Long elemId,
+			@NonNull PEResource peResource) {
+		
+		if (apiVersion == ApiVersion.V2) {
+			val parentClass = itemMetaLookup.getItemClass(repoKey);
+			val parent = itemService.find(new SimpleItemKey(parentClass, itemKey));
+			val elem = peResource.getItem();
+			val elemClass = elem.getClass();
+			val elemMeta = itemMetaLookup.getItemMeta(elemClass);
+			val elemWrapper = new DynaItem(elem);
+			elemWrapper.setPropertyValue("id", elemId);
+			elemWrapper.setPropertyValue(elemMeta.getParentPropertyName(), parent);
+			
+			// Disabling this. It requires write a repo adapter, and I want to get away from these compound item keys
+			// and move toward using URIs.
+//			itemService.save(elem, true);
+			
+			// This instead. Note though that this will miss the interceptors.
+			val repo = (CrudRepository) repositories.getRepositoryFor(elemClass);
+			repo.save(elem);
+			
+		} else {
+			val msg = apiVersion + " doesn't support putting collection property elements.";
+			throw new UnsupportedOperationException(msg);
+		}
+	}
+	
 	/**
 	 * Deletes the specified item.
 	 * 

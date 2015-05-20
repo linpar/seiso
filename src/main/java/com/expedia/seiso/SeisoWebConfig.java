@@ -17,8 +17,6 @@ package com.expedia.seiso;
 
 import java.util.List;
 
-import lombok.val;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -29,11 +27,9 @@ import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.serf.SerfProperties;
-import com.expedia.serf.web.BasePathAwareHandlerMapping;
 
 // Don't use @EnableWebMvc here since we are using WebMvcConfigurationSupport directly. [WLW]
 

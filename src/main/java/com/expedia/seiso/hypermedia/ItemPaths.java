@@ -69,7 +69,15 @@ public class ItemPaths {
 		converters.put(DataCenter.class,
 				(Item item) -> new String[] { RepoKeys.DATA_CENTERS, ((DataCenter) item).getKey() });
 		converters.put(DocLink.class,
-				(Item item) -> new String[] { RepoKeys.DOC_LINKS, String.valueOf(((DocLink) item).getId()) });
+				(Item item) -> {
+					DocLink docLink = (DocLink) item;
+					return new String[] {
+							RepoKeys.SERVICES,
+							docLink.getService().getKey(),
+							RepoKeys.DOC_LINKS,
+							String.valueOf(((DocLink) item).getId())
+					};
+				});
 		converters.put(Endpoint.class,
 				(Item item) -> new String[] { RepoKeys.ENDPOINTS, String.valueOf(((Endpoint) item).getId()) });
 		converters.put(Environment.class,
