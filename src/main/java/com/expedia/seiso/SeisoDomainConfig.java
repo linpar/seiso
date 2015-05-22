@@ -75,6 +75,7 @@ import com.expedia.seiso.domain.service.interceptor.NodePersistenceInterceptor;
 import com.expedia.seiso.domain.service.interceptor.ServiceInstancePortPersistenceInterceptor;
 import com.expedia.seiso.gateway.NotificationGateway;
 import com.expedia.seiso.gateway.impl.NotificationGatewayImpl;
+import com.expedia.seiso.util.MbMatrix;
 import com.expedia.serf.service.PersistenceInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -221,6 +222,9 @@ public class SeisoDomainConfig {
 		
 		@Bean
 		public SearchEngine searchEngine() { return new SearchEngineImpl(repositories); }
+		
+		@Bean
+		public MbMatrix mbMatrix() { return new MbMatrix(); }
 		
 		@Bean
 		public NotificationGateway notificationGateway() {

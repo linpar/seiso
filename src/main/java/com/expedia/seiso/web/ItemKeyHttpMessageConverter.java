@@ -58,6 +58,7 @@ public class ItemKeyHttpMessageConverter extends AbstractHttpMessageConverter<It
 	protected ItemKey readInternal(Class<? extends ItemKey> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 		
+		// FIXME Need to support a *list* of URIs, not just a single one.
 		val uri = StreamUtils.copyToString(inputMessage.getBody(), StandardCharsets.UTF_8);
 		return uriToItemKeyConverter.convert(uri);
 	}

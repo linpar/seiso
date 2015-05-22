@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.expedia.seiso.core.ann.FindByKey;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.serf.ann.RestResource;
 
@@ -30,8 +29,10 @@ import com.expedia.serf.ann.RestResource;
 @RestResource(rel = RepoKeys.SEYREN_CHECKS, path = RepoKeys.SEYREN_CHECKS)
 public interface SeyrenCheckRepo extends PagingAndSortingRepository<SeyrenCheck, Long> {
 	
-	@FindByKey
-	SeyrenCheck findBySeyrenId(@Param("id") String seyrenId);
+	@RestResource(path = "find-by-base-url-and-id")
+	SeyrenCheck findBySeyrenBaseUrlAndSeyrenId(
+			@Param("url") String seyrenBaseUrl,
+			@Param("id") String seyrenId);
 	
 	@RestResource(path = "find-by-source")
 	Page<SeyrenCheck> findBySourceKey(@Param("key") String key, Pageable pageable);

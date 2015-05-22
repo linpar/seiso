@@ -143,7 +143,7 @@ public class ItemPaths {
 		
 		// Custom integrations
 		converters.put(SeyrenCheck.class,
-				(Item item) -> new String[] { RepoKeys.SEYREN_CHECKS, ((SeyrenCheck) item).getSeyrenId() });
+				(Item item) -> new String[] { RepoKeys.SEYREN_CHECKS, String.valueOf(((SeyrenCheck) item).getId()) });
 	}
 	
 	public String[] convert(@NonNull Item item) {

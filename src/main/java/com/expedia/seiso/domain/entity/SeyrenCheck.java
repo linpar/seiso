@@ -17,7 +17,6 @@ package com.expedia.seiso.domain.entity;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
@@ -26,7 +25,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
@@ -54,8 +52,11 @@ import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 public class SeyrenCheck extends AbstractItem {
 	
 	@NotNull
+	@Size(min = 1, max = 250)
+	private String seyrenBaseUrl;
+	
+	@NotNull
 	@Size(min = 1, max = 40)
-	@Key
 	private String seyrenId;
 	
 	@NotNull

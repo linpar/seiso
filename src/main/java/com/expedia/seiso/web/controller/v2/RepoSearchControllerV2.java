@@ -92,7 +92,7 @@ public class RepoSearchControllerV2 {
 		val resultType = searchMethod.getReturnType();
 		
 		if (Item.class.isAssignableFrom(resultType)) {
-			throw new UnsupportedOperationException("Repo search with unique result not yet supported");
+			return delegate.repoSearchUniqueResult(ApiVersion.V2, repoKey, search, view, params);
 		} else if (itemMeta.isPagingRepo()) {
 			return delegate.repoSearch(ApiVersion.V2, repoKey, search, view, pageable, params);
 		} else {

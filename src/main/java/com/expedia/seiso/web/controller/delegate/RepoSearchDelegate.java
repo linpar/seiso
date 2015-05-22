@@ -38,10 +38,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 
 import com.expedia.seiso.core.ann.Projection;
+import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.serf.exception.ResourceNotFoundException;
 import com.expedia.serf.hypermedia.Link;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
@@ -65,6 +67,24 @@ public class RepoSearchDelegate {
 	
 	public Resource getRepoSearchList(@NonNull ApiVersion apiVersion, @NonNull String repoKey) {
 		return resourceAssembler.toRepoSearchList(apiVersion, repoKey);
+	}
+	
+	public Object repoSearchUniqueResult(
+			@NonNull ApiVersion apiVersion,
+			@NonNull String repoKey,
+			@NonNull String search,
+			@NonNull String view,
+			@NonNull MultiValueMap<String, String> params) {
+		
+		val itemClass = itemMetaLookup.getItemClass(repoKey);
+		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
+		val searchMethod = itemMeta.getRepositorySearchMethod(search);
+		notNull(searchMethod, "Unknown search: " + search);
+		val returnType = searchMethod.getReturnType();
+		val proj = itemMeta.getProjectionNode(apiVersion, Projection.Cardinality.COLLECTION, view);
+		val result = getUniqueResult(itemClass, searchMethod, params);
+		return resourceAssembler.toResource(apiVersion, result, proj);
+//		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	
 	/**
@@ -111,6 +131,49 @@ public class RepoSearchDelegate {
 			throw new UnsupportedOperationException(
 					"Don't know how to handle search " + search + " with return type " + returnType.getName());
 		}
+	}
+	
+	// TODO DRY up the getUniqueResult() and getResult() methods below.
+	
+	// FIXME Some of this belongs in ItemServiceImpl.
+	private Item getUniqueResult(
+			Class<?> itemClass,
+			Method searchMethod,
+			MultiValueMap<String, String> params) {
+		
+		val searchMethodName = searchMethod.getName();
+		log.trace("Finding {} using method {}", itemClass.getSimpleName(), searchMethodName);
+		val repo = repositories.getRepositoryFor(itemClass);
+		val paramClasses = searchMethod.getParameterTypes();
+		val allAnns = searchMethod.getParameterAnnotations();
+		val paramVals = new Object[paramClasses.length];
+		
+		for (int i = 0; i < paramClasses.length; i++) {
+			log.trace("Processing param {}", i);
+			val currentAnns = allAnns[i];
+			for (val currentAnn : currentAnns) {
+				if (Param.class.equals(currentAnn.annotationType())) {
+					log.trace("Found @Param");
+					if (conversionService.canConvert(String.class, paramClasses[i])) {
+						val paramAnn = (Param) currentAnn;
+						val paramName = paramAnn.value();
+						val paramValAsStr = params.getFirst(paramName);
+						log.trace("Setting param: {}={}", paramName, paramValAsStr);
+						paramVals[i] = conversionService.convert(paramValAsStr, paramClasses[i]);
+					} else {
+						log.trace("BUG! Not setting the param value!");
+					}
+				}
+			}
+		}
+		
+		log.trace("Invoking {}.{} with {} params", repo.getClass().getName(), searchMethodName, paramVals.length);
+		Item result = (Item) ReflectionUtils.invokeMethod(searchMethod, repo, paramVals);
+		if (result == null) {
+			// TODO Add info about the search
+			throw new ResourceNotFoundException();
+		}
+		return result;
 	}
 	
 	// FIXME Some of this belongs in ItemServiceImpl.

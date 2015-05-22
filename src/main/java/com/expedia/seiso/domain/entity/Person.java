@@ -99,7 +99,11 @@ public class Person extends AbstractItem {
 	// with our own machines. [WLW]	
 	@Size(max = 240)
 	private String ldapDn;
-
+	
+	// Don't get too attached to this as it's just for fun, and probably won't last.
+	@Size(min = 4, max = 4)
+	private String mbType;
+	
 	// Setting this lazy. Otherwise Hibernate is issuing a separate select for it. :-O
 	// UGH, having lazy here means there will be a proxy, and this was causing an EntityLinks lookup to fail since it
 	// was doing that by classname. (The proxy has a funky classname.) [WLW]

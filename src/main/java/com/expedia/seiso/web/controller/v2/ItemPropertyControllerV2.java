@@ -15,11 +15,14 @@
  */
 package com.expedia.seiso.web.controller.v2;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,7 +82,7 @@ public class ItemPropertyControllerV2 {
 	}
 	
 	/**
-	 * Assigns an item to a given property.
+	 * Posts a URI list to a collection resource on an item.
 	 * 
 	 * @param repoKey
 	 *            Repository key
@@ -90,18 +93,19 @@ public class ItemPropertyControllerV2 {
 	 * @param propItemKey
 	 *            Key for the item to assign to the property
 	 */
-//	@RequestMapping(
-//			method = RequestMethod.PUT,
-//			consumes = MediaTypes.TEXT_URI_LIST_VALUE)
+	@RequestMapping(
+			method = RequestMethod.POST,
+			consumes = MediaTypes.TEXT_URI_LIST_VALUE)
+	// TODO What's the correct response status here?
 //	@ResponseStatus(HttpStatus.NO_CONTENT)
-//	public void putProperty(
-//			@PathVariable String repoKey,
-//			@PathVariable String itemKey,
-//			@PathVariable String propKey,
-//			@RequestBody(required = false) ItemKey propItemKey) {
-//		
-//		delegate.putProperty(repoKey, itemKey, propKey, propItemKey);
-//	}
+	public void postUriList(
+			@PathVariable String repoKey,
+			@PathVariable String itemKey,
+			@PathVariable String propKey,
+			@RequestBody(required = false) List<String> uriList) {
+		
+		delegate.postUriList(repoKey, itemKey, propKey, uriList);
+	}
 	
 	@RequestMapping(
 			value = "/{elemId}",

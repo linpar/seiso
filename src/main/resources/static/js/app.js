@@ -22,6 +22,8 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoFilters
 				.when('/environments/:key', route('EnvironmentDetails', 'items/environment/details/environment-details')) 
 				.when('/load-balancers', route('LoadBalancerList', 'items/load-balancer/list/load-balancer-list'))
 				.when('/load-balancers/:name', route('LoadBalancerDetails', 'items/load-balancer/details/load-balancer-details'))
+				.when('/mb', route('MB', 'mb/index'))
+				.when('/mb/:type', route('MBProfile', 'mb/profile'))
 				.when('/machines/:name', route('MachineDetails', 'items/machine/details/machine-details'))
 				.when('/nodes/:name', route('NodeDetails', 'items/node/details/node-details'))
 				.when('/people', route('PersonList', 'items/person/list/person-list'))

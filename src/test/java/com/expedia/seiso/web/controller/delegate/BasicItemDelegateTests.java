@@ -22,6 +22,7 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -209,11 +210,16 @@ public class BasicItemDelegateTests {
 		verify(itemService).save(aristotle, false);
 	}
 	
-	@Test
-	public void putProperty() {
-		delegate.putProperty(PAGING_REPO_KEY, ITEM_KEY, PAGING_ITEM_PROPERTY_KEY, itemKey);
-		// TODO
-	}
+//	@Test
+//	public void postUriList() {
+//		List<String> uriList = new ArrayList<>();
+//		delegate.postUriList(
+//				PAGING_REPO_KEY,
+//				ITEM_KEY,
+//				PAGING_ITEM_PROPERTY_KEY,
+//				uriList);
+//		// TODO
+//	}
 	
 	@Test
 	public void delete() {

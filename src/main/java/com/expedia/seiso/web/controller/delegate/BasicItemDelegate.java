@@ -231,6 +231,29 @@ public class BasicItemDelegate {
 		return result;
 	}
 	
+	/**
+	 * Posts a URI list to a collection resource on an item.
+	 * 
+	 * @param repoKey
+	 *            Repository key
+	 * @param itemKey
+	 *            Item key
+	 * @param propKey
+	 *            Property key
+	 * @param uriList
+	 *            URI list to post
+	 */
+	public void postUriList(
+			@NonNull String repoKey,
+			@NonNull String itemKey,
+			@NonNull String propKey,
+			List<String> uriList) {
+		
+		log.trace("Posting URI list: size={}", uriList.size());
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+	
+	
 	public void postCollectionPropertyElement(
 			@NonNull ApiVersion apiVersion,
 			@NonNull String repoKey,
@@ -283,39 +306,6 @@ public class BasicItemDelegate {
 		}
 		
 		itemService.save(item, mergeAssociations);
-	}
-	
-	/**
-	 * Assigns an item to a given property.
-	 * 
-	 * @param repoKey
-	 *            Repository key
-	 * @param itemKey
-	 *            Item key
-	 * @param propKey
-	 *            Property key
-	 * @param itemUri
-	 *            Item URI, or null to null out the property
-	 */
-	public void putProperty(
-			@NonNull String repoKey,
-			@NonNull String itemKey,
-			@NonNull String propKey,
-			ItemKey propItemKey) {
-		
-		log.trace("propItemKey={}", propItemKey);
-		
-		// Metamodel
-		val itemClass = itemMetaLookup.getItemClass(repoKey);
-		val itemMeta = itemMetaLookup.getItemMeta(itemClass);
-		val propName = itemMeta.getPropertyName(propKey);
-		
-		// Update and save
-		val item = itemService.find(new SimpleItemKey(itemClass, itemKey));
-		val dynaItem = new DynaItem(item);
-		val propItem = (propItemKey == null ? null : itemService.find(propItemKey));
-		dynaItem.setPropertyValue(propName, propItem);
-		itemService.save(item, true);
 	}
 	
 	public void putCollectionPropertyElement(
