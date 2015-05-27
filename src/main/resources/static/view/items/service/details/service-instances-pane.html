@@ -9,22 +9,28 @@
 	<div ng-show="serviceInstances" ng-if="serviceInstances.length &gt; 0">
 		<table class="table">
 			<colgroup>
-				<col style="width:33%">
-				<col style="width:33%">
-				<col style="width:33%">
+				<col style="width:25%">
+				<col style="width:25%">
+				<col style="width:25%">
+				<col style="width:25%">
 			</colgroup>
 			<thead>
 				<tr>
 					<th>Service Instance</th>
+					<th>Node Health</th>
 					<th>Environment</th>
 					<th>Data Center</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="serviceInstance in serviceInstances">
+				<tr ng-repeat="serviceInstance in serviceInstances" ng-init="
+						environment = serviceInstance._embedded.environment;
+						dataCenter = serviceInstance._embedded.dataCenter;">
+						
 					<td><a ng-href="{{uri('service-instances', serviceInstance.key)}}">{{serviceInstance.key}}</a></td>
-					<td><a ng-href="{{uri('environments', serviceInstance.environment.key)}}">{{serviceInstance.environment.name}}</a></td>
-					<td><a ng-href="{{uri('data-centers', serviceInstance.dataCenter.key)}}">{{serviceInstance.dataCenter.name}}</a></td>
+					<td><i class="fa fa-circle fa-circle-{{serviceInstance.healthKey}}"></i> {{serviceInstance.percentHealthy}} ({{serviceInstance.numHealthy}} of {{serviceInstance.numNodes}})</td>
+					<td><a ng-href="{{uri('environments', environment.key)}}">{{environment.name}}</a></td>
+					<td><a ng-href="{{uri('data-centers', dataCenter.key)}}">{{dataCenter.name}}</a></td>
 				</tr>
 			</tbody>
 		</table>

@@ -389,8 +389,12 @@ var serviceDetailsController = function() {
 		})();
 		
 		(function getServiceInstances() {
-			$http.get('/v1/services/' + $routeParams.key + '?view=instances')
-					.success(function(data) { $scope.serviceInstances = data.serviceInstances; })
+			var successHandler = function(data) {
+				$scope.serviceInstances = data._embedded.items;
+			}
+//			$http.get('/v1/services/' + $routeParams.key + '?view=instances')
+			$http.get('/v2/service-instances/search/find-by-service?key=' + $routeParams.key, { headers : { 'Accept': 'application/hal+json' } })
+					.success(successHandler)
 					.error(function() { alert('Error while getting service instances.'); });
 		})();
 		

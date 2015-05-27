@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -33,6 +34,20 @@ import com.expedia.serf.ann.RestResource;
 @RestResource(rel = RepoKeys.SERVICE_INSTANCES, path = RepoKeys.SERVICE_INSTANCES)
 public interface ServiceInstanceRepo
 		extends PagingAndSortingRepository<ServiceInstance, Long>, ServiceInstanceRepoCustom {
+	
+	public static final String FIND_COUNTS_BY_SERVICE =
+			"select " +
+			"  si," +
+			"  count(*), " +
+			"  count(case st.key when 'success' then 1 end) " +
+			"from " +
+			"  Node n inner join n.serviceInstance si, " +
+			"  StatusType st " +
+			"where " +
+			"  si.service.key = :key " +
+			"  and n.healthStatus.statusType = st " +
+			"group by " +
+			"  si.id";
 
 	@FindByKey
 	ServiceInstance findByKey(@Param("key") String key);
@@ -50,4 +65,11 @@ public interface ServiceInstanceRepo
 	
 	@RestResource(path = "find-by-source")
 	Page<ServiceInstance> findBySourceKey(@Param("key") String key, Pageable pageable);
+	
+	// TODO Can't expose this yet, because the RepoSearchDelegate doesn't know how to handle
+	// Object[] results. The ResourceAssembler doesn't know either. Do we treat the individual results
+	// here as resources? (Service instances?) [WLW]
+//	@RestResource(path = "find-counts-by-service")
+	@Query(FIND_COUNTS_BY_SERVICE)
+	List<Object[]> findHealthyNodeCountsByService(@Param("key") String key);
 }
