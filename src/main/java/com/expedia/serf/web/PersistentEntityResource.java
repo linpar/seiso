@@ -20,6 +20,7 @@ import lombok.ToString;
 
 import org.springframework.data.mapping.PersistentEntity;
 
+import com.expedia.serf.hypermedia.hal.HalResource;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -30,11 +31,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @ToString
 public class PersistentEntityResource {
 	private PersistentEntity<?, ?> persistentEntity;
-	private Object entity;
+	private HalResource halResource;
 	
-	public PersistentEntityResource(PersistentEntity<?, ?> persistentEntity, Object entity) {
+	public PersistentEntityResource(PersistentEntity<?, ?> persistentEntity, HalResource halResource) {
 		this.persistentEntity = persistentEntity;
-		this.entity = entity;
+		this.halResource = halResource;
 	}
 	
 	@JsonIgnore
@@ -43,7 +44,7 @@ public class PersistentEntityResource {
 	}
 	
 	@JsonAnyGetter
-	public Object getEntity() {
-		return entity;
+	public HalResource getHalResource() {
+		return halResource;
 	}
 }

@@ -84,11 +84,11 @@ public class EntityController {
 			@RequestParam(value = "exclude", required = false) String exclude,
 			PersistentEntityResource peResource) {
 		
-		log.trace("POST /{}/{}", basePath, repoPath);
-		val entity = peResource.getEntity();
-		val dynaEntity = new DynaEntity(entity);
-		dynaEntity.setId(null);
-		crudService.save(entity, parseList(include), parseList(exclude));
+//		log.trace("POST /{}/{}", basePath, repoPath);
+//		val entity = peResource.getEntity();
+//		val dynaEntity = new DynaEntity(entity);
+//		dynaEntity.setId(null);
+//		crudService.save(entity, parseList(include), parseList(exclude));
 		
 		// TODO Return 201 CREATED
 	}
@@ -104,11 +104,11 @@ public class EntityController {
 			@RequestParam(value = "exclude", required = false) String exclude,
 			PersistentEntityResource peResource) {
 		
-		log.trace("PUT /{}/{}/{}", basePath, repoPath, entityId);
-		val entity = peResource.getEntity();
-		val dynaEntity = new DynaEntity(entity);
-		dynaEntity.setId(entityId);
-		crudService.save(entity, parseList(include), parseList(exclude));
+//		log.trace("PUT /{}/{}/{}", basePath, repoPath, entityId);
+//		val entity = peResource.getEntity();
+//		val dynaEntity = new DynaEntity(entity);
+//		dynaEntity.setId(entityId);
+//		crudService.save(entity, parseList(include), parseList(exclude));
 	}
 	
 	@SuppressWarnings("rawtypes")

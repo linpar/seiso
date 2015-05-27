@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
@@ -48,9 +47,9 @@ import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.hypermedia.ItemLinks;
 import com.expedia.seiso.hypermedia.LinkFactory;
 import com.expedia.seiso.web.ApiVersion;
-import com.expedia.seiso.web.PEResource;
-import com.expedia.seiso.web.PEResources;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.seiso.web.dto.v1.PEResource;
+import com.expedia.seiso.web.dto.v1.PEResources;
 import com.expedia.serf.exception.SaveAllException;
 import com.expedia.serf.exception.ValidationException;
 import com.expedia.serf.hypermedia.PagedResources;
@@ -67,10 +66,9 @@ import com.expedia.serf.util.SaveAllResult;
  * @author Willie Wheeler
  */
 @Component
-@RequiredArgsConstructor
 @XSlf4j
 public class BasicItemDelegate {
-	@NonNull private ResourceAssembler resourceAssembler;
+	@Autowired private ResourceAssembler resourceAssembler;
 	@Autowired @Setter private ItemMetaLookup itemMetaLookup;
 	@Autowired @Setter private ItemService itemService;
 	@Autowired @Setter private Validator validator;

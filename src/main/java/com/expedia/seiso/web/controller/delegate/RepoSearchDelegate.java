@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
@@ -56,14 +54,13 @@ import com.expedia.serf.hypermedia.Resources;
  * @author Willie Wheeler
  */
 @Component
-@RequiredArgsConstructor
 @XSlf4j
 public class RepoSearchDelegate {
-	@NonNull private ResourceAssembler resourceAssembler;
-	@Autowired @Setter private ItemMetaLookup itemMetaLookup;
-	@Autowired @Setter private Repositories repositories;
-	@Autowired @Setter private ItemService itemService;
-	@Autowired @Setter private ConversionService conversionService;
+	@Autowired private ResourceAssembler resourceAssembler;
+	@Autowired private ItemMetaLookup itemMetaLookup;
+	@Autowired private Repositories repositories;
+	@Autowired private ItemService itemService;
+	@Autowired private ConversionService conversionService;
 	
 	public Resource getRepoSearchList(@NonNull ApiVersion apiVersion, @NonNull String repoKey) {
 		return resourceAssembler.toRepoSearchList(apiVersion, repoKey);

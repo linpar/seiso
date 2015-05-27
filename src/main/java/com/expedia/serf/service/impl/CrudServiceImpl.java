@@ -52,12 +52,11 @@ public class CrudServiceImpl implements CrudService {
 		DynaEntity dynaEntity = new DynaEntity(entityData);
 		Long id = dynaEntity.getId();
 		
-		Object entityToSave = (id == null ? SerfReflectionUtils.createInstance(entityClass) : repo.findOne(id));
-		String[] propsToIgnore = SerfBeanUtils.determinePropertiesToIgnore(entityClass, includeProps, excludeProps);
-		BeanUtils.copyProperties(entityData, entityToSave, propsToIgnore);
+		final Object entity = (id == null ? SerfReflectionUtils.createInstance(entityClass) : repo.findOne(id));
+		String[] ignoreProps = SerfBeanUtils.determinePropertiesToIgnore(entityClass, includeProps, excludeProps);
+		BeanUtils.copyProperties(entityData, entity, ignoreProps);
 		
-		log.trace("entityToSave={}", entityToSave);
-		
-		repo.save(entityToSave);
+		log.trace("entity={}", entity);		
+		repo.save(entity);
 	}
 }

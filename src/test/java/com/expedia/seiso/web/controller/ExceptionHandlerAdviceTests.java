@@ -79,7 +79,7 @@ public class ExceptionHandlerAdviceTests {
 	public void handleJsonMappingException() {
 		val result = advice.handleJsonMappingException(jsonMappingException, webRequest);
 		assertNotNull(result);
-		assertEquals(C.EC_INVALID_REQUEST_JSON_PAYLOAD, result.getCode());
+		assertEquals(C.EC_INVALID_REQUEST_BODY, result.getCode());
 		assertNotNull(result.getMessage());
 	}
 

@@ -76,7 +76,9 @@ import com.expedia.seiso.domain.service.interceptor.ServiceInstancePortPersisten
 import com.expedia.seiso.gateway.NotificationGateway;
 import com.expedia.seiso.gateway.impl.NotificationGatewayImpl;
 import com.expedia.seiso.util.MbMatrix;
+import com.expedia.serf.service.CrudService;
 import com.expedia.serf.service.PersistenceInterceptor;
+import com.expedia.serf.service.impl.CrudServiceImpl;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
@@ -213,6 +215,9 @@ public class SeisoDomainConfig {
 		public ServiceInstancePortPersistenceInterceptor serviceInstancePortPersistenceInterceptor() {
 			return new ServiceInstancePortPersistenceInterceptor();
 		}
+		
+		@Bean
+		public CrudService crudService() { return new CrudServiceImpl(); }
 		
 		@Bean
 		public ItemService itemService() { return new ItemServiceImpl(); }

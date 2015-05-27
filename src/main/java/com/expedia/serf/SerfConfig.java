@@ -15,29 +15,17 @@
  */
 package com.expedia.serf;
 
-import lombok.val;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.expedia.serf.hypermedia.PathBuilder;
-import com.expedia.serf.meta.RepoMetaRegistry;
-import com.expedia.serf.service.CrudService;
-import com.expedia.serf.service.impl.CrudServiceImpl;
-import com.expedia.serf.web.PersistentEntityResourceResolver;
-import com.expedia.serf.web.controller.EntityController;
-import com.expedia.serf.web.controller.EntryController;
 
 /**
  * @author Willie Wheeler
  */
-@Configuration
+//@Configuration
 public class SerfConfig {
 	
-	@Bean
-	public SerfProperties serfProperties() {
-		return new SerfProperties();
-	}
+//	@Bean
+//	public SerfProperties serfProperties() {
+//		return new SerfProperties();
+//	}
 	
 //	@Bean
 //	public CrudService crudService() {

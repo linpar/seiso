@@ -35,6 +35,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.expedia.serf.exception.JavaConfigurationException;
+import com.expedia.serf.hypermedia.hal.HalResource;
 import com.expedia.serf.meta.RepoMetaRegistry;
 import com.expedia.serf.util.ResolverUtils;
 
@@ -94,23 +95,27 @@ public class PersistentEntityResourceResolver implements HandlerMethodArgumentRe
 		}
 		
 		val persistentEntity = repositories.getPersistentEntity(entityClass);
-		val entity = toEntity(entityClass, nativeRequest);
-		return new PersistentEntityResource(persistentEntity, entity);
+		val halResource = toHalResource(nativeRequest);
+		return new PersistentEntityResource(persistentEntity, halResource);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Object toEntity(Class entityClass, HttpServletRequest request) throws IOException {
+	private HalResource toHalResource(HttpServletRequest request) throws IOException {
 		val wrappedRequest = resolverUtils.wrapRequest(request);
 		val contentType = wrappedRequest.getHeaders().getContentType();
-		for (val messageConverter : messageConverters) {
-			if (messageConverter.canRead(entityClass, contentType)) {
-				return messageConverter.read(entityClass, wrappedRequest);
+		for (HttpMessageConverter messageConverter : messageConverters) {
+//			if (messageConverter.canRead(entityClass, contentType)) {
+//				return messageConverter.read(entityClass, wrappedRequest);
+//			}
+			log.trace("Testing to see whether {} can read {}", messageConverter, contentType);
+			if (messageConverter.canRead(HalResource.class, contentType)) {
+				log.trace("Yes!");
+				return (HalResource) messageConverter.read(HalResource.class, wrappedRequest);
+			} else {
+				log.trace("No!");
 			}
 		}
-		val errMsg = String.format(
-				"No HttpMessageConverter for entityClass=%s, contentType=%s",
-				entityClass.getName(),
-				contentType);
+		val errMsg = String.format("No HttpMessageConverter for HalResource, contentType=%s", contentType);
 		throw new JavaConfigurationException(errMsg);
 	}
 }

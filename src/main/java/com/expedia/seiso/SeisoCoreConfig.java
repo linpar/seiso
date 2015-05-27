@@ -21,6 +21,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.expedia.seiso.conf.CustomProperties;
+import com.expedia.seiso.web.jackson.orig.OrigMapper;
+import com.expedia.seiso.web.jackson.orig.OrigModule;
+import com.expedia.seiso.web.jackson.orig.OrigPagedResourcesSerializer;
+import com.expedia.seiso.web.jackson.orig.OrigResourceAssembler;
+import com.expedia.seiso.web.jackson.orig.OrigResourceSerializer;
+import com.expedia.seiso.web.jackson.orig.OrigResourcesSerializer;
+import com.expedia.serf.SerfProperties;
 import com.expedia.serf.hypermedia.hal.HalMapper;
 import com.expedia.serf.hypermedia.hal.HalModule;
 import com.expedia.serf.hypermedia.hal.HalPagedResourcesSerializer;
@@ -35,8 +42,29 @@ import com.expedia.serf.hypermedia.hal.HalResourcesSerializer;
 public class SeisoCoreConfig {
 	
 	@Bean
+	public SerfProperties serfProperties() { return new SerfProperties(); }
+	
+	@Bean
 	public CustomProperties customProperties() { return new CustomProperties(); }
 	
+	
+	// =================================================================================================================
+	// Jackson object mappers
+	// =================================================================================================================
+	
+	// V1
+	@Bean
+	public OrigMapper origMapper() {
+		val assembler = new OrigResourceAssembler();
+		// @formatter:off
+		return new OrigMapper(new OrigModule(
+				new OrigResourceSerializer(assembler),
+				new OrigResourcesSerializer(assembler),
+				new OrigPagedResourcesSerializer(assembler)));
+		// @formatter:on
+	}
+	
+	// V2
 	// Putting this here since both AMQP and REST API need it.
 	// Actually the NotificationGatewayImpl uses the ResourceAssembler too, so we may need to move that here.
 	@Bean

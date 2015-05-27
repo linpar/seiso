@@ -139,8 +139,6 @@ public class Node extends AbstractItem {
 	@RestResource(path = "machine")
 	private Machine machine;
 
-//	@NonNull
-//	@ElementCollection
 	@OneToMany(mappedBy = "node", cascade = CascadeType.ALL, orphanRemoval = true)
 	@RestResource(path = "ip-addresses")
 	private List<NodeIpAddress> ipAddresses = new ArrayList<>();

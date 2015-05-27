@@ -22,7 +22,6 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,6 +29,7 @@ import lombok.val;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
@@ -46,9 +46,9 @@ import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.service.ItemService;
 import com.expedia.seiso.web.ApiVersion;
-import com.expedia.seiso.web.PEResources;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.seiso.web.dto.v1.PEResources;
 import com.expedia.serf.hypermedia.PagedResources;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
@@ -72,7 +72,7 @@ public class BasicItemDelegateTests {
 	private static final String VIEW_KEY = "my-view";
 	
 	// Class under test
-	private BasicItemDelegate delegate;
+	@InjectMocks private BasicItemDelegate delegate;
 	
 	// Dependencies
 	@Mock private Validator validator;
@@ -98,14 +98,10 @@ public class BasicItemDelegateTests {
 	
 	@Before
 	public void setUp() {
+		this.delegate = new BasicItemDelegate();
 		MockitoAnnotations.initMocks(this);
 		setUpTestData();
 		setUpDependencies();
-		this.delegate = new BasicItemDelegate(resourceAssembler);
-		delegate.setItemMetaLookup(itemMetaLookup);
-		delegate.setItemService(itemService);
-		delegate.setValidator(validator);
-		
 	}
 	
 	private void setUpTestData() {

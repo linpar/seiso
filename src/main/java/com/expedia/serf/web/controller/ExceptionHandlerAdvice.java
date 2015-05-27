@@ -20,7 +20,7 @@ import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,9 +33,8 @@ import com.expedia.serf.exception.ResourceNotFoundException;
 import com.expedia.serf.exception.SaveAllException;
 import com.expedia.serf.exception.ValidationException;
 import com.expedia.serf.util.ErrorObject;
-import com.expedia.serf.util.SaveAllResult;
 import com.expedia.serf.util.ResourceValidationError;
-import com.expedia.serf.util.ResourceValidationErrorFactory;
+import com.expedia.serf.util.SaveAllResult;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
@@ -59,14 +58,19 @@ public class ExceptionHandlerAdvice {
 		return new ErrorObject(C.EC_RESOURCE_NOT_FOUND, e.getMessage());
 	}
 
-	// TODO Handle other kinds of JSON issue, like illegal JSON, wrong schema, etc. [WLW]
-
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorObject handleHttpMessageNotReadableException(HttpMessageNotReadableException e, WebRequest request) {
+		return new ErrorObject(C.EC_REQUEST_BODY_REQUIRED, "This request requires a request body.");
+	}
+	
 	// FIXME Oh, this doesn't fire, because it's the deserializer that throws the exception, not the controller.
 	@ExceptionHandler(JsonMappingException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public ErrorObject handleJsonMappingException(JsonMappingException e, WebRequest request) {
-		return new ErrorObject(C.EC_INVALID_REQUEST_JSON_PAYLOAD, e.getMessage());
+		return new ErrorObject(C.EC_INVALID_REQUEST_BODY, e.getMessage());
 	}
 	
 	@ExceptionHandler(ValidationException.class)

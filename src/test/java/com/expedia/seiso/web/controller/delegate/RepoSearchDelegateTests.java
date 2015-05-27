@@ -28,6 +28,7 @@ import lombok.val;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.convert.ConversionService;
@@ -60,7 +61,7 @@ public class RepoSearchDelegateTests {
 	private static final String VIEW_KEY = Projection.DEFAULT;
 	
 	// Class under test
-	private RepoSearchDelegate delegate;
+	@InjectMocks private RepoSearchDelegate delegate;
 	
 	// Dependencies
 	@Mock private ItemMetaLookup itemMetaLookup;
@@ -83,15 +84,10 @@ public class RepoSearchDelegateTests {
 	
 	@Before
 	public void setUp() {
+		this.delegate = new RepoSearchDelegate();
 		MockitoAnnotations.initMocks(this);
 		setUpTestData();
 		setUpDependencies();
-		
-		this.delegate = new RepoSearchDelegate(resourceAssembler);
-		delegate.setItemMetaLookup(itemMetaLookup);
-		delegate.setRepositories(repositories);
-		delegate.setItemService(itemService);
-		delegate.setConversionService(conversionService);
 	}
 
 	private void setUpTestData() {
