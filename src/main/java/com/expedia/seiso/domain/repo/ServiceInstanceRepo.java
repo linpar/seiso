@@ -39,7 +39,7 @@ public interface ServiceInstanceRepo
 			"select " +
 			"  si," +
 			"  count(*), " +
-			"  count(case st.key when 'success' then 1 end) " +
+			"  count(case when st.key in ('info', 'success') then 1 end) " +
 			"from " +
 			"  Node n inner join n.serviceInstance si, " +
 			"  StatusType st " +
