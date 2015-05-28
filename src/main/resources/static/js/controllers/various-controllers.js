@@ -378,42 +378,6 @@ var personDetailsController = function() {
 	return [ '$scope', '$http', '$routeParams', controller ];
 }
 
-var serviceDetailsController = function() {
-	var controller = function($scope, v2Api, $http, $routeParams) {
-		(function getService() {
-			$http.get('/v1/services/' + $routeParams.key)
-					.success(function(data) {
-						$scope.model.page.title = pageTitle(data.name);
-						$scope.service = data;
-					})
-					.error(function() { alert('Error while getting service.'); });
-		})();
-		
-		(function getServiceInstances() {
-			var successHandler = function(data) {
-				$scope.serviceInstances = data._embedded.items;
-			}
-			$http.get('/v2/service-instances/search/find-by-service?key=' + $routeParams.key, { headers : { 'Accept': 'application/hal+json' } })
-					.success(successHandler)
-					.error(function() { alert('Error while getting service instances.'); });
-		})();
-		
-		(function getServiceDocumentation() {
-			$scope.serviceDocumentationStatus = 'loading';
-			var successHandler = function(data) {
-				$scope.docLinks = data;
-				$scope.serviceDocumentationStatus = 'loaded';
-			}
-			var errorHandler = function() {
-				$scope.serviceDocumentationStatus = 'error';
-			}
-			v2Api.get('/v2/services/' + $routeParams.key + '/doc-links', successHandler, errorHandler);
-		})();
-	}
-	
-	return [ '$scope', 'v2Api', '$http', '$routeParams', controller ];
-}
-
 var statusListController = function() {
 	var controller = function($scope, $http) {
 		$scope.model.page.title = pageTitle('Statuses');

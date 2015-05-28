@@ -29,7 +29,9 @@ angular.module('seiso', [ 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'seisoFilters
 				.when('/people', route('PersonList', 'items/person/list/person-list'))
 				.when('/people/:username', route('PersonDetails', 'items/person/details/person-details'))
 				.when('/services', route('ServiceList', 'items/service/list/service-list'))
-				.when('/services/:key', route('ServiceDetails', 'items/service/details/service-details'))
+				.when('/services/:key', {
+					templateUrl: 'view/items/service/details/service-details.html'
+				})
 				.when('/service-instances', route('ServiceInstanceList', 'items/service-instance/list/service-instance-list'))
 				.when('/service-instances/:key', {
 					templateUrl: 'view/items/service-instance/details/service-instance-details.html'

@@ -23,11 +23,18 @@ angular.module('seisoControllers', [])
 		.controller('NodeDetailsController', nodeDetailsController())
 		.controller('PersonListController', pagingController('People', '/v1/people', 'lastName,firstName'))
 		.controller('PersonDetailsController', personDetailsController())
+		
 		.controller('ServiceListController', pagingController('Services', '/v1/services', 'name'))
+		
 		.controller('ServiceDetailsController', serviceDetailsController())
+		.controller('ServiceServiceInstancesController', serviceServiceInstancesController())
+		.controller('ServiceDocumentationController', serviceDocumentationController())
+		
 		.controller('ServiceInstanceListController', pagingController('Service Instances', '/v1/service-instances', 'key'))
+		
 		.controller('ServiceInstanceDetailsController', serviceInstanceDetailsController())
 		.controller('ServiceInstanceNodesController', serviceInstanceNodesController())
+		
 		.controller('StatusListController', statusListController())
 		.controller('TypeListController', typeListController())
 		;

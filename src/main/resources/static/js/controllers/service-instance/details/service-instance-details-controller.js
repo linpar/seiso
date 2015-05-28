@@ -1,5 +1,7 @@
 var serviceInstanceDetailsController = function() {
 	var controller = function($scope, v2Api, $routeParams) {
+		$scope.serviceInstanceStatus = 'loading';
+		var path = "/v2/service-instances/" + $routeParams.key;
 		var successHandler = function(data) {
 			var serviceInstance = data;
 			var siEmbedded = serviceInstance._embedded;
@@ -15,11 +17,12 @@ var serviceInstanceDetailsController = function() {
 			$scope.owner = service._embedded.owner;
 			$scope.dashboards = siEmbedded.dashboards;
 			$scope.checks = siEmbedded.seyrenChecks;
+			$scope.serviceInstanceStatus = 'loaded';
 		}
-		// TODO Make the error handling like other controllers'.
-		var errorHandler = function() { alert("Error while getting service instance."); }
-		v2Api.get('/v2/service-instances/' + $routeParams.key, successHandler, errorHandler);
+		var errorHandler = function() {
+			$scope.serviceInstanceStatus = 'error';
+		}
+		v2Api.get(path, successHandler, errorHandler);
 	}
-	
 	return [ '$scope', 'v2Api', '$routeParams', controller ];
 }

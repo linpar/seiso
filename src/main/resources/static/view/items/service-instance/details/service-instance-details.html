@@ -1,8 +1,11 @@
-<div ng-controller="ServiceInstanceDetailsController">
-	<div id="page-spinner-panel" ng-hide="serviceInstance">
-		<i class="fa fa-spinner fa-spin fa-5x"></i>
+<div ng-controller="ServiceInstanceDetailsController" ng-switch="serviceInstanceStatus">
+	<div ng-switch-when="loading">
+		<div id="page-spinner-panel"><i class="fa fa-spinner fa-spin fa-5x"></i></div>
 	</div>
-	<div ng-show="serviceInstance">
+	<div ng-switch-when="error">
+		<p><i class="fa fa-exclamation-triangle"></i> Couldn't load service instance.</p>
+	</div>
+	<div ng-switch-when="loaded">
 		<div class="page-header">
 			<ul class="breadcrumb">
 				<li><a ng-href="{{uri()}}">Home</a></li>
