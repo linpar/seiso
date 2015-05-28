@@ -23,9 +23,7 @@
 		</div>
 		<div ng-switch-when="loaded">
 			<div ng-if="nodeRows.length == 0">
-				<div class="alert alert-info">
-					<i class="fa fa-info-circle"></i> No nodes.
-				</div>
+				<p><i class="fa fa-info-circle"></i> No nodes.</p>
 			</div>
 			<div ng-if="nodeRows.length &gt; 0">
 				<!-- TODO Refactor this and node-alerts.html, which are almost exactly the same. -->

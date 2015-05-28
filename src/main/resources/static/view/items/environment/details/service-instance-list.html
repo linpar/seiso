@@ -7,9 +7,7 @@
 	</div>
 	<div ng-switch-when="loaded">
 		<div ng-if="serviceInstances.length == 0">
-			<div class="alert alert-info">
-				<i class="fa fa-info-circle"></i> No service instances.
-			</div>
+			<p><i class="fa fa-info-circle"></i> No service instances.</p>
 		</div>
 		<div ng-if="serviceInstances.length &gt; 0">
 			<div class="pagination-wrapper" ng-if="serviceInstanceMetadata.totalPages &gt; 1">
@@ -25,29 +23,24 @@
 				<thead>
 					<tr>
 						<th>Service Instance</th>
+						<th>Healthy Nodes</th>
 						<th>Service</th>
 						<th>Data Center</th>
-						<th>Owner</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="serviceInstance in serviceInstances">
+					<tr ng-repeat="serviceInstance in serviceInstances" ng-init="
+							service = serviceInstance._embedded.service;
+							dataCenter = serviceInstance._embedded.dataCenter;">
+						
 						<td><a ng-href="{{uri('service-instances', serviceInstance.key)}}">{{serviceInstance.key}}</a></td>
-						<td><a ng-href="{{uri('services', serviceInstance._embedded.service.key)}}">{{serviceInstance._embedded.service.name}}</a></td>
+						<td><i class="fa fa-circle fa-circle-{{serviceInstance.healthKey}}"></i> {{serviceInstance.percentHealthy}} ({{serviceInstance.numHealthy}} of {{serviceInstance.numNodes}})</td>
+						<td><a ng-href="{{uri('services', service.key)}}">{{serviceInstance._embedded.service.name}}</a></td>
 						<td>
-							<span ng-if="serviceInstance._embedded.dataCenter">
-								<a ng-href="{{uri('data-centers', serviceInstance._embedded.dataCenter.key)}}">{{serviceInstance._embedded.dataCenter.name}}</a>
+							<span ng-if="dataCenter">
+								<a ng-href="{{uri('data-centers', dataCenter.key)}}">{{serviceInstance._embedded.dataCenter.name}}</a>
 							</span>
-							<span ng-if="!serviceInstance._embedded.dataCenter">-</span>
-						</td>
-						<td>
-							<span ng-if="serviceInstance._embedded.service._embedded.owner">
-								<a ng-href="{{uri('people', serviceInstance._embedded.service._embedded.owner.username)}}">
-									{{serviceInstance._embedded.service._embedded.owner.firstName}}
-									{{serviceInstance._embedded.service._embedded.owner.lastName}}
-								</a>
-							</span>
-							<span ng-if="!serviceInstance._embedded.service._embedded.owner">-</span>
+							<span ng-if="!dataCenter">-</span>
 						</td>
 					</tr>
 				</tbody>

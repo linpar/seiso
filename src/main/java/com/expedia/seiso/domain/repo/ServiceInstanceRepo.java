@@ -36,8 +36,8 @@ public interface ServiceInstanceRepo
 		extends PagingAndSortingRepository<ServiceInstance, Long>, ServiceInstanceRepoCustom {
 	
 	// Need the left outer joins to ensure that nodeless service instances show up.
-	public static final String FIND_COUNTS_BY_SERVICE =
-			"select " +
+	public static final String FIND_BY_SERVICE_WITH_COUNTS =
+			"select distinct " +
 			"  si, " +
 			"  count(*), " +
 			"  count(case when st.key in ('info', 'success') then 1 end) " +
@@ -48,7 +48,39 @@ public interface ServiceInstanceRepo
 			"where " +
 			"  si.service.key = :key " +
 			"group by " +
-			"  si";
+			"  si.id";
+	
+	// Need the left outer joins to ensure that nodeless service instances show up.
+	public static final String FIND_BY_ENVIRONMENT_WITH_COUNTS =
+			"select distinct " +
+			"  si, " +
+			"  count(*), " +
+			"  count(case when st.key in ('info', 'success') then 1 end) " +
+			"from " +
+			"  ServiceInstance si left outer join si.nodes n " +
+			"  left outer join n.healthStatus hs " +
+			"  left outer join hs.statusType st " +
+			"where " +
+			"  si.environment.key = :key " +
+			"group by " +
+			"  si.id";
+	
+	// Need the left outer joins to ensure that nodeless service instances show up.
+	// Not sure why I have to have distinct here, but not including it sometimes results in the wrong number of total
+	// items in the page metadata.
+	public static final String FIND_BY_DATA_CENTER_WITH_COUNTS =
+			"select distinct " +
+			"  si, " +
+			"  count(*), " +
+			"  count(case when st.key in ('info', 'success') then 1 end) " +
+			"from " +
+			"  ServiceInstance si left outer join si.nodes n " +
+			"  left outer join n.healthStatus hs " +
+			"  left outer join hs.statusType st " +
+			"where " +
+			"  si.dataCenter.key = :key " +
+			"group by " +
+			"  si.id";
 	
 	// Ugh: http://en.wikibooks.org/wiki/Java_Persistence/JPQL#Sub-selects_in_FROM_clause
 //	public static final String FIND_COUNTS_ALL_SERVICES =
@@ -73,27 +105,41 @@ public interface ServiceInstanceRepo
 	@FindByKey
 	ServiceInstance findByKey(@Param("key") String key);
 	
-	@RestResource(path = "find-by-data-center")
-	Page<ServiceInstance> findByDataCenterKey(@Param("key") String key, Pageable pageable);
-	
-	@RestResource(path = "find-by-environment")
-	Page<ServiceInstance> findByEnvironmentKey(@Param("key") String key, Pageable pageable);
-	
-	@RestResource(path = "find-by-environment-and-eos-managed")
-	List<ServiceInstance> findByEnvironmentKeyAndEosManaged(
-			@Param("env") String environmentKey,
-			@Param("eos") Boolean eosManaged);
-	
-	@RestResource(path = "find-by-source")
-	Page<ServiceInstance> findBySourceKey(@Param("key") String key, Pageable pageable);
-	
-//	@Query(FIND_COUNTS_ALL_SERVICES)
-//	Page<Object[]> findCountsAllServices(Pageable pageable);
-	
 	// TODO Can't expose this yet, because the RepoSearchDelegate doesn't know how to handle
 	// Object[] results. The ResourceAssembler doesn't know either. Do we treat the individual results
 	// here as resources? (Service instances?) [WLW]
 //	@RestResource(path = "find-counts-by-service")
-	@Query(FIND_COUNTS_BY_SERVICE)
-	List<Object[]> findCountsByService(@Param("key") String key);
+	@Query(FIND_BY_SERVICE_WITH_COUNTS)
+	List<Object[]> findByServiceWithCounts(@Param("key") String key);
+	
+	@Query(FIND_BY_ENVIRONMENT_WITH_COUNTS)
+	Page<Object[]> findByEnvironmentWithCounts(@Param("key") String key, Pageable pageable);
+	
+	@Query(FIND_BY_DATA_CENTER_WITH_COUNTS)
+	Page<Object[]> findByDataCenterWithCounts(@Param("key") String key, Pageable pageable);
+	
+	@RestResource(path = "find-by-source")
+	Page<ServiceInstance> findBySourceKey(@Param("key") String key, Pageable pageable);
+	
+	
+	// =================================================================================================================
+	// Deprecated
+	// =================================================================================================================
+	
+	// Replace with ServiceInstanceControllerV2 handler method. [WLW]
+	@Deprecated
+	@RestResource(path = "find-by-environment")
+	Page<ServiceInstance> findByEnvironmentKey(@Param("key") String key, Pageable pageable);
+	
+	// Replace with ServiceInstanceControllerV2 handler method. [WLW]
+	@Deprecated
+	@RestResource(path = "find-by-data-center")
+	Page<ServiceInstance> findByDataCenterKey(@Param("key") String key, Pageable pageable);
+	
+	// Don't reference Eos.
+	@Deprecated
+	@RestResource(path = "find-by-environment-and-eos-managed")
+	List<ServiceInstance> findByEnvironmentKeyAndEosManaged(
+			@Param("env") String environmentKey,
+			@Param("eos") Boolean eosManaged);
 }

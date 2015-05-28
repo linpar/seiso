@@ -24,6 +24,10 @@ import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,7 +43,11 @@ import com.expedia.seiso.hypermedia.LinkFactory;
 import com.expedia.seiso.web.ApiVersion;
 import com.expedia.seiso.web.assembler.ProjectionNode;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
+import com.expedia.serf.C;
 import com.expedia.serf.ann.SuppressBasePath;
+import com.expedia.serf.hypermedia.Link;
+import com.expedia.serf.hypermedia.PageMetadata;
+import com.expedia.serf.hypermedia.PagedResources;
 import com.expedia.serf.hypermedia.Relations;
 import com.expedia.serf.hypermedia.Resource;
 import com.expedia.serf.hypermedia.Resources;
@@ -118,19 +126,56 @@ public class ServiceInstanceControllerV2 {
 		return resource;
 	}
 	
+	// TODO Make this paging?
+	// Not sure. It would make this like the environment/data center cases. But would there really be that many service
+	// instances in a service? Probably not.
 	@RequestMapping(
 			value = "/search/find-by-service",
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	public Resources findByService(@RequestParam String key) {
-		List<Object[]> results = serviceInstanceRepo.findCountsByService(key);
-		
-		// For now just use the default projection.
-		// Might make this more flexible in the future, but don't know how we want V2 projections to work yet.
+		List<Object[]> results = serviceInstanceRepo.findByServiceWithCounts(key);
 		val itemMeta = itemMetaLookup.getItemMeta(ServiceInstance.class);
-		val proj = itemMeta.getProjectionNode(ApiVersion.V2, Projection.Cardinality.COLLECTION, "default");
-		
+		val proj = itemMeta.getProjectionNode(ApiVersion.V2, Projection.Cardinality.COLLECTION, "by-service");
 		return toServiceInstanceResources(results, proj);
+	}
+	
+	@RequestMapping(
+			value = "/search/find-by-environment",
+			method = RequestMethod.GET,
+			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	public PagedResources findByEnvironment(
+			@RequestParam String key,
+			@PageableDefault(
+					page = C.DEFAULT_PAGE_NUMBER,
+					size = C.DEFAULT_PAGE_SIZE,
+					sort = "key",
+					direction = Direction.ASC)
+			Pageable pageable) {
+		
+		Page<Object[]> results = serviceInstanceRepo.findByEnvironmentWithCounts(key, pageable);
+		val itemMeta = itemMetaLookup.getItemMeta(ServiceInstance.class);
+		val proj = itemMeta.getProjectionNode(ApiVersion.V2, Projection.Cardinality.COLLECTION, "by-environment");
+		return toServiceInstancePagedResources(results, proj);
+	}
+	
+	@RequestMapping(
+			value = "/search/find-by-data-center",
+			method = RequestMethod.GET,
+			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	public PagedResources findByDataCenter(
+			@RequestParam String key,
+			@PageableDefault(
+					page = C.DEFAULT_PAGE_NUMBER,
+					size = C.DEFAULT_PAGE_SIZE,
+					sort = "key",
+					direction = Direction.ASC)
+			Pageable pageable) {
+		
+		Page<Object[]> results = serviceInstanceRepo.findByDataCenterWithCounts(key, pageable);
+		val itemMeta = itemMetaLookup.getItemMeta(ServiceInstance.class);
+		val proj = itemMeta.getProjectionNode(ApiVersion.V2, Projection.Cardinality.COLLECTION, "by-data-center");
+		return toServiceInstancePagedResources(results, proj);
 	}
 	
 	private ServiceInstance getServiceInstance(String key) {
@@ -139,14 +184,35 @@ public class ServiceInstanceControllerV2 {
 		return dummy;
 	}
 	
-	private Resources toServiceInstanceResources(List<Object[]> data, ProjectionNode proj) {
-		List<Resource> resourceList = new ArrayList<>();
-		for (Object[] row : data) {
-			resourceList.add(toServiceInstanceResource(row, proj));
+	private Resources toServiceInstanceResources(List<Object[]> itemList, ProjectionNode proj) {
+		List<Resource> itemResources = new ArrayList<>();
+		for (Object[] item : itemList) {
+			itemResources.add(toServiceInstanceResource(item, proj));
 		}
 		Resources resources = new Resources();
-		resources.setItems(resourceList);
+		resources.setItems(itemResources);
 		return resources;
+	}
+	
+	private PagedResources toServiceInstancePagedResources(Page<Object[]> itemPage, ProjectionNode proj) {
+		List<Link> links = new ArrayList<>();
+		
+		// FIXME This is misreporting the total number of items.
+		// See e.g. amazon-us-east-1d
+		int pageSize = itemPage.getSize();
+		int pageNumber = itemPage.getNumber();
+		long totalElements = itemPage.getTotalElements();
+		log.trace("pageSize={}, pageNumber={}, totalElements={}", pageSize, pageNumber, totalElements);
+		PageMetadata metadata = new PageMetadata(pageSize, pageNumber, totalElements);
+		
+		List<Object[]> itemList = itemPage.getContent();
+		log.trace("itemList.size={}", itemList.size());
+		List<Resource> itemResources = new ArrayList<>();
+		for (Object[] item : itemList) {
+			itemResources.add(toServiceInstanceResource(item, proj));
+		}
+		
+		return new PagedResources(links, metadata, itemResources);
 	}
 	
 	private Resource toServiceInstanceResource(Object[] data, ProjectionNode proj) {

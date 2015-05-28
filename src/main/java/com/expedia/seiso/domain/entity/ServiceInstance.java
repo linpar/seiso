@@ -63,13 +63,32 @@ import com.expedia.serf.ann.RestResource;
 //@formatter:off
 @Projections({
 	@Projection(cardinality = Cardinality.COLLECTION, paths = {
-			"service.group",
-			"service.type",
-			"service.owner",
+			// TODO Do we really need service group, type, owner here?
+			// Doesn't feel like these need to be part of the default projection.
+//			"service.group",
+//			"service.type",
+//			"service.owner",
+			"service",
 			"environment",
-			"dataCenter.region.infrastructureProvider",
+			// TODO Do we really need region or infrastructure provider here?
+//			"dataCenter.region.infrastructureProvider",
+			"dataCenter",
+			// TODO I wonder whether load balancer needs to be part of the default projection here.
+			// I could see there being a special projection that includes it.
 			"loadBalancer",
 			"source"
+			}),
+	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.COLLECTION, name = "by-service", paths = {
+			"dataCenter",
+			"environment"
+			}),
+	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.COLLECTION, name = "by-environment", paths = {
+			"service",
+			"dataCenter"
+			}),
+	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.COLLECTION, name = "by-data-center", paths = {
+			"service",
+			"environment"
 			}),
 	@Projection(apiVersions = ApiVersion.V1, cardinality = Cardinality.SINGLE, paths = {
 			"service.group",

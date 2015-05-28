@@ -7,9 +7,9 @@
 	</div>
 	<div ng-switch-when="loaded">
 		<div ng-if="loadBalancers.length == 0">
-			<div class="alert alert-info">
-				<i class="fa fa-info-circle"></i> No load balancers.
-			</div>
+			<!-- FIXME Sometimes this shows and sometimes not. I think it's a data race. -->
+			<!-- Might try using a dedicated controller for this list. -->
+			<p><i class="fa fa-info-circle"></i> No load balancers.</p>
 		</div>
 		<div ng-if="loadBalancers.length &gt; 0">
 			<div class="pagination-wrapper" ng-if="loadBalancerMetadata.totalPages &gt; 1">

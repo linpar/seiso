@@ -197,7 +197,7 @@ var dataCenterDetailsController = function() {
 				(function getServiceInstances(pageNumber) {
 					$scope.serviceInstanceListStatus = 'loading';
 					var apiPageNumber = pageNumber - 1;
-					var request = {
+					var siRequest = {
 							method: 'GET',
 							url: '/v2/service-instances/search/find-by-data-center?key=' + $routeParams.key
 							    + '&page=' + apiPageNumber + '&size=' + paginationConfig.itemsPerPage + '&sort=key',
@@ -209,7 +209,7 @@ var dataCenterDetailsController = function() {
 						$scope.serviceInstanceMetadata = page.metadata;
 						$scope.serviceInstanceListStatus = 'loaded';
 					}
-					$http(request)
+					$http(siRequest)
 							.success(successHandler)
 							.error(function() { $scope.serviceInstanceListStatus = 'error'; });
 				})($scope.model.serviceInstances.currentPage);
@@ -272,6 +272,7 @@ var environmentDetailsController = function() {
 		$scope.model.serviceInstances = {
 			currentPage: 1,
 			pageSelected: function() {
+				
 				(function getServiceInstances(pageNumber) {
 					$scope.serviceInstanceListStatus = 'loading';
 					var apiPageNumber = pageNumber - 1;
@@ -288,8 +289,8 @@ var environmentDetailsController = function() {
 						$scope.serviceInstanceListStatus = 'loaded';
 					}
 					$http(siRequest)
-					.success(siSuccessHandler)
-					.error(function() { $scope.serviceInstanceListStatus = 'error'; });
+							.success(siSuccessHandler)
+							.error(function() { $scope.serviceInstanceListStatus = 'error'; });
 				})($scope.model.serviceInstances.currentPage);
 			}
 		}
@@ -392,7 +393,6 @@ var serviceDetailsController = function() {
 			var successHandler = function(data) {
 				$scope.serviceInstances = data._embedded.items;
 			}
-//			$http.get('/v1/services/' + $routeParams.key + '?view=instances')
 			$http.get('/v2/service-instances/search/find-by-service?key=' + $routeParams.key, { headers : { 'Accept': 'application/hal+json' } })
 					.success(successHandler)
 					.error(function() { alert('Error while getting service instances.'); });

@@ -6,7 +6,10 @@
 			<span ng-hide="serviceInstances"><i class="fa fa-spinner fa-spin"></i></span>
 		</h1>
 	</header>
-	<div ng-show="serviceInstances" ng-if="serviceInstances.length &gt; 0">
+	<div ng-if="serviceInstances.length == 0">
+		<p><i class="fa fa-info-circle"></i> No service instances.</p>
+	</div>
+	<div ng-if="serviceInstances" ng-if="serviceInstances.length &gt; 0">
 		<table class="table">
 			<colgroup>
 				<col style="width:25%">
@@ -17,7 +20,7 @@
 			<thead>
 				<tr>
 					<th>Service Instance</th>
-					<th>Node Health</th>
+					<th>Healthy Nodes</th>
 					<th>Environment</th>
 					<th>Data Center</th>
 				</tr>
