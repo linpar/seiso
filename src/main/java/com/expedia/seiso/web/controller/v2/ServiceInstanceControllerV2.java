@@ -123,7 +123,7 @@ public class ServiceInstanceControllerV2 {
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
 	public Resources findByService(@RequestParam String key) {
-		List<Object[]> results = serviceInstanceRepo.findHealthyNodeCountsByService(key);
+		List<Object[]> results = serviceInstanceRepo.findCountsByService(key);
 		
 		// For now just use the default projection.
 		// Might make this more flexible in the future, but don't know how we want V2 projections to work yet.
@@ -151,9 +151,9 @@ public class ServiceInstanceControllerV2 {
 	
 	private Resource toServiceInstanceResource(Object[] data, ProjectionNode proj) {
 		ServiceInstance si = (ServiceInstance) data[0];
-		Long numNodes = (Long) data[1];
-		Long numHealthy = (Long) data[2];
-		String percentHealthy = (numNodes == 0 ? "N/A" :
+		Long numNodes = (data[1] == null ? 0L : (Long) data[1]);
+		Long numHealthy = (data[2] == null ? 0L : (Long) data[2]);
+		String percentHealthy = (numNodes == 0L ? "N/A" :
 			percentFormat.format((double) numHealthy / (double) numNodes));
 		
 		// TODO Remove hardcodes

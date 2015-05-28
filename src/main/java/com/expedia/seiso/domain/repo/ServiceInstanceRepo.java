@@ -35,20 +35,45 @@ import com.expedia.serf.ann.RestResource;
 public interface ServiceInstanceRepo
 		extends PagingAndSortingRepository<ServiceInstance, Long>, ServiceInstanceRepoCustom {
 	
+	// FIXME This isn't returning service instances that don't have nodes.
+	// See e.g. bfs-amd
+	// Doesn't work: http://www.coderanch.com/t/535628/ORM/databases/JPQL-left-outer-join-condition
 	public static final String FIND_COUNTS_BY_SERVICE =
 			"select " +
-			"  si," +
+			"  si, " +
 			"  count(*), " +
+//			"  count(*) " +
+//			"  count(case when n.healthStatus.statusType.key in ('info', 'success') then 1 end) " +
 			"  count(case when st.key in ('info', 'success') then 1 end) " +
 			"from " +
-			"  Node n inner join n.serviceInstance si, " +
-			"  StatusType st " +
+			"  ServiceInstance si left outer join si.nodes n " +
+			"  left outer join n.healthStatus hs " +
+			"  left outer join hs.statusType st " +
 			"where " +
 			"  si.service.key = :key " +
-			"  and n.healthStatus.statusType = st " +
 			"group by " +
-			"  si.id";
-
+			"  si";
+	
+	// Ugh: http://en.wikibooks.org/wiki/Java_Persistence/JPQL#Sub-selects_in_FROM_clause
+//	public static final String FIND_COUNTS_ALL_SERVICES =
+//			"select " +
+//			"  *, " +
+//			"  numHealthy / numNodes as percentHealthy " +
+//			"from (" +
+//			"  select " +
+//			"    si, " +
+//			"    count(*) as numNodes, " +
+//			"    count(case when st.key in ('info', 'success') then 1 end) as numHealthy " +
+//			"  from " +
+//			"    Node n inner join n.serviceInstance si, " +
+//			"    StatusType st " +
+//			"  where " +
+//			"    n.healthStatus.statusType = st " +
+//			"  group by " +
+//			"    si.id) " +
+//			"order by " +
+//			"  percentHealthy";
+	
 	@FindByKey
 	ServiceInstance findByKey(@Param("key") String key);
 	
@@ -66,10 +91,13 @@ public interface ServiceInstanceRepo
 	@RestResource(path = "find-by-source")
 	Page<ServiceInstance> findBySourceKey(@Param("key") String key, Pageable pageable);
 	
+//	@Query(FIND_COUNTS_ALL_SERVICES)
+//	Page<Object[]> findCountsAllServices(Pageable pageable);
+	
 	// TODO Can't expose this yet, because the RepoSearchDelegate doesn't know how to handle
 	// Object[] results. The ResourceAssembler doesn't know either. Do we treat the individual results
 	// here as resources? (Service instances?) [WLW]
 //	@RestResource(path = "find-counts-by-service")
 	@Query(FIND_COUNTS_BY_SERVICE)
-	List<Object[]> findHealthyNodeCountsByService(@Param("key") String key);
+	List<Object[]> findCountsByService(@Param("key") String key);
 }
