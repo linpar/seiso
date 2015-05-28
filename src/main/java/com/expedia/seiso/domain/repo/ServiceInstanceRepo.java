@@ -35,15 +35,11 @@ import com.expedia.serf.ann.RestResource;
 public interface ServiceInstanceRepo
 		extends PagingAndSortingRepository<ServiceInstance, Long>, ServiceInstanceRepoCustom {
 	
-	// FIXME This isn't returning service instances that don't have nodes.
-	// See e.g. bfs-amd
-	// Doesn't work: http://www.coderanch.com/t/535628/ORM/databases/JPQL-left-outer-join-condition
+	// Need the left outer joins to ensure that nodeless service instances show up.
 	public static final String FIND_COUNTS_BY_SERVICE =
 			"select " +
 			"  si, " +
 			"  count(*), " +
-//			"  count(*) " +
-//			"  count(case when n.healthStatus.statusType.key in ('info', 'success') then 1 end) " +
 			"  count(case when st.key in ('info', 'success') then 1 end) " +
 			"from " +
 			"  ServiceInstance si left outer join si.nodes n " +
