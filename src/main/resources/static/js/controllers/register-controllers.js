@@ -12,7 +12,7 @@ angular.module('seisoControllers', [])
 		// Items
 		.controller('DataCenterListController', dataCenterListController())
 		.controller('DataCenterDetailsController', dataCenterDetailsController())
-		.controller('EnvironmentListController', environmentListController())
+		.controller('EnvironmentListController', listController('Environments', '/v2/environments'))
 		.controller('EnvironmentDetailsController', environmentDetailsController())
 		.controller('LoadBalancerListController', pagingController('Load Balancers', '/v1/load-balancers', 'name'))
 		.controller('LoadBalancerDetailsController', loadBalancerDetailsController())
@@ -23,18 +23,13 @@ angular.module('seisoControllers', [])
 		.controller('NodeDetailsController', nodeDetailsController())
 		.controller('PersonListController', pagingController('People', '/v1/people', 'lastName,firstName'))
 		.controller('PersonDetailsController', personDetailsController())
-		
 		.controller('ServiceListController', pagingController('Services', '/v1/services', 'name'))
-		
 		.controller('ServiceDetailsController', serviceDetailsController())
 		.controller('ServiceServiceInstancesController', serviceServiceInstancesController())
 		.controller('ServiceDocumentationController', serviceDocumentationController())
-		
 		.controller('ServiceInstanceListController', pagingController('Service Instances', '/v1/service-instances', 'key'))
-		
 		.controller('ServiceInstanceDetailsController', serviceInstanceDetailsController())
 		.controller('ServiceInstanceNodesController', serviceInstanceNodesController())
-		
 		.controller('StatusListController', statusListController())
-		.controller('TypeListController', typeListController())
+		.controller('TypeListController', listController('Types', '/v2/service-types'))
 		;

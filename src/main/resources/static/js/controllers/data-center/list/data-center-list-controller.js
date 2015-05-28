@@ -1,21 +1,21 @@
 var dataCenterListController = function() {
-	var controller = function($scope, $http, generalRegions) {
+	var controller = function($scope, v2Api, generalRegions) {
+		$scope.listStatus = 'loading';
 		$scope.model.page.title = pageTitle('Data Centers');
 		
+		var path = "/v2/infrastructure-providers";
 		var successHandler = function(data) {
-			var srcProviders = data;
+			var srcProviders = data._embedded.items;
 			var destProviders = organizeDataCenters(srcProviders, generalRegions);
 			$scope.generalRegions = generalRegions;
 			$scope.infrastructureProviders = destProviders;
+			$scope.listStatus = 'loaded';
 		}
-		
-		// Format providers for rendering. We want a matrix with general regions (NA, EU, APAC, SA) for columns and
-		// providers for rows. Any given cell contains the provider's special regions (falling under the relevant
-		// general region) and corresponding data centers.
-		$http.get('/v1/infrastructure-providers')
-				.success(successHandler)
-				.error(function() { alert('Error while getting data centers.'); });
+		var errorHandler = function(data) {
+			$scope.listStatus = 'error';
+		}
+		v2Api.get(path, successHandler, errorHandler);
 	}
 	
-	return [ '$scope', '$http', 'generalRegions', controller ];
+	return [ '$scope', 'v2Api', 'generalRegions', controller ];
 }

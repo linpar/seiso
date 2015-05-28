@@ -4,6 +4,22 @@ var pageTitle = function(baseTitle) {
 	return baseTitle + " - Seiso";
 }
 
+var listController = function(title, path) {
+	var controller = function($scope, v2Api) {
+		$scope.listStatus = 'loading';
+		$scope.model.page.title = pageTitle(title);
+		var successHandler = function(data) {
+			$scope.items = data._embedded.items;
+			$scope.listStatus = 'loaded';
+		}
+		var errorHandler = function() {
+			$scope.listStatus = 'error';
+		}
+		v2Api.get(path, successHandler, errorHandler);
+	}
+	return [ '$scope', 'v2Api', controller ];
+}
+
 var pagingController = function(title, path, sortKey) {
 	var controller = function($scope, paginationConfig, v1Api) {
 		$scope.model.page.title = pageTitle(title);
@@ -132,17 +148,5 @@ var statusListController = function() {
 		$http.get('/v1/rotation-statuses')
 				.success(function(data) { $scope.rotationStatuses = data; });
 	}
-	return [ '$scope', '$http', controller ];
-};
-
-// At some future point this will have other types too (e.g., dependency types, platform types, etc.). When that
-// happens we can treat this like we're treating StatusListController above, with embedded GETs. [WLW]
-var typeListController = function() {
-	var controller = function($scope, $http) {
-		$scope.model.page.title = pageTitle('Types');
-		$http.get('/v1/service-types')
-				.success(function(data) { $scope.items = data; })
-				.error(function() { alert('Error while getting service types.'); });
-	};
 	return [ '$scope', '$http', controller ];
 };
