@@ -34,6 +34,10 @@ import com.expedia.serf.ann.RestResource;
 @RestResource(rel = RepoKeys.NODES, path = RepoKeys.NODES)
 public interface NodeRepo extends PagingAndSortingRepository<Node, Long>, NodeRepoCustom {
 	
+	// Include infos here too, the idea being that these are things that we want to let people know about, but they are
+	// purely informational in nature as opposed to warnings or danger alerts. We use default statuses for things that
+	// we don't want to show up in the alert list. This is something Mike Nash and came up with after discussion so
+	// please don't change it without talking to one of us first. [WLW]
 	public static final String FIND_NODE_ALERTS_JPQL =
 			"select " +
 			"  n " +
@@ -43,8 +47,8 @@ public interface NodeRepo extends PagingAndSortingRepository<Node, Long>, NodeRe
 			"  join hs.statusType hst " +
 			"where " +
 			"  n.serviceInstance.key = :key " +
-			"  and (hst.key in ('warning', 'danger')" +
-			"      or n.aggregateRotationStatus.statusType.key in ('warning', 'danger'))";
+			"  and (hst.key in ('info', 'warning', 'danger')" +
+			"      or n.aggregateRotationStatus.statusType.key in ('info', 'warning', 'danger'))";
 	
 	@FindByKey
 	Node findByName(@Param("name") String name);

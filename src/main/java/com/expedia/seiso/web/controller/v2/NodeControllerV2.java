@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.repo.MachineRepo;
 import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
 import com.expedia.seiso.domain.repo.NodeRepo;
