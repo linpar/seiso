@@ -63,12 +63,12 @@ public class RotationStatus extends AbstractItem {
 
 	// TODO We might want to replace the data-driven rotation statuses with fixed statuses, since we have hand-coded
 	// rotation status aggregation logic involving specific statuses. [WLW]
-	public static final RotationStatus ENABLED = new RotationStatus("enabled", "Enabled", SUCCESS);
-	public static final RotationStatus DISABLED = new RotationStatus("disabled", "Disabled", WARNING);
-	public static final RotationStatus EXCLUDED = new RotationStatus("excluded", "Excluded", INFO);
-	public static final RotationStatus NO_ENDPOINTS = new RotationStatus("no-endpoints", "No endpoints", INFO);
-	public static final RotationStatus PARTIAL = new RotationStatus("partial", "Partial", WARNING);
-	public static final RotationStatus UNKNOWN = new RotationStatus("unknown", "Unknown", WARNING);
+	public static final RotationStatus ENABLED = new RotationStatus("enabled", "Enabled", null, SUCCESS);
+	public static final RotationStatus DISABLED = new RotationStatus("disabled", "Disabled", null, WARNING);
+	public static final RotationStatus EXCLUDED = new RotationStatus("excluded", "Excluded", null, INFO);
+	public static final RotationStatus NO_ENDPOINTS = new RotationStatus("no-endpoints", "No endpoints", null, INFO);
+	public static final RotationStatus PARTIAL = new RotationStatus("partial", "Partial", null, WARNING);
+	public static final RotationStatus UNKNOWN = new RotationStatus("unknown", "Unknown", null, WARNING);
 	
 	public static final RotationStatus getRotationStatus(@NonNull String key) {
 		// FIXME This sucks. Figure out a better way.
@@ -101,6 +101,9 @@ public class RotationStatus extends AbstractItem {
 	@Size(min = 1, max = 80)
 	@Column(name = "name")
 	private String name;
+	
+	@Size(max = 250)
+	private String description;
 	
 	@NotNull
 	@ManyToOne

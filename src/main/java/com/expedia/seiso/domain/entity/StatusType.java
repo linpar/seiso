@@ -21,23 +21,24 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
+import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Accessors(chain = true)
 @ToString(of = { "key", "name" })
 @EqualsAndHashCode(callSuper = false, of = { "key", "name" })
@@ -58,7 +59,8 @@ public class StatusType extends AbstractItem {
 	public static final StatusType INFO = new StatusType("info", "Info");
 	public static final StatusType WARNING = new StatusType("warning", "Warning");
 	public static final StatusType DANGER = new StatusType("danger", "Danger");
-
+	
+	@NonNull
 	@NotNull
 	@Size(min = 1, max = 20)
 	@Pattern(regexp = "[a-z0-9-]+")
@@ -66,10 +68,14 @@ public class StatusType extends AbstractItem {
 	@Column(name = "ukey")
 	private String key;
 
+	@NonNull
 	@NotNull
 	@Size(min = 1, max = 80)
 	@Column(name = "name")
 	private String name;
+	
+	@Size(max = 250)
+	private String description;
 
 	@Override
 	public ItemKey itemKey() {

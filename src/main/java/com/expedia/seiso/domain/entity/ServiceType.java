@@ -64,6 +64,9 @@ public class ServiceType extends AbstractItem {
 	@Size(min = 1, max = 80)
 	@Column(name = "name")
 	private String name;
+	
+	@Size(max = 250)
+	private String description;
 
 	// Don't want cascading here. If we delete a service type, then the former members are simply orphaned rather than
 	// being deleted. [WLW]

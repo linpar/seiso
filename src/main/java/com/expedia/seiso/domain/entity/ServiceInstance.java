@@ -140,6 +140,9 @@ public class ServiceInstance extends AbstractItem {
 	@Column(name = "ukey")
 	private String key;
 	
+	@Size(max = 250)
+	private String description;
+	
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "service_id")

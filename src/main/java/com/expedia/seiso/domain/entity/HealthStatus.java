@@ -58,6 +58,9 @@ public class HealthStatus extends AbstractItem {
 	@Size(min = 1, max = 80)
 	private String name;
 	
+	@Size(max = 250)
+	private String description;
+	
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "status_type_id")

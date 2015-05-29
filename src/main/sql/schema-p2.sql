@@ -8,3 +8,12 @@ ALTER TABLE seyren_check ADD CONSTRAINT seyren_check_source_id FOREIGN KEY (sour
 
 # Support for MB
 ALTER TABLE person ADD COLUMN mb_type char(4) AFTER ldap_dn;
+
+# Issues #110, #111, #112
+alter table service_type add column description varchar(250) after name;
+alter table status_type add column description varchar(250) after name;
+alter table health_status add column description varchar(250) after name;
+alter table rotation_status add column description varchar(250) after name;
+
+# Issue #113: Service instance descriptions
+alter table service_instance add column description varchar(250) after ukey;
