@@ -12,12 +12,10 @@
 				<li><a ng-href="{{uri('services')}}">Services</a></li>
 			</ul>
 			<h1 ng-bind="service.name"></h1>
-			<div class="header-description" ng-if="service.description || service.scmRepository">
-				<div class="lead" ng-if="service.description != null" ng-bind="service.description"></div>
-				<div ng-if="service.scmRepository != null">
-					<a ng-href="{{service.scmRepository}}" ng-bind="service.scmRepository"></a>
-				</div>
-			</div>
+			<p class="lead" ng-if="service.description" ng-bind="service.description"></p>
+			<p ng-if="service.scmRepository">
+				<a ng-href="{{service.scmRepository}}" ng-bind="service.scmRepository"></a>
+			</p>
 		</div>
 		<ul class="field-list">
 			<li>
