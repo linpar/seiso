@@ -30,6 +30,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -247,6 +248,12 @@ public class SeisoWebConfig extends WebMvcConfigurationSupport {
 	// =================================================================================================================
 	// Custom
 	// =================================================================================================================
+	
+	@Bean
+	public RestTemplate restTemplate() {
+		// Using this to invoke actions
+		return new RestTemplate();
+	}
 	
 	// V1
 	@Bean

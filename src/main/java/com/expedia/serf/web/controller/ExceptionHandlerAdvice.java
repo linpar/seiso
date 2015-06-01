@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
 import com.expedia.serf.C;
@@ -97,6 +98,14 @@ public class ExceptionHandlerAdvice {
 	public SaveAllResult handleSaveAllException(SaveAllException e, WebRequest request) {
 		// TODO Harmonize the response body with that of other errors
 		return e.getSaveAllResult();
+	}
+	
+	@ExceptionHandler(HttpClientErrorException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorObject handleHttpClientErrorException(HttpClientErrorException e, WebRequest request) {
+		val message = "Seiso called a web service, but the result was a client error.";
+		return new ErrorObject(C.EC_HTTP_CLIENT_ERROR, message);
 	}
 	
 	@ExceptionHandler(RuntimeException.class)

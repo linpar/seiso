@@ -29,4 +29,6 @@ import org.springframework.stereotype.Component;
 public class CustomProperties {
 	private SeisoNav nav;
 	@NonNull private String changeNotificationExchange;
+	private Boolean enableActions = false;
+	private String actionsBaseUri;
 }

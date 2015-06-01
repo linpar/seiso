@@ -30,8 +30,8 @@ public class C {
 	// Error codes
 	public static final String EC_VALIDATION_ERROR = "validation_error";
 	public static final String EC_INTERNAL_ERROR = "internal_error";
-
 	public static final String EC_RESOURCE_NOT_FOUND = "resource_not_found";
+	public static final String EC_HTTP_CLIENT_ERROR = "http_client_error";
 	
 	/** Request requires a request body */
 	public static final String EC_REQUEST_BODY_REQUIRED = "request_body_required";

@@ -1,68 +1,75 @@
 <!-- margin-bottom:0 since the wells already create a margin, and we need to keep those for small viewports -->
 <section ng-controller="NodeSummaryController" style="margin-bottom:0">
 	<header>
-		<h1>
-			Node Summary
-			<span ng-show="nodeStatsStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span>
-		</h1>
+		<h1>Node Summary <span ng-if="nodeStatsStatus == 'loading'"><i class="fa fa-spinner fa-spin"></i></span></h1>
 	</header>
 	<div ng-switch="nodeStatsStatus">
 		<div ng-switch-when="error">
-			<h3><span class="label label-danger"><i class="fa fa-times-circle"></i> Couldn't get node summary.</span></h3>
+			<p><i class="fa fa-exclamation-triangle"></i> Couldn't get node summary.</p>
 		</div>
 		<div ng-switch-when="loaded">
-			<div class="row">
-				<div class="col-md-4">
-					<div class="well well-sm">
-						<div class="row vcenter">
-							<div class="col-md-6">
-								<pie-chart id="healthy-chart" chart-data="healthDataset"></pie-chart>
-							</div>
-							<div class="col-md-6">
-								<div class="metric">
-									<div class="metric-count">{{nodeStats.numHealthy}} of {{nodeStats.numNodes}}</div>
-									<div class="metric-percentage">{{nodeStats.percentHealthy | number : 1}}%</div>
-									<div class="metric-name">Healthy</div>
+			<div ng-if="nodeStats.numNodes == 0">
+				<p><i class="fa fa-info-circle"></i> No nodes.</p>
+			</div>
+			<div ng-if="nodeStats.numNodes &gt; 0">
+				<p>
+					Expected capacity:
+					{{serviceInstance.minCapacityOps || 'unknown'}}<span ng-if="serviceInstance.minCapacityOps">%</span> during normal operations,
+					{{serviceInstance.minCapacityDeploy || 'unknown'}}<span ng-if="serviceInstance.minCapacityDeploy">%</span> during deployments
+				</p>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="well well-sm">
+							<div class="row vcenter">
+								<div class="col-md-6">
+									<pie-chart id="healthy-chart" chart-data="healthDataset"></pie-chart>
 								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="well well-sm">
-						<div class="row vcenter">
-							<div class="col-md-6">
-								<pie-chart id="enabled-chart" chart-data="enabledDataset"></pie-chart>
-							</div>
-							<div class="col-md-6">
-								<div class="metric">
-									<div class="metric-count">{{nodeStats.numEnabled}} of {{nodeStats.numNodes}}</div>
-									<div class="metric-percentage">{{nodeStats.percentEnabled | number : 1}}%</div>
-									<div class="metric-name">Enabled</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="well well-sm">
-						<div class="row vcenter">
-							<div class="col-md-6">
-								<pie-chart id="healthy-given-enabled-chart" chart-data="healthyGivenEnabledDataset"></pie-chart>
-							</div>
-							<div class="col-md-6">
-								<div class="metric">
-									<div class="metric-count">{{nodeStats.numHealthyGivenEnabled}} of {{nodeStats.numEnabled}}</div>
-									<div class="metric-percentage">
-										<span ng-if="nodeStats.numEnabled == 0">N/A</span>
-										<span ng-if="nodeStats.numEnabled &gt; 0">{{nodeStats.percentHealthyGivenEnabled | number : 1}}%</span>
+								<div class="col-md-6">
+									<div class="metric">
+										<div class="metric-count">{{nodeStats.numHealthy}} of {{nodeStats.numNodes}}</div>
+										<div class="metric-percentage">{{nodeStats.percentHealthy | number : 1}}%</div>
+										<div class="metric-name">Healthy</div>
 									</div>
-									<div class="metric-name">Healthy, given enabled</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				</div>
+					</div> <!-- end col -->
+					<div class="col-md-4">
+						<div class="well well-sm">
+							<div class="row vcenter">
+								<div class="col-md-6">
+									<pie-chart id="enabled-chart" chart-data="enabledDataset"></pie-chart>
+								</div>
+								<div class="col-md-6">
+									<div class="metric">
+										<div class="metric-count">{{nodeStats.numEnabled}} of {{nodeStats.numNodes}}</div>
+										<div class="metric-percentage">{{nodeStats.percentEnabled | number : 1}}%</div>
+										<div class="metric-name">Enabled</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div> <!-- end col -->
+					<div class="col-md-4">
+						<div class="well well-sm">
+							<div class="row vcenter">
+								<div class="col-md-6">
+									<pie-chart id="healthy-given-enabled-chart" chart-data="healthyGivenEnabledDataset"></pie-chart>
+								</div>
+								<div class="col-md-6">
+									<div class="metric">
+										<div class="metric-count">{{nodeStats.numHealthyGivenEnabled}} of {{nodeStats.numEnabled}}</div>
+										<div class="metric-percentage">
+											<span ng-if="nodeStats.numEnabled == 0">N/A</span>
+											<span ng-if="nodeStats.numEnabled &gt; 0">{{nodeStats.percentHealthyGivenEnabled | number : 1}}%</span>
+										</div>
+										<div class="metric-name">Healthy, given enabled</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div> <!-- end col -->
+				</div> <!-- end row -->
 			</div>
 		</div>
 	</div>

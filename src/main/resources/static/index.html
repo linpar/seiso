@@ -13,13 +13,11 @@
 	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Serif">
 	<link rel="stylesheet" type="text/css" href="css/samurai/bootstrap.min.css?v=3">
 </head>
-<body ng-class="{wait: model.wait}">
+<body ng-class="{wait: model.wait}" ng-controller="GlobalsController">
 	<ng-include src="'navbar.html'"></ng-include>
 	<div class="page-content">
 		<div class="container">
-			<div ng-controller="MotdController">
-				<div class="alert alert-info" ng-if="motd" ng-bind-html="motd"></div>
-			</div>
+			<div class="alert alert-info" ng-if="globals.motd" ng-bind-html="globals.motd"></div>
 			<ng-view></ng-view>
 		</div>
 	</div>
@@ -48,8 +46,7 @@
 	<script type="text/javascript" src="js/ng-mappers.js?v=2"></script>
 	
 	<script type="text/javascript" src="js/controllers/various-controllers.js?v=5"></script>
-	<script type="text/javascript" src="js/controllers/nav-controller.js?v=1"></script>
-	<script type="text/javascript" src="js/controllers/motd-controller.js?v=2"></script>
+	<script type="text/javascript" src="js/controllers/globals-controller.js?v=1"></script>
 	<script type="text/javascript" src="js/controllers/home-controller.js?v=1"></script>
 	<script type="text/javascript" src="js/controllers/search-controller.js?v=1"></script>
 	<script type="text/javascript" src="js/controllers/data-center/list/data-center-list-controller.js?v=1"></script>

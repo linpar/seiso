@@ -2,11 +2,10 @@ angular.module('seisoControllers', [])
 
 		// Special
 		.controller('HomeController', homeController())
+		.controller('GlobalsController', globalsController())
 		.controller('SearchController', searchController())
 		.controller('MBController', mbController())
 		.controller('MBProfileController', mbProfileController())
-		.controller('MotdController', motdController())
-		.controller('NavController', navController())
 		.controller('AdminController', adminController())
 		
 		// Items

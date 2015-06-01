@@ -15,7 +15,7 @@
  */
 package com.expedia.seiso.web.controller.internal;
 
-import lombok.extern.slf4j.XSlf4j;
+import lombok.Data;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,27 +36,31 @@ import com.expedia.serf.web.MediaTypes;
 @RestController
 @SuppressBasePath
 @RequestMapping("/internal")
-@XSlf4j
-public class TemplateDataController {
+public class GlobalsController {
 	@Autowired private CustomProperties customProperties;
 	@Autowired private ConfPropRepo confPropRepo;
 	
 	@RequestMapping(
-			value = "/motd",
+			value = "/globals",
 			method = RequestMethod.GET,
 			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public Motd motd() {
-		log.trace("Getting MotD");
+	public Globals globals() {
+		Globals globals = new Globals();
+		globals.setMotd(getMotd());
+		globals.setSeisoNav(customProperties.getNav());
+		globals.setEnableActions(customProperties.getEnableActions());
+		return globals;
+	}
+	
+	private Motd getMotd() {
 		ConfProp motdProp = confPropRepo.findByKey("motd");
 		return (motdProp == null ? null : new Motd(motdProp.getValue()));
 	}
 	
-	@RequestMapping(
-			value = "/nav",
-			method = RequestMethod.GET,
-			produces = MediaTypes.APPLICATION_HAL_JSON_VALUE)
-	public SeisoNav seisoNav() {
-		log.trace("Getting Seiso nav");
-		return customProperties.getNav();
+	@Data
+	private static class Globals {
+		private SeisoNav seisoNav;
+		private Motd motd;
+		private Boolean enableActions;
 	}
 }

@@ -3,7 +3,7 @@
 		<div id="page-spinner-panel"><i class="fa fa-spinner fa-spin fa-5x"></i></div>
 	</div>
 	<div ng-switch-when="error">
-		<p><i class="fa fa-exclamation-triangle"></i> Couldn't load service instance.</p>
+		<p><i class="fa fa-exclamation-triangle"></i> Couldn't get service instance.</p>
 	</div>
 	<div ng-switch-when="loaded">
 		<div class="page-header">
@@ -11,11 +11,20 @@
 				<li><a ng-href="{{uri()}}">Home</a></li>
 				<li><a ng-href="{{uri('services')}}">Services</a></li>
 				<li><a ng-href="{{uri('services', service.key)}}" ng-bind="service.name"></a></li>
+				<li>Service instances</li>
 			</ul>
-			<h1 ng-bind="serviceInstance.key"></h1>
+			<h1>
+				<span ng-bind="serviceInstance.key"></span>
+				<span ng-if="globals.enableActions">
+					<button class="btn btn-primary btn-xs" ng-click="actions.interrogate()" tooltip="Runs all Eos checks, including health and deployment verification."><i class="fa fa-cog"></i> Eos Interrogate</button>
+					<button class="btn btn-primary btn-xs" ng-click="actions.reload()" tooltip="Reloads this service instance in Eos."><i class="fa fa-refresh"></i> Eos Reload</button>
+				</span>
+			</h1>
 			<p class="lead" ng-if="serviceInstance.description" ng-bind="serviceInstance.description"></p>
 		</div>
 		<section>
+			<!-- Also Mike is going to want to see the Eos-enabled flag, but we need a way to do this without hardcoding it
+			     into Seiso. [WLW] -->
 			<ul class="field-list">
 				<li>
 					<div>Service:</div>
@@ -37,7 +46,15 @@
 					<span ng-if="owner"><a ng-href="{{uri('people', owner.username)}}">{{owner.firstName}} {{owner.lastName}}</a></span>
 					<span ng-if="!owner">-</span>
 				</li>
+				<li>
+					<div>Load Balancer:</div>
+					<div ng-if="loadBalancer"><a ng-href="{{uri('load-balancers', loadBalancer.name)}}">{{loadBalancer.name}}</a></div>
+					<div ng-if="!loadBalancer">-</div>
+				</li>
 			</ul>
+		</section>
+		<section>
+			<!-- FIXME Temporarily hardcoding Eos stuff here. [WLW] -->
 		</section>
 		<tabset>
 			<tab heading="Dashboard">
@@ -45,29 +62,10 @@
 				<ng-include src="'view/items/service-instance/details/dashboard/node-breakdowns.html'"></ng-include>
 				<ng-include src="'view/items/service-instance/details/dashboard/node-alerts.html'"></ng-include>
 			</tab>
-			<tab heading="Nodes">
+			<tab heading="All Nodes">
 				<ng-include src="'view/items/service-instance/details/nodes/node-pane.html'"></ng-include>
 			</tab>
 			<tab heading="Details">
-				<!-- Also Mike is going to want to see the Eos-enabled flag, but we need a way to do this without hardcoding it
-				     into Seiso. [WLW] -->
-				<ul class="field-list">
-					<li>
-						<div>Load Balancer:</div>
-						<div ng-if="loadBalancer"><a ng-href="{{uri('load-balancers', loadBalancer.name)}}">{{loadBalancer.name}}</a></div>
-						<div ng-if="!loadBalancer">-</div>
-					</li>
-					<li>
-						<div>Min Deploy Capacity:</div>
-						<div ng-if="serviceInstance.minCapacityDeploy != null">{{serviceInstance.minCapacityDeploy}}%</div>
-						<div ng-if="serviceInstance.minCapacityDeploy == null">-</div>
-					</li>
-					<li>
-						<div>Min Ops Capacity:</div>
-						<div ng-if="serviceInstance.minCapacityOps != null">{{serviceInstance.minCapacityOps}}%</div>
-						<div ng-if="serviceInstance.minCapacityOps == null">-</div>
-					</li>
-				</ul>
 				<ng-include src="'view/items/service-instance/details/details/endpoints-pane.html'"></ng-include>
 				<ng-include src="'view/items/service-instance/details/details/dashboards-pane.html'"></ng-include>
 				<ng-include src="'view/items/service-instance/details/details/seyren-pane.html'"></ng-include>

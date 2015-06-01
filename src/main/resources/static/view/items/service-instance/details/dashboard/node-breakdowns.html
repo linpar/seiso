@@ -10,7 +10,7 @@
 			</header>
 			<div ng-switch="healthBreakdownStatus">
 				<div ng-switch-when="error">
-					<h3><span class="label label-danger"><i class="fa fa-times-circle"></i> Couldn't get health breakdown.</span></h3>
+					<p><i class="fa fa-exclamation-triangle"></i> Couldn't get health breakdown.</p>
 				</div>
 				<div ng-switch-when="loaded">
 					<div ng-if="healthBreakdown.items.length == 0">
@@ -39,7 +39,7 @@
 			</header>
 			<div ng-switch="rotationBreakdownStatus">
 				<div ng-switch-when="error">
-					<h3><span class="label label-danger"><i class="fa fa-times-circle"></i> Couldn't get rotation breakdown.</span></h3>
+					<p><i class="fa fa-exclamation-triangle"></i> Couldn't get rotation breakdown.</p>
 				</div>
 				<div ng-switch-when="loaded">
 					<div ng-if="rotationBreakdown.items.length == 0">

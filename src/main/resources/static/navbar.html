@@ -10,11 +10,11 @@
       <a class="navbar-brand" ng-href="{{uri()}}" style="margin-top:-8px"><img src="images/seiso-logo-white.png"></a>
     </div>
     <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav" ng-if="nav.seisoInstances.length &gt; 1">
+      <ul class="nav navbar-nav" ng-if="globals.nav.seisoInstances.length &gt; 1">
         <li class="dropdown">
-          <a class="dropdown-toggle"><span ng-bind="nav.currentSeisoInstance"></span> <b class="caret"></b></a>
+          <a class="dropdown-toggle"><span ng-bind="globals.nav.currentSeisoInstance"></span> <b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li ng-repeat="inst in nav.seisoInstances">
+            <li ng-repeat="inst in globals.nav.seisoInstances">
             	<a href="{{inst.href}}" ng-bind="inst.name"></a>
             </li>
           </ul>

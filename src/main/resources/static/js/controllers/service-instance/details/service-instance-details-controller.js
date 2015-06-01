@@ -1,7 +1,8 @@
 var serviceInstanceDetailsController = function() {
-	var controller = function($scope, v2Api, $routeParams) {
+	var controller = function($scope, v2Api, $http, $routeParams) {
 		$scope.serviceInstanceStatus = 'loading';
-		var path = "/v2/service-instances/" + $routeParams.key;
+		var serviceInstanceKey = $routeParams.key;
+		var path = "/v2/service-instances/" + serviceInstanceKey;
 		var successHandler = function(data) {
 			var serviceInstance = data;
 			var siEmbedded = serviceInstance._embedded;
@@ -17,6 +18,39 @@ var serviceInstanceDetailsController = function() {
 			$scope.owner = service._embedded.owner;
 			$scope.dashboards = siEmbedded.dashboards;
 			$scope.checks = siEmbedded.seyrenChecks;
+			
+			$scope.actions = {
+				interrogate: function() {
+					console.log("Interrogating service instance in Eos");
+					var interrogatePath = "/internal/service-instances/" + serviceInstanceKey + "/interrogate";
+					var interrogateSuccessHandler = function(data) {
+						console.log("Success");
+					}
+					var interrogateErrorHandler = function() {
+						console.log("Error");
+						// TODO Do a better notification.
+						alert("Interrogation failed.");
+					}
+					$http.post(interrogatePath)
+							.success(interrogateSuccessHandler)
+							.error(interrogateErrorHandler);
+				},
+				reload: function() {
+					console.log("Reloading service instance in Eos");
+					var reloadPath = "/internal/service-instances/" + serviceInstanceKey + "/reload";
+					var reloadSuccessHandler = function(data) {
+						console.log("Success");
+					}
+					var reloadErrorHandler = function() {
+						console.log("Error");
+						alert("Reload failed.");
+					}
+					$http.post(reloadPath)
+							.success(reloadSuccessHandler)
+							.error(reloadErrorHandler);
+				}
+			}
+			
 			$scope.serviceInstanceStatus = 'loaded';
 		}
 		var errorHandler = function() {
@@ -24,5 +58,5 @@ var serviceInstanceDetailsController = function() {
 		}
 		v2Api.get(path, successHandler, errorHandler);
 	}
-	return [ '$scope', 'v2Api', '$routeParams', controller ];
+	return [ '$scope', 'v2Api', '$http', '$routeParams', controller ];
 }
