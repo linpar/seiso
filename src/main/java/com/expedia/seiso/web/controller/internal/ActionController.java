@@ -52,7 +52,8 @@ public class ActionController {
 			value = "/service-instances/{key}/interrogate",
 			method = RequestMethod.POST)
 	public void interrogate(@PathVariable String key) throws IOException {
-		log.info("Interrogating service instance {} in Eos", key);
+		final String uri = actionUri(INTERROGATE_PATH);
+		log.info("Interrogating service instance {}: POST {}", key, uri);
 		try {
 			// Though Eos returns a JSON object, the Content-Type is text/plain,
 			// so here we treat the type as String.class.
@@ -70,11 +71,12 @@ public class ActionController {
 			value = "/service-instances/{key}/reload",
 			method = RequestMethod.POST)
 	public void reload(@PathVariable String key) throws IOException {
-		log.info("Reloading service instance {} in Eos", key);
+		final String uri = actionUri(RELOAD_PATH);
+		log.info("Reloading service instance {}: POST {}", key, uri);
 		try {
 			// Though Eos returns a JSON object, the Content-Type is text/plain,
 			// so here we treat the type as String.class.
-			restTemplate.postForEntity(actionUri(RELOAD_PATH), "", String.class, key);
+			restTemplate.postForEntity(uri, "", String.class, key);
 		} catch (HttpClientErrorException e) {
 			throw e;
 		} catch (HttpServerErrorException e) {

@@ -13,13 +13,11 @@
 				<li><a ng-href="{{uri('services', service.key)}}" ng-bind="service.name"></a></li>
 				<li>Service instances</li>
 			</ul>
-			<h1>
-				<span ng-bind="serviceInstance.key"></span>
-				<span ng-if="globals.enableActions">
-					<button class="btn btn-primary btn-xs" ng-click="actions.interrogate()" tooltip="Runs all Eos checks, including health and deployment verification."><i class="fa fa-cog"></i> Eos Interrogate</button>
-					<button class="btn btn-primary btn-xs" ng-click="actions.reload()" tooltip="Reloads this service instance in Eos."><i class="fa fa-refresh"></i> Eos Reload</button>
-				</span>
-			</h1>
+			<h1 ng-bind="serviceInstance.key"></h1>
+			<div ng-if="globals.enableActions">
+				<button class="btn btn-primary btn-xs" ng-click="actions.interrogate()" tooltip="Runs all Eos checks, including health and deployment verification."><i class="fa fa-cog"></i> Eos Interrogate</button>
+				<button class="btn btn-primary btn-xs" ng-click="actions.reload()" tooltip="Reloads this service instance in Eos."><i class="fa fa-refresh"></i> Eos Reload</button>
+			</div>
 			<p class="lead" ng-if="serviceInstance.description" ng-bind="serviceInstance.description"></p>
 		</div>
 		<section>
