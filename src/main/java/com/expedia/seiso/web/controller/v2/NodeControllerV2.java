@@ -15,6 +15,7 @@
  */
 package com.expedia.seiso.web.controller.v2;
 
+import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +23,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.repo.MachineRepo;
 import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
 import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.domain.repo.ServiceInstanceRepo;
+import com.expedia.seiso.web.controller.delegate.BasicItemDelegate;
 import com.expedia.seiso.web.dto.v1.PEResource;
 import com.expedia.serf.ann.SuppressBasePath;
-import com.expedia.serf.hypermedia.hal.HalResource;
 import com.expedia.serf.service.CrudService;
 import com.expedia.serf.web.MediaTypes;
-import com.expedia.serf.web.PersistentEntityResource;
 
 /**
  * @author Willie Wheeler
@@ -50,6 +50,7 @@ public class NodeControllerV2 {
 	@Autowired private NodeIpAddressRepo nipRepo;
 	@Autowired private ServiceInstanceRepo serviceInstanceRepo;
 	@Autowired private CrudService crudService;
+	@Autowired private BasicItemDelegate basicItemDelegate;
 	
 	// Temporarily disabling so we can get Ansible imports working. [WLW]
 	/*
@@ -98,5 +99,14 @@ public class NodeControllerV2 {
 			PEResource peResource) {
 		
 		log.trace("Putting NIP: node={}, ipAddress={}", name, ipAddress);
+		val node = nodeRepo.findByName(name);
+		val serviceInstance = node.getServiceInstance();
+
+		// Enrich the node IP address so we can save it. [WLW]
+		val nipData = (NodeIpAddress) peResource.getItem();
+		nipData.setNode(node);
+		nipData.setIpAddress(ipAddress);
+		nipData.getIpAddressRole().setServiceInstance(serviceInstance);
+		basicItemDelegate.put(nipData, true);
 	}
 }
