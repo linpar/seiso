@@ -1,0 +1,30 @@
+<section>
+	<header>
+		<h1>Interrogate</h1>
+	</header>
+	<div class="row">
+		<div class="col-md-8">
+			<p>Runs all Eos checks for {{serviceInstance.key}}, including health and deployment verification.</p>
+			<form class="form-horizontal" ng-submit="actions.interrogate()" style="margin-top:30px">
+				<div class="form-group">
+					<label for="inputNodes" class="col-md-2 control-label">Nodes</label>
+					<div class="col-md-10">
+						<input class="form-control" id="inputNodes" placeholder="Node list">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<div class="checkbox">
+							<label><input type="checkbox"> Run deployment verification tests</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<button type="submit" class="btn btn-success btn-sm">Interrogate <i class="fa fa-cog"></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>

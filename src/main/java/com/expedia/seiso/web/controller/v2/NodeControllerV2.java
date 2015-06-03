@@ -51,6 +51,8 @@ public class NodeControllerV2 {
 	@Autowired private ServiceInstanceRepo serviceInstanceRepo;
 	@Autowired private CrudService crudService;
 	
+	// Temporarily disabling so we can get Ansible imports working. [WLW]
+	/*
 	@RequestMapping(
 			value = "/{name}",
 			method = RequestMethod.PUT,
@@ -84,6 +86,7 @@ public class NodeControllerV2 {
 		final String[] excludeProps = new String[] { "healthStatus", "aggregateRotationStatus", "version" };
 //		crudService.save(nodeData, null, excludeProps);
 	}
+	*/
 	
 	@RequestMapping(
 			value = "/{name}/ip-addresses/{ipAddress}",

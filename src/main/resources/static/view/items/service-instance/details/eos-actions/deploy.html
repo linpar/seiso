@@ -1,0 +1,77 @@
+<section>
+	<header>
+		<h1>Deploy</h1>
+	</header>
+	<div class="row">
+		<div class="col-md-8">
+			<p>Deploys the <span ng-bind="serviceInstance.key"></span> service instance using Eos.</p>
+			<form class="form-horizontal" ng-submit="#" style="margin-top:30px">
+				<div class="form-group">
+					<label for="inputVersion" class="col-md-2 control-label">Version</label>
+					<div class="col-md-10">
+						<input class="form-control" id="inputVersion" placeholder="Version">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="inputArguments" class="col-md-2 control-label">Arguments</label>
+					<div class="col-md-10">
+						<input class="form-control" id="inputArguments" placeholder="Arguments">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="inputNodes" class="col-md-2 control-label">Nodes</label>
+					<div class="col-md-10">
+						<input class="form-control" id="inputNodes" placeholder="Node list">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<div class="checkbox">
+							<label><input type="checkbox"> Deploy same version</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<div class="checkbox">
+							<label><input type="checkbox"> Override state restriction</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<div class="checkbox">
+							<label><input type="checkbox"> Skip rotate in</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<div class="checkbox">
+							<label><input type="checkbox"> Skip rotate out</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<div class="checkbox">
+							<label><input type="checkbox"> Skip deployment verification test</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<div class="checkbox">
+							<label><input type="checkbox"> Skip set active</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<button type="submit" class="btn btn-success btn-sm">Deploy <i class="fa fa-arrow-right"></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>
