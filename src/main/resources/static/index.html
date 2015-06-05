@@ -17,7 +17,7 @@
 	<ng-include src="'navbar.html'"></ng-include>
 	<div class="page-content">
 		<div class="container">
-			<div class="alert alert-info" ng-if="globals.motd" ng-bind-html="globals.motd"></div>
+			<div class="alert alert-info" ng-if="globals.motd" ng-bind-html="globals.motd.message"></div>
 			<ng-view></ng-view>
 		</div>
 	</div>

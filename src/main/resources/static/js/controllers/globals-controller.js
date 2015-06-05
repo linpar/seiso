@@ -8,7 +8,7 @@ var globalsController = function() {
 		var successHandler = function(data) {
 			$rootScope.globals = {
 				nav: data.seisoNav,
-				motd: data.motd.message,
+				motd: data.motd,
 				enableActions: data.enableActions
 			}
 		}
