@@ -18,8 +18,6 @@ package com.expedia.seiso.domain.entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import lombok.Data;
@@ -42,7 +40,7 @@ public abstract class AbstractItem implements Item {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@ManyToOne
-	@JoinColumn(name = "source_id")
-	private Source source;
+//	@ManyToOne
+//	@JoinColumn(name = "source_id")
+//	private Source source;
 }

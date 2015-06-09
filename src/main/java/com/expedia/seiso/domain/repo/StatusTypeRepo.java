@@ -35,6 +35,6 @@ public interface StatusTypeRepo extends CrudRepository<StatusType, Long> {
 
 	StatusType findByName(@Param("name") String name);
 	
-	@RestResource(path = "find-by-source")
-	List<StatusType> findBySourceKey(@Param("key") String key);
+//	@RestResource(path = "find-by-source")
+//	List<StatusType> findBySourceKey(@Param("key") String key);
 }

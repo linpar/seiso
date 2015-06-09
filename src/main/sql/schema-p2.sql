@@ -17,3 +17,18 @@ alter table rotation_status add column description varchar(250) after name;
 
 # Issue #113: Service instance descriptions
 alter table service_instance add column description varchar(250) after ukey;
+
+# Allow null.
+alter table dashboard modify column source_id int(10) unsigned;
+
+# Part of issue #9.
+create table service_instance_dependency (
+  id int unsigned not null auto_increment primary key,
+  dependent_id int unsigned not null,
+  dependency_id int unsigned not null,
+  description varchar(250),
+  key `dependent_id` (dependent_id),
+  key `dependency_id` (dependency_id),
+  constraint `service_instance_dependency_dependent_id` foreign key (dependent_id) references service_instance (id),
+  constraint `service_instance_dependency_dependency_id` foreign key (dependency_id) references service_instance (id)
+) engine=InnoDB default charset=utf8;

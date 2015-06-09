@@ -54,6 +54,6 @@ public interface MachineRepo extends PagingAndSortingRepository<Machine, Long>, 
 	@Query("select n.machine from ServiceInstance si join si.nodes n where si.key = :key")
 	Page<Machine> findByServiceInstance(@Param("key") String key, Pageable pageable);
 	
-	@RestResource(path = "find-by-source")
-	Page<Machine> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<Machine> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

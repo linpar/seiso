@@ -40,6 +40,6 @@ public interface EnvironmentRepo extends CrudRepository<Environment, Long> {
 	@FindByKey
 	Environment findByKey(@Param("key") String key);
 	
-	@RestResource(path = "find-by-source")
-	List<Endpoint> findBySourceKey(@Param("key") String key);
+//	@RestResource(path = "find-by-source")
+//	List<Endpoint> findBySourceKey(@Param("key") String key);
 }

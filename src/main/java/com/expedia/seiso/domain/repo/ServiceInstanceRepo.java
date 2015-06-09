@@ -118,8 +118,8 @@ public interface ServiceInstanceRepo
 	@Query(FIND_BY_DATA_CENTER_WITH_COUNTS)
 	Page<Object[]> findByDataCenterWithCounts(@Param("key") String key, Pageable pageable);
 	
-	@RestResource(path = "find-by-source")
-	Page<ServiceInstance> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<ServiceInstance> findBySourceKey(@Param("key") String key, Pageable pageable);
 	
 	
 	// =================================================================================================================

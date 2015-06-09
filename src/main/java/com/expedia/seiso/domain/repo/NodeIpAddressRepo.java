@@ -35,8 +35,8 @@ public interface NodeIpAddressRepo extends PagingAndSortingRepository<NodeIpAddr
 	@Query("from NodeIpAddress nip where nip.node.name = :nodeName and nip.ipAddress = :ipAddress")
 	NodeIpAddress findByNodeNameAndIpAddress(@Param("nodeName") String nodeName, @Param("ipAddress") String ipAddress);
 	
-	@RestResource(path = "find-by-source")
-	Page<NodeIpAddress> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<NodeIpAddress> findBySourceKey(@Param("key") String key, Pageable pageable);
 
 	@Modifying
 	@Query("delete from NodeIpAddress nip where nip.node = :node and nip.ipAddress = :ipAddress")

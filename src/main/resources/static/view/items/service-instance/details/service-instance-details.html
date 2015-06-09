@@ -50,6 +50,7 @@
 		<section>
 			<!-- FIXME Temporarily hardcoding Eos stuff here. [WLW] -->
 		</section>
+		<!-- TODO Load these with AJAX calls instead of eagerly loading everything. [WLW] -->
 		<tabset>
 			<tab heading="Dashboard">
 				<ng-include src="'view/items/service-instance/details/dashboard/node-summary.html'"></ng-include>
@@ -63,6 +64,12 @@
 				<ng-include src="'view/items/service-instance/details/details/endpoints-pane.html'"></ng-include>
 				<ng-include src="'view/items/service-instance/details/details/dashboards-pane.html'"></ng-include>
 				<ng-include src="'view/items/service-instance/details/details/seyren-pane.html'"></ng-include>
+			</tab>
+			<tab heading="Dependencies">
+				<!--
+				<ng-include src="'view/items/service-instance/details/dependencies/dependency-graph.html'"></ng-include>
+				-->
+				<ng-include src="'view/items/service-instance/details/dependencies/dependencies-tables.html'"></ng-include>
 			</tab>
 			<!--
 			<tab heading="Actions" ng-if="globals.enableActions">

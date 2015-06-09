@@ -86,10 +86,10 @@ public class RepoSearchControllerV2Tests {
 		when(nonPagingItemMeta.isPagingRepo()).thenReturn(false);
 		when(pagingItemMeta.isPagingRepo()).thenReturn(true);
 		
-		val searchMethodWithListResult =
-				ReflectionUtils.findMethod(StatusTypeRepo.class, "findBySourceKey", String.class);
-		assert(searchMethodWithListResult != null);
-		when(nonPagingItemMeta.getRepositorySearchMethod(SEARCH)).thenReturn(searchMethodWithListResult);
+//		val searchMethodWithListResult =
+//				ReflectionUtils.findMethod(StatusTypeRepo.class, "findBySourceKey", String.class);
+//		assert(searchMethodWithListResult != null);
+//		when(nonPagingItemMeta.getRepositorySearchMethod(SEARCH)).thenReturn(searchMethodWithListResult);
 		
 		val searchMethodWithPageResult =
 				ReflectionUtils.findMethod(PersonRepo.class, "findByLastName", String.class, Pageable.class);

@@ -116,7 +116,14 @@ public class ExceptionHandlerAdvice {
 		val fullMsg = e.getClass().getName() + ": " + e.getMessage();
 		return new ErrorObject(C.EC_INTERNAL_ERROR, fullMsg);
 	}
-
+	
+	@ExceptionHandler(UnsupportedOperationException.class)
+	@ResponseStatus(value = HttpStatus.NOT_IMPLEMENTED)
+	@ResponseBody
+	public ErrorObject handleUnsupportedOperationException(UnsupportedOperationException e, WebRequest request) {
+		return new ErrorObject(C.EC_NOT_IMPLEMENTED, "Endpoint not yet implemented.");
+	}
+	
 //	@ExceptionHandler(BindException.class)
 //	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //	@ResponseBody

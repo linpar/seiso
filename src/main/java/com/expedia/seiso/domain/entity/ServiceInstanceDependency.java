@@ -23,8 +23,8 @@ import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.val;
 import lombok.experimental.Accessors;
 
 import com.expedia.seiso.core.ann.Projection;
@@ -32,68 +32,53 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.seiso.web.ApiVersion;
 
 /**
  * @author Willie Wheeler
  */
 @Data
-@NoArgsConstructor
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false, of = "seyrenId")
-@ToString(callSuper = true, of = { "seyrenId", "name" })
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Entity
 // @formatter:off
 @Projections({
 	@Projection(cardinality = Cardinality.COLLECTION, paths = {
+			"dependency",
+			"dependent"
+	}),
+	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.COLLECTION, name = "by-dependent", paths = {
+			"dependency"
+	}),
+	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.COLLECTION, name = "by-dependency", paths = {
+			"dependent"
 	}),
 	@Projection(cardinality = Cardinality.SINGLE, paths = {
-			"source"
+			"dependency",
+			"dependent"
 	})
 })
 // @formatter:on
-public class SeyrenCheck extends AbstractItem {
+public class ServiceInstanceDependency extends AbstractItem {
 	
 	@NotNull
-	@Size(min = 1, max = 250)
-	private String seyrenBaseUrl;
-	
-	@NotNull
-	@Size(min = 1, max = 40)
-	private String seyrenId;
-	
-	@NotNull
-	@Size(min = 1, max = 250)
-	private String name;
-	
-	@Size(min = 1, max = 1000)
-	private String description;
-	
-	@NotNull
-	@Size(min = 1, max = 250)
-	private String graphiteBaseUrl;
-	
-	@NotNull
-	@Size(min = 1, max = 1000)
-	private String target;
-	
-	@NotNull
-	private Long warn;
-	
-	@NotNull
-	private Long error;
-	
-	@NotNull
-	private Boolean enabled;
-	
-	@Size(min = 1, max = 20)
-	private String state;
-	
 	@ManyToOne
-	@JoinColumn(name = "source_id")
-	private Source source;
+	@JoinColumn(name = "dependent_id", nullable = false)
+	private ServiceInstance dependent;
+	
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "dependency_id", nullable = false)
+	private ServiceInstance dependency;
+	
+	@Size(max = 250)
+	private String description;
 	
 	@Override
 	public ItemKey itemKey() {
-		return new SimpleItemKey(SeyrenCheck.class, seyrenId);
+		val id = getId();
+		return (id == null ? null : new SimpleItemKey(ServiceInstanceDependency.class, id));
 	}
+
 }

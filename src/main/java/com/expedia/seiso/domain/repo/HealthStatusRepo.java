@@ -35,6 +35,6 @@ public interface HealthStatusRepo extends PagingAndSortingRepository<HealthStatu
 
 	HealthStatus findByName(@Param("name") String name);
 	
-	@RestResource(path = "find-by-source")
-	Page<HealthStatus> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<HealthStatus> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

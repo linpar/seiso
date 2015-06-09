@@ -33,6 +33,6 @@ public interface DashboardRepo extends PagingAndSortingRepository<Dashboard, Lon
 	@FindByKey
 	Dashboard findByKey(@Param("key") String key);
 	
-	@RestResource(path = "find-by-source")
-	Page<Dashboard> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<Dashboard> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

@@ -42,6 +42,7 @@ import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.entity.ServiceGroup;
 import com.expedia.seiso.domain.entity.ServiceInstance;
+import com.expedia.seiso.domain.entity.ServiceInstanceDependency;
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.entity.ServiceType;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
@@ -124,6 +125,8 @@ public class ItemPaths {
 				(Item item) -> new String[] { RepoKeys.SERVICE_GROUPS, ((ServiceGroup) item).getKey() });
 		converters.put(ServiceInstance.class,
 				(Item item) -> new String[] { RepoKeys.SERVICE_INSTANCES, ((ServiceInstance) item).getKey() });
+		converters.put(ServiceInstanceDependency.class,
+				(Item item) -> new String[] { RepoKeys.SERVICE_INSTANCE_DEPENDENCIES, String.valueOf(((ServiceInstanceDependency) item).getId()) });
 		converters.put(ServiceInstancePort.class,
 				(Item item) -> {
 					ServiceInstancePort port = (ServiceInstancePort) item;

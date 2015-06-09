@@ -65,6 +65,6 @@ public interface NodeRepo extends PagingAndSortingRepository<Node, Long>, NodeRe
 	@Query("select n from Node n join n.ipAddresses nip join nip.endpoints e where nip.ipAddress = :ipAddress and e.port.number = :port")
 	List<Node> findByIpAddressAndPort(@Param("ipAddress") String ipAddress, @Param("port") Integer port);
 	
-	@RestResource(path = "find-by-source")
-	Page<Node> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<Node> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

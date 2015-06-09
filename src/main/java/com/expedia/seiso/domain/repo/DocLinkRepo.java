@@ -29,6 +29,6 @@ import com.expedia.serf.ann.RestResource;
 @RestResource(rel = RepoKeys.DOC_LINKS, path = RepoKeys.DOC_LINKS)
 public interface DocLinkRepo extends PagingAndSortingRepository<DocLink, Long> {
 	
-	@RestResource(path = "find-by-source")
-	Page<DocLink> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<DocLink> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

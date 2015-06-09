@@ -63,6 +63,6 @@ public interface EndpointRepo extends PagingAndSortingRepository<Endpoint, Long>
 	@Query("from Endpoint e where e.ipAddress.ipAddress = :ipAddress and e.port.number = :port")
 	Endpoint findByIpAddressAndPort(@Param("ipAddress") String ipAddress, @Param("port") int port);
 	
-	@RestResource(path = "find-by-source")
-	Page<Endpoint> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<Endpoint> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

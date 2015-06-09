@@ -29,6 +29,8 @@ angular.module('seisoControllers', [])
 		.controller('ServiceInstanceListController', pagingController('Service Instances', '/v1/service-instances', 'key'))
 		.controller('ServiceInstanceDetailsController', serviceInstanceDetailsController())
 		.controller('ServiceInstanceNodesController', serviceInstanceNodesController())
+		.controller('ServiceInstanceDependenciesController', serviceInstanceDependenciesController())
+		.controller('ServiceInstanceDependentsController', serviceInstanceDependentsController())
 		.controller('StatusListController', statusListController())
 		.controller('TypeListController', listController('Types', '/v2/service-types'))
 		;

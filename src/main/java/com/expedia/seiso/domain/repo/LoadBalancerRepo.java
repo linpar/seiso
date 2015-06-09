@@ -45,6 +45,6 @@ public interface LoadBalancerRepo extends PagingAndSortingRepository<LoadBalance
 	@Query("from LoadBalancer lb where lb.dataCenter.key = :key")
 	Page<LoadBalancer> findByDataCenterKey(@Param("key") String key, Pageable pageable);
 	
-	@RestResource(path = "find-by-source")
-	Page<LoadBalancer> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<LoadBalancer> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

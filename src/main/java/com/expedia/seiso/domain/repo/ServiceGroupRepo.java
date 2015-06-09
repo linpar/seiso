@@ -37,6 +37,6 @@ public interface ServiceGroupRepo extends CrudRepository<ServiceGroup, Long> {
 	@FindByKey
 	ServiceGroup findByKey(@Param("key") String key);
 	
-	@RestResource(path = "find-by-source")
-	List<ServiceGroup> findBySourceKey(@Param("key") String key);
+//	@RestResource(path = "find-by-source")
+//	List<ServiceGroup> findBySourceKey(@Param("key") String key);
 }

@@ -36,8 +36,8 @@ public interface IpAddressRoleRepo extends PagingAndSortingRepository<IpAddressR
 
 	IpAddressRole findByServiceInstanceKeyAndName(String serviceInstanceKey, String name);
 	
-	@RestResource(path = "find-by-source")
-	Page<IpAddressRole> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<IpAddressRole> findBySourceKey(@Param("key") String key, Pageable pageable);
 
 	@Modifying
 	@Query("delete from IpAddressRole r where r.serviceInstance.key = :serviceInstanceKey and r.name = :name")

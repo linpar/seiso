@@ -57,6 +57,6 @@ public interface ServiceRepo extends PagingAndSortingRepository<Service, Long>, 
 	@RestResource(path = "find-by-name")
 	Service findByName(@Param("name") String name);
 	
-	@RestResource(path = "find-by-source")
-	Page<Service> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<Service> findBySourceKey(@Param("key") String key, Pageable pageable);
 }

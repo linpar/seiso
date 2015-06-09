@@ -38,6 +38,7 @@ public interface RepoKeys {
 	public static final String REGIONS = "regions";
 	public static final String ROTATION_STATUSES = "rotation-statuses";
 	public static final String SERVICE_GROUPS = "service-groups";
+	public static final String SERVICE_INSTANCE_DEPENDENCIES = "service-instance-dependencies";
 	public static final String SERVICE_INSTANCE_PORTS = "service-instance-ports";
 	public static final String SERVICE_INSTANCES = "service-instances";
 	public static final String SERVICE_TYPES = "service-types";

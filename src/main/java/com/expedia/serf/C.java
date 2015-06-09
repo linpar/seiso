@@ -28,14 +28,17 @@ public class C {
 	public static final int DEFAULT_PAGE_SIZE = 100;
 
 	// Error codes
-	public static final String EC_VALIDATION_ERROR = "validation_error";
-	public static final String EC_INTERNAL_ERROR = "internal_error";
-	public static final String EC_RESOURCE_NOT_FOUND = "resource_not_found";
 	public static final String EC_HTTP_CLIENT_ERROR = "http_client_error";
+	public static final String EC_INTERNAL_ERROR = "internal_error";
+	
+	/** Syntax is fine, but semantics wrong (e.g. array passed where we expect a single value) */
+	public static final String EC_INVALID_REQUEST_BODY = "invalid_request_body";
+	
+	public static final String EC_NOT_IMPLEMENTED = "not_implemented";
 	
 	/** Request requires a request body */
 	public static final String EC_REQUEST_BODY_REQUIRED = "request_body_required";
 	
-	/** Syntax is fine, but semantics wrong (e.g. array passed where we expect a single value) */
-	public static final String EC_INVALID_REQUEST_BODY = "invalid_request_body";
+	public static final String EC_RESOURCE_NOT_FOUND = "resource_not_found";
+	public static final String EC_VALIDATION_ERROR = "validation_error";
 }

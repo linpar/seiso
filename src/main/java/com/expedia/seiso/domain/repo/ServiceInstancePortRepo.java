@@ -36,8 +36,8 @@ public interface ServiceInstancePortRepo extends PagingAndSortingRepository<Serv
 
 	ServiceInstancePort findByServiceInstanceKeyAndNumber(String serviceInstanceKey, Integer number);
 	
-	@RestResource(path = "find-by-source")
-	Page<ServiceInstancePort> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<ServiceInstancePort> findBySourceKey(@Param("key") String key, Pageable pageable);
 	
 	@Modifying
 	@Query("delete from ServiceInstancePort p where p.serviceInstance.key = :serviceInstanceKey and p.number = :number")

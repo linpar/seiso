@@ -40,6 +40,6 @@ public interface RegionRepo extends PagingAndSortingRepository<Region, Long> {
 	@Query("from Region r left join fetch r.infrastructureProvider where r.key = :key")
 	Region findByKey(@Param("key") String key);
 	
-	@RestResource(path = "find-by-source")
-	Page<Region> findBySourceKey(@Param("key") String key, Pageable pageable);
+//	@RestResource(path = "find-by-source")
+//	Page<Region> findBySourceKey(@Param("key") String key, Pageable pageable);
 }
