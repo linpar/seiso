@@ -24,7 +24,6 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.val;
 import lombok.experimental.Accessors;
 
 import com.expedia.seiso.core.ann.Projection;
@@ -77,8 +76,7 @@ public class ServiceInstanceDependency extends AbstractItem {
 	
 	@Override
 	public ItemKey itemKey() {
-		val id = getId();
+		Long id = getId();
 		return (id == null ? null : new SimpleItemKey(ServiceInstanceDependency.class, id));
 	}
-
 }

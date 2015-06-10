@@ -20,6 +20,8 @@ import java.util.List;
 import lombok.NonNull;
 import lombok.val;
 
+// TODO Can we get rid of these adapters? It's a nuisance to have to keep implementing them. [WLW]
+
 /**
  * Repo adapter lookup.
  * 

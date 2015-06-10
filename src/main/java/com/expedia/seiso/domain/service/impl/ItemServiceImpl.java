@@ -149,6 +149,7 @@ public class ItemServiceImpl implements ItemService {
 	@Transactional(readOnly = false)
 	public void save(@NonNull Item itemData, boolean mergeAssociations) {
 		val itemKey = itemData.itemKey();
+		log.trace("Saving item: itemKey={}", itemKey);
 		
 		if (itemKey == null) {
 			// No key, so the item is new.

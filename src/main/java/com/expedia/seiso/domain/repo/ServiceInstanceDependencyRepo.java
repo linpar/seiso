@@ -30,6 +30,13 @@ import com.expedia.serf.ann.RestResource;
 @RestResource(rel = RepoKeys.SERVICE_INSTANCE_DEPENDENCIES, path = RepoKeys.SERVICE_INSTANCE_DEPENDENCIES)
 public interface ServiceInstanceDependencyRepo extends PagingAndSortingRepository<ServiceInstanceDependency, Long> {
 	
+	public static final String FIND_BY_KEYS =
+			"from " +
+			"  ServiceInstanceDependency " +
+			"where " +
+			"  dependent.key = :dependent and " +
+			"  dependency.key = :dependency";
+	
 	public static final String FIND_BY_DEPENDENT_WITH_COUNTS =
 			"select distinct " +
 			"  sid, " +
@@ -59,6 +66,12 @@ public interface ServiceInstanceDependencyRepo extends PagingAndSortingRepositor
 			"  sid.dependency.key = :key " +
 			"group by " +
 			"  si.id";
+	
+	@RestResource(path = "find-by-keys")
+	@Query(FIND_BY_KEYS)
+	ServiceInstanceDependency findByKeys(
+			@Param("dependent") String dependentKey,
+			@Param("dependency") String dependencyKey);
 	
 	/**
 	 * @param dependentKey

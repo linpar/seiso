@@ -38,6 +38,7 @@ import org.springframework.validation.Validator;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.entity.ServiceInstanceDependency;
 import com.expedia.seiso.domain.entity.key.EndpointKey;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
@@ -135,6 +136,8 @@ public class BasicItemDelegate {
 		ItemKey itemKeyObj;
 		if (apiVersion == ApiVersion.V1 && itemClass == Endpoint.class) {
 			itemKeyObj = new EndpointKey(Long.parseLong(itemKey));
+		} else if (apiVersion == ApiVersion.V2 && itemClass == ServiceInstanceDependency.class) {
+			itemKeyObj = new SimpleItemKey(itemClass, Long.parseLong(itemKey));
 		} else {
 			itemKeyObj = new SimpleItemKey(itemClass, itemKey);
 		}
@@ -205,6 +208,11 @@ public class BasicItemDelegate {
 		// Do we need to handle paging property lists here?
 		// Usually property lists will be reasonably short. But it is easy to imagine real cases where this isn't true,
 		// such as a service instance with hundreds of nodes.
+	}
+	
+	public void post(@NonNull Item item, boolean mergeAssociations) {
+		log.trace("Putting item: {}", item.itemKey());
+		itemService.save(item, mergeAssociations);		
 	}
 	
 	public SaveAllResult postAll(
@@ -289,7 +297,8 @@ public class BasicItemDelegate {
 	 *            separate resources, and hence does not merge.
 	 */
 	public void put(@NonNull Item item, boolean mergeAssociations) {
-		log.trace("Putting item: {}", item.itemKey());
+		ItemKey itemKey = item.itemKey();
+		log.trace("Putting item: {}", itemKey);
 		
 		// Hibernate already performs this validation, but do it here instead to avoid having to unwrap a
 		// TransactionSystemException and a RollbackException. This makes processing by ExceptionHandlerAdvice more
@@ -297,6 +306,7 @@ public class BasicItemDelegate {
 		BindException bindException = new BindException(item, "item");
 		validator.validate(item, bindException);
 		if (bindException.hasErrors()) {
+			log.trace("Validation failed: itemKey={}", itemKey);
 			ItemLinks itemLinks = linkFactoryV1.getItemLinks();
 			String itemUri = itemLinks.itemLink(item).getHref();
 			ResourceValidationError vem = ResourceValidationErrorFactory.buildFrom(itemUri, bindException);

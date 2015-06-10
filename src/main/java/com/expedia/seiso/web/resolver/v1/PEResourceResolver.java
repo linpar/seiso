@@ -48,9 +48,10 @@ import com.expedia.serf.util.ResolverUtils;
 public class PEResourceResolver implements HandlerMethodArgumentResolver {
 	
 	// FIXME DRY up. We're repeating info in com.expedia.seiso.web.converter.
-	private static final String ITEM_FORMAT = "/{version}/{repoKey}/{itemKey}";
-	private static final String PROPERTY_FORMAT = "/{version}/{repoKey}/{itemKey}/{propKey}";
-	private static final String COLLECTION_ELEMENT_FORMAT = "/{version}/{repoKey}/{itemKey}/{propKey}/{propValue}";
+	private static final String COLLECTION_FORMAT = "/{version}/{repoKey}";
+	private static final String ITEM_FORMAT = COLLECTION_FORMAT + "/{itemKey}";
+	private static final String PROPERTY_FORMAT = ITEM_FORMAT + "/{propKey}";
+	private static final String COLLECTION_ELEMENT_FORMAT = PROPERTY_FORMAT + "/{propValue}";
 
 	private List<SimplePropertyEntry> simplePropertyEntries;
 	
@@ -80,7 +81,10 @@ public class PEResourceResolver implements HandlerMethodArgumentResolver {
 
 		Class<?> itemClass = null;
 		val matcher = new AntPathMatcher();
-		if (matcher.match(ITEM_FORMAT, path)) {
+		if (matcher.match(COLLECTION_FORMAT, path)) {
+			val variables = matcher.extractUriTemplateVariables(COLLECTION_FORMAT, path);
+			itemClass = itemMetaLookup.getItemClass(variables.get("repoKey"));
+		} else if (matcher.match(ITEM_FORMAT, path)) {
 			val variables = matcher.extractUriTemplateVariables(ITEM_FORMAT, path);
 			itemClass = itemMetaLookup.getItemClass(variables.get("repoKey"));
 		} else if (matcher.match(PROPERTY_FORMAT, path)) {
@@ -94,7 +98,7 @@ public class PEResourceResolver implements HandlerMethodArgumentResolver {
 			val propKey = variables.get("propKey");
 			itemClass = findPropertyClass(repoKey, propKey);
 		} else {
-			throw new RuntimeException("No resolver for requestUri=" + path);
+			throw new RuntimeException("Can't resolve uri=" + path + " to a PEResource");
 		}
 
 		val pEntity = repositories.getPersistentEntity(itemClass);

@@ -51,12 +51,14 @@ import com.expedia.seiso.domain.repo.EndpointRepo;
 import com.expedia.seiso.domain.repo.IpAddressRoleRepo;
 import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
 import com.expedia.seiso.domain.repo.RepoPackageMarker;
+import com.expedia.seiso.domain.repo.ServiceInstanceDependencyRepo;
 import com.expedia.seiso.domain.repo.ServiceInstancePortRepo;
 import com.expedia.seiso.domain.repo.adapter.EndpointRepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.IpAddressRoleRepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.NodeIpAddressRepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.RepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
+import com.expedia.seiso.domain.repo.adapter.ServiceInstanceDependencyRepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.ServiceInstancePortRepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.SimpleItemRepoAdapter;
 import com.expedia.seiso.domain.repo.impl.RepoImplUtils;
@@ -153,10 +155,13 @@ public class SeisoDomainConfig {
 	public static class ServiceConfig {
 		@Autowired private PlatformTransactionManager txManager;
 		@Autowired private Repositories repositories;
+		
+		// TODO Get rid of this stuff [WLW]
 		@Autowired private EndpointRepo endpointRepo;
 		@Autowired private IpAddressRoleRepo ipAddressRoleRepo;
 		@Autowired private NodeIpAddressRepo nodeIpAddressRepo;
 		@Autowired private ServiceInstancePortRepo serviceInstancePortRepo;
+		@Autowired private ServiceInstanceDependencyRepo serviceInstanceDependencyRepo;
 		
 		@Bean
 		public TransactionTemplate transactionTemplate() {
@@ -166,6 +171,7 @@ public class SeisoDomainConfig {
 		@Bean
 		public ItemMetaLookup itemMetaLookup() { return new ItemMetaLookup(); }
 		
+		// TODO Get rid of this [WLW]
 		@Bean
 		public RepoAdapterLookup repoAdapterLookup() {
 			// TODO Should be pretty easy to collapse these into a single class using lambdas.
@@ -175,6 +181,7 @@ public class SeisoDomainConfig {
 					new EndpointRepoAdapter(endpointRepo),
 					new IpAddressRoleRepoAdapter(ipAddressRoleRepo),
 					new NodeIpAddressRepoAdapter(nodeIpAddressRepo),
+					new ServiceInstanceDependencyRepoAdapter(serviceInstanceDependencyRepo),
 					new ServiceInstancePortRepoAdapter(serviceInstancePortRepo)));
 			// @formatting:on
 		}

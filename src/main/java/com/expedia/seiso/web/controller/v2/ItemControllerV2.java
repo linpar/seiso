@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.core.ann.Projection;
+import com.expedia.seiso.domain.entity.Item;
+import com.expedia.seiso.domain.entity.ServiceInstanceDependency;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.ApiVersion;
@@ -116,6 +118,15 @@ public class ItemControllerV2 {
 //		return delegate.postAll(itemClass, peResources, true);
 //	}
 	
+	@RequestMapping(
+			value = "/{repoKey}",
+			method = RequestMethod.POST,
+			consumes = MediaTypes.APPLICATION_HAL_JSON_VALUE)
+	public void post(@PathVariable String repoKey, PEResource peResource) {
+		log.trace("Posting /{}", repoKey);
+		delegate.post(peResource.getItem(), true);
+	}
+	
 	/**
 	 * Handles HTTP PUT requests against top-level resources. Following HTTP semantics, this creates the resource if it
 	 * doesn't already exist; otherwise, it completely replaces the existing resource (as opposed to merging it). With
@@ -136,6 +147,14 @@ public class ItemControllerV2 {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void put(@PathVariable String repoKey, @PathVariable String itemKey, PEResource peResource) {
 		log.trace("Putting /{}/{}", repoKey, itemKey);
+		Item item = peResource.getItem();
+		
+		// FIXME Hardcode
+		// Need a more generic way to resolve the key (whether natural or DB PK) to the DB ID.
+		if (ServiceInstanceDependency.class.equals(item.getClass())) {
+			item.setId(Long.parseLong(itemKey));
+		}
+		
 		delegate.put(peResource.getItem(), true);
 	}
 	
