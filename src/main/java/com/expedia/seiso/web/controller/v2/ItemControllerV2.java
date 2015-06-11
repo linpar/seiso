@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.web.controller.v2;
 
+import java.io.Serializable;
+
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
@@ -171,6 +173,16 @@ public class ItemControllerV2 {
 	@SuppressWarnings("rawtypes")
 	public void delete(@PathVariable String repoKey, @PathVariable String itemKey) {
 		val itemClass = itemMetaLookup.getItemClass(repoKey);
-		delegate.delete(new SimpleItemKey(itemClass, itemKey));
+		Serializable itemKeyValue = null;
+		
+		// FIXME Hardcode
+		// Need a more generic way to resolve the key (whether natural or DB PK) to the DB ID.
+		if (ServiceInstanceDependency.class.equals(itemClass)) {
+			itemKeyValue = Long.parseLong(itemKey);
+		} else {
+			itemKeyValue = itemKey;
+		}
+		
+		delegate.delete(new SimpleItemKey(itemClass, itemKeyValue));
 	}
 }
