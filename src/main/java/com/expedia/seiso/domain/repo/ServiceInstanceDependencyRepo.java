@@ -73,6 +73,12 @@ public interface ServiceInstanceDependencyRepo extends PagingAndSortingRepositor
 			@Param("dependent") String dependentKey,
 			@Param("dependency") String dependencyKey);
 	
+	@RestResource(path = "find-by-dependent")
+	Page<ServiceInstanceDependency> findByDependentKey(String key, Pageable pageable);
+	
+	@RestResource(path = "find-by-dependency")
+	Page<ServiceInstanceDependency> findByDependencyKey(String key, Pageable pageable);
+	
 	/**
 	 * @param dependentKey
 	 *            dependent service instance key

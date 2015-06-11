@@ -48,10 +48,10 @@ import com.expedia.seiso.web.ApiVersion;
 			"dependent"
 	}),
 	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.COLLECTION, name = "by-dependent", paths = {
-			"dependency"
+			"dependency.service"
 	}),
 	@Projection(apiVersions = ApiVersion.V2, cardinality = Cardinality.COLLECTION, name = "by-dependency", paths = {
-			"dependent"
+			"dependent.service"
 	}),
 	@Projection(cardinality = Cardinality.SINGLE, paths = {
 			"dependency",
@@ -70,9 +70,6 @@ public class ServiceInstanceDependency extends AbstractItem {
 	@ManyToOne
 	@JoinColumn(name = "dependency_id", nullable = false)
 	private ServiceInstance dependency;
-	
-	@Size(max = 250)
-	private String description;
 	
 	@Override
 	public ItemKey itemKey() {
