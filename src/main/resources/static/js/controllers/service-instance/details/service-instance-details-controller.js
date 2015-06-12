@@ -19,6 +19,18 @@ var serviceInstanceDetailsController = function() {
 			$scope.dashboards = siEmbedded.dashboards;
 			$scope.checks = siEmbedded.seyrenChecks;
 			
+			$scope.tabs = [
+				{ heading: 'Dashboard', content: 'dashboard/index' },
+				{ heading: 'All Nodes', content: 'nodes/node-pane' },
+				{ heading: 'Details', content: 'details/index' },
+				{ heading: 'Dependencies', content: 'dependencies/dependencies-tables' }
+//				{ heading: 'Actions', content: 'eos-actions/eos-actions' }
+			];
+			
+			$scope.setTabContent = function(name) {
+				$scope.tabContentUrl = "view/items/service-instance/details/" + name + ".html";
+			}
+			
 			$scope.actions = {
 				interrogate: function() {
 					console.log("Interrogating service instance in Eos");
