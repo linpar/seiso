@@ -30,6 +30,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.expedia.seiso.conf.CustomProperties;
+import com.expedia.seiso.integration.eos.connector.Eos;
+import com.expedia.seiso.integration.eos.connector.impl.EosTemplate;
 
 // Recent changes to this configuration:
 // 
@@ -46,7 +48,7 @@ import com.expedia.seiso.conf.CustomProperties;
  */
 @Configuration
 @XSlf4j
-public class SeisoRabbitConfig {
+public class SeisoIntegrationConfig {
 	@Autowired private CachingConnectionFactory connectionFactory;
 	@Autowired private CustomProperties customProperties;
 	
@@ -75,5 +77,10 @@ public class SeisoRabbitConfig {
 		val template = new RabbitTemplate(connectionFactory);
 		template.setMessageConverter(jsonMessageConverter());
 		return template;
+	}
+	
+	@Bean
+	public Eos eos() {
+		return new EosTemplate();
 	}
 }

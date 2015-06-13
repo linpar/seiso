@@ -24,45 +24,16 @@ var serviceInstanceDetailsController = function() {
 				{ heading: 'All Nodes', content: 'nodes/node-pane' },
 				{ heading: 'Details', content: 'details/index' },
 				{ heading: 'Dependencies', content: 'dependencies/dependencies-tables' }
-//				{ heading: 'Actions', content: 'eos-actions/eos-actions' }
 			];
+			
+			if ($scope.globals.enableActions) {
+				$scope.tabs.push({ heading: 'Actions', content: 'eos-actions/index' });
+			}
 			
 			$scope.setTabContent = function(name) {
 				$scope.tabContentUrl = "view/items/service-instance/details/" + name + ".html";
 			}
-			
-			$scope.actions = {
-				interrogate: function() {
-					console.log("Interrogating service instance in Eos");
-					var interrogatePath = "/internal/service-instances/" + serviceInstanceKey + "/interrogate";
-					var interrogateSuccessHandler = function(data) {
-						console.log("Success");
-					}
-					var interrogateErrorHandler = function() {
-						console.log("Error");
-						// TODO Do a better notification.
-						alert("Interrogation failed.");
-					}
-					$http.post(interrogatePath)
-							.success(interrogateSuccessHandler)
-							.error(interrogateErrorHandler);
-				},
-				reload: function() {
-					console.log("Reloading service instance in Eos");
-					var reloadPath = "/internal/service-instances/" + serviceInstanceKey + "/reload";
-					var reloadSuccessHandler = function(data) {
-						console.log("Success");
-					}
-					var reloadErrorHandler = function() {
-						console.log("Error");
-						alert("Reload failed.");
-					}
-					$http.post(reloadPath)
-							.success(reloadSuccessHandler)
-							.error(reloadErrorHandler);
-				}
-			}
-			
+		
 			$scope.serviceInstanceStatus = 'loaded';
 		}
 		var errorHandler = function() {

@@ -1,0 +1,20 @@
+<section ng-controller="EosSetActiveController">
+	<header>
+		<h1>Set Active</h1>
+	</header>
+	<p>Sets all nodes in the current channel to the <em>Active</em> state and the alternate channel's nodes to the <em>Inactive</em> state.</p>
+	<div class="row">
+		<div class="col-md-8">
+			<form ng-submit="submit()">
+				<button class="btn btn-success" type="submit">
+					Set Active
+					<span ng-switch="setActiveStatus">
+						<span ng-switch-when="loading"><i class="fa fa-spinner fa-spin"></i></span>
+						<span ng-switch-when="success"><i class="fa fa-check"></i></span>
+						<span ng-switch-when="error"><i class="fa fa-times"></i></span>
+					</span>
+				</button>
+			</form>
+		</div>
+	</div>
+</section>

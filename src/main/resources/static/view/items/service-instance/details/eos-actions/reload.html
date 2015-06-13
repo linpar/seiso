@@ -1,14 +1,20 @@
-<section>
+<section ng-controller="EosReloadController">
 	<header>
 		<h1>Reload</h1>
 	</header>
+	<p>Reloads the {{serviceInstance.key}} service instance in Eos.</p>
 	<div class="row">
 		<div class="col-md-8">
-			<p>Reloads the {{serviceInstance.key}} service instance in Eos.</p>
-			<form style="margin-top:30px" ng-submit="actions.reload()">
-				<button class="btn btn-success btn-sm" type="submit">Reload <i class="fa fa-refresh"></i></button>
+			<form ng-submit="submit()">
+				<button class="btn btn-success" type="submit">
+					Reload
+					<span ng-switch="reloadStatus">
+						<span ng-switch-when="loading"><i class="fa fa-spinner fa-spin"></i></span>
+						<span ng-switch-when="success"><i class="fa fa-check"></i></span>
+						<span ng-switch-when="error"><i class="fa fa-times"></i></span>
+					</span>
+				</button>
 			</form>
 		</div>
 	</div>
 </section>
-

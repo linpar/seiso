@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.gateway.model;
-
-import java.util.List;
+package com.expedia.seiso.integration.eos.connector;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
-import com.expedia.seiso.domain.entity.key.ItemKey;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Willie Wheeler
  */
 @Data
-@NoArgsConstructor
-@RequiredArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class BulkNodeActionRequest implements ActionRequest {
-	@NonNull
-	private String code;
-	@NonNull
-	private List<ItemKey> nodeKeys;
+public class EosMaintenanceModeRequest {
+	
+	@JsonProperty("Nodes")
+	private String nodes;
+	
+	@JsonProperty("Minutes")
+	private Integer minutes;
+	
+	@JsonProperty("Enable")
+	private Boolean enable;
+	
+	@JsonProperty("OverrideOthers")
+	private Boolean overrideOthers;
 }

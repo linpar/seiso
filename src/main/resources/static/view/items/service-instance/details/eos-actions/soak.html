@@ -1,0 +1,30 @@
+<section>
+	<header>
+		<h1>Soak</h1>
+	</header>
+	<p>Sets the given nodes in the alternate channel into either the <em>Active</em> or the <em>Inactive</em> state.</p>
+	<div class="row">
+		<div class="col-md-8">
+			<form class="form-horizontal" ng-submit="actions.soak()" style="margin-top:30px">
+				<div class="form-group">
+					<label for="inputNodes" class="col-md-2 control-label">Nodes</label>
+					<div class="col-md-10">
+						<input class="form-control" id="inputNodes" placeholder="Node list">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<div class="checkbox">
+							<label><input type="checkbox"> Activate</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<button type="submit" class="btn btn-success btn-sm">Soak</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>

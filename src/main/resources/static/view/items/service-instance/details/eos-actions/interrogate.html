@@ -2,9 +2,9 @@
 	<header>
 		<h1>Interrogate</h1>
 	</header>
+	<p>Runs all Eos checks for {{serviceInstance.key}}, including health and deployment verification.</p>
 	<div class="row">
 		<div class="col-md-8">
-			<p>Runs all Eos checks for {{serviceInstance.key}}, including health and deployment verification.</p>
 			<form class="form-horizontal" ng-submit="actions.interrogate()" style="margin-top:30px">
 				<div class="form-group">
 					<label for="inputNodes" class="col-md-2 control-label">Nodes</label>
@@ -21,7 +21,7 @@
 				</div>
 				<div class="form-group">
 					<div class="col-md-offset-2 col-md-10">
-						<button type="submit" class="btn btn-success btn-sm">Interrogate <i class="fa fa-cog"></i></button>
+						<button type="submit" class="btn btn-success btn-sm">Interrogate</button>
 					</div>
 				</div>
 			</form>

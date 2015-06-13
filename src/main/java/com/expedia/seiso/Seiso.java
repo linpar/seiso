@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @Import({
 	SeisoCoreConfig.class,
-	SeisoRabbitConfig.class,
+	SeisoIntegrationConfig.class,
 	SeisoDomainConfig.class,
 	SeisoWebConfig.class,
 	SeisoWebSecurityConfig.class

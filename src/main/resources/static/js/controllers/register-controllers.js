@@ -8,6 +8,12 @@ angular.module('seisoControllers', [])
 		.controller('MBProfileController', mbProfileController())
 		.controller('AdminController', adminController())
 		
+		.controller('EosActionController', eosActionController())
+		.controller('EosDeployController', eosDeployController())
+		.controller('EosMaintenanceModeController', eosMaintenanceModeController())
+		.controller('EosReloadController', eosReloadController())
+		.controller('EosSetActiveController', eosSetActiveController())
+		
 		// Items
 		.controller('DataCenterListController', dataCenterListController())
 		.controller('DataCenterDetailsController', dataCenterDetailsController())

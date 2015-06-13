@@ -13,19 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.gateway.model;
+package com.expedia.seiso.integration.eos.connector;
+
+import lombok.Data;
 
 /**
- * Represents a user-initiated action.
- * 
  * @author Willie Wheeler
  */
-public interface ActionRequest {
+@Data
+public class EosSoakRequest {
 
-	/**
-	 * Identifies the type of action being requested.
-	 * 
-	 * @return action code
-	 */
-	String getCode();
 }
