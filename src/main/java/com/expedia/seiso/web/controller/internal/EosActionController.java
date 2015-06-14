@@ -16,7 +16,6 @@
 package com.expedia.seiso.web.controller.internal;
 
 import lombok.Data;
-import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +37,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @RestController
 @SuppressBasePath
 @RequestMapping("/internal")
-@XSlf4j
 public class EosActionController {
 	@Autowired private Eos eos;
 	
@@ -46,7 +44,7 @@ public class EosActionController {
 			value = "/service-instances/{key}/convict",
 			method = RequestMethod.POST)
 	public void convict(@PathVariable String key, @RequestBody ConvictRequest request) {
-		
+		// TODO
 	}
 	
 	@RequestMapping(
@@ -64,6 +62,7 @@ public class EosActionController {
 			value = "/service-instances/{key}/interrogate",
 			method = RequestMethod.POST)
 	public void interrogate(@PathVariable String key) {
+		// TODO
 	}
 	
 	@RequestMapping(
@@ -101,6 +100,7 @@ public class EosActionController {
 			value = "/service-instances/{key}/soak",
 			method = RequestMethod.POST)
 	public void soak(@PathVariable String key) {
+		// TODO
 	}
 	
 	private EosDeployRequest toEosDeployRequest(DeployRequest request) {

@@ -77,7 +77,9 @@ public class EosTemplate implements Eos {
 	@Override
 	public EosResponse convict(@NonNull String serviceInstanceKey, @NonNull EosConvictRequest request) {
 		log.info("Convicting: serviceInstanceKey={}", serviceInstanceKey);
-		return null;
+		final String uri = actionUri(EOS_CONVICT_PATH);
+		final HttpEntity<EosConvictRequest> requestEntity = new HttpEntity<>(request, REQUEST_HEADERS);
+		return exchange(uri, requestEntity, serviceInstanceKey);
 	}
 
 	/* (non-Javadoc)
@@ -86,7 +88,9 @@ public class EosTemplate implements Eos {
 	@Override
 	public EosResponse deploy(@NonNull String serviceInstanceKey, @NonNull EosDeployRequest request) {
 		log.info("Deploying: serviceInstanceKey={}", serviceInstanceKey);
-		return null;
+		final String uri = actionUri(EOS_DEPLOY_PATH);
+		final HttpEntity<EosDeployRequest> requestEntity = new HttpEntity<>(request, REQUEST_HEADERS);
+		return exchange(uri, requestEntity, serviceInstanceKey);
 	}
 
 	/* (non-Javadoc)
@@ -94,20 +98,10 @@ public class EosTemplate implements Eos {
 	 */
 	@Override
 	public EosResponse interrogate(@NonNull String serviceInstanceKey, @NonNull EosInterrogateRequest request) {
-//		log.info("Interrogating: serviceInstanceKey={}", serviceInstanceKey);
-//		final String uri = actionUri(EOS_INTERROGATE_PATH);
-//		try {
-//			// Though Eos returns a JSON object, the Content-Type is text/plain,
-//			// so here we treat the type as String.class.
-//			restTemplate.postForEntity(actionUri(EOS_INTERROGATE_PATH), "", String.class, key);
-//		} catch (HttpClientErrorException e) {
-//			throw e;
-//		} catch (HttpServerErrorException e) {
-//			// Eos incorrectly generates HTTP 500 for client errors, so just recast this as an HTTP 400.
-//			// If it's a genuine server error, we're out of luck.
-//			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
-//		}
-		return null;
+		log.info("Interrogate: serviceInstanceKey={}", serviceInstanceKey);
+		final String uri = actionUri(EOS_INTERROGATE_PATH);
+		final HttpEntity<EosInterrogateRequest> requestEntity = new HttpEntity<>(request, REQUEST_HEADERS);
+		return exchange(uri, requestEntity, serviceInstanceKey);
 	}
 
 	/* (non-Javadoc)
@@ -149,7 +143,9 @@ public class EosTemplate implements Eos {
 	@Override
 	public EosResponse soak(@NonNull String serviceInstanceKey, @NonNull EosSoakRequest request) {
 		log.info("Soaking: serviceInstanceKey={}", serviceInstanceKey);
-		return null;
+		final String uri = actionUri(EOS_SOAK_PATH);
+		final HttpEntity<EosSoakRequest> requestEntity = new HttpEntity<>(request, REQUEST_HEADERS);
+		return exchange(uri, requestEntity, serviceInstanceKey);
 	}
 	
 	private String actionUri(String path) {
