@@ -62,6 +62,10 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 				.antMatchers(HttpMethod.GET, "/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/v1/machines/search").permitAll()
+				
+				// For Eos commands
+				.antMatchers(HttpMethod.POST, "/internal/**").permitAll()
+				
 				.anyRequest().authenticated()
 				.and()
 			.httpBasic()
