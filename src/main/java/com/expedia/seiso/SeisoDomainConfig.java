@@ -53,6 +53,7 @@ import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
 import com.expedia.seiso.domain.repo.RepoPackageMarker;
 import com.expedia.seiso.domain.repo.ServiceInstanceDependencyRepo;
 import com.expedia.seiso.domain.repo.ServiceInstancePortRepo;
+import com.expedia.seiso.domain.repo.SeyrenCheckRepo;
 import com.expedia.seiso.domain.repo.adapter.EndpointRepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.IpAddressRoleRepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.NodeIpAddressRepoAdapter;
@@ -60,6 +61,7 @@ import com.expedia.seiso.domain.repo.adapter.RepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.RepoAdapterLookup;
 import com.expedia.seiso.domain.repo.adapter.ServiceInstanceDependencyRepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.ServiceInstancePortRepoAdapter;
+import com.expedia.seiso.domain.repo.adapter.SeyrenCheckRepoAdapter;
 import com.expedia.seiso.domain.repo.adapter.SimpleItemRepoAdapter;
 import com.expedia.seiso.domain.repo.impl.RepoImplUtils;
 import com.expedia.seiso.domain.service.ItemService;
@@ -162,6 +164,7 @@ public class SeisoDomainConfig {
 		@Autowired private NodeIpAddressRepo nodeIpAddressRepo;
 		@Autowired private ServiceInstancePortRepo serviceInstancePortRepo;
 		@Autowired private ServiceInstanceDependencyRepo serviceInstanceDependencyRepo;
+		@Autowired private SeyrenCheckRepo seyrenCheckRepo;
 		
 		@Bean
 		public TransactionTemplate transactionTemplate() {
@@ -182,7 +185,8 @@ public class SeisoDomainConfig {
 					new IpAddressRoleRepoAdapter(ipAddressRoleRepo),
 					new NodeIpAddressRepoAdapter(nodeIpAddressRepo),
 					new ServiceInstanceDependencyRepoAdapter(serviceInstanceDependencyRepo),
-					new ServiceInstancePortRepoAdapter(serviceInstancePortRepo)));
+					new ServiceInstancePortRepoAdapter(serviceInstancePortRepo),
+					new SeyrenCheckRepoAdapter(seyrenCheckRepo)));
 			// @formatting:on
 		}
 		

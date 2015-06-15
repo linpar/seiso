@@ -25,9 +25,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.integration.eos.connector.Eos;
+import com.expedia.seiso.integration.eos.connector.EosConvictRequest;
 import com.expedia.seiso.integration.eos.connector.EosDeployRequest;
+import com.expedia.seiso.integration.eos.connector.EosInterrogateRequest;
 import com.expedia.seiso.integration.eos.connector.EosMaintenanceModeRequest;
 import com.expedia.seiso.integration.eos.connector.EosResponse;
+import com.expedia.seiso.integration.eos.connector.EosSoakRequest;
 import com.expedia.serf.ann.SuppressBasePath;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -44,7 +47,11 @@ public class EosActionController {
 			value = "/service-instances/{key}/convict",
 			method = RequestMethod.POST)
 	public void convict(@PathVariable String key, @RequestBody ConvictRequest request) {
-		// TODO
+		EosConvictRequest eosRequest = toEosConvictRequest(request);
+		EosResponse response = eos.convict(key, eosRequest);
+		if (response.isError()) {
+			throw new RuntimeException(response.getMessage());
+		}
 	}
 	
 	@RequestMapping(
@@ -61,8 +68,12 @@ public class EosActionController {
 	@RequestMapping(
 			value = "/service-instances/{key}/interrogate",
 			method = RequestMethod.POST)
-	public void interrogate(@PathVariable String key) {
-		// TODO
+	public void interrogate(@PathVariable String key, @RequestBody InterrogateRequest request) {
+		EosInterrogateRequest eosRequest = toEosInterrogateRequest(request);
+		EosResponse response = eos.interrogate(key, eosRequest);
+		if (response.isError()) {
+			throw new RuntimeException(response.getMessage());
+		}
 	}
 	
 	@RequestMapping(
@@ -99,8 +110,21 @@ public class EosActionController {
 	@RequestMapping(
 			value = "/service-instances/{key}/soak",
 			method = RequestMethod.POST)
-	public void soak(@PathVariable String key) {
-		// TODO
+	public void soak(@PathVariable String key, @RequestBody SoakRequest request) {
+		EosSoakRequest eosRequest = toEosSoakRequest(request);
+		EosResponse response = eos.soak(key, eosRequest);
+		if (response.isError()) {
+			throw new RuntimeException(response.getMessage());
+		}
+	}
+	
+	private EosConvictRequest toEosConvictRequest(ConvictRequest request) {
+		EosConvictRequest eosRequest = new EosConvictRequest();
+		eosRequest.setNodeList(request.getNodeList());
+		eosRequest.setReason(request.getReason());
+		eosRequest.setOverrideCapacity(request.getOverrideCapacity());
+		eosRequest.setSkipRotateIn(request.getSkipRotateIn());
+		return eosRequest;
 	}
 	
 	private EosDeployRequest toEosDeployRequest(DeployRequest request) {
@@ -117,12 +141,26 @@ public class EosActionController {
 		return eosRequest;
 	}
 	
+	private EosInterrogateRequest toEosInterrogateRequest(InterrogateRequest request) {
+		EosInterrogateRequest eosRequest = new EosInterrogateRequest();
+		eosRequest.setNodes(request.getNodeList());
+		eosRequest.setDvtOption(request.getRunDvt());
+		return eosRequest;
+	}
+	
 	private EosMaintenanceModeRequest toEosMaintenanceModeRequest(MaintenanceModeRequest request) {
 		EosMaintenanceModeRequest eosRequest = new EosMaintenanceModeRequest();
 		eosRequest.setNodes(request.getNodeList());
 		eosRequest.setMinutes(request.getMinutes());
 		eosRequest.setEnable(request.getEnable());
 		eosRequest.setOverrideOthers(request.getOverrideOthers());
+		return eosRequest;
+	}
+	
+	private EosSoakRequest toEosSoakRequest(SoakRequest request) {
+		EosSoakRequest eosRequest = new EosSoakRequest();
+		eosRequest.setNodes(request.getNodeList());
+		eosRequest.setActivate(request.getActivate());
 		return eosRequest;
 	}
 	
@@ -151,10 +189,24 @@ public class EosActionController {
 	
 	@Data
 	@JsonIgnoreProperties(ignoreUnknown = true)
+	private static class InterrogateRequest {
+		private String nodeList;
+		private Boolean runDvt;
+	}
+	
+	@Data
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	private static class MaintenanceModeRequest {
 		private String nodeList;
 		private Integer minutes;
 		private Boolean enable;
 		private Boolean overrideOthers;
 	}
+	
+	@Data
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	private static class SoakRequest {
+		private String nodeList;
+		private Boolean activate;
+	}	
 }

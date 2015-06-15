@@ -39,6 +39,7 @@ import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.ServiceInstanceDependency;
+import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.entity.key.EndpointKey;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
@@ -138,6 +139,8 @@ public class BasicItemDelegate {
 			itemKeyObj = new EndpointKey(Long.parseLong(itemKey));
 		} else if (apiVersion == ApiVersion.V2 && itemClass == ServiceInstanceDependency.class) {
 			itemKeyObj = new SimpleItemKey(itemClass, Long.parseLong(itemKey));
+		} else if (apiVersion == ApiVersion.V2 && itemClass == SeyrenCheck.class) {
+			itemKeyObj = new SimpleItemKey(itemClass, Long.parseLong(itemKey));
 		} else {
 			itemKeyObj = new SimpleItemKey(itemClass, itemKey);
 		}
@@ -211,7 +214,7 @@ public class BasicItemDelegate {
 	}
 	
 	public void post(@NonNull Item item, boolean mergeAssociations) {
-		log.trace("Putting item: {}", item.itemKey());
+		log.trace("Posting item: {}", item.itemKey());
 		itemService.save(item, mergeAssociations);		
 	}
 	

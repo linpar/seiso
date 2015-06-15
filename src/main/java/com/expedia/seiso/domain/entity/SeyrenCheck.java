@@ -94,6 +94,7 @@ public class SeyrenCheck extends AbstractItem {
 	
 	@Override
 	public ItemKey itemKey() {
-		return new SimpleItemKey(SeyrenCheck.class, seyrenId);
+		Long id = getId();
+		return (id == null ? null : new SimpleItemKey(SeyrenCheck.class, id));
 	}
 }

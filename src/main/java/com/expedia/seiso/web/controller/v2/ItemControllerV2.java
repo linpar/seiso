@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.ServiceInstanceDependency;
+import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.web.ApiVersion;
@@ -150,10 +151,13 @@ public class ItemControllerV2 {
 	public void put(@PathVariable String repoKey, @PathVariable String itemKey, PEResource peResource) {
 		log.trace("Putting /{}/{}", repoKey, itemKey);
 		Item item = peResource.getItem();
+		Class<?> itemClass = item.getClass();
 		
 		// FIXME Hardcode
 		// Need a more generic way to resolve the key (whether natural or DB PK) to the DB ID.
-		if (ServiceInstanceDependency.class.equals(item.getClass())) {
+		if (ServiceInstanceDependency.class.equals(itemClass)) {
+			item.setId(Long.parseLong(itemKey));
+		} else if (SeyrenCheck.class.equals(itemClass)) {
 			item.setId(Long.parseLong(itemKey));
 		}
 		
@@ -178,6 +182,8 @@ public class ItemControllerV2 {
 		// FIXME Hardcode
 		// Need a more generic way to resolve the key (whether natural or DB PK) to the DB ID.
 		if (ServiceInstanceDependency.class.equals(itemClass)) {
+			itemKeyValue = Long.parseLong(itemKey);
+		} else if (SeyrenCheck.class.equals(itemClass)) {
 			itemKeyValue = Long.parseLong(itemKey);
 		} else {
 			itemKeyValue = itemKey;

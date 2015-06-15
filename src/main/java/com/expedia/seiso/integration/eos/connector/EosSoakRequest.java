@@ -17,10 +17,17 @@ package com.expedia.seiso.integration.eos.connector;
 
 import lombok.Data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Willie Wheeler
  */
 @Data
 public class EosSoakRequest {
-
+	
+	@JsonProperty("Nodes")
+	private String nodes;
+	
+	@JsonProperty("Activate")
+	private Boolean activate;
 }
