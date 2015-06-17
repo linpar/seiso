@@ -48,7 +48,9 @@ public interface ServiceInstanceRepo
 			"where " +
 			"  si.service.key = :key " +
 			"group by " +
-			"  si.id";
+			"  si.id " +
+			"order by " +
+			"  si.key";
 	
 	// Need the left outer joins to ensure that nodeless service instances show up.
 	public static final String FIND_BY_ENVIRONMENT_WITH_COUNTS =
