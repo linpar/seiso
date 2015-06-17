@@ -83,4 +83,19 @@
       </ul>
     </div>
   </section>
+  <section>
+    <header>
+      <h2>People <small>({{$root.searchResults.person.length}})</small></h2>
+    </header>
+    <div ng-show="$root.searchResults.person.length == 0">
+      <p>No results.</p>
+    </div>
+    <div ng-show="$root.searchResults.person.length &gt; 0">
+      <ul class="list-unstyled">
+        <li ng-repeat="person in $root.searchResults.person | orderBy:['firstName','lastName']">
+          <a ng-href="{{uri('people', person.username)}}">{{person.firstName}} {{person.lastName}} ({{person.username}})</a>
+        </li>
+      </ul>
+    </div>
+  </section>
 </div>
