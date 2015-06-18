@@ -149,7 +149,7 @@ public class ItemServiceImpl implements ItemService {
 	@Transactional(readOnly = false)
 	public void save(@NonNull Item itemData, boolean mergeAssociations) {
 		val itemKey = itemData.itemKey();
-		log.trace("Saving item: itemKey={}", itemKey);
+		log.info("Saving item: itemKey={}", itemKey);
 		
 		if (itemKey == null) {
 			// No key, so the item is new.
@@ -244,6 +244,7 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	@Transactional(readOnly = false)
 	public void delete(@NonNull ItemKey key) {
+		log.info("Deleting item: {}", key);
 		// We look up the actual item here, as opposed to simply calling a delete(key) method, because we want to throw
 		// a ResourceNotFoundException if the item doesn't exist.
 		itemDeleter.delete(find(key));
