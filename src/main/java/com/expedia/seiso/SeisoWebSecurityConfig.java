@@ -15,24 +15,26 @@
  */
 package com.expedia.seiso;
 
-import lombok.val;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 import com.expedia.seiso.core.security.Roles;
 import com.expedia.seiso.core.security.UserDetailsServiceImpl;
 
-// See http://blog.springsource.org/2013/07/03/spring-security-java-config-preview-web-security/
+// See
+// http://kielczewski.eu/2014/12/spring-boot-security-application/
+// http://blog.springsource.org/2013/07/03/spring-security-java-config-preview-web-security/
 // http://stackoverflow.com/questions/8658584/spring-security-salt-for-custom-userdetails
 // http://stackoverflow.com/questions/8521251/spring-securitypassword-encoding-in-db-and-in-applicationconext
 // http://docs.spring.io/spring-security/site/docs/3.2.x/guides/helloworld.html
@@ -46,15 +48,22 @@ import com.expedia.seiso.core.security.UserDetailsServiceImpl;
  * @author Willie Wheeler
  */
 @Configuration
+//@EnableWebMvcSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
+@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Override
-	protected UserDetailsService userDetailsService() { return userDetailsServiceImpl(); }
+//	@Override
+//	protected UserDetailsService userDetailsService() { return userDetailsServiceImpl(); }
 
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
-	}
+//	@Autowired
+//	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+//		// @formatter:off
+//		auth
+//			.userDetailsService(userDetailsService())
+//			.passwordEncoder(passwordEncoder());
+//		// @formatter:on
+//	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -74,41 +83,68 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.POST, "/v1/machines/search").permitAll()
 				
 				// For Eos commands
-				.antMatchers(HttpMethod.POST, "/internal/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/internal/**").authenticated()
 				
 //				.anyRequest().hasRole(Roles.ROLE_USER)
 				
-				// FIXME Change to denyAll() (blacklist)
-				.anyRequest().authenticated()
-				
+				.anyRequest().denyAll()
 				.and()
-			.httpBasic()
-				.authenticationEntryPoint(entryPoint())
+//			.httpBasic()
+//				.authenticationEntryPoint(entryPoint())
+//				.and()
+			.formLogin()
+				// FIXME These aren't right
+//				.loginPage("/login/login.html")
+				.loginProcessingUrl("/login")
+//				.failureUrl("/login/login.html")
+				.usernameParameter("username")
+				.passwordParameter("password")
+				.permitAll()
 				.and()
-			.exceptionHandling()
-				.authenticationEntryPoint(entryPoint())
+			.logout()
+				.logoutUrl("/logout")
+				.logoutSuccessUrl("/")
+				.permitAll()
 				.and()
+//			.exceptionHandling()
+//				.authenticationEntryPoint(entryPoint())
+//				.and()
 //			.headers()
 //				.cacheControl()
 //				.contentTypeOptions()
 //				.frameOptions()
 //				.httpStrictTransportSecurity()
 //				.and()
+			// FIXME Enable. See https://spring.io/guides/tutorials/spring-security-and-angular-js/
 			.csrf()
 				.disable();
 		// @formatter:on
 	}
 	
-	@Bean
-	public UserDetailsService userDetailsServiceImpl() { return new UserDetailsServiceImpl(); }
+//	@Bean
+//	public UserDetailsService userDetailsServiceImpl() { return new UserDetailsServiceImpl(); }
 	
-	@Bean
-	public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
-
-	@Bean
-	public BasicAuthenticationEntryPoint entryPoint() {
-		val entry = new BasicAuthenticationEntryPoint();
-		entry.setRealmName("Seiso");
-		return entry;
+//	@Bean
+//	public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+	
+	// Don't use this. Otherwise we get Basic Auth dialog.
+//	@Bean
+//	public BasicAuthenticationEntryPoint entryPoint() {
+//		val entry = new BasicAuthenticationEntryPoint();
+//		entry.setRealmName("Seiso");
+//		return entry;
+//	}
+	
+	@Configuration
+	protected static class AuthenticationConfiguration extends GlobalAuthenticationConfigurerAdapter {
+		
+		@Override
+		public void init(AuthenticationManagerBuilder auth) throws Exception {
+			auth
+				.ldapAuthentication()
+					.userDnPatterns("uid={0},ou=people")
+					.groupSearchBase("ou=groups")
+					.contextSource().ldif("classpath:test-server.ldif");
+		}
 	}
 }

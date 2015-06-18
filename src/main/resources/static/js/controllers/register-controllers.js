@@ -3,6 +3,7 @@ angular.module('seisoControllers', [])
 		// Special
 		.controller('HomeController', homeController())
 		.controller('GlobalsController', globalsController())
+		.controller('LoginController', loginController())
 		.controller('SearchController', searchController())
 		.controller('MBController', mbController())
 		.controller('MBProfileController', mbProfileController())

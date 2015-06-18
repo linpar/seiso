@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.controller.v2;
+package com.expedia.seiso.web.controller.internal;
 
 import java.security.Principal;
 
@@ -21,12 +21,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.expedia.serf.ann.SuppressBasePath;
+
 /**
  * @author Willie Wheeler
  */
 @RestController
-@RequestMapping("/v2/security")
-public class SecurityControllerV2 {
+@SuppressBasePath
+@RequestMapping("/internal/security")
+public class SecurityController {
 	
 	@RequestMapping(
 			value = "/user",
