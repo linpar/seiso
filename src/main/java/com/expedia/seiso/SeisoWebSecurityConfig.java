@@ -53,17 +53,26 @@ import com.expedia.seiso.core.security.UserDetailsServiceImpl;
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-//	@Override
-//	protected UserDetailsService userDetailsService() { return userDetailsServiceImpl(); }
+	@Override
+	protected UserDetailsService userDetailsService() { return userDetailsServiceImpl(); }
 
-//	@Autowired
-//	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//		// @formatter:off
-//		auth
-//			.userDetailsService(userDetailsService())
-//			.passwordEncoder(passwordEncoder());
-//		// @formatter:on
-//	}
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		
+		// Two authorization sources: LDAP and database.
+		// TODO Make the automation sources configurable via application.yml. [WLW]
+		
+		// @formatter:off
+		auth
+			.ldapAuthentication()
+				.userDnPatterns("uid={0},ou=people")
+				.groupSearchBase("ou=groups")
+				.contextSource().ldif("classpath:test-server.ldif");
+		auth
+			.userDetailsService(userDetailsService())
+			.passwordEncoder(passwordEncoder());
+		// @formatter:on
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -121,11 +130,11 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// @formatter:on
 	}
 	
-//	@Bean
-//	public UserDetailsService userDetailsServiceImpl() { return new UserDetailsServiceImpl(); }
+	@Bean
+	public UserDetailsService userDetailsServiceImpl() { return new UserDetailsServiceImpl(); }
 	
-//	@Bean
-//	public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+	@Bean
+	public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 	
 	// Don't use this. Otherwise we get Basic Auth dialog.
 //	@Bean
@@ -135,16 +144,11 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 //		return entry;
 //	}
 	
-	@Configuration
-	protected static class AuthenticationConfiguration extends GlobalAuthenticationConfigurerAdapter {
-		
-		@Override
-		public void init(AuthenticationManagerBuilder auth) throws Exception {
-			auth
-				.ldapAuthentication()
-					.userDnPatterns("uid={0},ou=people")
-					.groupSearchBase("ou=groups")
-					.contextSource().ldif("classpath:test-server.ldif");
-		}
-	}
+//	@Configuration
+//	protected static class AuthenticationConfiguration extends GlobalAuthenticationConfigurerAdapter {
+//		
+//		@Override
+//		public void init(AuthenticationManagerBuilder auth) throws Exception {
+//		}
+//	}
 }
