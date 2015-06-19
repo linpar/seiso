@@ -61,8 +61,10 @@ import com.expedia.serf.ann.RestResource;
 	@Projection(apiVersions = ApiVersion.V1, cardinality = Cardinality.COLLECTION, name = "serviceInstanceNodes", paths = {
 			"machine"
 			}),
+			
+	// Include serviceInstance.loadBalancer so the Seiso/NetScaler sync job can filter events by load balancer.
 	@Projection(apiVersions = ApiVersion.V1, cardinality = Cardinality.COLLECTION, name = "withEndpoints", paths = {
-			"serviceInstance",
+			"serviceInstance.loadBalancer",
 			"machine",
 			"ipAddresses.ipAddressRole",
 			"ipAddresses.endpoints.port",
