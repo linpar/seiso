@@ -51,7 +51,7 @@
         </li>
         <li><a ng-href="{{uri('people')}}"><span class="fa fa-user"></span> People</a></li>
         <!-- TODO admin actually requires an admin role -->
-        <li ng-show="authenticated"><a ng-href="{{uri('admin')}}"><span class="fa fa-bar-chart"></span> Admin</a></li>
+        <li ng-show="authenticated && hasAdminRole"><a ng-href="{{uri('admin')}}"><span class="fa fa-bar-chart"></span> Admin</a></li>
         <li ng-show="!authenticated"><a href="#/login">Sign In</a></li>
         <li ng-show="authenticated"><a href="" ng-click="logout()">Sign Out</a></li>
       </ul>

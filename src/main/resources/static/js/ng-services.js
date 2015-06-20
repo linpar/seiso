@@ -44,6 +44,24 @@ angular.module('seisoServices', [])
 			var successHandler = function(data) {
 				$rootScope.authenticated = (data.name ? true : false);
 				console.log("Authenticated: " + $rootScope.authenticated);
+				
+				var isAnonymous = true;
+				var hasAdminRole = false;
+				
+				if ($rootScope.authenticated) {
+					isAnonymous = false;					
+					$rootScope.authorities = data.authorities;
+					for (i = 0; i < data.authorities.length; i++) {
+						var authority = data.authorities[i];
+						if (authority.authority == "ROLE_ADMIN") {
+							hasAdminRole = true;
+						}
+					}
+				}
+				
+				$rootScope.isAnonymous = isAnonymous;
+				$rootScope.hasAdminRole = hasAdminRole;
+				
 				if (login) {
 					if ($rootScope.authenticated) {
 						$location.path("/");
