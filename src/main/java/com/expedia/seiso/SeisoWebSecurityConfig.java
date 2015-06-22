@@ -27,7 +27,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 
+import com.expedia.seiso.conf.CustomProperties;
 import com.expedia.seiso.core.security.Roles;
 import com.expedia.seiso.core.security.UserDetailsServiceImpl;
 
@@ -51,6 +53,7 @@ import com.expedia.seiso.core.security.UserDetailsServiceImpl;
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
+	@Autowired private CustomProperties customProperties;
 
 	@Override
 	protected UserDetailsService userDetailsService() { return userDetailsServiceImpl(); }
@@ -58,15 +61,23 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		
-		// Two authorization sources: LDAP and database.
-		// TODO Make the automation sources configurable via application.yml. [WLW]
+		// Test
+//		auth
+//			.ldapAuthentication()
+//				.userDnPatterns("uid={0},ou=people")
+//				.groupSearchBase("ou=groups")
+//				.contextSource().ldif("classpath:test-server.ldif");
+		
+		// Use AD if configured
+		String adDomain = customProperties.getAdDomain();
+		String adUrl = customProperties.getAdUrl();
+		if (adDomain != null) {
+			ActiveDirectoryLdapAuthenticationProvider adAuthProvider =
+					new ActiveDirectoryLdapAuthenticationProvider(adDomain, adUrl);
+			auth.authenticationProvider(adAuthProvider);
+		}
 		
 		// @formatter:off
-		auth
-			.ldapAuthentication()
-				.userDnPatterns("uid={0},ou=people")
-				.groupSearchBase("ou=groups")
-				.contextSource().ldif("classpath:test-server.ldif");
 		auth
 			.userDetailsService(userDetailsService())
 			.passwordEncoder(passwordEncoder());

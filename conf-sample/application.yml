@@ -52,3 +52,8 @@ custom:
         href: https://seiso.prod.example.com
     current-seiso-instance: Test
   change-notification-exchange: seiso.notifications.v2
+  enable-actions: true
+  actions-base-uri: http://eos.example.com
+
+  ad_domain: ad.example.com
+  ad_url: ldap://ad.example.com:389
