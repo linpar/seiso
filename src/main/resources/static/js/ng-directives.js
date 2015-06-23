@@ -12,6 +12,17 @@ var enterDirective = function() {
 	return [ directive ];
 }
 
+var focusDirective = function() {
+	var directive = function() {
+		return {
+			link: function(scope, element, attrs) {
+				element[0].focus();
+			}
+		};
+	}
+	return [ directive ];
+}
+
 var pieChartDirective = function() {
 	var directive = function($window) {
 		var d3 = $window.d3;
@@ -96,6 +107,7 @@ var rotationDetailsPopoverDirective = function() {
 // Register directives
 angular.module('seiso')
 		.directive('ngEnter', enterDirective())
+		.directive('focus', focusDirective())
 		.directive('pieChart', pieChartDirective())
 		.directive('rotationDetailsPopover', rotationDetailsPopoverDirective())
 		;

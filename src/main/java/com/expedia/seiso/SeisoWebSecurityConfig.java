@@ -15,6 +15,12 @@
  */
 package com.expedia.seiso;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +32,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 import com.expedia.seiso.conf.CustomProperties;
@@ -136,9 +144,10 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.formLogin()
 //				.loginPage("/login/login.html")
 				.loginProcessingUrl("/login")
-//				.failureUrl("/login/login.html")
 				.usernameParameter("username")
 				.passwordParameter("password")
+//				.failureUrl("/login/login.html")
+				.failureHandler(authenticationFailureHandler())
 				.permitAll()
 				.and()
 			.logout()
@@ -174,6 +183,21 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		val entry = new BasicAuthenticationEntryPoint();
 		entry.setRealmName("Seiso");
 		return entry;
+	}
+	
+	@Bean
+	public AuthenticationFailureHandler authenticationFailureHandler() {
+		return new AuthenticationFailureHandler() {
+
+			@Override
+			public void onAuthenticationFailure(
+					HttpServletRequest request,
+					HttpServletResponse response,
+					AuthenticationException exception) throws IOException, ServletException {
+				
+				// No-op. Just leave the user on the current page but update the JS error message.
+			}
+		};
 	}
 	
 	@Bean
