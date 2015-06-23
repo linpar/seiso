@@ -15,27 +15,34 @@
  */
 package com.expedia.seiso;
 
+import lombok.val;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
+import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 import com.expedia.seiso.conf.CustomProperties;
 import com.expedia.seiso.core.security.Roles;
+import com.expedia.seiso.core.security.SeisoUserDetailsContextMapper;
 import com.expedia.seiso.core.security.UserDetailsServiceImpl;
 
 // See
 // http://kielczewski.eu/2014/12/spring-boot-security-application/
 // http://blog.springsource.org/2013/07/03/spring-security-java-config-preview-web-security/
+// https://spring.io/guides/tutorials/spring-security-and-angular-js/
+// https://spring.io/guides/gs/authenticating-ldap/
 // http://stackoverflow.com/questions/8658584/spring-security-salt-for-custom-userdetails
 // http://stackoverflow.com/questions/8521251/spring-securitypassword-encoding-in-db-and-in-applicationconext
 // http://docs.spring.io/spring-security/site/docs/3.2.x/guides/helloworld.html
@@ -49,9 +56,9 @@ import com.expedia.seiso.core.security.UserDetailsServiceImpl;
  * @author Willie Wheeler
  */
 @Configuration
-//@EnableWebMvcSecurity
+@EnableWebMvcSecurity
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
-@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+//@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired private CustomProperties customProperties;
 
@@ -60,59 +67,73 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		
-		// Test
-//		auth
-//			.ldapAuthentication()
-//				.userDnPatterns("uid={0},ou=people")
-//				.groupSearchBase("ou=groups")
-//				.contextSource().ldif("classpath:test-server.ldif");
-		
-		// Use AD if configured
-		String adDomain = customProperties.getAdDomain();
-		String adUrl = customProperties.getAdUrl();
-		if (adDomain != null) {
-			ActiveDirectoryLdapAuthenticationProvider adAuthProvider =
-					new ActiveDirectoryLdapAuthenticationProvider(adDomain, adUrl);
-			auth.authenticationProvider(adAuthProvider);
-		}
-		
-		// @formatter:off
-		auth
-			.userDetailsService(userDetailsService())
-			.passwordEncoder(passwordEncoder());
-		// @formatter:on
+//		configureTestLdap(auth);
+		configureActiveDirectory(auth);
+		configureUserDetailsService(auth);
 	}
-
+	
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web
+			.ignoring()
+				.antMatchers("/bower_components/**")
+				.antMatchers("/css/**")
+				.antMatchers("/images/**")
+				.antMatchers("/js/**")
+				;
+	}
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		
 		// @formatter:off
 		http
+			// TODO Would prefer to do this without sessions if possible. But see
+			// https://spring.io/guides/tutorials/spring-security-and-angular-js/
+			// http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/elb-sticky-sessions.html
+//			.sessionManagement()
+//				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//				.and()
 			.authorizeRequests()
 				
-				// Admin console
-				// Spring Security prepends "ROLE_" to the role.
-				// So in the DB, the roles have to be of the form ROLE_XXX.
-				.antMatchers(HttpMethod.GET, "/health").hasRole(Roles.ROLE_ADMIN)
-				.antMatchers(HttpMethod.GET, "/metrics").hasRole(Roles.ROLE_ADMIN)
-				.antMatchers(HttpMethod.GET, "/env").hasRole(Roles.ROLE_ADMIN)
-				.antMatchers(HttpMethod.GET, "/dump").hasRole(Roles.ROLE_ADMIN)
-				
-				.antMatchers(HttpMethod.GET, "/**").permitAll()
+				// "The HTML resources need to be available to anonymous users, not just ignored by Spring Security,
+				// for reasons that will become clear."
+				// https://spring.io/guides/tutorials/spring-security-and-angular-js/
+				.antMatchers("/view/**").permitAll()
+				.antMatchers("/index.html").permitAll()
+			
+				// v1 API
+				.antMatchers(HttpMethod.GET, "/v1/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/v1/machines/search").permitAll()
+				.antMatchers(HttpMethod.POST, "/v1/**").hasRole(Roles.USER)
+				.antMatchers(HttpMethod.PUT, "/v1/**").hasRole(Roles.USER)
+				.antMatchers(HttpMethod.DELETE, "/v1/**").hasRole(Roles.USER)
 				
-				// For Eos commands
-				.antMatchers(HttpMethod.POST, "/internal/**").authenticated()
+				// v2 API
+				.antMatchers(HttpMethod.GET, "/v2/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/v2/**").hasRole(Roles.USER)
+				.antMatchers(HttpMethod.PUT, "/v2/**").hasRole(Roles.USER)
+				.antMatchers(HttpMethod.DELETE, "/v2/**").hasRole(Roles.USER)
 				
-//				.anyRequest().hasRole(Roles.ROLE_USER)
+				// Internal API
+				.antMatchers(HttpMethod.GET, "/internal/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/internal/**").hasRole(Roles.USER)
+				.antMatchers(HttpMethod.GET, "/mb/**").permitAll()
 				
-				.anyRequest().denyAll()
+				// Admin console
+				.antMatchers(HttpMethod.GET, "/health").hasRole(Roles.ADMIN)
+				.antMatchers(HttpMethod.GET, "/metrics").hasRole(Roles.ADMIN)
+				.antMatchers(HttpMethod.GET, "/env").hasRole(Roles.ADMIN)
+				.antMatchers(HttpMethod.GET, "/dump").hasRole(Roles.ADMIN)
+				
+				// Blacklist
+//				.anyRequest().denyAll()
+				.anyRequest().hasRole(Roles.USER)
 				.and()
-//			.httpBasic()
-//				.authenticationEntryPoint(entryPoint())
-//				.and()
+			.httpBasic()
+				.authenticationEntryPoint(entryPoint())
+				.and()
 			.formLogin()
-				// FIXME These aren't right
 //				.loginPage("/login/login.html")
 				.loginProcessingUrl("/login")
 //				.failureUrl("/login/login.html")
@@ -123,11 +144,12 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.logout()
 				.logoutUrl("/logout")
 				.logoutSuccessUrl("/")
+				.deleteCookies("JSESSIONID")
 				.permitAll()
 				.and()
-//			.exceptionHandling()
-//				.authenticationEntryPoint(entryPoint())
-//				.and()
+			.exceptionHandling()
+				.authenticationEntryPoint(entryPoint())
+				.and()
 //			.headers()
 //				.cacheControl()
 //				.contentTypeOptions()
@@ -136,7 +158,8 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 //				.and()
 			// FIXME Enable. See https://spring.io/guides/tutorials/spring-security-and-angular-js/
 			.csrf()
-				.disable();
+				.disable()
+			;
 		// @formatter:on
 	}
 	
@@ -146,12 +169,54 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 	
-	// Don't use this. Otherwise we get Basic Auth dialog.
+	@Bean
+	public BasicAuthenticationEntryPoint entryPoint() {
+		val entry = new BasicAuthenticationEntryPoint();
+		entry.setRealmName("Seiso");
+		return entry;
+	}
+	
+	@Bean
+	public UserDetailsContextMapper userDetailsContextMapper() {
+		return new SeisoUserDetailsContextMapper();
+	}
+	
 //	@Bean
-//	public BasicAuthenticationEntryPoint entryPoint() {
-//		val entry = new BasicAuthenticationEntryPoint();
-//		entry.setRealmName("Seiso");
-//		return entry;
+//	public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
+//		return new SeisoGrantedAuthoritiesMapper();
 //	}
 	
+	@SuppressWarnings("unused")
+	private void configureTestLdap(AuthenticationManagerBuilder auth) throws Exception {
+		// @formatter:off
+		auth
+			.ldapAuthentication()
+				.userDnPatterns("uid={0},ou=people")
+				.groupSearchBase("ou=groups")
+				.contextSource().ldif("classpath:test-server.ldif");
+		// @formatter:on
+	}
+	
+	private void configureActiveDirectory(AuthenticationManagerBuilder auth) throws Exception {
+		String domain = customProperties.getAdDomain();
+		String url = customProperties.getAdUrl();
+		if (domain != null) {
+			ActiveDirectoryLdapAuthenticationProvider provider =
+					new ActiveDirectoryLdapAuthenticationProvider(domain, url);
+			provider.setUserDetailsContextMapper(userDetailsContextMapper());
+			
+			// Hm, this doesn't seem to have any effect, so handle the mapping in the SeisoUserDetailsContextMapper.
+//			provider.setAuthoritiesMapper(grantedAuthoritiesMapper());
+			
+			auth.authenticationProvider(provider);
+		}
+	}
+	
+	private void configureUserDetailsService(AuthenticationManagerBuilder auth) throws Exception {
+		// @formatter:off
+		auth
+			.userDetailsService(userDetailsService())
+			.passwordEncoder(passwordEncoder());
+		// @formatter:on
+	}
 }

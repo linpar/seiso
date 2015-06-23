@@ -14,14 +14,14 @@
 	<link rel="stylesheet" type="text/css" href="css/samurai/bootstrap.min.css?v=3">
 </head>
 <body ng-class="{wait: model.wait}" ng-controller="GlobalsController">
-	<ng-include src="'navbar.html'"></ng-include>
+	<ng-include src="'view/navbar.html'"></ng-include>
 	<div class="page-content">
 		<div class="container">
 			<div class="alert alert-info" ng-if="globals.motd" ng-bind-html="globals.motd.message"></div>
 			<ng-view></ng-view>
 		</div>
 	</div>
-	<ng-include src="'footer.html'"></ng-include>
+	<ng-include src="'view/footer.html'"></ng-include>
 
 	<!-- Need jQuery and Bootstrap JS for the rotation popovers -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

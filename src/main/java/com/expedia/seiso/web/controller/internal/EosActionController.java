@@ -15,7 +15,10 @@
  */
 package com.expedia.seiso.web.controller.internal;
 
+import java.security.Principal;
+
 import lombok.Data;
+import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,13 +43,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @RestController
 @SuppressBasePath
 @RequestMapping("/internal")
+@XSlf4j
 public class EosActionController {
 	@Autowired private Eos eos;
 	
 	@RequestMapping(
 			value = "/service-instances/{key}/convict",
 			method = RequestMethod.POST)
-	public void convict(@PathVariable String key, @RequestBody ConvictRequest request) {
+	public void convict(@PathVariable String key, @RequestBody ConvictRequest request, Principal principal) {
+		log.info("Convicting: key={}, principal={}", key, principal.getName());
 		EosConvictRequest eosRequest = toEosConvictRequest(request);
 		EosResponse response = eos.convict(key, eosRequest);
 		if (response.isError()) {
@@ -57,7 +62,8 @@ public class EosActionController {
 	@RequestMapping(
 			value = "/service-instances/{key}/deploy",
 			method = RequestMethod.POST)
-	public void deploy(@PathVariable String key, @RequestBody DeployRequest request) {
+	public void deploy(@PathVariable String key, @RequestBody DeployRequest request, Principal principal) {
+		log.info("Deploying: key={}, principal={}", key, principal.getName());
 		EosDeployRequest eosRequest = toEosDeployRequest(request);
 		EosResponse response = eos.deploy(key, eosRequest);
 		if (response.isError()) {
@@ -68,7 +74,8 @@ public class EosActionController {
 	@RequestMapping(
 			value = "/service-instances/{key}/interrogate",
 			method = RequestMethod.POST)
-	public void interrogate(@PathVariable String key, @RequestBody InterrogateRequest request) {
+	public void interrogate(@PathVariable String key, @RequestBody InterrogateRequest request, Principal principal) {
+		log.info("Interrogating: key={}, principal={}", key, principal.getName());
 		EosInterrogateRequest eosRequest = toEosInterrogateRequest(request);
 		EosResponse response = eos.interrogate(key, eosRequest);
 		if (response.isError()) {
@@ -79,7 +86,12 @@ public class EosActionController {
 	@RequestMapping(
 			value = "/service-instances/{key}/maintenance-mode",
 			method = RequestMethod.POST)
-	public void maintenanceMode(@PathVariable String key, @RequestBody MaintenanceModeRequest request) {
+	public void maintenanceMode(
+			@PathVariable String key,
+			@RequestBody MaintenanceModeRequest request,
+			Principal principal) {
+		
+		log.info("Setting maintenance mode: key={}, principal={}", key, principal.getName());
 		EosMaintenanceModeRequest eosRequest = toEosMaintenanceModeRequest(request);
 		EosResponse response = eos.maintenanceMode(key, eosRequest);
 		if (response.isError()) {
@@ -90,7 +102,8 @@ public class EosActionController {
 	@RequestMapping(
 			value = "/service-instances/{key}/reload",
 			method = RequestMethod.POST)
-	public void reload(@PathVariable String key) {
+	public void reload(@PathVariable String key, Principal principal) {
+		log.info("Reloading: key={}, principal={}", key, principal.getName());
 		EosResponse response = eos.reload(key);
 		if (response.isError()) {
 			throw new RuntimeException(response.getMessage());
@@ -100,7 +113,8 @@ public class EosActionController {
 	@RequestMapping(
 			value = "/service-instances/{key}/set-active",
 			method = RequestMethod.POST)
-	public void setActive(@PathVariable String key) {
+	public void setActive(@PathVariable String key, Principal principal) {
+		log.info("Setting active: key={}, principal={}", key, principal.getName());
 		EosResponse response = eos.setActive(key);
 		if (response.isError()) {
 			throw new RuntimeException(response.getMessage());
@@ -110,7 +124,8 @@ public class EosActionController {
 	@RequestMapping(
 			value = "/service-instances/{key}/soak",
 			method = RequestMethod.POST)
-	public void soak(@PathVariable String key, @RequestBody SoakRequest request) {
+	public void soak(@PathVariable String key, @RequestBody SoakRequest request, Principal principal) {
+		log.info("Soaking: key={}, principal={}", key, principal.getName());
 		EosSoakRequest eosRequest = toEosSoakRequest(request);
 		EosResponse response = eos.soak(key, eosRequest);
 		if (response.isError()) {

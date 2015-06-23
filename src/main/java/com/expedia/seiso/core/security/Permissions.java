@@ -18,7 +18,6 @@ package com.expedia.seiso.core.security;
 /**
  * @author Willie Wheeler
  */
-public interface Roles {
-	static final String ADMIN = "ADMIN";
-	static final String USER = "USER";
+public interface Permissions {
+	static final String VIEW_ADMIN_CONSOLE = "VIEW_ADMIN_CONSOLE";
 }

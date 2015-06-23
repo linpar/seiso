@@ -43,8 +43,8 @@ public class UserDetailsAdapterTests {
 	@Before
 	public void setUp() {
 		val roles = new ArrayList<Role>();
-		roles.add(new Role().setName("ROLE_USER"));
-		roles.add(new Role().setName("ROLE_ADMIN"));
+		roles.add(new Role().setName("USER"));
+		roles.add(new Role().setName("ADMIN"));
 
 		this.user = new User().setUsername("happy1").setPassword("p@ssw0rd").setEnabled(false).setRoles(roles);
 		this.adapter = new UserDetailsAdapter(user);
