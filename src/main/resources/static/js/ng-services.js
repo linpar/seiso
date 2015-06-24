@@ -38,9 +38,10 @@ angular.module('seisoServices', [])
 		}
 	}])
 	
-	// TODO Is it better to use $location instead of $window?
-	// $location.path() was making XHR calls over HTTP even though the page is HTTPS.
-	.factory('AuthService', [ '$rootScope', '$http', '$window', function($rootScope, $http, $window) {
+	// Both $location.path("xxx") and $window.location.href = "xxx" are generating mixed content errors. See
+	// http://stackoverflow.com/questions/29302160/https-with-http-in-angular-not-working
+	// http://stackoverflow.com/questions/30538209/get-request-throws-error-after-app-implemented-ssl-mixed-content-this-request
+	.factory('AuthService', [ '$rootScope', '$http', '$location', function($rootScope, $http, $location) {
 		var checkAuthentication = function(login) {
 			console.log("Checking authentication");
 			var successHandler = function(data) {
@@ -67,8 +68,7 @@ angular.module('seisoServices', [])
 				if (login) {
 					if ($rootScope.authenticated) {
 						$rootScope.authenticationError = false;
-						// When this was $location.path("/"), it was doing XHR over HTTP rather than HTTPS.
-						$window.location.href = "/";
+						$location.path("//");
 					} else {
 						$rootScope.authenticationError = true;
 					}
@@ -111,7 +111,7 @@ angular.module('seisoServices', [])
 				var successHandler = function() {
 					console.log("Logged out");
 					$rootScope.authenticated = false;
-					$window.location.href = "/";
+					$location.path("//");
 				}
 				var errorHandler = function(data) {
 					// TODO Is this the right thing to do here?
