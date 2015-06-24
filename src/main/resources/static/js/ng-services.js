@@ -41,6 +41,7 @@ angular.module('seisoServices', [])
 	// Both $location.path("xxx") and $window.location.href = "xxx" are generating mixed content errors. See
 	// http://stackoverflow.com/questions/29302160/https-with-http-in-angular-not-working
 	// http://stackoverflow.com/questions/30538209/get-request-throws-error-after-app-implemented-ssl-mixed-content-this-request
+	// Hm, it may not be AngularJS doing this at all. It could be Spring Security login/logout redirection.
 	.factory('AuthService', [ '$rootScope', '$http', '$location', function($rootScope, $http, $location) {
 		var checkAuthentication = function(login) {
 			console.log("Checking authentication");
