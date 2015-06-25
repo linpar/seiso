@@ -33,3 +33,21 @@ create table service_instance_dependency (
   constraint `service_instance_dependency_dependent_id` foreign key (dependent_id) references service_instance (id),
   constraint `service_instance_dependency_dependency_id` foreign key (dependency_id) references service_instance (id)
 ) engine=InnoDB default charset=utf8;
+
+# Group support - issue #133
+create table `group` (
+  id smallint unsigned not null auto_increment primary key,
+  name varchar(80) not null,
+  alias varchar(80)
+) engine=InnoDB default charset=utf8;
+
+create table group_owner (
+  id int unsigned not null auto_increment primary key,
+  group_id smallint unsigned not null,
+  person_id smallint unsigned not null,
+  unique key group_id_person_id (group_id, person_id),
+  key `person_id` (person_id),
+  constraint group_owner_group_id foreign key (group_id) references `group` (id),
+  constraint group_owner_person_id foreign key (person_id) references person (id)
+) engine=InnoDB default charset=utf8;
+
