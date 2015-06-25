@@ -148,6 +148,7 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutUrl("/logout")
 				.logoutSuccessHandler(new NoOpLogoutSuccessHandler())
 				.deleteCookies("JSESSIONID")
+				.invalidateHttpSession(true)
 				.permitAll()
 				.and()
 			.exceptionHandling()
