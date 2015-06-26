@@ -64,6 +64,10 @@ import com.expedia.serf.ann.RestResource;
 //@formatter:off
 @Projections({
 	@Projection(cardinality = Cardinality.COLLECTION, paths = { "group", "type", "owner" }),
+	
+	// TODO Add API version, give better name
+	@Projection(cardinality = Cardinality.COLLECTION, name = "home", paths = { "group" }),
+	
 	@Projection(cardinality = Cardinality.SINGLE, paths = { "group", "type", "owner", }),
 	@Projection(cardinality = Cardinality.SINGLE, name = "instances", paths = {
 			"serviceInstances.environment",

@@ -12,7 +12,7 @@ var homeController = function() {
 		var getServices = function(doneCallback) {
 			// FIXME If there are more than 300 services, we won't catch them all. We need a JS client for getting the
 			// full list from the paging API. (The API will continue to page.) [WLW]
-			$http.get('/v1/services?page=0&size=300&sort=name')
+			$http.get('/v1/services?page=0&size=300&sort=name&view=home')
 				.success(function(services) { return doneCallback(null, services); })
 				.error(function(data) { return doneCallback(data, null); });
 		}
