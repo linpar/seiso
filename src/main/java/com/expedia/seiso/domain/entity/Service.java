@@ -45,6 +45,7 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.serf.ann.RestResource;
 
 /**
@@ -124,5 +125,10 @@ public class Service extends AbstractItem {
 	@Override
 	public ItemKey itemKey() {
 		return new SimpleItemKey(Service.class, key);
+	}
+
+	@Override
+	public String[] itemPath() {
+		return new String[] { RepoKeys.SERVICES, key };
 	}
 }

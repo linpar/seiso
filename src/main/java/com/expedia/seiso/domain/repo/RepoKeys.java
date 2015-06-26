@@ -27,6 +27,7 @@ public interface RepoKeys {
 	public static final String DOC_LINKS = "doc-links";
 	public static final String ENDPOINTS = "endpoints";
 	public static final String ENVIRONMENTS = "environments";
+	public static final String GROUPS = "groups";
 	public static final String HEALTH_STATUSES = "health-statuses";
 	public static final String INFRASTRUCTURE_PROVIDERS = "infrastructure-providers";
 	public static final String IP_ADDRESS_ROLES = "ip-address-roles";

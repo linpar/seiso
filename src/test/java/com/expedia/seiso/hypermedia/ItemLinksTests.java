@@ -17,7 +17,6 @@ package com.expedia.seiso.hypermedia;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
@@ -32,12 +31,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.util.MultiValueMap;
 
 import com.expedia.seiso.conf.CustomProperties;
-import com.expedia.seiso.domain.entity.Item;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.hypermedia.ItemLinks;
-import com.expedia.seiso.hypermedia.ItemPaths;
 import com.expedia.serf.hypermedia.Relations;
 
 /**
@@ -50,7 +46,6 @@ public class ItemLinksTests {
 
 	// Dependencies
 	@Mock private CustomProperties customProperties;
-	@Mock private ItemPaths itemPaths;
 	@Mock private ItemMetaLookup itemMetaLookup;
 
 	// Test data
@@ -64,7 +59,7 @@ public class ItemLinksTests {
 		MockitoAnnotations.initMocks(this);
 		setUpTestData();
 		setUpDependencies();
-		this.itemLinks = new ItemLinks(v2BaseUri, itemPaths, itemMetaLookup);
+		this.itemLinks = new ItemLinks(v2BaseUri, itemMetaLookup);
 	}
 
 	private void setUpTestData() throws Exception {
@@ -73,7 +68,6 @@ public class ItemLinksTests {
 
 	private void setUpDependencies() {
 		when(itemMetaLookup.getItemMeta(Service.class)).thenReturn(serviceMeta);
-		when(itemPaths.convert((Item) anyObject())).thenReturn(new String[0]);
 	}
 
 	@Test

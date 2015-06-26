@@ -35,6 +35,7 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.IpAddressRoleKey;
 import com.expedia.seiso.domain.entity.key.ItemKey;
+import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.serf.ann.RestResource;
 
 @Data
@@ -75,5 +76,15 @@ public class IpAddressRole extends AbstractItem {
 			throw new IllegalStateException("name can't be null");
 		}
 		return new IpAddressRoleKey(serviceInstance.getKey(), name);
+	}
+
+	@Override
+	public String[] itemPath() {
+		return new String[] {
+				RepoKeys.SERVICE_INSTANCES,
+				serviceInstance.getKey(),
+				RepoKeys.IP_ADDRESS_ROLES,
+				name
+		};
 	}
 }

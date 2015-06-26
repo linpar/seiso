@@ -41,6 +41,7 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.ServiceInstancePortKey;
+import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.serf.ann.RestResource;
 
 /**
@@ -115,5 +116,18 @@ public class ServiceInstancePort extends AbstractItem {
 			}
 		}
 		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.expedia.seiso.domain.entity.Item#itemPath()
+	 */
+	@Override
+	public String[] itemPath() {
+		return new String[] {
+				RepoKeys.SERVICE_INSTANCES,
+				serviceInstance.getKey(),
+				RepoKeys.SERVICE_INSTANCE_PORTS,
+				String.valueOf(number)
+		};
 	}
 }

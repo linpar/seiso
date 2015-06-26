@@ -19,20 +19,15 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.core.ann.FindByKey;
-import com.expedia.seiso.domain.entity.HealthStatus;
+import com.expedia.seiso.domain.entity.Group;
 import com.expedia.serf.ann.RestResource;
 
 /**
  * @author Willie Wheeler
  */
-@RestResource(rel = RepoKeys.HEALTH_STATUSES, path = RepoKeys.HEALTH_STATUSES)
-public interface HealthStatusRepo extends PagingAndSortingRepository<HealthStatus, Long> {
-
-	@FindByKey
-	HealthStatus findByKey(@Param("key") String key);
-
-	HealthStatus findByName(@Param("name") String name);
+@RestResource(rel = RepoKeys.GROUPS, path = RepoKeys.GROUPS)
+public interface GroupRepo extends PagingAndSortingRepository<Group, Long> {
 	
-//	@RestResource(path = "find-by-source")
-//	Page<HealthStatus> findBySourceKey(@Param("key") String key, Pageable pageable);
+	@FindByKey
+	Group findByName(@Param("name") String name);
 }

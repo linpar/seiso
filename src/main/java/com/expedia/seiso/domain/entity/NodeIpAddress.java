@@ -37,6 +37,7 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.NodeIpAddressKey;
+import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.serf.ann.RestResource;
 
 @Data
@@ -91,16 +92,6 @@ public class NodeIpAddress extends AbstractItem {
 	@JoinColumn(name = "aggregate_rotation_status_id")
 	@RestResource(path = "aggregate-rotation-status")
 	private RotationStatus aggregateRotationStatus;
-	
-	@Override
-	public ItemKey itemKey() {
-		// FIXME This NPEs when there's no node loaded. So at least make it more explicit with ISE.
-		// Need to get away from itemKeys and use URIs instead.
-		if (node == null) {
-			throw new IllegalStateException("Need node to generate itemKey");
-		}
-		return new NodeIpAddressKey(node.getName(), ipAddress);
-	}
 
 	// TODO Adopt this pattern for bidirectional associations throughout. [WLW]
 	// public NodeIpAddress setNode(Node node) {
@@ -112,4 +103,27 @@ public class NodeIpAddress extends AbstractItem {
 	// }
 	// return this;
 	// }
+	
+	@Override
+	public ItemKey itemKey() {
+		// FIXME This NPEs when there's no node loaded. So at least make it more explicit with ISE.
+		// Need to get away from itemKeys and use URIs instead.
+		if (node == null) {
+			throw new IllegalStateException("Need node to generate itemKey");
+		}
+		return new NodeIpAddressKey(node.getName(), ipAddress);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.expedia.seiso.domain.entity.Item#itemPath()
+	 */
+	@Override
+	public String[] itemPath() {
+		return new String[] {
+				RepoKeys.NODES,
+				node.getName(),
+				"ip-addresses",
+				getIpAddress()
+		};
+	}	
 }

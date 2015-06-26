@@ -35,10 +35,12 @@ create table service_instance_dependency (
 ) engine=InnoDB default charset=utf8;
 
 # Group support - issue #133
-create table `group` (
+create table `person_group` (
   id smallint unsigned not null auto_increment primary key,
   name varchar(80) not null,
-  alias varchar(80)
+  alias varchar(80),
+  unique key name (name),
+  unique key alias (alias)
 ) engine=InnoDB default charset=utf8;
 
 create table group_owner (
@@ -47,7 +49,16 @@ create table group_owner (
   person_id smallint unsigned not null,
   unique key group_id_person_id (group_id, person_id),
   key `person_id` (person_id),
-  constraint group_owner_group_id foreign key (group_id) references `group` (id),
+  constraint group_owner_group_id foreign key (group_id) references `person_group` (id),
   constraint group_owner_person_id foreign key (person_id) references person (id)
 ) engine=InnoDB default charset=utf8;
 
+create table group_member (
+  id int unsigned not null auto_increment primary key,
+  group_id smallint unsigned not null,
+  person_id smallint unsigned not null,
+  unique key group_id_person_id (group_id, person_id),
+  key `person_id` (person_id),
+  constraint group_member_group_id foreign key (group_id) references `person_group` (id),
+  constraint group_member_person_id foreign key (person_id) references person (id)
+) engine=InnoDB default charset=utf8;

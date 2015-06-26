@@ -37,17 +37,11 @@ public class LinkFactory {
 	/**
 	 * @param versionUri
 	 *            URI path up to and including the API version.
-	 * @param itemPaths
-	 *            Maps items to their URI paths.
 	 * @param itemMetaLookup
 	 *            Item metadata lookup.
 	 */
-	public LinkFactory(
-			@NonNull URI versionUri,
-			@NonNull ItemPaths itemPaths,
-			@NonNull ItemMetaLookup itemMetaLookup) {
-		
-		this.itemLinks = new ItemLinks(versionUri, itemPaths, itemMetaLookup);
-		this.repoSearchLinks = new RepoSearchLinks(versionUri, itemPaths, itemMetaLookup);
+	public LinkFactory(@NonNull URI versionUri, @NonNull ItemMetaLookup itemMetaLookup) {
+		this.itemLinks = new ItemLinks(versionUri, itemMetaLookup);
+		this.repoSearchLinks = new RepoSearchLinks(versionUri, itemMetaLookup);
 	}
 }

@@ -42,7 +42,6 @@ public class RepoSearchLinks {
 	/** Includes version prefix; e.g., /v1, /v2 */
 	@NonNull private URI versionUri;
 	
-	@NonNull private ItemPaths itemPaths;
 	@NonNull private ItemMetaLookup itemMetaLookup;
 	
 	public Link repoSearchListLink(@NonNull String rel, @NonNull Class<?> itemClass) {

@@ -16,17 +16,16 @@
 package com.expedia.seiso.domain.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
@@ -34,73 +33,42 @@ import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
 import com.expedia.seiso.domain.repo.RepoKeys;
 
+// TODO Support group description
+
 /**
+ * Represents a group of people.
+ * 
  * @author Willie Wheeler
  */
 @Data
-@NoArgsConstructor
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false, of = "seyrenId")
-@ToString(callSuper = true, of = { "seyrenId", "name" })
+@ToString(of = { "name", "alias" })
+@EqualsAndHashCode(callSuper = false, of = { "name", "alias" })
 @Entity
-// @formatter:off
+@Table(name = "person_group")
+//@formatter:off
 @Projections({
-	@Projection(cardinality = Cardinality.COLLECTION, paths = {
-	}),
-	@Projection(cardinality = Cardinality.SINGLE, paths = {
-			"source"
+	@Projection(cardinality = Cardinality.COLLECTION, paths = { }),
+	@Projection(cardinality = Cardinality.SINGLE, paths = { })
 	})
-})
-// @formatter:on
-public class SeyrenCheck extends AbstractItem {
+//@formatter:on
+public class Group extends AbstractItem {
 	
 	@NotNull
-	@Size(min = 1, max = 250)
-	private String seyrenBaseUrl;
-	
-	@NotNull
-	@Size(min = 1, max = 40)
-	private String seyrenId;
-	
-	@NotNull
-	@Size(min = 1, max = 250)
+	@Size(min = 1, max = 80)
+	@Key
 	private String name;
 	
-	@Size(min = 1, max = 1000)
-	private String description;
-	
-	@NotNull
-	@Size(min = 1, max = 250)
-	private String graphiteBaseUrl;
-	
-	@NotNull
-	@Size(min = 1, max = 1000)
-	private String target;
-	
-	@NotNull
-	private Long warn;
-	
-	@NotNull
-	private Long error;
-	
-	@NotNull
-	private Boolean enabled;
-	
-	@Size(min = 1, max = 20)
-	private String state;
-	
-	@ManyToOne
-	@JoinColumn(name = "source_id")
-	private Source source;
+	@Size(min = 1, max = 80)
+	private String alias;
 	
 	@Override
 	public ItemKey itemKey() {
-		Long id = getId();
-		return (id == null ? null : new SimpleItemKey(SeyrenCheck.class, id));
+		return new SimpleItemKey(Group.class, name);
 	}
 
 	@Override
 	public String[] itemPath() {
-		return new String[] { RepoKeys.SEYREN_CHECKS, String.valueOf(getId()) };
+		return new String[] { RepoKeys.GROUPS, name };
 	}
 }

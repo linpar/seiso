@@ -47,7 +47,6 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.entity.SeyrenCheck;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
 import com.expedia.seiso.domain.repo.RepoKeys;
-import com.expedia.seiso.hypermedia.ItemPaths;
 import com.expedia.seiso.hypermedia.LinkFactory;
 import com.expedia.seiso.web.SimplePropertyEntry;
 import com.expedia.seiso.web.assembler.ResourceAssembler;
@@ -269,16 +268,13 @@ public class SeisoWebConfig extends WebMvcConfigurationSupport {
 	
 	@Bean
 	public LinkFactory linkFactoryV1() {
-		return new LinkFactory(getVersionUri("v1"), itemPaths(), itemMetaLookup);
+		return new LinkFactory(getVersionUri("v1"), itemMetaLookup);
 	}
 	
 	@Bean
 	public LinkFactory linkFactoryV2() {
-		return new LinkFactory(getVersionUri("v2"), itemPaths(), itemMetaLookup);
+		return new LinkFactory(getVersionUri("v2"), itemMetaLookup);
 	}
-	
-	@Bean
-	public ItemPaths itemPaths() { return new ItemPaths(); }
 	
 	@Bean
 	public ExceptionHandlerAdvice exceptionHandlerAdvice() {

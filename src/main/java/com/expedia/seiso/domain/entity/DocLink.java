@@ -32,6 +32,7 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.seiso.domain.repo.RepoKeys;
 
 /**
  * @author Willie Wheeler
@@ -71,5 +72,15 @@ public class DocLink extends AbstractItem {
 	public ItemKey itemKey() {
 		Long id = getId();
 		return (id == null ? null : new SimpleItemKey(DocLink.class, id));
+	}
+
+	@Override
+	public String[] itemPath() {
+		return new String[] {
+				RepoKeys.SERVICES,
+				service.getKey(),
+				RepoKeys.DOC_LINKS,
+				String.valueOf(getId())
+		};
 	}
 }

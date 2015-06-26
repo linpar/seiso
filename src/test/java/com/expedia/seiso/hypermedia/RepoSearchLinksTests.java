@@ -33,8 +33,6 @@ import org.springframework.util.MultiValueMap;
 import com.expedia.seiso.domain.entity.Service;
 import com.expedia.seiso.domain.meta.ItemMeta;
 import com.expedia.seiso.domain.meta.ItemMetaLookup;
-import com.expedia.seiso.hypermedia.ItemPaths;
-import com.expedia.seiso.hypermedia.RepoSearchLinks;
 import com.expedia.serf.hypermedia.Relations;
 
 /**
@@ -48,7 +46,6 @@ public class RepoSearchLinksTests {
 	private RepoSearchLinks repoSearchLinks;
 	
 	// Dependencies
-	@Mock private ItemPaths itemPaths;
 	@Mock private ItemMetaLookup itemMetaLookup;
 	
 	// Test data
@@ -62,7 +59,7 @@ public class RepoSearchLinksTests {
 		MockitoAnnotations.initMocks(this);
 		setUpTestData();
 		setUpDependencies();
-		this.repoSearchLinks = new RepoSearchLinks(versionUri, itemPaths, itemMetaLookup);
+		this.repoSearchLinks = new RepoSearchLinks(versionUri, itemMetaLookup);
 	}
 	
 	private void setUpTestData() throws Exception {

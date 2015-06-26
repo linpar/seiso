@@ -29,6 +29,7 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.seiso.domain.repo.RepoKeys;
 
 /**
  * Represents a source of Seiso item data. In general we create sync processes to copy data from the data source into
@@ -68,5 +69,10 @@ public class Source extends AbstractItem {
 	@Override
 	public ItemKey itemKey() {
 		return new SimpleItemKey(Source.class, key);
+	}
+
+	@Override
+	public String[] itemPath() {
+		return new String[] { RepoKeys.SOURCES, key };
 	}
 }

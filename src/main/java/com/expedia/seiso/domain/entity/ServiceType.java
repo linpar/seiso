@@ -33,10 +33,11 @@ import lombok.experimental.Accessors;
 
 import com.expedia.seiso.core.ann.Key;
 import com.expedia.seiso.core.ann.Projection;
-import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.core.ann.Projection.Cardinality;
+import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.seiso.domain.repo.RepoKeys;
 
 /**
  * @author Willie Wheeler
@@ -77,5 +78,10 @@ public class ServiceType extends AbstractItem {
 	@Override
 	public ItemKey itemKey() {
 		return new SimpleItemKey(ServiceType.class, key);
+	}
+
+	@Override
+	public String[] itemPath() {
+		return new String[] { RepoKeys.SERVICE_TYPES, key };
 	}
 }

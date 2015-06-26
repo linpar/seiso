@@ -49,7 +49,6 @@ public class ItemLinks {
 	/** Includes version prefix; e.g., /v1, /v2 */
 	@NonNull private URI versionUri;
 	
-	@NonNull private ItemPaths itemPaths;
 	@NonNull private ItemMetaLookup itemMetaLookup;
 	
 	
@@ -128,7 +127,7 @@ public class ItemLinks {
 	public Link itemLink(@NonNull String rel, @NonNull Item item, @NonNull MultiValueMap<String, String> params) {
 		// @formatter:off
 		val href = repoUri(item.getClass(), params)
-				.pathSegment(itemPathSegment(item))
+				.pathSegment(item.itemPath())
 				.build()
 				.toString();
 		// @formatter:on
@@ -138,7 +137,7 @@ public class ItemLinks {
 	public Link itemPropertyLink(@NonNull Item item, @NonNull String prop) {
 		// @formatter:off
 		val href = repoUri(item.getClass(), EMPTY_PARAMS)
-				.pathSegment(itemPathSegment(item))
+				.pathSegment(item.itemPath())
 				.pathSegment(prop)
 				.build()
 				.toString();
@@ -154,7 +153,7 @@ public class ItemLinks {
 	public Link serviceInstanceNodeSummaryLink(String rel, @NonNull ServiceInstance serviceInstance) {
 		// @formatter:off
 		val href = repoUri(ServiceInstance.class, EMPTY_PARAMS)
-				.pathSegment(itemPathSegment(serviceInstance))
+				.pathSegment(serviceInstance.itemPath())
 				.pathSegment("node-summary")
 				.build()
 				.toString();
@@ -165,7 +164,7 @@ public class ItemLinks {
 	public Link serviceInstanceHealthBreakdownLink(String rel, @NonNull ServiceInstance serviceInstance) {
 		// @formatter:off
 		val href = repoUri(ServiceInstance.class, EMPTY_PARAMS)
-				.pathSegment(itemPathSegment(serviceInstance))
+				.pathSegment(serviceInstance.itemPath())
 				.pathSegment("health-breakdown")
 				.build()
 				.toString();
@@ -176,7 +175,7 @@ public class ItemLinks {
 	public Link serviceInstanceRotationBreakdownLink(String rel, @NonNull ServiceInstance serviceInstance) {
 		// @formatter:off
 		val href = repoUri(ServiceInstance.class, EMPTY_PARAMS)
-				.pathSegment(itemPathSegment(serviceInstance))
+				.pathSegment(serviceInstance.itemPath())
 				.pathSegment("rotation-breakdown")
 				.build()
 				.toString();
@@ -233,9 +232,5 @@ public class ItemLinks {
 	
 	private String repoPath(Class<?> itemClass) {
 		return itemMetaLookup.getItemMeta(itemClass).getRepoKey();
-	}
-	
-	private String[] itemPathSegment(Item item) {
-		return itemPaths.convert(item);
 	}
 }

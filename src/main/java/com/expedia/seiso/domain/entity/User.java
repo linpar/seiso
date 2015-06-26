@@ -61,11 +61,19 @@ public class User extends AbstractItem implements Serializable {
 	private Boolean enabled;
 
 	@ManyToMany
-	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@JoinTable(
+			name = "user_role",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private List<Role> roles;
 
 	@Override
 	public ItemKey itemKey() {
 		return new SimpleItemKey(User.class, username);
+	}
+
+	@Override
+	public String[] itemPath() {
+		throw new UnsupportedOperationException("Not supported");
 	}
 }

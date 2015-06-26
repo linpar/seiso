@@ -27,4 +27,6 @@ public interface Item {
 	Item setId(Long id);
 	
 	ItemKey itemKey();
+	
+	String[] itemPath();
 }

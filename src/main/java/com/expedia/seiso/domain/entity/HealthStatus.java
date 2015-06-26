@@ -33,6 +33,7 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.ItemKey;
 import com.expedia.seiso.domain.entity.key.SimpleItemKey;
+import com.expedia.seiso.domain.repo.RepoKeys;
 
 @Data
 @Accessors(chain = true)
@@ -69,5 +70,10 @@ public class HealthStatus extends AbstractItem {
 	@Override
 	public ItemKey itemKey() {
 		return new SimpleItemKey(HealthStatus.class, key);
+	}
+
+	@Override
+	public String[] itemPath() {
+		return new String[] { RepoKeys.HEALTH_STATUSES, key };
 	}
 }

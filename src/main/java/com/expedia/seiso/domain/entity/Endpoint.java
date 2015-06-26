@@ -32,6 +32,7 @@ import com.expedia.seiso.core.ann.Projection.Cardinality;
 import com.expedia.seiso.core.ann.Projections;
 import com.expedia.seiso.domain.entity.key.EndpointKey;
 import com.expedia.seiso.domain.entity.key.ItemKey;
+import com.expedia.seiso.domain.repo.RepoKeys;
 import com.expedia.serf.ann.RestResource;
 
 /**
@@ -104,5 +105,10 @@ public class Endpoint extends AbstractItem {
 			}
 		}
 		return this;
+	}
+
+	@Override
+	public String[] itemPath() {
+		return new String[] { RepoKeys.ENDPOINTS, String.valueOf(getId()) };
 	}
 }
