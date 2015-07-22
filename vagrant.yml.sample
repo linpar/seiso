@@ -5,7 +5,8 @@ db:
     host: 23141
     guest: 3306
   artifacts_dir:
-    host: /Users/wwheeler/.seiso/db
+    # Set from Vagrantfile ( https://github.com/ExpediaDotCom/seiso/pull/145 )
+    host: 
     guest: /opt/seiso-db
 
 bus:

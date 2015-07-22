@@ -36,11 +36,6 @@ As a preliminary, you will need to install the [Omnibus plugin](https://github.c
 
 First create a copy of `vagrant.yml.sample` called `vagrant.yml` and place it in the same directory. Change the configuration as necessary. (The instructions are in `vagrant.yml.sample` itself.)
 
-Setup ~/.seiso config files:
-
-    $ mkdir -p ~/.seiso/db
-    $ cp src/main/sql/* ~/.seiso/db/
-
 Then do
 
     $ vagrant up

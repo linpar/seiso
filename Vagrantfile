@@ -5,6 +5,7 @@ require "yaml"
 VAGRANTFILE_API_VERSION = "2"
 
 settings = YAML.load_file "vagrant.yml"
+settings["db"]["artifacts_dir"]["host"] = "#{File.dirname(__FILE__)}/src/main/sql"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -15,7 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # (RabbitMQ depends on Erlang, which depends on yum-erlang_solutions, and that has an attributes/erlang_solutions.rb
   # file that seems to hardcode CentosOS 6.) [WLW]
   config.vm.box = "chef/centos-6.5"
-  
+
   config.vm.provider "virtualbox" do |v|
     v.cpus = 1
     v.memory = 1024
@@ -23,7 +24,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Installs Chef Solo provisioner.
   config.omnibus.chef_version = :latest
-  
+
   config.vm.define "db" do |db|
     db.vm.network "forwarded_port", guest: 22, host: 12222, auto_correct: true
     db.vm.network "forwarded_port", guest: settings["db"]["port"]["guest"], host: settings["db"]["port"]["host"]
@@ -37,7 +38,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       }
     end
   end
-  
+
   # TODO Add management console port
   config.vm.define "bus" do |bus|
     bus.vm.network "forwarded_port", guest: 22, host: 12223, auto_correct: true
