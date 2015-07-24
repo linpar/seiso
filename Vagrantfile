@@ -1,11 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-require "yaml"
 
 VAGRANTFILE_API_VERSION = "2"
-
-settings = YAML.load_file "vagrant.yml"
-settings["db"]["artifacts_dir"]["host"] = "#{File.dirname(__FILE__)}/src/main/sql"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -27,13 +23,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "db" do |db|
     db.vm.network "forwarded_port", guest: 22, host: 12222, auto_correct: true
-    db.vm.network "forwarded_port", guest: settings["db"]["port"]["guest"], host: settings["db"]["port"]["host"]
-    db.vm.synced_folder settings["db"]["artifacts_dir"]["host"], settings["db"]["artifacts_dir"]["guest"]
+    db.vm.network "forwarded_port", guest: 3306, host: 23141
+    db.vm.synced_folder "#{File.dirname(__FILE__)}/src/main/sql", '/opt/seiso-db'
     db.vm.provision "chef_solo" do |chef|
       configure_chef(chef, "seiso_db")
       chef.json = {
         "seiso_db" => {
-          "artifacts_dir" => settings["db"]["artifacts_dir"]["guest"]
+          "artifacts_dir" => '/opt/seiso-db'
         }
       }
     end
@@ -42,7 +38,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # TODO Add management console port
   config.vm.define "bus" do |bus|
     bus.vm.network "forwarded_port", guest: 22, host: 12223, auto_correct: true
-    bus.vm.network "forwarded_port", guest: settings["bus"]["port"]["guest"], host: settings["bus"]["port"]["host"]
+    bus.vm.network "forwarded_port", guest: 5672, host: 23142
     bus.vm.provision "chef_solo" do |chef|
       configure_chef(chef, "seiso_bus")
     end
