@@ -99,7 +99,7 @@ var nodeDetailsController = function() {
 					$scope.service = $scope.serviceInstance.service;
 					$scope.owner = $scope.service.owner;
 					if ($scope.owner != null) {
-						$scope.owner.fullName = $scope.owner.firstName + " " + $scope.owner.lastName;
+						$scope.owner.fullName = $scope.displayName($scope.owner);
 					}
 					$scope.environment = $scope.serviceInstance.environment;
 					$scope.dataCenter = $scope.serviceInstance.dataCenter;
@@ -124,7 +124,7 @@ var nodeDetailsController = function() {
 var personDetailsController = function() {
 	var controller = function($scope, $http, $routeParams) {
 		var successHandler = function(data) {
-			var fullName = data.firstName + ' ' + data.lastName;
+			var fullName = $scope.displayName(data);
 			$scope.model.page.title = pageTitle(fullName);
 			$scope.person = data;
 			$scope.person.firstNameLastName = fullName;

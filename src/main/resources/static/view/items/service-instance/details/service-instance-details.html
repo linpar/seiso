@@ -37,7 +37,7 @@
 				</li>
 				<li>
 					<div>Owner:</div>
-					<span ng-if="owner"><a ng-href="{{uri('people', owner.username)}}">{{owner.firstName}} {{owner.lastName}}</a></span>
+					<span ng-if="owner"><a ng-href="{{uri('people', owner.username)}}">{{displayName(owner)}}</a></span>
 					<span ng-if="!owner">-</span>
 				</li>
 				<li>

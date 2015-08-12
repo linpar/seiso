@@ -29,7 +29,10 @@ angular.module('seisoControllers', [])
 		.controller('NodeBreakdownController', nodeBreakdownController())
 		.controller('NodeSummaryController', nodeSummaryController())
 		.controller('NodeDetailsController', nodeDetailsController())
+		
+		// TODO Consider using the display name here, but if we do, we'll need to parse the displayName in AD. [WLW]
 		.controller('PersonListController', pagingController('People', '/v1/people', 'lastName,firstName'))
+		
 		.controller('PersonDetailsController', personDetailsController())
 		.controller('ServiceListController', pagingController('Services', '/v1/services', 'name'))
 		.controller('ServiceDetailsController', serviceDetailsController())

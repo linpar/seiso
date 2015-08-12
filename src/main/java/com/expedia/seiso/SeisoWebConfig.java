@@ -117,6 +117,7 @@ public class SeisoWebConfig extends WebMvcConfigurationSupport {
 		registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
 	}
 
+	// FIXME This is public in later versions of Spring (e.g. 4.1.7).
 	@Override
 	protected void addViewControllers(ViewControllerRegistry registry) {
 		// Lifted from org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration. [WLW]

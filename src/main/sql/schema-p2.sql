@@ -62,3 +62,6 @@ create table group_member (
   constraint group_member_group_id foreign key (group_id) references `person_group` (id),
   constraint group_member_person_id foreign key (person_id) references person (id)
 ) engine=InnoDB default charset=utf8;
+
+# Support for person display name - issue #147
+alter table person add column display_name varchar(160) after last_name;

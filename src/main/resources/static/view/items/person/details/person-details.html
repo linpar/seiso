@@ -7,7 +7,7 @@
 			<li><a ng-href="{{uri()}}">Home</a></li>
 			<li><a ng-href="{{uri('people')}}">People</a></li>
 		</ul>
-		<h1><i class="fa fa-user"></i> {{person.firstNameLastName}} <small>({{person.username}})</small></h1>
+		<h1><i class="fa fa-user"></i> {{displayName(person)}} <small>({{person.username}})</small></h1>
 		<div class="lead" ng-if="person.title">{{person.title}}</div>
 	</div>
 	<section>
@@ -52,7 +52,7 @@
 								<td>Manager</td>
 								<td>
 									<div ng-if="person.manager">
-										<a ng-href="{{uri('people', person.manager.username)}}">{{person.manager.firstName}} {{person.manager.lastName}}</a>
+										<a ng-href="{{uri('people', person.manager.username)}}">{{displayName(person.manager)}}</a>
 									</div>
 									<div ng-if="!person.manager">-</div>
 								</td>
@@ -64,7 +64,7 @@
 									<div ng-if="person.directReports.length &gt; 0">
 										<ul class="list-unstyled">
 											<li ng-repeat="directReport in person.directReports">
-												<a ng-href="{{uri('people', directReport.username)}}">{{directReport.firstName}} {{directReport.lastName}}</a>
+												<a ng-href="{{uri('people', directReport.username)}}">{{displayName(directReport)}}</a>
 											</li>
 										</ul>
 									</div>

@@ -37,7 +37,7 @@
 			<li>
 				<div>Owner:</div>
 				<div>
-					<span ng-if="serviceOwner"><a ng-href="{{uri('people', serviceOwner.username)}}" ng-bind="serviceOwner.firstName + ' ' + serviceOwner.lastName"></a></span>
+					<span ng-if="serviceOwner"><a ng-href="{{uri('people', serviceOwner.username)}}" ng-bind="displayName(serviceOwner)"></a></span>
 					<span ng-if="!serviceOwner">-</span>
 				</div>
 			</li>

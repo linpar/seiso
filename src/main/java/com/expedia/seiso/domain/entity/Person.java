@@ -69,6 +69,9 @@ public class Person extends AbstractItem {
 	@Size(max = 40)
 	private String lastName;
 	
+	@Size(max = 160)
+	private String displayName;
+	
 	@Size(max = 80)
 	private String title;
 	

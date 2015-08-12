@@ -70,6 +70,9 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		
+		// FIXME How do we specify an order here?
+		// http://stackoverflow.com/questions/31302262/provider-order-using-authenticationmanagerbuilder
 //		configureTestLdap(auth);
 		configureActiveDirectory(auth);
 		configureUserDetailsService(auth);
@@ -77,6 +80,7 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	public void configure(WebSecurity web) throws Exception {
+		// @formatter:off
 		web
 			.ignoring()
 				.antMatchers("/bower_components/**")
@@ -84,11 +88,11 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/images/**")
 				.antMatchers("/js/**")
 				;
+		// @formatter:on
 	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
 		// @formatter:off
 		http
 			// TODO Would prefer to do this without sessions if possible. But see
@@ -197,7 +201,8 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.ldapAuthentication()
 				.userDnPatterns("uid={0},ou=people")
 				.groupSearchBase("ou=groups")
-				.contextSource().ldif("classpath:test-server.ldif");
+				.contextSource()
+				.ldif("classpath:test-server.ldif");
 		// @formatter:on
 	}
 	
