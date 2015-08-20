@@ -32,7 +32,7 @@ public class CustomProperties {
 	// Actions
 	private Boolean enableActions = false;
 	private String actionsBaseUri;
-	
+
 	// Messaging
 	@NonNull private String changeNotificationExchange;
 	
@@ -43,4 +43,7 @@ public class CustomProperties {
 	
 	/** Active Directory URL */
 	private String adUrl;
+
+	/** Use active directory authentication (you might not want this during development) */
+	private Boolean enableActiveDirectory = true;
 }

@@ -74,7 +74,9 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// FIXME How do we specify an order here?
 		// http://stackoverflow.com/questions/31302262/provider-order-using-authenticationmanagerbuilder
 //		configureTestLdap(auth);
-		configureActiveDirectory(auth);
+		if (customProperties.getEnableActiveDirectory()) {
+			configureActiveDirectory(auth);
+		}
 		configureUserDetailsService(auth);
 	}
 	

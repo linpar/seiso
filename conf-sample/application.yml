@@ -57,3 +57,5 @@ custom:
 
   ad_domain: ad.example.com
   ad_url: ldap://ad.example.com:389
+  # Good for testing if you don't have an AD server.
+  enable-active-directory: false
