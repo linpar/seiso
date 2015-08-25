@@ -20,7 +20,9 @@ Approach #1: Manual setup
 * Java 8
 * MySQL 5.6.x
   * Create the Seiso database: `create database seiso;`
-  * Create a `seiso` user. It needs at least select, update and delete permissions on the `seiso` database.
+  * Create a `seiso` user. It needs at least select, update and delete permissions on the `seiso` database. For a dev setup:
+    `create user 'seiso'@'localhost' identified by 'password'`
+    `grant select,update,delete on sesio.* to 'seiso'@'localhost'`
   * Create the tables by running `src/main/sql/create-tables.sql`.
   * Insert the reference data by running `src/main/sql/insert-reference-data.sql`.
   * If you like, insert the sample data by running `src/main/sql/insert-sample-data.sql`.
@@ -53,13 +55,17 @@ Common Configuration
 
 Create a copy of `conf-sample/application.yml` and modify it as appropriate.
 
-To run Seiso in development mode, you can place it directly in `src/main/resources`.
+To run Seiso in development mode, you can place it directly in `src/main/resources`. The file is for the vagrant
+setup, so if you installed without it you'll probably want to change the mysql port to 3306 and the Rabbit port
+to 5672.
 
 Patch the Database
 -------------
 
 * Connect to `localhost:3306/seiso` as `root` user
-* Run any patch files.
+* Run any patch files. Currently these two:
+  * Run `src/main/sql/archives/schema-p1.sql`
+  * Run `src/main/sql/schema-p2.sql`
 * Follow the instructions in that patch sql file (e.g. Run query: `update person set source='ldap-corp'`)
 
 
@@ -73,4 +79,6 @@ Run Seiso
 
     $ ./gradlew bootRun
 
-Point your HTML5-enabled browser to **https://localhost:8443** or whatever scheme/port combo you chose during configuration. You should see a home page with a list of services.
+Point your HTML5-enabled browser to **https://localhost:8443** or whatever scheme/port combo you chose during configuration in the application.yml for
+base-uri. You should see a home page with a list of services. To login, look at the file in src/main/sql/README.md which has the sample data
+usernames and passwords.
