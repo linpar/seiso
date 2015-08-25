@@ -95,9 +95,10 @@
 								<td>Work Phone</td>
 								<td>{{person.workPhone || '-'}}</td>
 							</tr>
-							<tr>
+							<tr ng-switch="person.email">
 								<td>E-mail</td>
-								<td>{{person.email || '-'}}</td>
+								<td ng-switch-when="">-</td>
+								<td ng-switch-default><a href="mailto:{{ person.email }}">{{ person.email }}</a></td>
 							</tr>
 						</tbody>
 					</table>
