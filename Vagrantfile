@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Currently need to use CentOS 6.5, since the RabbitMQ cookbook isn't working with CentOS 7.0.
   # (RabbitMQ depends on Erlang, which depends on yum-erlang_solutions, and that has an attributes/erlang_solutions.rb
   # file that seems to hardcode CentosOS 6.) [WLW]
-  config.vm.box = "chef/centos-6.5"
+  config.vm.box = "puphpet/centos65-x64"
 
   config.vm.provider "virtualbox" do |v|
     v.cpus = 1
