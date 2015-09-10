@@ -18,11 +18,11 @@ Approach #1: Manual setup
 **Installation.** You'll need to install the following:
 
 * Java 8
-* MySQL 5.6.x
+* MySQL 5.6.x (recommend using Homebrew)
   * Create the Seiso database: `create database seiso;`
   * Create a `seiso` user. It needs at least select, update and delete permissions on the `seiso` database. For a dev setup:
-    `create user 'seiso'@'localhost' identified by 'password'`
-    `grant select,update,delete on sesio.* to 'seiso'@'localhost'`
+    `create user 'seiso'@'localhost' identified by 'password';`
+    `grant select, update, delete, insert on sesio.* to 'seiso'@'localhost';`
   * Create the tables by running `src/main/sql/create-tables.sql`.
   * Insert the reference data by running `src/main/sql/insert-reference-data.sql`.
   * If you like, insert the sample data by running `src/main/sql/insert-sample-data.sql`.
@@ -62,7 +62,7 @@ to 5672.
 Patch the Database
 -------------
 
-* Connect to `localhost:3306/seiso` as `root` user
+* Connect to `localhost:3306` and db `seiso` as `root` user
 * Run any patch files. Currently these two:
   * Run `src/main/sql/archives/schema-p1.sql`
   * Run `src/main/sql/schema-p2.sql`
@@ -79,6 +79,6 @@ Run Seiso
 
     $ ./gradlew bootRun
 
-Point your HTML5-enabled browser to **https://localhost:8443** or whatever scheme/port combo you chose during configuration in the application.yml for
+Point your HTML5-enabled browser to **https://localhost:8080** or whatever scheme/port combo you chose during configuration in the application.yml for
 base-uri. You should see a home page with a list of services. To login, look at the file in src/main/sql/README.md which has the sample data
 usernames and passwords.
