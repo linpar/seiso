@@ -50,7 +50,7 @@ ext {
   hikariVersion = '2.3.2'
   jackson2Version = '2.5.1'
   jodaTimeVersion = '2.7'
-  lombokVersion = '1.16.2'
+  lombokVersion = '1.16.6'
   mysqlConnectorJVersion = '5.1.34'
   slf4jVersion = '1.7.10'
   springBootVersion = '1.2.4.RELEASE'

@@ -42,3 +42,19 @@ from (
 order by
   healthy / nodes
     ;
+
+-- Select service instances with service and port info
+select
+  s.name 'service',
+  si.ukey 'service_instance',
+  sip.number 'port',
+  sip.protocol 'protocol'
+from
+  service s
+  left outer join service_instance si on si.service_id = s.id
+  left outer join service_instance_port sip on sip.service_instance_id = si.id
+order by
+  s.name,
+  si.ukey,
+  sip.number
+;
