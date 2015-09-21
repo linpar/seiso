@@ -1,10 +1,12 @@
--- MySQL dump 10.13  Distrib 5.6.23, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.26, for osx10.10 (x86_64)
 --
--- Host: localhost    Database: seiso
+-- Host: 127.0.0.1    Database: seiso
 -- ------------------------------------------------------
--- Server version	5.6.23
+-- Server version	5.6.26
 
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
@@ -12,6 +14,22 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `conf_prop`
+--
+
+DROP TABLE IF EXISTS `conf_prop`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `conf_prop` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `pkey` varchar(80) NOT NULL,
+  `pvalue` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `pkey` (`pkey`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `dashboard`
@@ -28,7 +46,7 @@ CREATE TABLE `dashboard` (
   `description` varchar(1000) DEFAULT NULL,
   `ui_uri` varchar(255) DEFAULT NULL,
   `api_uri` varchar(255) DEFAULT NULL,
-  `source_id` int(10) unsigned NOT NULL,
+  `source_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ukey` (`ukey`),
   KEY `source_id` (`source_id`),
@@ -60,6 +78,28 @@ CREATE TABLE `data_center` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `doc_link`
+--
+
+DROP TABLE IF EXISTS `doc_link`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `doc_link` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `service_id` int(10) unsigned NOT NULL,
+  `title` varchar(250) NOT NULL,
+  `href` varchar(250) NOT NULL,
+  `description` varchar(250) NOT NULL,
+  `source_id` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `service_id_title` (`service_id`,`title`),
+  KEY `source_id` (`source_id`),
+  CONSTRAINT `doc_link_service_id` FOREIGN KEY (`service_id`) REFERENCES `service` (`id`),
+  CONSTRAINT `doc_link_source_id` FOREIGN KEY (`source_id`) REFERENCES `source` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `endpoint`
 --
 
@@ -69,7 +109,7 @@ DROP TABLE IF EXISTS `endpoint`;
 CREATE TABLE `endpoint` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `service_instance_port_id` int(10) unsigned NOT NULL,
-  `node_ip_address_id` int(10) unsigned DEFAULT NULL,
+  `node_ip_address_id` int(10) unsigned NOT NULL,
   `rotation_status_id` tinyint(3) unsigned DEFAULT NULL,
   `source_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -107,6 +147,44 @@ CREATE TABLE `environment` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `group_member`
+--
+
+DROP TABLE IF EXISTS `group_member`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `group_member` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `group_id` smallint(5) unsigned NOT NULL,
+  `person_id` smallint(5) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `group_id_person_id` (`group_id`,`person_id`),
+  KEY `person_id` (`person_id`),
+  CONSTRAINT `group_member_group_id` FOREIGN KEY (`group_id`) REFERENCES `person_group` (`id`),
+  CONSTRAINT `group_member_person_id` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `group_owner`
+--
+
+DROP TABLE IF EXISTS `group_owner`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `group_owner` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `group_id` smallint(5) unsigned NOT NULL,
+  `person_id` smallint(5) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `group_id_person_id` (`group_id`,`person_id`),
+  KEY `person_id` (`person_id`),
+  CONSTRAINT `group_owner_group_id` FOREIGN KEY (`group_id`) REFERENCES `person_group` (`id`),
+  CONSTRAINT `group_owner_person_id` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `health_status`
 --
 
@@ -117,6 +195,7 @@ CREATE TABLE `health_status` (
   `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   `ukey` varchar(20) NOT NULL,
   `name` varchar(80) NOT NULL,
+  `description` varchar(250) DEFAULT NULL,
   `status_type_id` tinyint(3) unsigned NOT NULL,
   `source_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -243,16 +322,19 @@ CREATE TABLE `node` (
   `name` varchar(80) NOT NULL,
   `description` varchar(250) DEFAULT NULL,
   `version` varchar(128) DEFAULT NULL,
-  `service_instance_id` int(10) unsigned DEFAULT NULL,
+  `service_instance_id` int(10) unsigned NOT NULL,
   `machine_id` int(10) unsigned DEFAULT NULL,
   `health_status_id` tinyint(3) unsigned DEFAULT NULL,
+  `aggregate_rotation_status_id` tinyint(3) unsigned DEFAULT NULL,
   `source_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `service_instance_id` (`service_instance_id`),
   KEY `machine_id` (`machine_id`),
-  KEY `health_status_id` (`health_status_id`),
   KEY `source_id` (`source_id`),
+  KEY `aggregate_rotation_status_id` (`aggregate_rotation_status_id`),
+  KEY `health_status_id` (`health_status_id`),
+  CONSTRAINT `node_aggregate_rotation_status_id` FOREIGN KEY (`aggregate_rotation_status_id`) REFERENCES `rotation_status` (`id`),
   CONSTRAINT `node_health_status_id` FOREIGN KEY (`health_status_id`) REFERENCES `health_status` (`id`),
   CONSTRAINT `node_machine_id` FOREIGN KEY (`machine_id`) REFERENCES `machine` (`id`),
   CONSTRAINT `node_service_instance_id` FOREIGN KEY (`service_instance_id`) REFERENCES `service_instance` (`id`),
@@ -271,14 +353,17 @@ CREATE TABLE `node_ip_address` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `node_id` int(10) unsigned NOT NULL,
   `ip_address_role_id` int(10) unsigned NOT NULL,
-  `ip_address` varchar(20) DEFAULT NULL,
+  `ip_address` varchar(20) NOT NULL,
   `rotation_status_id` tinyint(3) unsigned DEFAULT NULL,
+  `aggregate_rotation_status_id` tinyint(3) unsigned DEFAULT NULL,
   `source_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `node_id_ip_address_role_id` (`node_id`,`ip_address_role_id`),
   KEY `rotation_status_id` (`rotation_status_id`),
   KEY `ip_address_role_id` (`ip_address_role_id`),
   KEY `source_id` (`source_id`),
+  KEY `aggregate_rotation_status_id` (`aggregate_rotation_status_id`),
+  CONSTRAINT `node_ip_address_aggregate_rotation_status_id` FOREIGN KEY (`aggregate_rotation_status_id`) REFERENCES `rotation_status` (`id`),
   CONSTRAINT `node_ip_address_ip_address_role_id` FOREIGN KEY (`ip_address_role_id`) REFERENCES `ip_address_role` (`id`),
   CONSTRAINT `node_ip_address_node_id` FOREIGN KEY (`node_id`) REFERENCES `node` (`id`),
   CONSTRAINT `node_ip_address_rotation_status_id` FOREIGN KEY (`rotation_status_id`) REFERENCES `rotation_status` (`id`),
@@ -298,6 +383,7 @@ CREATE TABLE `person` (
   `username` varchar(40) NOT NULL,
   `first_name` varchar(40) DEFAULT NULL,
   `last_name` varchar(40) DEFAULT NULL,
+  `display_name` varchar(160) DEFAULT NULL,
   `title` varchar(80) DEFAULT NULL,
   `company` varchar(80) DEFAULT NULL,
   `department` varchar(80) DEFAULT NULL,
@@ -309,7 +395,7 @@ CREATE TABLE `person` (
   `email` varchar(80) DEFAULT NULL,
   `manager_id` smallint(5) unsigned DEFAULT NULL,
   `ldap_dn` varchar(240) DEFAULT NULL,
-  `mingle_user_id` smallint(6) DEFAULT NULL,
+  `mb_type` char(4) DEFAULT NULL,
   `source_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
@@ -320,6 +406,23 @@ CREATE TABLE `person` (
   CONSTRAINT `person_manager_id` FOREIGN KEY (`manager_id`) REFERENCES `person` (`id`),
   CONSTRAINT `person_source_id` FOREIGN KEY (`source_id`) REFERENCES `source` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `person_group`
+--
+
+DROP TABLE IF EXISTS `person_group`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `person_group` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(80) NOT NULL,
+  `alias` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  UNIQUE KEY `alias` (`alias`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -374,6 +477,7 @@ CREATE TABLE `rotation_status` (
   `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   `ukey` varchar(20) NOT NULL,
   `name` varchar(80) NOT NULL,
+  `description` varchar(250) DEFAULT NULL,
   `status_type_id` tinyint(3) unsigned NOT NULL,
   `source_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -394,7 +498,7 @@ DROP TABLE IF EXISTS `service`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `service` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `ukey` varchar(40) DEFAULT NULL,
+  `ukey` varchar(40) NOT NULL,
   `name` varchar(200) NOT NULL,
   `group_id` smallint(5) unsigned DEFAULT NULL,
   `type_id` tinyint(3) unsigned DEFAULT NULL,
@@ -448,6 +552,7 @@ DROP TABLE IF EXISTS `service_instance`;
 CREATE TABLE `service_instance` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `ukey` varchar(40) NOT NULL,
+  `description` varchar(250) DEFAULT NULL,
   `service_id` int(10) unsigned NOT NULL,
   `environment_id` smallint(5) unsigned NOT NULL,
   `data_center_id` smallint(5) unsigned DEFAULT NULL,
@@ -488,6 +593,27 @@ CREATE TABLE `service_instance_dashboard` (
   CONSTRAINT `sid_dashboard_id` FOREIGN KEY (`dashboard_id`) REFERENCES `dashboard` (`id`),
   CONSTRAINT `sid_service_instance_id` FOREIGN KEY (`service_instance_id`) REFERENCES `service_instance` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `service_instance_dependency`
+--
+
+DROP TABLE IF EXISTS `service_instance_dependency`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `service_instance_dependency` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `dependent_id` int(10) unsigned NOT NULL,
+  `dependency_id` int(10) unsigned NOT NULL,
+  `description` varchar(250) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `dependent_id_dependency_id` (`dependent_id`,`dependency_id`),
+  KEY `dependent_id` (`dependent_id`),
+  KEY `dependency_id` (`dependency_id`),
+  CONSTRAINT `service_instance_dependency_dependency_id` FOREIGN KEY (`dependency_id`) REFERENCES `service_instance` (`id`),
+  CONSTRAINT `service_instance_dependency_dependent_id` FOREIGN KEY (`dependent_id`) REFERENCES `service_instance` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -543,6 +669,7 @@ CREATE TABLE `service_type` (
   `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   `ukey` varchar(40) NOT NULL,
   `name` varchar(80) NOT NULL,
+  `description` varchar(250) DEFAULT NULL,
   `source_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ukey` (`ukey`),
@@ -561,6 +688,7 @@ DROP TABLE IF EXISTS `seyren_check`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `seyren_check` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `seyren_base_url` varchar(250) NOT NULL,
   `seyren_id` varchar(40) NOT NULL,
   `name` varchar(250) NOT NULL,
   `description` varchar(1000) DEFAULT NULL,
@@ -570,9 +698,9 @@ CREATE TABLE `seyren_check` (
   `error` bigint(20) NOT NULL,
   `enabled` tinyint(1) unsigned NOT NULL,
   `state` varchar(20) DEFAULT NULL,
-  `source_id` int(10) unsigned NOT NULL,
+  `source_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `seyren_id` (`seyren_id`),
+  UNIQUE KEY `seyren_base_url_seyren_id` (`seyren_base_url`,`seyren_id`),
   KEY `data_source_id` (`source_id`),
   KEY `source_id` (`source_id`),
   CONSTRAINT `seyren_check_source_id` FOREIGN KEY (`source_id`) REFERENCES `source` (`id`)
@@ -610,6 +738,7 @@ CREATE TABLE `status_type` (
   `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   `ukey` varchar(20) NOT NULL,
   `name` varchar(80) NOT NULL,
+  `description` varchar(250) DEFAULT NULL,
   `source_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ukey` (`ukey`),
@@ -665,7 +794,9 @@ CREATE TABLE `user_role` (
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-02-28  6:02:32
+-- Dump completed on 2015-09-21 13:08:13
