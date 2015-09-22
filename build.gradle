@@ -53,7 +53,6 @@ bootRun {
   jvmArgs = [ "-Djava.security.egd=file:/dev/./urandom", "-Xmx2048m" ]
 }
 
-// Gradle 2.0 to align with Travis CI. [WLW 2014-11-19]
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.0'
+  gradleVersion = '2.7'
 }

@@ -22,6 +22,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -61,4 +64,20 @@ public class Seiso {
 		dataSource.setPassword(dataSourceProperties.getPassword());
 		return dataSource;
 	}
+
+	// TODO Upgrade once Spring Data REST compiles against Spring 4.2. See
+	// - http://stackoverflow.com/questions/31724994/spring-data-rest-and-cors
+	// - https://jira.spring.io/browse/DATAREST-573
+    @Bean
+    public CorsFilter corsFilter() {
+        val config = new CorsConfiguration();
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("GET");
+        
+        val source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        
+        return new CorsFilter(source);
+    }
 }
