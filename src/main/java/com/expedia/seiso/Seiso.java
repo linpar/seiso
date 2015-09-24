@@ -43,25 +43,14 @@ public class Seiso {
 	@Bean
 	public HikariDataSource dataSource() {
 		
-		// FIXME Remove hardcodes
-		// val hikariConfig = new HikariConfig();
-		// hikariConfig.setMaximumPoolSize(10);
-		// hikariConfig.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-		// hikariConfig.addDataSourceProperty("serverName", "localhost");
-		// hikariConfig.addDataSourceProperty("port", 3306);
-		// hikariConfig.addDataSourceProperty("databaseName", "seiso");
-		// hikariConfig.addDataSourceProperty("user", env.getProperty(SEISO_DB_USERNAME_KEY));
-		// hikariConfig.addDataSourceProperty("password", env.getProperty(SEISO_DB_PASSWORD_KEY));
-		// return new HikariDataSource(hikariConfig);
-		
-		// FIXME Legacy configuration.
 		// TODO Add other Hikari data source options.
-		// See https://github.com/brettwooldridge/HikariCP to upgrade.
+		// TODO Legacy configuration. See https://github.com/brettwooldridge/HikariCP to upgrade.
 		val dataSource = new HikariDataSource();
 		dataSource.setDriverClassName(dataSourceProperties.getDriverClassName());
 		dataSource.setJdbcUrl(dataSourceProperties.getUrl());
 		dataSource.setUsername(dataSourceProperties.getUsername());
 		dataSource.setPassword(dataSourceProperties.getPassword());
+		dataSource.setMaximumPoolSize(dataSourceProperties.getMaximumPoolSize());
 		return dataSource;
 	}
 

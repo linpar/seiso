@@ -1,12 +1,11 @@
 spring:
-  main:
-    web-environment: true
-    show-banner: true
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:23141/seiso?autoReconnect=true
     username: seiso
     password: seiso
+    maximum-pool-size: 10
+    minimum-idle: -1
     # TODO Add other data source settings here
   jpa:
     openInView: true
@@ -15,47 +14,15 @@ spring:
     generate-ddl: false
     hibernate:
       naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
-  rabbitmq:
-    host: 127.0.0.1
-    port: 23142
-    username: seiso
-    password: seiso
 
 logging:
 #  file: /var/log/seiso/seiso.log
   level:
     com.expedia.seiso: TRACE
-    com.expedia.serf: TRACE
     org.springframework: INFO
-
-security:
-  basic:
-    enabled: false
 
 # IMPORTANT: This is a potential security risk, so use discretion.
 # The admin panel currently assumes that endpoints.health.sensitive is false.
 endpoints:
   health:
     sensitive: false
-
-serf:
-  # No trailing slash!
-  base-uri: http://localhost:8080
-  base-path: api
-
-custom:
-  nav:
-    seiso-instances:
-      - name: Test
-        href: https://seiso.test.example.com
-      - name: Production/DR
-        href: https://seiso.prod.example.com
-    current-seiso-instance: Test
-  change-notification-exchange: seiso.notifications.v2
-  enable-actions: true
-  actions-base-uri: http://eos.example.com
-
-  ad_domain: ad.example.com
-  ad_url: ldap://ad.example.com:389
-  # Good for testing if you don't have an AD server.
-  enable-active-directory: false

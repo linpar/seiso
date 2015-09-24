@@ -13,30 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso;
+package com.expedia.seiso.entity.projection;
 
-import javax.validation.constraints.NotNull;
+import org.springframework.data.rest.core.config.Projection;
 
-import lombok.Data;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import com.expedia.seiso.entity.HealthStatus;
+import com.expedia.seiso.entity.Node;
+import com.expedia.seiso.entity.RotationStatus;
 
 /**
- * Data source configuration properties.
- * 
  * @author Willie Wheeler
  */
-@Data
-@Component
-@ConfigurationProperties(prefix = "spring.datasource")
-public class DataSourceProperties {
-	@NotNull private String driverClassName;
-	@NotNull private String url;
-	@NotNull private String username;
-	@NotNull private String password;
-	private int maximumPoolSize = 10;
-	private int minimumIdle = -1;
-
-	// TODO Add other data source settings here. [WLW]
+@Projection(name = "nodeState", types = Node.class)
+public interface NodeState {
+	
+	String getName();
+	
+	RotationStatus getAggregateRotationStatus();
+	
+	HealthStatus getHealthStatus();
 }
