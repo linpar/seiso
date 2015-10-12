@@ -54,17 +54,17 @@ public class ServiceInstanceServiceImpl implements ServiceInstanceService {
 	
 	@Override
 	public NodeSummary getNodeSummary(@NonNull Long id) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		return serviceInstanceRepo.getServiceInstanceNodeSummary(id);
 	}
 
 	@Override
 	public List<BreakdownItem> getHealthBreakdown(@NonNull Long id) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		return serviceInstanceRepo.getServiceInstanceHealthBreakdown(id);
 	}
 
 	@Override
 	public List<BreakdownItem> getRotationBreakdown(@NonNull Long id) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		return serviceInstanceRepo.getServiceInstanceRotationBreakdown(id);
 	}
 
 	@Override

@@ -24,12 +24,14 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.entity.ServiceInstance;
+import com.expedia.seiso.repo.custom.ServiceInstanceRepoCustom;
 
 /**
  * @author Willie Wheeler
  */
-public interface ServiceInstanceRepo
-		extends PagingAndSortingRepository<ServiceInstance, Long> {
+public interface ServiceInstanceRepo extends
+		PagingAndSortingRepository<ServiceInstance, Long>,
+		ServiceInstanceRepoCustom {
 	
 	// Need the left outer joins to ensure that nodeless service instances show up.
 	public static final String FIND_BY_SERVICE_WITH_COUNTS =
