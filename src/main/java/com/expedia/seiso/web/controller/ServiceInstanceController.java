@@ -15,6 +15,9 @@
  */
 package com.expedia.seiso.web.controller;
 
+import java.util.Collections;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.rest.webmvc.BasePathAwareController;
@@ -23,9 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.expedia.seiso.resource.HealthBreakdown;
+import com.expedia.seiso.resource.BreakdownItem;
 import com.expedia.seiso.resource.NodeSummary;
-import com.expedia.seiso.resource.RotationBreakdown;
 
 /**
  * @author Willie Wheeler
@@ -39,20 +41,20 @@ public class ServiceInstanceController {
 	@ResponseBody
 	public NodeSummary getNodeSummary(@PathVariable("id") Long id) {
 		log.trace("It worked: serviceInstance.id={}", id);
-		return new NodeSummary();
+		return new NodeSummary(0, 0, 0, 0);
 	}
 	
 	@RequestMapping(value = "/{id}/healthBreakdown", method = RequestMethod.GET)
 	@ResponseBody
-	public HealthBreakdown getHealthBreakdown(@PathVariable("id") Long id) {
+	public List<BreakdownItem> getHealthBreakdown(@PathVariable("id") Long id) {
 		log.trace("It worked: serviceInstance.id={}", id);
-		return new HealthBreakdown();
+		return Collections.singletonList(new BreakdownItem());
 	}
 	
 	@RequestMapping(value = "/{id}/rotationBreakdown", method = RequestMethod.GET)
 	@ResponseBody
-	public RotationBreakdown getRotationBreakdown(@PathVariable("id") Long id) {
+	public List<BreakdownItem> getRotationBreakdown(@PathVariable("id") Long id) {
 		log.trace("It worked: serviceInstance.id={}", id);
-		return new RotationBreakdown();
+		return Collections.singletonList(new BreakdownItem());
 	}
 }

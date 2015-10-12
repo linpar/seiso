@@ -15,11 +15,19 @@
  */
 package com.expedia.seiso.resource;
 
-import org.springframework.hateoas.ResourceSupport;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author Willie Wheeler
  */
-public class RotationBreakdown extends ResourceSupport {
-
+@Data
+@NoArgsConstructor
+@RequiredArgsConstructor
+public class BreakdownItem {
+	@NonNull private String statusName;
+	@NonNull private String statusType;
+	@NonNull private Integer count;
 }

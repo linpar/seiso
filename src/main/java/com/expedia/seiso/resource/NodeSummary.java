@@ -15,11 +15,17 @@
  */
 package com.expedia.seiso.resource;
 
-import org.springframework.hateoas.ResourceSupport;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * @author Willie Wheeler
  */
-public class NodeSummary extends ResourceSupport {
-
+@Data
+@AllArgsConstructor
+public class NodeSummary {
+	private Integer numNodes;
+	private Integer numHealthy;
+	private Integer numEnabled;
+	private Integer numHealthyGivenEnabled;
 }
