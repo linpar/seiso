@@ -14,6 +14,12 @@ spring:
     generate-ddl: false
     hibernate:
       naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+  data:
+    rest:
+      base-path: /api
+
+management:
+  context-path: /admin
 
 logging:
 #  file: /var/log/seiso/seiso.log
