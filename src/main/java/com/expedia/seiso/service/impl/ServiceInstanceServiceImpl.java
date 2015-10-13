@@ -21,14 +21,12 @@ import static com.expedia.seiso.entity.RotationStatus.EXCLUDED;
 import static com.expedia.seiso.entity.RotationStatus.NO_ENDPOINTS;
 import static com.expedia.seiso.entity.RotationStatus.PARTIAL;
 import static com.expedia.seiso.entity.RotationStatus.UNKNOWN;
-
-import java.util.List;
-
 import lombok.NonNull;
 import lombok.val;
 import lombok.extern.slf4j.XSlf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resources;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,13 +56,15 @@ public class ServiceInstanceServiceImpl implements ServiceInstanceService {
 	}
 
 	@Override
-	public List<BreakdownItem> getHealthBreakdown(@NonNull Long id) {
-		return serviceInstanceRepo.getServiceInstanceHealthBreakdown(id);
+	public Resources<BreakdownItem> getHealthBreakdown(@NonNull Long id) {
+		val items = serviceInstanceRepo.getServiceInstanceHealthBreakdown(id);
+		return new Resources<BreakdownItem>(items);
 	}
 
 	@Override
-	public List<BreakdownItem> getRotationBreakdown(@NonNull Long id) {
-		return serviceInstanceRepo.getServiceInstanceRotationBreakdown(id);
+	public Resources<BreakdownItem> getRotationBreakdown(@NonNull Long id) {
+		val items = serviceInstanceRepo.getServiceInstanceRotationBreakdown(id);
+		return new Resources<BreakdownItem>(items);
 	}
 
 	@Override

@@ -15,10 +15,13 @@
  */
 package com.expedia.seiso.web.controller;
 
-import java.util.List;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.BasePathAwareController;
+import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +30,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.expedia.seiso.resource.BreakdownItem;
 import com.expedia.seiso.resource.NodeSummary;
 import com.expedia.seiso.service.ServiceInstanceService;
+import com.expedia.seiso.web.link.IanaLinkRelation;
+
+// Is there a way to add the links here using a ResourceProcessor? [WLW]
+
+// FIXME The base path isn't appearing in the links. See
+// http://stackoverflow.com/questions/33092440/base-path-doesnt-appear-in-resourceprocessor-custom-links
 
 /**
  * @author Willie Wheeler
@@ -39,18 +48,31 @@ public class ServiceInstanceController {
 	@RequestMapping(value = "/{id}/nodeSummary", method = RequestMethod.GET)
 	@ResponseBody
 	public NodeSummary getNodeSummary(@PathVariable("id") Long id) {
-		return serviceInstanceService.getNodeSummary(id);
+		val resource = serviceInstanceService.getNodeSummary(id);
+		resource.add(baseLink(id).slash("nodeSummary").withSelfRel());
+		resource.add(baseLink(id).withRel(IanaLinkRelation.UP));
+		return resource;
 	}
 	
 	@RequestMapping(value = "/{id}/healthBreakdown", method = RequestMethod.GET)
 	@ResponseBody
-	public List<BreakdownItem> getHealthBreakdown(@PathVariable("id") Long id) {
-		return serviceInstanceService.getHealthBreakdown(id);
+	public Resources<BreakdownItem> getHealthBreakdown(@PathVariable("id") Long id) {
+		val resources = serviceInstanceService.getHealthBreakdown(id);
+		resources.add(baseLink(id).slash("healthBreakdown").withSelfRel());
+		resources.add(baseLink(id).withRel(IanaLinkRelation.UP));
+		return resources;
 	}
 	
 	@RequestMapping(value = "/{id}/rotationBreakdown", method = RequestMethod.GET)
 	@ResponseBody
-	public List<BreakdownItem> getRotationBreakdown(@PathVariable("id") Long id) {
-		return serviceInstanceService.getRotationBreakdown(id);
+	public Resources<BreakdownItem> getRotationBreakdown(@PathVariable("id") Long id) {
+		val resources = serviceInstanceService.getRotationBreakdown(id);
+		resources.add(baseLink(id).slash("rotationBreakdown").withSelfRel());
+		resources.add(baseLink(id).withRel(IanaLinkRelation.UP));
+		return resources;
+	}
+	
+	private ControllerLinkBuilder baseLink(Long id) {
+		return linkTo(ServiceInstanceController.class).slash(id);
 	}
 }

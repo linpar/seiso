@@ -17,13 +17,17 @@ package com.expedia.seiso.resource;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import org.springframework.hateoas.ResourceSupport;
 
 /**
  * @author Willie Wheeler
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
-public class NodeSummary {
+public class NodeSummary extends ResourceSupport {
 	private Integer numNodes;
 	private Integer numHealthy;
 	private Integer numEnabled;

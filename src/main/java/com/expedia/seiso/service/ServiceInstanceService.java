@@ -15,12 +15,14 @@
  */
 package com.expedia.seiso.service;
 
-import java.util.List;
+import org.springframework.hateoas.Resources;
 
 import com.expedia.seiso.entity.Node;
 import com.expedia.seiso.entity.NodeIpAddress;
 import com.expedia.seiso.resource.BreakdownItem;
 import com.expedia.seiso.resource.NodeSummary;
+
+// FIXME Resources don't really belong here. They belong in the web tier.
 
 /**
  * @author Willie Wheeler
@@ -29,9 +31,9 @@ public interface ServiceInstanceService {
 	
 	NodeSummary getNodeSummary(Long id);
 	
-	List<BreakdownItem> getHealthBreakdown(Long id);
+	Resources<BreakdownItem> getHealthBreakdown(Long id);
 	
-	List<BreakdownItem> getRotationBreakdown(Long id);
+	Resources<BreakdownItem> getRotationBreakdown(Long id);
 	
 	void recalculateAggregateRotationStatus(Node node);
 	

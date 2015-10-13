@@ -13,25 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.resource;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.hateoas.ResourceSupport;
+package com.expedia.seiso.web.link;
 
 /**
  * @author Willie Wheeler
  */
-@Data
-@EqualsAndHashCode(callSuper = false)
-@NoArgsConstructor
-@RequiredArgsConstructor
-public class BreakdownItem extends ResourceSupport {
-	@NonNull private String statusName;
-	@NonNull private String statusType;
-	@NonNull private Integer count;
+public class IanaLinkRelation {
+	public static final String UP = "up";
 }

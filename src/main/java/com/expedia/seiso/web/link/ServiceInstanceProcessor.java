@@ -16,16 +16,18 @@
 package com.expedia.seiso.web.link;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import lombok.val;
 
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceProcessor;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.entity.ServiceInstance;
 import com.expedia.seiso.web.controller.ServiceInstanceController;
+
+// FIXME The base path isn't appearing in the links. See
+// http://stackoverflow.com/questions/33092440/base-path-doesnt-appear-in-resourceprocessor-custom-links
 
 /**
  * @author Willie Wheeler
@@ -36,14 +38,10 @@ public class ServiceInstanceProcessor implements ResourceProcessor<Resource<Serv
 	@Override
 	public Resource<ServiceInstance> process(Resource<ServiceInstance> resource) {
 		val id = resource.getContent().getId();
-		val baseLink = linkTo(ServiceInstanceController.class).slash(id);
-		resource.add(link(baseLink, "nodeSummary"));
-		resource.add(link(baseLink, "healthBreakdown"));
-		resource.add(link(baseLink, "rotationBreakdown"));
+		val controller = methodOn(ServiceInstanceController.class);
+		resource.add(linkTo(controller.getNodeSummary(id)).withRel("nodeSummary"));
+		resource.add(linkTo(controller.getHealthBreakdown(id)).withRel("healthBreakdown"));
+		resource.add(linkTo(controller.getRotationBreakdown(id)).withRel("rotationBreakdown"));
 		return resource;
-	}
-	
-	private Link link(ControllerLinkBuilder builder, String rel) {
-		return builder.slash(rel).withRel(rel);
 	}
 }
