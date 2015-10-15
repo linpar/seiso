@@ -15,23 +15,15 @@
  */
 package com.expedia.seiso.repo;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.entity.Environment;
 
-// TODO This might need to be pageable, at least with the way we've been creating these things at Expedia. :-)
-
 /**
  * @author Willie Wheeler
  */
-public interface EnvironmentRepo extends CrudRepository<Environment, Long> {
-
-	@Query("from Environment order by name")
-	List<Environment> findAll();
+public interface EnvironmentRepo extends PagingAndSortingRepository<Environment, Long> {
 
 	Environment findByKey(@Param("key") String key);
 }
