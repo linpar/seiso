@@ -16,7 +16,8 @@
 package com.expedia.seiso.web.controller;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import lombok.val;
+
+import java.text.NumberFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.BasePathAwareController;
@@ -32,6 +33,8 @@ import com.expedia.seiso.resource.NodeSummary;
 import com.expedia.seiso.service.ServiceInstanceService;
 import com.expedia.seiso.web.link.IanaLinkRelation;
 
+import lombok.val;
+
 // Is there a way to add the links here using a ResourceProcessor? [WLW]
 
 // FIXME The base path isn't appearing in the links. See
@@ -44,6 +47,12 @@ import com.expedia.seiso.web.link.IanaLinkRelation;
 @RequestMapping("/serviceInstances")
 public class ServiceInstanceController {
 	@Autowired private ServiceInstanceService serviceInstanceService;
+	
+	private static final NumberFormat percentFormat = NumberFormat.getPercentInstance();
+	static {
+		percentFormat.setMinimumFractionDigits(1);
+		percentFormat.setMaximumFractionDigits(1);
+	}
 	
 	@RequestMapping(value = "/{id}/nodeSummary", method = RequestMethod.GET)
 	@ResponseBody
@@ -75,4 +84,5 @@ public class ServiceInstanceController {
 	private ControllerLinkBuilder baseLink(Long id) {
 		return linkTo(ServiceInstanceController.class).slash(id);
 	}
+	
 }
