@@ -22,4 +22,6 @@ public interface ServiceInstanceNodes {
 	RotationStatus getAggregateRotationStatus();
 
 	List<NodeIpAddress> getIpAddresses();
+	
+	String getVersion();
 }
