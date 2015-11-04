@@ -3,7 +3,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath "org.springframework.boot:spring-boot-gradle-plugin:1.2.0.RELEASE"
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:1.3.0.M5"
   }
 }
 
@@ -16,76 +16,34 @@ version = '0.4.0.SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-/*
-sourceSets {
-  // Declaring this sourceset creates two configurations: intTestCompile and intTestRuntime.
-  // See http://stackoverflow.com/questions/11581419/how-do-i-add-a-new-sourceset-to-gradle
-  intTest {
-    java {
-      srcDir 'src/test-integration/java'
-      compileClasspath += main.output
-//      runtimeClasspath += main.output + files("${System.env.SEISO_API_CONF_DIR}/classes-test-integration")
-    }
-    resources {
-      srcDir 'src/test-integration/resources'
-    }
-  }
-}
-
-configurations {
-  // http://www.gradle.org/docs/current/dsl/org.gradle.api.artifacts.Configuration.html
-  intTestCompile.extendsFrom testCompile
-  intTestRuntime.extendsFrom testRuntime
-}
-*/
-
 repositories {
   maven { url "https://repo.spring.io/milestone/" }
   jcenter()
 }
 
 ext {
-  aspectJVersion = '1.8.5'
-  commonsCodecVersion = '1.10'
-  hikariVersion = '2.3.2'
-  jackson2Version = '2.5.1'
-  jodaTimeVersion = '2.7'
+  hikariVersion = '2.4.1'
   lombokVersion = '1.16.6'
-  mysqlConnectorJVersion = '5.1.34'
-  slf4jVersion = '1.7.10'
-  springBootVersion = '1.2.4.RELEASE'
-  springVersion = '4.1.6.RELEASE'
-  springSecurityVersion = '4.0.1.RELEASE'
+  mysqlConnectorJVersion = '5.1.36'
+  slf4jVersion = '1.7.12'
+  springBootVersion = '1.3.0.M5'
 }
 
 dependencies {
   compile(
-    "com.fasterxml.jackson.core:jackson-annotations:${jackson2Version}",
-    "com.fasterxml.jackson.core:jackson-core:${jackson2Version}",
-    "com.fasterxml.jackson.core:jackson-databind:${jackson2Version}",
     "com.zaxxer:HikariCP:${hikariVersion}",
-    "commons-codec:commons-codec:${commonsCodecVersion}",
     "org.projectlombok:lombok:${lombokVersion}",
     "org.slf4j:slf4j-ext:${slf4jVersion}",
-    "org.springframework:spring-context-support:${springVersion}",
-    "org.springframework:spring-web:${springVersion}",
     "org.springframework.boot:spring-boot-starter:${springBootVersion}",
     "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}",
-    "org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}",
     "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}",
-    "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
-    "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
-    "org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}",
-    "org.springframework.security:spring-security-ldap:${springSecurityVersion}",
-    "org.apache.directory.server:apacheds-server-jndi:1.5.5"
+    "org.springframework.boot:spring-boot-starter-data-rest:${springBootVersion}"
   )
   testCompile(
     "org.springframework.boot:spring-boot-starter-test:${springBootVersion}",
   )
   runtime(
-    "joda-time:joda-time:${jodaTimeVersion}",
-    "mysql:mysql-connector-java:${mysqlConnectorJVersion}",
-    "org.aspectj:aspectjweaver:${aspectJVersion}"
+    "mysql:mysql-connector-java:${mysqlConnectorJVersion}"
   )
 }
 
@@ -95,24 +53,6 @@ bootRun {
   jvmArgs = [ "-Djava.security.egd=file:/dev/./urandom", "-Xmx2048m" ]
 }
 
-// Gradle 2.0 to align with Travis CI. [WLW 2014-11-19]
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.0'
+  gradleVersion = '2.7'
 }
-
-/*
-task printProfile() {
-  println "spring.profiles.default=${System.properties['spring.profiles.default']}"
-  println "spring.profiles.active=${System.properties['spring.profiles.active']}"
-}
-
-task intTest(type: Test) {
-  group 'Verification'
-  description "Runs integration tests in src/intTest."
-  testClassesDir = sourceSets.intTest.output.classesDir
-  classpath = sourceSets.intTest.runtimeClasspath
-}
-
-check.dependsOn intTest
-*/
-

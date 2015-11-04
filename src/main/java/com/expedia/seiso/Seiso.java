@@ -15,33 +15,58 @@
  */
 package com.expedia.seiso;
 
+import lombok.val;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * @author Willie Wheeler
  */
-@Configuration
-@Import({
-	SeisoCoreConfig.class,
-	SeisoIntegrationConfig.class,
-	SeisoDomainConfig.class,
-	SeisoWebConfig.class,
-	SeisoWebSecurityConfig.class
-})
-
-// Exclude HTTP message converters since they expect a single ObjectMapper, while we have two.
-@EnableAutoConfiguration(exclude = { HttpMessageConvertersAutoConfiguration.class })
-
-//@EnableAspectJAutoProxy
+@SpringBootApplication
 @EnableConfigurationProperties
 public class Seiso {
+	@Autowired private DataSourceProperties dataSourceProperties;
 	
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Seiso.class, args);
 	}
+	
+	@Bean
+	public HikariDataSource dataSource() {
+		
+		// TODO Add other Hikari data source options.
+		// TODO Legacy configuration. See https://github.com/brettwooldridge/HikariCP to upgrade.
+		val dataSource = new HikariDataSource();
+		dataSource.setDriverClassName(dataSourceProperties.getDriverClassName());
+		dataSource.setJdbcUrl(dataSourceProperties.getUrl());
+		dataSource.setUsername(dataSourceProperties.getUsername());
+		dataSource.setPassword(dataSourceProperties.getPassword());
+		dataSource.setMaximumPoolSize(dataSourceProperties.getMaximumPoolSize());
+		return dataSource;
+	}
+
+	// TODO Upgrade once Spring Data REST compiles against Spring 4.2. See
+	// - http://stackoverflow.com/questions/31724994/spring-data-rest-and-cors
+	// - https://jira.spring.io/browse/DATAREST-573
+    @Bean
+    public CorsFilter corsFilter() {
+        val config = new CorsConfiguration();
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("GET");
+        
+        val source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        
+        return new CorsFilter(source);
+    }
 }
