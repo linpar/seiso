@@ -20,20 +20,12 @@ import org.springframework.stereotype.Component;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
 @Component
 @ConfigurationProperties(prefix = "custom")
 public class CustomProperties {
-	
-	// Actions
-	private Boolean enableActions = false;
-	private String actionsBaseUri;
-
-	// Messaging
-	@NonNull private String changeNotificationExchange;
 	
 	// Security
 	
