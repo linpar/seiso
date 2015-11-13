@@ -15,6 +15,7 @@
  */
 package com.expedia.seiso;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,10 +25,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
+import com.expedia.seiso.conf.CustomProperties;
 import com.expedia.seiso.security.Roles;
 import com.expedia.seiso.security.SeisoUserDetailsContextMapper;
 import com.expedia.seiso.security.UserDetailsServiceImpl;
@@ -55,7 +57,9 @@ import lombok.val;
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
 //@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
-
+	
+	@Autowired private CustomProperties customProperties;
+	
 	@Override
 	protected UserDetailsService userDetailsService() { return userDetailsServiceImpl(); }
 	
@@ -100,6 +104,18 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public UserDetailsService userDetailsServiceImpl() { return new UserDetailsServiceImpl(); }
 	
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		
+		// FIXME How do we specify an order here?
+		// http://stackoverflow.com/questions/31302262/provider-order-using-authenticationmanagerbuilder
+//		configureTestLdap(auth);
+		if (customProperties.getEnableActiveDirectory()) {
+			configureActiveDirectory(auth);
+		}
+		configureUserDetailsService(auth);
+	}
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 	
@@ -120,6 +136,21 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	// 	   return new SeisoGrantedAuthoritiesMapper();
 	// }
 	
+	private void configureActiveDirectory(AuthenticationManagerBuilder auth) throws Exception {
+		String domain = customProperties.getAdDomain();
+		String url = customProperties.getAdUrl();
+		if (domain != null) {
+			ActiveDirectoryLdapAuthenticationProvider provider =
+					new ActiveDirectoryLdapAuthenticationProvider(domain, url);
+			provider.setUserDetailsContextMapper(userDetailsContextMapper());
+			
+			// Hm, this doesn't seem to have any effect, so handle the mapping in the SeisoUserDetailsContextMapper.
+//			provider.setAuthoritiesMapper(grantedAuthoritiesMapper());
+			
+			auth.authenticationProvider(provider);
+		}
+	}
+	
 	@SuppressWarnings("unused")
 	private void configureTestLdap(AuthenticationManagerBuilder auth) throws Exception {
 		// @formatter:off
@@ -129,6 +160,14 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.groupSearchBase("ou=groups")
 				.contextSource()
 				.ldif("classpath:test-server.ldif");
+		// @formatter:on
+	}
+	
+	private void configureUserDetailsService(AuthenticationManagerBuilder auth) throws Exception {
+		// @formatter:off
+		auth
+			.userDetailsService(userDetailsService())
+			.passwordEncoder(passwordEncoder());
 		// @formatter:on
 	}
 	
