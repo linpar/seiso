@@ -15,7 +15,9 @@
  */
 package com.expedia.seiso;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -163,6 +165,7 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// @formatter:on
 	}
 	
+
 	private void configureUserDetailsService(AuthenticationManagerBuilder auth) throws Exception {
 		// @formatter:off
 		auth
@@ -170,5 +173,5 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.passwordEncoder(passwordEncoder());
 		// @formatter:on
 	}
-	
+
 }
