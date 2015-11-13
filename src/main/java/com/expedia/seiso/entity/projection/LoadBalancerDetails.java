@@ -10,8 +10,8 @@ import com.expedia.seiso.entity.DataCenter;
  * @author Ian McCunn
  *
  */
-@Projection(name = "loadBalancersList", types = LoadBalancer.class)
-public interface LoadBalancersList {
+@Projection(name = "loadBalancerDetails", types = LoadBalancer.class)
+public interface LoadBalancerDetails {
 	
 	String getType();
 	
