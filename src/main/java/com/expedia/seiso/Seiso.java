@@ -63,6 +63,10 @@ public class Seiso {
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("GET");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("PATCH");
+        config.addAllowedMethod("DELETE");
         
         val source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
