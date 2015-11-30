@@ -17,6 +17,7 @@ package com.expedia.seiso.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -118,6 +119,12 @@ public class ServiceInstance extends AbstractItem {
 			inverseJoinColumns = @JoinColumn(name = "dashboard_id"))
 	private List<Dashboard> dashboards;
 	
+	@OneToMany(mappedBy = "dependent", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<ServiceInstanceDependency> dependencies;
+	
+	@OneToMany(mappedBy = "dependency", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<ServiceInstanceDependency> dependents;
+	
 	/**
 	 * Indicates whether Eos manages this service instance; i.e., whether Eos manages health state machines for the
 	 * service instance's nodes.
@@ -125,13 +132,15 @@ public class ServiceInstance extends AbstractItem {
 	 * DEPRECATED Don't want EOS-specific stuff here, at least not while Eos is Expedia-proprietary software. If we
 	 * open source Eos then we might rename this to enableEos. [WLW]
 	 */
+	@Deprecated
 	private Boolean eosManaged;
 	
 	/**
 	 * Enable Seyren integration.
 	 */
+	@Deprecated
 	private Boolean enableSeyren;
-
+	
 	@Deprecated
 	public Boolean getEosManaged() {
 		return eosManaged;
