@@ -4,6 +4,7 @@
 /.settings
 /.springBeans
 /.vagrant
+/application.yml
 /bin
 /build
 **/.DS_Store
