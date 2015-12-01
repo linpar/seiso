@@ -22,6 +22,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableLoadTimeWeaving;
+import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -33,8 +35,12 @@ import com.zaxxer.hikari.HikariDataSource;
  */
 @SpringBootApplication
 @EnableConfigurationProperties
+@EnableSpringConfigured
+@EnableLoadTimeWeaving
 public class Seiso {
-	@Autowired private DataSourceProperties dataSourceProperties;
+	
+	@Autowired
+	private DataSourceProperties dataSourceProperties;
 	
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Seiso.class, args);
@@ -53,7 +59,7 @@ public class Seiso {
 		dataSource.setMaximumPoolSize(dataSourceProperties.getMaximumPoolSize());
 		return dataSource;
 	}
-
+	
 	// TODO Upgrade once Spring Data REST compiles against Spring 4.2. See
 	// - http://stackoverflow.com/questions/31724994/spring-data-rest-and-cors
 	// - https://jira.spring.io/browse/DATAREST-573

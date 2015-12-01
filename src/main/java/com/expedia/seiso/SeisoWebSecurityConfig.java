@@ -16,8 +16,9 @@
 package com.expedia.seiso;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.val;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,12 +32,9 @@ import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAu
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
-import com.expedia.seiso.conf.CustomProperties;
 import com.expedia.seiso.security.Roles;
 import com.expedia.seiso.security.SeisoUserDetailsContextMapper;
 import com.expedia.seiso.security.UserDetailsServiceImpl;
-
-import lombok.val;
 
 // See
 // http://kielczewski.eu/2014/12/spring-boot-security-application/
@@ -56,14 +54,18 @@ import lombok.val;
  * @author Willie Wheeler
  */
 @Configuration
+// Leave these commented out for now. [WLW 2015-12-01]
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
 //@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
-	
-	@Autowired private CustomProperties customProperties;
+
+	@Autowired
+	private CustomProperties customProperties;
 	
 	@Override
-	protected UserDetailsService userDetailsService() { return userDetailsServiceImpl(); }
+	protected UserDetailsService userDetailsService() {
+		return userDetailsServiceImpl();
+	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {

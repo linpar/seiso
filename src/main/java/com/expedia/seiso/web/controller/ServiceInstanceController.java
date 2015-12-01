@@ -28,10 +28,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.expedia.seiso.resource.BreakdownItem;
-import com.expedia.seiso.resource.NodeSummary;
-import com.expedia.seiso.service.ServiceInstanceService;
+import com.expedia.seiso.web.assembler.ServiceInstanceService;
 import com.expedia.seiso.web.link.IanaLinkRelation;
+import com.expedia.seiso.web.resource.BreakdownItem;
+import com.expedia.seiso.web.resource.NodeSummary;
 
 import lombok.val;
 

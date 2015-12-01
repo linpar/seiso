@@ -23,7 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.expedia.seiso.repo.UserRepo;
+import com.expedia.seiso.domain.repo.UserRepo;
 
 import lombok.NonNull;
 import lombok.val;

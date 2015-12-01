@@ -23,7 +23,7 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceProcessor;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.entity.ServiceInstance;
+import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.web.controller.ServiceInstanceController;
 
 // FIXME The base path isn't appearing in the links. See

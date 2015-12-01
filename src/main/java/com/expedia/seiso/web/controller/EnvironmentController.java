@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.expedia.seiso.resource.ServiceInstanceResource;
-import com.expedia.seiso.service.EnvironmentService;
+import com.expedia.seiso.web.assembler.EnvironmentService;
+import com.expedia.seiso.web.resource.ServiceInstanceResource;
 
 @BasePathAwareController
 @RequestMapping("/environments")
