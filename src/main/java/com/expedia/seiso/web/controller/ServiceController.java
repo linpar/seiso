@@ -11,12 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.expedia.seiso.web.assembler.ServiceService;
 import com.expedia.seiso.web.resource.ServiceInstanceResource;
 
-import lombok.val;
-import lombok.extern.slf4j.Slf4j;
-
 @BasePathAwareController
 @RequestMapping("/services")
-@Slf4j
 public class ServiceController {
 	
 	@Autowired

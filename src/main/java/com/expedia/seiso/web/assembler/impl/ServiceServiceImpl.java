@@ -5,6 +5,9 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import lombok.NonNull;
+import lombok.val;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resources;
 import org.springframework.stereotype.Service;
@@ -15,13 +18,8 @@ import com.expedia.seiso.domain.repo.ServiceRepo;
 import com.expedia.seiso.web.assembler.ServiceService;
 import com.expedia.seiso.web.resource.ServiceInstanceResource;
 
-import lombok.NonNull;
-import lombok.val;
-import lombok.extern.slf4j.Slf4j;
-
 @Service
 @Transactional
-@Slf4j
 public class ServiceServiceImpl implements ServiceService {
 
 	@Autowired
