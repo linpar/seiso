@@ -32,7 +32,7 @@ public abstract class AbstractEntityListener<T extends EntityInterceptor<?>> {
 	public AbstractEntityListener() {
 		val superclass = (ParameterizedType) getClass().getGenericSuperclass();
 		val typeArgs = superclass.getActualTypeArguments();
-		this.interceptorClass = (Class<T>) typeArgs[1];
+		this.interceptorClass = (Class<T>) typeArgs[0];
 	}
 	
 	protected T getInterceptor() {

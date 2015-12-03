@@ -37,14 +37,12 @@ dependencies {
     "org.apache.directory.server:apacheds-server-jndi:${apacheDsServerVersion}",
     "org.projectlombok:lombok:${lombokVersion}",
     "org.slf4j:slf4j-ext:${slf4jVersion}",
-//    "org.springframework:spring-instrument:${springVersion}",
     "org.springframework.boot:spring-boot-starter:${springBootVersion}",
     "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}",
     "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
     "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}",
     "org.springframework.boot:spring-boot-starter-data-rest:${springBootVersion}",
     "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
-//    "org.springframework.boot:spring-boot-starter-tomcat:${springBootVersion}",
     "org.springframework.security:spring-security-ldap:${springSecurityVersion}"
   )
   testCompile(
@@ -60,8 +58,7 @@ bootRun {
   // http://wiki.apache.org/tomcat/HowTo/FasterStartUp
   jvmArgs = [
   	"-Djava.security.egd=file:/dev/./urandom",
-  	"-Xmx2048m",
-  	"-javaagent:./lib/spring-instrument-${springVersion}.jar"
+  	"-Xmx2048m"
   ]
 }
 
