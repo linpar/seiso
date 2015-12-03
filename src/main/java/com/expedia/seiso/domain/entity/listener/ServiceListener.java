@@ -16,29 +16,23 @@
 package com.expedia.seiso.domain.entity.listener;
 
 import javax.persistence.PostPersist;
+import javax.persistence.PrePersist;
 
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-
-import com.expedia.seiso.DataSourceProperties;
 import com.expedia.seiso.domain.entity.Service;
-import com.expedia.seiso.domain.repo.ServiceRepo;
+import com.expedia.seiso.domain.entity.interceptor.ServiceInterceptor;
 
 /**
  * @author Willie Wheeler
  */
-@Configurable
-@Slf4j
-public class ServiceListener {
-	@Autowired private ServiceRepo serviceRepo;
-	@Autowired private DataSourceProperties dsProps;
+public class ServiceListener extends AbstractEntityListener<ServiceInterceptor> {
+	
+	@PrePersist
+	public void prePersist(Service service) {
+		getInterceptor().prePersist(service);
+	}
 	
 	@PostPersist
-	public void postPersist(@NonNull Service service) {
-		log.trace("service={}, serviceRepo={}, dsProps={}", service, serviceRepo, dsProps);
-		service.displayDependencies();
+	public void postPersist(Service service) {
+		getInterceptor().postPersist(service);
 	}
 }

@@ -15,9 +15,10 @@
  */
 package com.expedia.seiso.domain.entity.listener;
 
+import com.expedia.seiso.domain.entity.interceptor.NodeIpAddressInterceptor;
+
 /**
  * @author Willie Wheeler
  */
-public class NodeIpAddressListener {
-
+public class NodeIpAddressListener extends AbstractEntityListener<NodeIpAddressInterceptor> {
 }

@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.entity.listener;
+package com.expedia.seiso.domain.entity.interceptor;
 
-import com.expedia.seiso.domain.entity.interceptor.EndpointInterceptor;
+import lombok.NonNull;
+
+import com.expedia.seiso.domain.entity.NodeIpAddress;
 
 /**
  * @author Willie Wheeler
  */
-public class EndpointListener extends AbstractEntityListener<EndpointInterceptor> {
+public class NodeIpAddressInterceptor extends EntityInterceptorSupport<NodeIpAddress> {
 	
+	@Override
+	public void postPersist(@NonNull NodeIpAddress nip) {
+		// TODO
+	}
 }

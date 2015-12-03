@@ -26,7 +26,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -37,14 +36,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.ApplicationContext;
 
 import com.expedia.seiso.domain.entity.listener.ServiceListener;
 
@@ -62,13 +56,7 @@ import com.expedia.seiso.domain.entity.listener.ServiceListener;
 @ToString(callSuper = true, of = { "key", "name", "type" })
 @Entity
 @EntityListeners(ServiceListener.class)
-@Slf4j
-@Configurable(autowire = Autowire.BY_TYPE, preConstruction = true)
 public class Service extends AbstractItem {
-	
-	@Autowired
-	@Transient
-	private ApplicationContext appContext;
 	
 	// TODO Lock this down to lowercase, but let people update first. [WLW]
 	@NotNull
@@ -114,8 +102,4 @@ public class Service extends AbstractItem {
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("title")
 	private List<DocLink> docLinks = new ArrayList<>();
-	
-	public void displayDependencies() {
-		log.trace("service dependencies: appContext={}", appContext);
-	}
 }

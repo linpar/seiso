@@ -17,7 +17,6 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-  maven { url "https://repo.spring.io/milestone/" }
   jcenter()
 }
 
@@ -29,7 +28,7 @@ ext {
   slf4jVersion = '1.7.12'
   springBootVersion = '1.3.0.RELEASE'
   springSecurityVersion = '4.0.3.RELEASE'
-//  springVersion = '4.2.3.RELEASE'
+  springVersion = '4.2.3.RELEASE'
 }
 
 dependencies {
@@ -62,7 +61,7 @@ bootRun {
   jvmArgs = [
   	"-Djava.security.egd=file:/dev/./urandom",
   	"-Xmx2048m",
-  	"-javaagent:./lib/spring-instrument-4.2.3.RELEASE.jar"
+  	"-javaagent:./lib/spring-instrument-${springVersion}.jar"
   ]
 }
 

@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.entity.listener;
+package com.expedia.seiso.domain.entity.interceptor;
 
-import com.expedia.seiso.domain.entity.interceptor.EndpointInterceptor;
+import com.expedia.seiso.domain.entity.Endpoint;
 
 /**
  * @author Willie Wheeler
  */
-public class EndpointListener extends AbstractEntityListener<EndpointInterceptor> {
-	
+public class EndpointInterceptor extends EntityInterceptorSupport<Endpoint> {
+
 }
