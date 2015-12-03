@@ -15,11 +15,27 @@
  */
 package com.expedia.seiso.domain.entity.listener;
 
-import com.expedia.seiso.domain.entity.interceptor.EndpointInterceptor;
+import java.lang.reflect.ParameterizedType;
+
+import lombok.val;
+
+import com.expedia.seiso.domain.entity.interceptor.EntityInterceptor;
+import com.expedia.seiso.util.ApplicationContextProvider;
 
 /**
  * @author Willie Wheeler
  */
-public class EndpointListener extends AbstractEntityListener<EndpointInterceptor> {
+public abstract class AbstractEntityListener<T extends EntityInterceptor<?>> {
+	private Class<T> interceptorClass;
 	
+	@SuppressWarnings("unchecked")
+	public AbstractEntityListener() {
+		val superclass = (ParameterizedType) getClass().getGenericSuperclass();
+		val typeArgs = superclass.getActualTypeArguments();
+		this.interceptorClass = (Class<T>) typeArgs[0];
+	}
+	
+	protected T getInterceptor() {
+		return ApplicationContextProvider.applicationContext().getBean(interceptorClass);
+	}
 }

@@ -13,13 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.entity.listener;
+package com.expedia.seiso.domain.entity.interceptor;
 
-import com.expedia.seiso.domain.entity.interceptor.EndpointInterceptor;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Component;
+
+import com.expedia.seiso.domain.entity.Service;
 
 /**
  * @author Willie Wheeler
  */
-public class EndpointListener extends AbstractEntityListener<EndpointInterceptor> {
+@Component
+@Slf4j
+public class ServiceInterceptor extends EntityInterceptorSupport<Service> {
 	
+	@Override
+	public void postPersist(@NonNull Service service) {
+		log.trace("Post-persisting service: {}", service);
+	}
+	
+	@Override
+	public void postUpdate(@NonNull Service service) {
+		log.trace("Post-updating service: {}", service);
+	}
 }

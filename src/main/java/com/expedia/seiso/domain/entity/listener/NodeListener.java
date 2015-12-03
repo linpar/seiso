@@ -15,23 +15,11 @@
  */
 package com.expedia.seiso.domain.entity.listener;
 
-import javax.persistence.PostPersist;
-
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Configurable;
-
-import com.expedia.seiso.domain.entity.Node;
+import com.expedia.seiso.domain.entity.interceptor.NodeInterceptor;
 
 /**
  * @author Willie Wheeler
  */
-@Configurable
-@Slf4j
-public class NodeListener {
+public class NodeListener extends AbstractEntityListener<NodeInterceptor> {
 	
-	@PostPersist
-	public void postCreate(Node node) {
-		log.trace("Hello, from NodeListener");
-	}
 }

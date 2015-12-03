@@ -13,13 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.entity.listener;
+package com.expedia.seiso.domain.entity.interceptor;
 
-import com.expedia.seiso.domain.entity.interceptor.EndpointInterceptor;
+import com.expedia.seiso.domain.entity.Item;
 
 /**
  * @author Willie Wheeler
  */
-public class EndpointListener extends AbstractEntityListener<EndpointInterceptor> {
+public interface EntityInterceptor<T extends Item> {
 	
+	void prePersist(T item);
+	
+	void postPersist(T item);
+	
+	void preUpdate(T item);
+	
+	void postUpdate(T item);
+	
+	void preRemove(T item);
+	
+	void postRemove(T item);
 }

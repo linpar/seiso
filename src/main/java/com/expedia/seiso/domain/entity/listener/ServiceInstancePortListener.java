@@ -15,22 +15,11 @@
  */
 package com.expedia.seiso.domain.entity.listener;
 
-import javax.persistence.PostPersist;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.expedia.seiso.domain.repo.EndpointRepo;
+import com.expedia.seiso.domain.entity.interceptor.ServiceInstancePortInterceptor;
 
 /**
  * @author Willie Wheeler
  */
-public class ServiceInstancePortListener {
+public class ServiceInstancePortListener extends AbstractEntityListener<ServiceInstancePortInterceptor> {
 	
-	@Autowired
-	private EndpointRepo endpointRepo;
-	
-	@PostPersist
-	public void postCreate(Object entity) {
-		
-	}
 }

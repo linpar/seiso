@@ -22,8 +22,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableLoadTimeWeaving;
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -35,8 +33,6 @@ import com.zaxxer.hikari.HikariDataSource;
  */
 @SpringBootApplication
 @EnableConfigurationProperties
-@EnableSpringConfigured
-@EnableLoadTimeWeaving
 public class Seiso {
 	
 	@Autowired
