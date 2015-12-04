@@ -15,9 +15,73 @@
  */
 package com.expedia.seiso.web.eventhandler;
 
+import javax.annotation.PostConstruct;
+
+import lombok.val;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.core.annotation.HandleAfterCreate;
+import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.stereotype.Component;
+
+import com.expedia.seiso.domain.Domain;
+import com.expedia.seiso.domain.entity.Endpoint;
+import com.expedia.seiso.domain.entity.RotationStatus;
+import com.expedia.seiso.domain.entity.ServiceInstancePort;
+import com.expedia.seiso.domain.repo.EndpointRepo;
+import com.expedia.seiso.domain.repo.RotationStatusRepo;
+import com.expedia.seiso.web.assembler.ServiceInstanceService;
+
 /**
  * @author Willie Wheeler
  */
+@RepositoryEventHandler(ServiceInstancePort.class)
+@Component
+@Slf4j
 public class ServiceInstancePortEventHandler {
-
+	@Autowired private EndpointRepo endpointRepo;
+	@Autowired private RotationStatusRepo rotationStatusRepo;
+	@Autowired private ServiceInstanceService serviceInstanceService;
+	
+	private RotationStatus unknownRotationStatus;
+	
+	@PostConstruct
+	public void postConstruct() {
+		// Assume this doesn't change over time.
+		this.unknownRotationStatus = rotationStatusRepo.findByKey(Domain.UNKNOWN_ROTATION_STATUS_KEY);
+	}
+	
+	@HandleAfterCreate
+	public void handleAfterCreate(ServiceInstancePort sip) {
+		createEndpointsForPort(sip);
+	}
+	
+	private void createEndpointsForPort(ServiceInstancePort sip) {
+		log.info("Post-processing port insertion: id={}", sip.getId());
+		val nodes = sip.getServiceInstance().getNodes();
+		
+		// For some reason, when we save the endpoint, it doesn't see the port IO, even though we can see it here. So
+		// use a reference instead. [WLW]
+		val sipRef = new ServiceInstancePort();
+		sipRef.setId(sip.getId());
+		
+		for (val node : nodes) {
+			val nips = node.getIpAddresses();
+			for (val nip : nips) {
+				// Set the unknown rotation status on the endpoint immediately. This is because Hibernate can decide to
+				// flush the persistence context at any time (e.g., before executing queries) and we need to ensure that
+				// we don't save the endpoint until it's ready. [WLW]
+				// @formatter:off
+				val endpoint = new Endpoint()
+						.setRotationStatus(unknownRotationStatus)
+						.setIpAddress(nip)
+						.setPort(sipRef);
+				// @formatter:on
+				log.info("Creating endpoint: {}", endpoint);
+				endpointRepo.save(endpoint);
+			}
+			serviceInstanceService.recalculateAggregateRotationStatus(node);
+		}		
+	}
 }

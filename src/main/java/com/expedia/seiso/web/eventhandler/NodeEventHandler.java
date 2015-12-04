@@ -15,13 +15,18 @@
  */
 package com.expedia.seiso.web.eventhandler;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
+import com.expedia.seiso.domain.Domain;
+import com.expedia.seiso.domain.entity.HealthStatus;
 import com.expedia.seiso.domain.entity.Node;
+import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.repo.HealthStatusRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
 
@@ -31,12 +36,18 @@ import com.expedia.seiso.domain.repo.RotationStatusRepo;
 @RepositoryEventHandler(Node.class)
 @Component
 public class NodeEventHandler {
-	
-	/** Key for both the unknown health status and the unknown rotation status */
-	private static final String UNKNOWN_KEY = "unknown";
-	
 	@Autowired private HealthStatusRepo healthStatusRepo;
 	@Autowired private RotationStatusRepo rotationStatusRepo;
+	
+	private HealthStatus unknownHealthStatus;
+	private RotationStatus unknownRotationStatus;
+	
+	@PostConstruct
+	public void postConstruct() {
+		// Assume these don't change over time.
+		this.unknownHealthStatus = healthStatusRepo.findByKey(Domain.UNKNOWN_HEALTH_STATUS_KEY);
+		this.unknownRotationStatus = rotationStatusRepo.findByKey(Domain.UNKNOWN_ROTATION_STATUS_KEY);
+	}
 	
 	/**
 	 * If the health or aggregate rotation status is {@code null}, we initialize it to the corresponding "unknown"
@@ -72,10 +83,10 @@ public class NodeEventHandler {
 	
 	private void replaceNullStatusesWithUnknown(Node node) {
 		if (node.getHealthStatus() == null) {
-			node.setHealthStatus(healthStatusRepo.findByKey(UNKNOWN_KEY));
+			node.setHealthStatus(unknownHealthStatus);
 		}
 		if (node.getAggregateRotationStatus() == null) {
-			node.setAggregateRotationStatus(rotationStatusRepo.findByKey(UNKNOWN_KEY));
+			node.setAggregateRotationStatus(unknownRotationStatus);
 		}
 	}
 }

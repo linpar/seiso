@@ -15,9 +15,35 @@
  */
 package com.expedia.seiso.web.eventhandler;
 
+import lombok.val;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.core.annotation.HandleAfterSave;
+import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.stereotype.Component;
+
+import com.expedia.seiso.domain.entity.Endpoint;
+import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
+import com.expedia.seiso.domain.repo.NodeRepo;
+import com.expedia.seiso.web.assembler.ServiceInstanceService;
+
 /**
  * @author Willie Wheeler
  */
+@RepositoryEventHandler(Endpoint.class)
+@Component
 public class EndpointEventHandler {
-
+	@Autowired private NodeRepo nodeRepo;
+	@Autowired private NodeIpAddressRepo nodeIpAddressRepo;
+	@Autowired private ServiceInstanceService serviceInstanceService;
+	
+	@HandleAfterSave
+	public void handleAfterSave(Endpoint endpoint) {
+		val nip = endpoint.getIpAddress();
+		val node = nip.getNode();
+		serviceInstanceService.recalculateAggregateRotationStatus(nip);
+		nodeIpAddressRepo.save(nip);
+		serviceInstanceService.recalculateAggregateRotationStatus(node);
+		nodeRepo.save(node);
+	}
 }

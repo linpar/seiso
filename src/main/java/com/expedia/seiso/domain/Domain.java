@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.eventhandler;
-
-import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
-import org.springframework.stereotype.Component;
-
-import com.expedia.seiso.domain.entity.NodeIpAddress;
+package com.expedia.seiso.domain;
 
 /**
  * @author Willie Wheeler
  */
-@RepositoryEventHandler(NodeIpAddress.class)
-@Component
-public class NodeIpAddressEventHandler {
-
+public class Domain {
+	public static final String UNKNOWN_HEALTH_STATUS_KEY = "unknown";
+	public static final String UNKNOWN_ROTATION_STATUS_KEY = "unknown";
 }
