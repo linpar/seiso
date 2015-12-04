@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -33,8 +32,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import com.expedia.seiso.domain.entity.listener.NodeListener;
-
 /**
  * @author Willie Wheeler
  */
@@ -44,7 +41,6 @@ import com.expedia.seiso.domain.entity.listener.NodeListener;
 @EqualsAndHashCode(callSuper = false, of = { "name" })
 @ToString(callSuper = true, of = { "name", "serviceInstance", "machine" })
 @Entity
-@EntityListeners(NodeListener.class)
 public class Node extends AbstractItem {
 	
 	// TODO Lock this down to lowercase, but let people update first. [WLW]

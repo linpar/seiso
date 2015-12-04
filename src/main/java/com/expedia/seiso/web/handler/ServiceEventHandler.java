@@ -13,26 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.domain.entity.listener;
+package com.expedia.seiso.web.handler;
 
-import javax.persistence.PostPersist;
-import javax.persistence.PrePersist;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.rest.core.annotation.HandleAfterCreate;
+import org.springframework.data.rest.core.annotation.HandleAfterSave;
+import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.entity.Service;
-import com.expedia.seiso.domain.entity.interceptor.ServiceInterceptor;
 
 /**
  * @author Willie Wheeler
  */
-public class ServiceListener extends AbstractEntityListener<ServiceInterceptor> {
+@RepositoryEventHandler
+@Component
+@Slf4j
+public class ServiceEventHandler {
 	
-	@PrePersist
-	public void prePersist(Service service) {
-		getInterceptor().prePersist(service);
+	@HandleAfterCreate
+	public void handleAfterCreate(Service service) {
+		log.trace("Handling after create: service={}", service);
 	}
 	
-	@PostPersist
-	public void postPersist(Service service) {
-		getInterceptor().postPersist(service);
+	@HandleAfterSave
+	public void handleAfterSave(Service service) {
+		log.trace("Handling after save: service={}", service);
 	}
 }
