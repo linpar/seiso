@@ -27,7 +27,7 @@ import com.expedia.seiso.domain.entity.Service;
 /**
  * @author Willie Wheeler
  */
-@RepositoryEventHandler
+@RepositoryEventHandler(Service.class)
 @Component
 @Slf4j
 public class ServiceEventHandler {
