@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.handler;
+package com.expedia.seiso.web.eventhandler;
 
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleAfterSave;
+import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
+import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
@@ -32,9 +34,19 @@ import com.expedia.seiso.domain.entity.Service;
 @Slf4j
 public class ServiceEventHandler {
 	
+	@HandleBeforeCreate
+	public void handleBeforeCreate(Service service) {
+		log.trace("Handling before create: service={}", service);
+	}
+	
 	@HandleAfterCreate
 	public void handleAfterCreate(Service service) {
 		log.trace("Handling after create: service={}", service);
+	}
+	
+	@HandleBeforeSave
+	public void handleBeforeSave(Service service) {
+		log.trace("Handling before save: service={}", service);
 	}
 	
 	@HandleAfterSave
