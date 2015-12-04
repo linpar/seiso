@@ -15,9 +15,16 @@
  */
 package com.expedia.seiso.web.eventhandler;
 
+import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.stereotype.Component;
+
+import com.expedia.seiso.domain.entity.Endpoint;
+
 /**
  * @author Willie Wheeler
  */
+@RepositoryEventHandler(Endpoint.class)
+@Component
 public class EndpointEventHandler {
 
 }
