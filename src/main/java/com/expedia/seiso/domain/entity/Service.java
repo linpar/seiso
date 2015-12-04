@@ -50,7 +50,7 @@ import org.hibernate.annotations.FetchMode;
 @NoArgsConstructor
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false, of = "key")
-@ToString(callSuper = true, of = { "key", "name", "type" })
+@ToString(callSuper = true, of = { "key", "name", "group", "type" })
 @Entity
 public class Service extends AbstractItem {
 	
