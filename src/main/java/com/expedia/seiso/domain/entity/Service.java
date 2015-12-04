@@ -21,7 +21,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -40,8 +39,6 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import com.expedia.seiso.domain.entity.listener.ServiceListener;
-
 /**
  * <p>
  * A service.
@@ -55,7 +52,6 @@ import com.expedia.seiso.domain.entity.listener.ServiceListener;
 @EqualsAndHashCode(callSuper = false, of = "key")
 @ToString(callSuper = true, of = { "key", "name", "type" })
 @Entity
-@EntityListeners(ServiceListener.class)
 public class Service extends AbstractItem {
 	
 	// TODO Lock this down to lowercase, but let people update first. [WLW]
