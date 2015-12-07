@@ -15,9 +15,91 @@
  */
 package com.expedia.seiso.web.eventhandler;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import com.expedia.seiso.domain.Domain;
+import com.expedia.seiso.domain.entity.HealthStatus;
+import com.expedia.seiso.domain.entity.Node;
+import com.expedia.seiso.domain.entity.RotationStatus;
+import com.expedia.seiso.domain.repo.HealthStatusRepo;
+import com.expedia.seiso.domain.repo.RotationStatusRepo;
+
 /**
  * @author Willie Wheeler
  */
 public class NodeEventHandlerTests {
-
+	@InjectMocks private NodeEventHandler handler;
+	
+	// Dependencies
+	@Mock private HealthStatusRepo healthStatusRepo;
+	@Mock private RotationStatusRepo rotationStatusRepo;
+	
+	// Test data
+	@Mock private HealthStatus unknownHealthStatus;
+	@Mock private HealthStatus arbitraryHealthStatus;
+	@Mock private RotationStatus unknownRotationStatus;
+	@Mock private RotationStatus arbitraryRotationStatus;
+	
+	private Node nodeWithNullStatuses;
+	private Node nodeWithNonNullStatuses;
+	
+	@Before
+	public void setUp() {
+		this.handler = new NodeEventHandler();
+		MockitoAnnotations.initMocks(this);
+		initTestData();
+		initDependencies();
+		handler.postConstruct();
+	}
+	
+	private void initTestData() {
+		// @formatter:off
+		this.nodeWithNullStatuses = Node.builder().build();
+		this.nodeWithNonNullStatuses = Node.builder()
+				.healthStatus(arbitraryHealthStatus)
+				.aggregateRotationStatus(arbitraryRotationStatus)
+				.build();
+		// @formatter:on
+	}
+	
+	private void initDependencies() {
+		when(healthStatusRepo.findByKey(Domain.UNKNOWN_HEALTH_STATUS_KEY)).thenReturn(unknownHealthStatus);
+		when(rotationStatusRepo.findByKey(Domain.UNKNOWN_ROTATION_STATUS_KEY)).thenReturn(unknownRotationStatus);
+	}
+	
+	@Test
+	public void testHandleBeforeCreate_nullStatuses() {
+		handler.handleBeforeCreate(nodeWithNullStatuses);
+		assertStatuses(nodeWithNullStatuses, unknownHealthStatus, unknownRotationStatus);
+	}
+	
+	@Test
+	public void testHandleBeforeCreate_nonNullStatuses() {
+		handler.handleBeforeCreate(nodeWithNonNullStatuses);
+		assertStatuses(nodeWithNonNullStatuses, arbitraryHealthStatus, arbitraryRotationStatus);
+	}
+	
+	@Test
+	public void testHandleBeforeSave_nullStatuses() {
+		handler.handleBeforeSave(nodeWithNullStatuses);
+		assertStatuses(nodeWithNullStatuses, unknownHealthStatus, unknownRotationStatus);
+	}
+	
+	@Test
+	public void testHandleBeforeSave_nonNullStatuses() {
+		handler.handleBeforeSave(nodeWithNonNullStatuses);
+		assertStatuses(nodeWithNonNullStatuses, arbitraryHealthStatus, arbitraryRotationStatus);
+	}
+	
+	private void assertStatuses(Node node, HealthStatus healthStatus, RotationStatus rotationStatus) {
+		assertEquals(healthStatus, node.getHealthStatus());
+		assertEquals(rotationStatus, node.getAggregateRotationStatus());		
+	}
 }
