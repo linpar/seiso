@@ -25,12 +25,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
@@ -38,18 +39,19 @@ import lombok.experimental.Accessors;
  * @author Willie Wheeler
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false, of = { "serviceInstance", "number" })
 @ToString(of = { "serviceInstance", "number", "protocol", "description" })
 @Entity
 public class ServiceInstancePort extends AbstractItem {
 	
-	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "service_instance_id")
 	private ServiceInstance serviceInstance;
 	
-	@NotNull
 	@Min(0)
 	@Max(65535)
 	private Integer number;
@@ -62,7 +64,6 @@ public class ServiceInstancePort extends AbstractItem {
 
 	// FIXME For some reason, this is not cascade deleting endpoints. I get a constraint violation when calling it from
 	// ServiceInstancePortControllerV1.deletePort(). [WLW]
-	@NonNull
 	@OneToMany(mappedBy = "port", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Endpoint> endpoints = new ArrayList<>();
 }

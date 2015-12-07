@@ -28,14 +28,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
@@ -47,7 +47,9 @@ import lombok.experimental.Accessors;
  * @author Willie Wheeler
  */
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false, of = "key")
 @ToString(callSuper = true, of = { "key", "service", "environment", "dataCenter" })
@@ -55,7 +57,6 @@ import lombok.experimental.Accessors;
 public class ServiceInstance extends AbstractItem {
 	
 	// TODO Lock this down to lowercase, but let people update first. [WLW]
-	@NotNull
 	@Pattern(regexp = "[A-Za-z0-9-]+")
 	@Size(min = 1, max = 40)
 	@Column(name = "ukey")
@@ -64,12 +65,10 @@ public class ServiceInstance extends AbstractItem {
 	@Size(max = 250)
 	private String description;
 	
-	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "service_id")
 	private Service service;
 	
-	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "environment_id")
 	private Environment environment;
@@ -82,16 +81,13 @@ public class ServiceInstance extends AbstractItem {
 	@JoinColumn(name = "load_balancer_id")
 	private LoadBalancer loadBalancer;
 
-	@NonNull
 	@OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<IpAddressRole> ipAddressRoles = new ArrayList<>();
 
-	@NonNull
 	@OrderBy("number")
 	@OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ServiceInstancePort> ports = new ArrayList<>();
 
-	@NonNull
 	@OrderBy("name")
 	@OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Node> nodes = new ArrayList<>();
