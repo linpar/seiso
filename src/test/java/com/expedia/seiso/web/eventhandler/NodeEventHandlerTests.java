@@ -43,9 +43,9 @@ public class NodeEventHandlerTests {
 	
 	// Test data
 	@Mock private HealthStatus unknownHealthStatus;
-	@Mock private HealthStatus arbitraryHealthStatus;
+	@Mock private HealthStatus someHealthStatus;
 	@Mock private RotationStatus unknownRotationStatus;
-	@Mock private RotationStatus arbitraryRotationStatus;
+	@Mock private RotationStatus someRotationStatus;
 	
 	private Node nodeWithNullStatuses;
 	private Node nodeWithNonNullStatuses;
@@ -63,8 +63,8 @@ public class NodeEventHandlerTests {
 		// @formatter:off
 		this.nodeWithNullStatuses = Node.builder().build();
 		this.nodeWithNonNullStatuses = Node.builder()
-				.healthStatus(arbitraryHealthStatus)
-				.aggregateRotationStatus(arbitraryRotationStatus)
+				.healthStatus(someHealthStatus)
+				.aggregateRotationStatus(someRotationStatus)
 				.build();
 		// @formatter:on
 	}
@@ -83,7 +83,7 @@ public class NodeEventHandlerTests {
 	@Test
 	public void testHandleBeforeCreate_nonNullStatuses() {
 		handler.handleBeforeCreate(nodeWithNonNullStatuses);
-		assertStatuses(nodeWithNonNullStatuses, arbitraryHealthStatus, arbitraryRotationStatus);
+		assertStatuses(nodeWithNonNullStatuses, someHealthStatus, someRotationStatus);
 	}
 	
 	@Test
@@ -95,7 +95,7 @@ public class NodeEventHandlerTests {
 	@Test
 	public void testHandleBeforeSave_nonNullStatuses() {
 		handler.handleBeforeSave(nodeWithNonNullStatuses);
-		assertStatuses(nodeWithNonNullStatuses, arbitraryHealthStatus, arbitraryRotationStatus);
+		assertStatuses(nodeWithNonNullStatuses, someHealthStatus, someRotationStatus);
 	}
 	
 	private void assertStatuses(Node node, HealthStatus healthStatus, RotationStatus rotationStatus) {
