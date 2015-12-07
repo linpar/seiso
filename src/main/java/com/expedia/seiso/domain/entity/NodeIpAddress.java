@@ -23,37 +23,37 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false, of = { "node", "ipAddressRole", "ipAddress" })
 @ToString(callSuper = true, of = { "node", "ipAddressRole", "ipAddress" })
 @Entity
 public class NodeIpAddress extends AbstractItem {
 	
-	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "node_id")
 	private Node node;
 	
-	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ip_address_role_id")
 	private IpAddressRole ipAddressRole;
 	
-	@NotNull
 	@Size(min = 1, max = 20)
 	private String ipAddress;
 
-	@NonNull
 	@OneToMany(mappedBy = "ipAddress", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Endpoint> endpoints = new ArrayList<>();
 
