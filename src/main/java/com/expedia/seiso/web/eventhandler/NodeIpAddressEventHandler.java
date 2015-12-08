@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.web.eventhandler;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import lombok.val;
@@ -30,8 +32,10 @@ import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.Domain;
 import com.expedia.seiso.domain.entity.Endpoint;
+import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.RotationStatus;
+import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.repo.EndpointRepo;
 import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
 import com.expedia.seiso.domain.repo.NodeRepo;
@@ -115,13 +119,13 @@ public class NodeIpAddressEventHandler {
 		}
 	}
 
-	private void createEndpointsForNodeIpAddress(NodeIpAddress nip) {
+	private void createEndpointsForNodeIpAddress(NodeIpAddress nip) {		
 		val ipAddress = nip.getIpAddress();
 		val node = nip.getNode();
-		val ports = node.getServiceInstance().getPorts();
-		log.info("Creating endpoints for nip={} and each of {} ports", ipAddress, ports.size());
+		val sips = node.getServiceInstance().getPorts();
+		log.info("Creating endpoints for nip={} and each of {} ports", ipAddress, sips.size());
 		
-		ports.forEach(port -> {
+		sips.forEach(sip -> {
 			
 			// Set the rotation status on the endpoint. Hibernate can flush the persistence context at any time (e.g.,
 			// before executing queries) and we must ensure that the endpoint is ready. I *think* the call to
@@ -132,12 +136,14 @@ public class NodeIpAddressEventHandler {
 			// Otherwise, when ServiceInstanceServiceImpl recalculates the aggregate rotation statuses, it won't see
 			// that the NIP has endpoints, and will assign the "no-endpoints" status. [WLW]
 			
-			log.info("Creating endpoint: nip={}, port={}", ipAddress, port.getNumber());
+			// For some reason, gradle assemble (and hence Travis CI) craps out when I use a val here. I assume it has
+			// something to do with the lambda. So use Endpoint. [WLW]
+			log.info("Creating endpoint: nip={}, port={}", ipAddress, sip.getNumber());
 			// @formatter:off
-			val endpoint = new Endpoint()
+			Endpoint endpoint = new Endpoint()
 					.setRotationStatus(unknownRotationStatus)
 					.setIpAddress(nip)
-					.setPort(port);
+					.setPort(sip);
 			// @formatter:on
 
 			log.trace("nip={} has {} endpoints", ipAddress, nip.getEndpoints().size());
