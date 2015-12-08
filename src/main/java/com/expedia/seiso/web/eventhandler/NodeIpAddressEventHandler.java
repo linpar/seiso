@@ -15,8 +15,6 @@
  */
 package com.expedia.seiso.web.eventhandler;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import lombok.val;
@@ -32,10 +30,8 @@ import org.springframework.stereotype.Component;
 
 import com.expedia.seiso.domain.Domain;
 import com.expedia.seiso.domain.entity.Endpoint;
-import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.RotationStatus;
-import com.expedia.seiso.domain.entity.ServiceInstancePort;
 import com.expedia.seiso.domain.repo.EndpointRepo;
 import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
 import com.expedia.seiso.domain.repo.NodeRepo;
