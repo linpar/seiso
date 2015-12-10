@@ -83,6 +83,7 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.POST, "/api/**").hasRole(Roles.USER)
 				.antMatchers(HttpMethod.PUT, "/api/**").hasRole(Roles.USER)
 				.antMatchers(HttpMethod.DELETE, "/api/**").hasRole(Roles.USER)
+				.antMatchers(HttpMethod.PATCH, "/api/**").hasRole(Roles.USER)
 				
 				// Admin console
 				.antMatchers(HttpMethod.GET, "/admin").hasRole(Roles.ADMIN)
