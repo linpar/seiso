@@ -4,6 +4,8 @@
 /.settings
 /.springBeans
 /.vagrant
+/.idea
+/*.iml
 /application.yml
 /bin
 /build
