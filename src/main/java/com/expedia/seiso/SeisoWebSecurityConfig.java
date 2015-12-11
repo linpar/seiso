@@ -78,12 +78,11 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 //				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 //				.and()
 			.authorizeRequests()
-				
 				.antMatchers(HttpMethod.GET, "/api/**").permitAll()
-				.antMatchers(HttpMethod.POST, "/api/**").hasRole(Roles.USER)
-				.antMatchers(HttpMethod.PUT, "/api/**").hasRole(Roles.USER)
-				.antMatchers(HttpMethod.DELETE, "/api/**").hasRole(Roles.USER)
-				.antMatchers(HttpMethod.PATCH, "/api/**").hasRole(Roles.USER)
+				.antMatchers(HttpMethod.POST, "/api/**").hasAnyRole(Roles.USER, Roles.ADMIN)
+				.antMatchers(HttpMethod.PUT, "/api/**").hasAnyRole(Roles.USER, Roles.ADMIN)
+				.antMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole(Roles.USER, Roles.ADMIN)
+				.antMatchers(HttpMethod.PATCH, "/api/**").hasAnyRole(Roles.USER, Roles.ADMIN)
 				
 				// Admin console
 				.antMatchers(HttpMethod.GET, "/admin").hasRole(Roles.ADMIN)
