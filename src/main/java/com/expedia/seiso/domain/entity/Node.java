@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
@@ -61,9 +62,10 @@ public class Node extends AbstractItem {
 	 */
 	@Size(max = 250)
 	private String description;
-	
+
+	@Column(name = "version")
 	@Size(max = 128)
-	private String version;
+	private String buildVersion;
 	
 	@NotNull
 	@ManyToOne

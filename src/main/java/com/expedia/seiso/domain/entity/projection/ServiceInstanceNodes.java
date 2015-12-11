@@ -23,5 +23,5 @@ public interface ServiceInstanceNodes {
 
 	List<NodeIpAddress> getIpAddresses();
 	
-	String getVersion();
+	String getBuildVersion();
 }
