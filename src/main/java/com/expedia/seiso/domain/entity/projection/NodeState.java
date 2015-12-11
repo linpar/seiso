@@ -21,6 +21,8 @@ import com.expedia.seiso.domain.entity.HealthStatus;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.RotationStatus;
 
+// Gary Yao is using this, so don't change/delete it without coordinating with him.
+
 /**
  * @author Willie Wheeler
  */
