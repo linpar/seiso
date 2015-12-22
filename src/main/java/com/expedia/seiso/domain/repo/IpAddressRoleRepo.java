@@ -19,6 +19,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import com.expedia.seiso.domain.entity.IpAddressRole;
 import com.expedia.seiso.domain.entity.ServiceInstance;
@@ -27,14 +28,19 @@ import com.expedia.seiso.domain.entity.ServiceInstance;
  * @author Willie Wheeler
  */
 public interface IpAddressRoleRepo extends PagingAndSortingRepository<IpAddressRole, Long> {
-
-	IpAddressRole findByServiceInstanceAndName(ServiceInstance serviceInstance, String name);
-
-	IpAddressRole findByServiceInstanceKeyAndName(String serviceInstanceKey, String name);
+	
+	@RestResource(exported = false)
+	IpAddressRole findByServiceInstanceAndName(
+			ServiceInstance serviceInstance,
+			String name);
+	
+	IpAddressRole findByServiceInstanceKeyAndName(
+			@Param("si") String serviceInstanceKey,
+			@Param("name") String name);
 
 	@Modifying
-	@Query("delete from IpAddressRole r where r.serviceInstance.key = :serviceInstanceKey and r.name = :name")
+	@Query("delete from IpAddressRole r where r.serviceInstance.key = :si and r.name = :name")
 	void deleteByServiceInstanceKeyAndName(
-			@Param("serviceInstanceKey") String serviceInstanceKey,
+			@Param("si") String serviceInstanceKey,
 			@Param("name") String name);
 }
