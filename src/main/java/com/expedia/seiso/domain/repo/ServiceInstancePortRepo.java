@@ -19,6 +19,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.entity.ServiceInstancePort;
@@ -28,6 +29,7 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
  */
 public interface ServiceInstancePortRepo extends PagingAndSortingRepository<ServiceInstancePort, Long> {
 
+	@RestResource(exported = false)
 	ServiceInstancePort findByServiceInstanceAndNumber(
 			ServiceInstance serviceInstance,
 			Integer number);
