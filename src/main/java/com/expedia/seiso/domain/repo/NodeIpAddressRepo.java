@@ -27,9 +27,9 @@ import com.expedia.seiso.domain.entity.NodeIpAddress;
  * @author Willie Wheeler
  */
 public interface NodeIpAddressRepo extends PagingAndSortingRepository<NodeIpAddress, Long> {
-
+	
 	@Query("from NodeIpAddress nip where nip.node.name = :nodeName and nip.ipAddress = :ipAddress")
-	NodeIpAddress findByNodeNameAndIpAddress(@Param("nodeName") String nodeName, @Param("ipAddress") String ipAddress);
+	NodeIpAddress findByNodeNameAndIpAddress(@Param("node") String nodeName, @Param("ipAddress") String ipAddress);
 
 	@Modifying
 	@Query("delete from NodeIpAddress nip where nip.node = :node and nip.ipAddress = :ipAddress")
@@ -37,5 +37,5 @@ public interface NodeIpAddressRepo extends PagingAndSortingRepository<NodeIpAddr
 
 	@Modifying
 	@Query("delete from NodeIpAddress nip where nip.node.name = :nodeName and nip.ipAddress = :ipAddress")
-	void deleteByNodeNameAndIpAddress(@Param("nodeName") String nodeName, @Param("ipAddress") String ipAddress);
+	void deleteByNodeNameAndIpAddress(@Param("node") String nodeName, @Param("ipAddress") String ipAddress);
 }
