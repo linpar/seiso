@@ -48,6 +48,9 @@ public class Machine extends AbstractItem {
 	@NotNull
 	@Size(min = 1, max = 250)
 	private String name;
+	
+	@Size(max = 80)
+	private String serialNumber;
 
 	@Size(max = 80)
 	private String os;
