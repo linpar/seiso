@@ -11,3 +11,7 @@
 /build
 **/.DS_Store
 /application.yml
+pom.xml
+target/classes/application.yml
+*.MF
+target/m2e-wtp/web-resources/META-INF/maven/Seiso_lc/Sesio_lc_v1/pom.properties
