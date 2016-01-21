@@ -12,7 +12,17 @@ import com.expedia.seiso.domain.entity.Node;
 public interface MachineDetails {
 	
 	String getName();
-
+	
+	String getSerialNumber();
+	
+	String getOs();
+	
+	String getOsVersion();
+	
+	String getPlatform();
+	
+	String getPlatformVersion();
+	
 	String getHostname();
 
 	String getDomain();
@@ -20,9 +30,12 @@ public interface MachineDetails {
 	String getFqdn();
 
 	String getIpAddress();
+	
+	String getIp6Address();
+	
+	String getMacAddress();
 
 	DataCenter getDataCenter();
 
 	List<Node> getNodes();
-	
 }
