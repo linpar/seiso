@@ -4,8 +4,8 @@ spring:
     url: jdbc:mysql://127.0.0.1:23141/seiso?autoReconnect=true
     username: seiso
     password: seiso
-    maximum-pool-size: 10
-    minimum-idle: -1
+    maximum-pool-size: 8
+    minimum-idle: 0
     # TODO Add other data source settings here
   jpa:
     openInView: true
