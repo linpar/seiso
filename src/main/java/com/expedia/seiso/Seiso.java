@@ -15,8 +15,6 @@
  */
 package com.expedia.seiso;
 
-import lombok.val;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,6 +24,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
@@ -36,7 +35,7 @@ import com.zaxxer.hikari.HikariDataSource;
 public class Seiso {
 	
 	@Autowired
-	private DataSourceProperties dataSourceProperties;
+	private DataSourceProperties dataSourceProps;
 	
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Seiso.class, args);
@@ -45,15 +44,17 @@ public class Seiso {
 	@Bean
 	public HikariDataSource dataSource() {
 		
-		// TODO Add other Hikari data source options.
-		// TODO Legacy configuration. See https://github.com/brettwooldridge/HikariCP to upgrade.
-		val dataSource = new HikariDataSource();
-		dataSource.setDriverClassName(dataSourceProperties.getDriverClassName());
-		dataSource.setJdbcUrl(dataSourceProperties.getUrl());
-		dataSource.setUsername(dataSourceProperties.getUsername());
-		dataSource.setPassword(dataSourceProperties.getPassword());
-		dataSource.setMaximumPoolSize(dataSourceProperties.getMaximumPoolSize());
-		return dataSource;
+		// The HikariCP docs note that there's a slight performance benefit to configuring the HikariDataSource via the
+		// HikariConfig as opposed to configuring the HikariDataSource directly.
+		HikariConfig config = new HikariConfig();
+		config.setDriverClassName(dataSourceProps.getDriverClassName());
+		config.setJdbcUrl(dataSourceProps.getUrl());
+		config.setUsername(dataSourceProps.getUsername());
+		config.setPassword(dataSourceProps.getPassword());
+		config.setMaximumPoolSize(dataSourceProps.getMaximumPoolSize());
+		config.setMinimumIdle(dataSourceProps.getMinimumIdle());
+		
+		return new HikariDataSource(config);
 	}
 	
 	// TODO Upgrade once Spring Data REST compiles against Spring 4.2. See
@@ -61,7 +62,7 @@ public class Seiso {
 	// - https://jira.spring.io/browse/DATAREST-573
     @Bean
     public CorsFilter corsFilter() {
-        val config = new CorsConfiguration();
+        CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("GET");
@@ -70,7 +71,7 @@ public class Seiso {
         config.addAllowedMethod("PATCH");
         config.addAllowedMethod("DELETE");
         
-        val source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         
         return new CorsFilter(source);
