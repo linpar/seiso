@@ -35,8 +35,8 @@ public class DataSourceProperties {
 	@NotNull private String url;
 	@NotNull private String username;
 	@NotNull private String password;
-	private int maximumPoolSize = 10;
-	private int minimumIdle = -1;
+	private int maximumPoolSize = 8;
+	private int minimumIdle = 0;
 
 	// TODO Add other data source settings here. [WLW]
 }

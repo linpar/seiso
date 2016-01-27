@@ -33,6 +33,8 @@ public interface MachineRepo extends PagingAndSortingRepository<Machine, Long> {
 	Iterable<Machine> findAll();
 
 	Machine findByName(@Param("name") String name);
+	
+	Machine findBySerialNumber(@Param("sn") String serialNumber);
 
 	// FIXME This won't work til NodeControllerV1 can handle single return values. [WLW]
 	// @RestResource(path = "find-by-fqdn")
