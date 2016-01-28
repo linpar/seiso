@@ -1,5 +1,4 @@
-seiso
-=====
+# seiso
 
 [![Build Status](https://travis-ci.org/ExpediaDotCom/seiso.svg?branch=master)](https://travis-ci.org/ExpediaDotCom/seiso)
 
@@ -7,13 +6,11 @@ Devops data integration repository.
 
 Please see the [seiso.io](http://seiso.io) for project information and documentation.
 
-Dev setup
-=========
+# Dev setup
 
 There are two options available here. The first is a manual setup, where you install Java, MySQL, RabbitMQ and the app yourself. The other is via Vagrant.
 
-Approach #1: Manual setup
--------------------------
+## Approach #1: Manual setup
 
 **Installation.** You'll need to install the following:
 
@@ -29,8 +26,7 @@ Approach #1: Manual setup
 * RabbitMQ
   * For visibility we recommend installing the RabbitMQ management plugin.
 
-Approach #2: Vagrant setup
---------------------------
+## Approach #2: Vagrant setup
 
 You can use [Vagrant](https://www.vagrantup.com/) to set up your development environment, which consists of a MySQL database and a RabbitMQ message bus.
 
@@ -50,8 +46,7 @@ in one and
 
 in the other, just to parallelize the work.
 
-Common Configuration
--------------
+## Common Configuration
 
 Create a copy of `conf-sample/application.yml` and modify it as appropriate.
 
@@ -59,8 +54,7 @@ To run Seiso in development mode, you can place it directly in `src/main/resourc
 setup, so if you installed without it you'll probably want to change the mysql port to 3306 and the Rabbit port
 to 5672.
 
-Patch the Database
--------------
+## Patch the Database
 
 * Connect to `localhost:3306` and db `seiso` as `root` user
 * Run any patch files. Currently these two:
@@ -69,13 +63,11 @@ Patch the Database
 * Follow the instructions in that patch sql file (e.g. Run query: `update person set source='ldap-corp'`)
 
 
-Build Seiso
-===========
+# Build Seiso
 
     $ ./gradlew clean build
 
-Run Seiso
-=========
+# Run Seiso
 
     $ ./gradlew bootRun
 
