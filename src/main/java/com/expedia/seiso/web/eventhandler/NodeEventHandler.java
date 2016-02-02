@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
+import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.repo.HealthStatusRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
+
 
 /**
  * @author Willie Wheeler
@@ -41,6 +43,8 @@ public class NodeEventHandler {
 	
 	private HealthStatus unknownHealthStatus;
 	private RotationStatus unknownRotationStatus;
+	
+	@Autowired private RabbitMQSender mqMessenger;
 	
 	@PostConstruct
 	public void postConstruct() {
@@ -60,6 +64,13 @@ public class NodeEventHandler {
 	@HandleBeforeCreate
 	public void handleBeforeCreate(Node node) {
 		replaceNullStatusesWithUnknown(node);
+		mqMessenger.sendMessage("Node has been created.");
+	}
+	
+	@HandleBeforeDelete
+	public void handleBeforeDelete(Node node) {
+		replaceNullStatusesWithUnknown(node);
+		mqMessenger.sendMessage("Node has been deleted.");
 	}
 	
 	/**
@@ -79,6 +90,7 @@ public class NodeEventHandler {
 	@HandleBeforeSave
 	public void handleBeforeSave(Node node) {
 		replaceNullStatusesWithUnknown(node);
+		mqMessenger.sendMessage("Node has been updated.");
 	}
 	
 	private void replaceNullStatusesWithUnknown(Node node) {
