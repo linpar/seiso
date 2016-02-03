@@ -83,6 +83,10 @@ public class Node extends AbstractItem {
 	@JoinColumn(name = "health_status_id")
 	private HealthStatus healthStatus;
 	
+	@Size(max = 250)
+	@Column(name = "details")
+	private String details;
+	
 	// We use this primarily to find node alerts. See NodeRepo.
 	@ManyToOne
 	@JoinColumn(name = "aggregate_rotation_status_id")
