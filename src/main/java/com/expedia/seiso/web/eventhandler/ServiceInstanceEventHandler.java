@@ -24,35 +24,22 @@ import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.domain.Domain;
-import com.expedia.seiso.domain.entity.HealthStatus;
 import com.expedia.seiso.domain.entity.Node;
-import com.expedia.seiso.domain.entity.RotationStatus;
-import com.expedia.seiso.domain.repo.HealthStatusRepo;
-import com.expedia.seiso.domain.repo.NodeRepo;
-import com.expedia.seiso.domain.repo.RotationStatusRepo;
+import com.expedia.seiso.domain.entity.ServiceInstance;
 
 
 /**
- * @author Willie Wheeler
+ * @author Wayne Warren
  */
-@RepositoryEventHandler(Node.class)
+@RepositoryEventHandler(ServiceInstance.class)
 @Component
-public class NodeEventHandler {
-	@Autowired private HealthStatusRepo healthStatusRepo;
-	@Autowired private RotationStatusRepo rotationStatusRepo;
-	@Autowired private NodeRepo nodeRepo;
-	
-	private HealthStatus unknownHealthStatus;
-	private RotationStatus unknownRotationStatus;
+public class ServiceInstanceEventHandler {
 	
 	@Autowired private RabbitMQSender mqMessenger;
 	
 	@PostConstruct
 	public void postConstruct() {
-		// Assume these don't change over time.
-		this.unknownHealthStatus = healthStatusRepo.findByKey(Domain.UNKNOWN_HEALTH_STATUS_KEY);
-		this.unknownRotationStatus = rotationStatusRepo.findByKey(Domain.UNKNOWN_ROTATION_STATUS_KEY);
+
 	}
 	
 	/**
@@ -65,14 +52,12 @@ public class NodeEventHandler {
 	 */
 	@HandleBeforeCreate
 	public void handleBeforeCreate(Node node) {
-		replaceNullStatusesWithUnknown(node);
-		mqMessenger.sendMessage("Node has been created.");
+		mqMessenger.sendMessage("Service-Instance has been created.");
 	}
 	
 	@HandleBeforeDelete
 	public void handleBeforeDelete(Node node) {
-		replaceNullStatusesWithUnknown(node);
-		mqMessenger.sendMessage("Node has been deleted.");
+		mqMessenger.sendMessage("Service-Instance has been deleted.");
 	}
 	
 	/**
@@ -91,36 +76,7 @@ public class NodeEventHandler {
 	 */
 	@HandleBeforeSave
 	public void handleBeforeSave(Node node) {
-		replaceNullStatusesWithUnknown(node);
-		handleDetailsVsStatusUpdates(node);
-		mqMessenger.sendMessage("Node has been updated.");
+		mqMessenger.sendMessage("Service-Instance has been updated.");
 	}
 	
-	private void replaceNullStatusesWithUnknown(Node node) {
-		if (node.getHealthStatus() == null) {
-			node.setHealthStatus(unknownHealthStatus);
-		}
-		if (node.getAggregateRotationStatus() == null) {
-			node.setAggregateRotationStatus(unknownRotationStatus);
-		}
-	}
-	
-	private void handleDetailsVsStatusUpdates(Node node){
-		Node oldNode = nodeRepo.findOne(node.getId());
-		// If the update concerns the health status details
-		if (!oldNode.getDetails().equals(node.getDetails())){
-			// Then make certain that the health status is also updated
-			if (oldNode.getHealthStatus().equals(node.getHealthStatus())){
-				// Take action and cancel the transaction, telling the user that 
-				// the health status must ALSO be updated
-			}
-		}
-		// If the update concerns the health status, and the details are not being 
-		// updated, set the details to null
-		if (!oldNode.getHealthStatus().equals(node.getHealthStatus())){
-			if (oldNode.getDetails().equals(node.getDetails())){
-				node.setDetails(null);
-			}
-		}
-	}
 }

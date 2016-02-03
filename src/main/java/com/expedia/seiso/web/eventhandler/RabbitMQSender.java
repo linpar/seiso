@@ -10,7 +10,10 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class RabbitMQSender {
 	
 	private final ConnectionFactory factory;
@@ -21,16 +24,22 @@ public class RabbitMQSender {
 	
 	private final String queueName;
 	
+	public static final String NODE_UPDATE_MESSAGE = "TBD";
+
+	public static final String SERVICE_INSTANCE_UPDATE_MESSAGE = "TBD";
+	
+	public static final String MQ_CHANNEL_NAME = "CHANNEL";
+	
 	@Autowired
 	public RabbitMQSender(@Value("localhost") String mqServerAddress,
-			@Value("SEISO") String queueName) throws IOException {
+			@Value(MQ_CHANNEL_NAME) String queueName) throws IOException {
 		factory = new ConnectionFactory();
 		try {
 			this.queueName = queueName;
-			factory.setHost(mqServerAddress);
-			connection = factory.newConnection();
-			channel = connection.createChannel();
-			channel.queueDeclare(this.queueName, false, false, false, null);
+			this.factory.setHost(mqServerAddress);
+			this.connection = factory.newConnection();
+			this.channel = connection.createChannel();
+			this.channel.queueDeclare(this.queueName, false, false, false, null);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw e;
@@ -40,7 +49,7 @@ public class RabbitMQSender {
 	public boolean sendMessage(String message){
 	    try {
 			channel.basicPublish("", this.queueName, null, message.getBytes());
-			System.out.println(" [x] Sent '" + message + "'");
+			log.info("MQ message Sent '" + message + "'");
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -52,6 +61,7 @@ public class RabbitMQSender {
 		try {
 			channel.close();
 			connection.close();
+			log.info("MQ connection closed");
 			return true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
