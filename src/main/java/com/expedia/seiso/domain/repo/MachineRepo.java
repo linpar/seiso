@@ -22,14 +22,17 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.domain.entity.Machine;
+import com.expedia.seiso.domain.repo.custom.MachineRepoCustom;
 
 /**
  * @author Willie Wheeler
  */
-public interface MachineRepo extends PagingAndSortingRepository<Machine, Long> {
+public interface MachineRepo extends PagingAndSortingRepository<Machine, Long>, MachineRepoCustom {
 
-	@Query("from Machine m order by m.name")
+	// FIXME This is generating a repository search method, which doesn't seem like what we want to do here.
+	// /machines is already a findAll(), even if it's not ordering them. Maybe we want to export=false this. [WLW]
 	@Override
+	@Query("from Machine m order by m.name")
 	Iterable<Machine> findAll();
 
 	Machine findByName(@Param("name") String name);
