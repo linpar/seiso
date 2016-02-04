@@ -22,11 +22,12 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.domain.entity.Service;
+import com.expedia.seiso.domain.repo.custom.ServiceRepoCustom;
 
 /**
  * @author Willie Wheeler
  */
-public interface ServiceRepo extends PagingAndSortingRepository<Service, Long> {
+public interface ServiceRepo extends PagingAndSortingRepository<Service, Long>, ServiceRepoCustom {
 
 	@Query("from Service order by name")
 	List<Service> findAll();

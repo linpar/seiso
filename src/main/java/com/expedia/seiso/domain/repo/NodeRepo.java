@@ -24,11 +24,12 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.domain.entity.Node;
+import com.expedia.seiso.domain.repo.custom.NodeRepoCustom;
 
 /**
  * @author Willie Wheeler
  */
-public interface NodeRepo extends PagingAndSortingRepository<Node, Long> {
+public interface NodeRepo extends PagingAndSortingRepository<Node, Long>, NodeRepoCustom {
 	
 	// Include infos here too, the idea being that these are things that we want to let people know about, but they are
 	// purely informational in nature as opposed to warnings or danger alerts. We use default statuses for things that

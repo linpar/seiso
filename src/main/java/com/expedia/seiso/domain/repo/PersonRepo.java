@@ -23,11 +23,12 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.domain.entity.Person;
+import com.expedia.seiso.domain.repo.custom.PersonRepoCustom;
 
 /**
  * @author Willie Wheeler
  */
-public interface PersonRepo extends PagingAndSortingRepository<Person, Long> {
+public interface PersonRepo extends PagingAndSortingRepository<Person, Long>, PersonRepoCustom {
 
 	Person findByLdapDn(@Param("dn") String ldapDn);
 
