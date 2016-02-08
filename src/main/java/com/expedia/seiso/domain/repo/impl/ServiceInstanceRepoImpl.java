@@ -17,7 +17,9 @@ package com.expedia.seiso.domain.repo.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,9 +28,12 @@ import lombok.NonNull;
 import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
+import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.repo.custom.ServiceInstanceRepoCustom;
 import com.expedia.seiso.web.resource.BreakdownItem;
 import com.expedia.seiso.web.resource.NodeSummary;
@@ -37,6 +42,8 @@ import com.expedia.seiso.web.resource.NodeSummary;
  * @author Willie Wheeler
  */
 public class ServiceInstanceRepoImpl implements ServiceInstanceRepoCustom {
+	private static final String ENTITY_NAME = "ServiceInstance";
+	private static final Set<String> FIELD_NAMES = Collections.singleton("key");
 	
 	// It might make more sense to move this into ServiceInstanceServiceImpl.
 	// But there's not really much domain logic going on so maybe it's OK here.
@@ -101,7 +108,16 @@ public class ServiceInstanceRepoImpl implements ServiceInstanceRepoCustom {
 	@PersistenceContext private EntityManager entityManager;
 	
 	@Autowired private JdbcTemplate jdbcTemplate;
-
+	@Autowired private RepoImplUtils repoUtils;
+	
+	@Override
+	public Class<ServiceInstance> getResultType() { return ServiceInstance.class; }
+	
+	@Override
+	public Page<ServiceInstance> search(Set<String> searchTokens, Pageable pageable) {
+		return repoUtils.search(ENTITY_NAME, entityManager, FIELD_NAMES, searchTokens, pageable);
+	}
+	
 	@Override
 	public NodeSummary getServiceInstanceNodeSummary(@NonNull Long id) {
 		val mapper = new RowMapper<NodeSummary>() {

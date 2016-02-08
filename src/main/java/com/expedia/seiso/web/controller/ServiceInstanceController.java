@@ -20,13 +20,14 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import java.text.NumberFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.BasePathAwareController;
 import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.expedia.seiso.web.assembler.ServiceInstanceService;
 import com.expedia.seiso.web.link.IanaLinkRelation;
@@ -39,12 +40,16 @@ import lombok.val;
 
 // FIXME The base path isn't appearing in the links. See
 // http://stackoverflow.com/questions/33092440/base-path-doesnt-appear-in-resourceprocessor-custom-links
+// 
 
 /**
  * @author Willie Wheeler
  */
-@BasePathAwareController
-@RequestMapping("/serviceInstances")
+
+//@BasePathAwareController
+@RestController
+//@RequestMapping(value = "/serviceInstances")
+@RequestMapping(value = "/api/serviceInstances")
 public class ServiceInstanceController {
 	@Autowired private ServiceInstanceService serviceInstanceService;
 	

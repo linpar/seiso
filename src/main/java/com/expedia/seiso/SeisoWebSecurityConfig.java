@@ -67,6 +67,7 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return userDetailsServiceImpl();
 	}
 	
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// @formatter:off
@@ -78,6 +79,7 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 //				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 //				.and()
 			.authorizeRequests()
+				.antMatchers(HttpMethod.GET, "/internal/**").permitAll()
 				.antMatchers(HttpMethod.GET, "/api/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/api/**").hasAnyRole(Roles.USER, Roles.ADMIN)
 				.antMatchers(HttpMethod.PUT, "/api/**").hasAnyRole(Roles.USER, Roles.ADMIN)
