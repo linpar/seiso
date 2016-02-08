@@ -22,7 +22,7 @@ public class AnnotatedHealthStatusController {
 	AnnotatedHealthStateService healthStateService;
 	
 	@RequestMapping(
-			value = "/{nodeID}/",
+			value = "/{nodeID}",
 			method = RequestMethod.GET)
 	@ResponseBody
 	public AnnotatedHealthStateResource getAnnotatedHealthState(@PathVariable("nodeID") Long nodeID) {;
@@ -30,7 +30,7 @@ public class AnnotatedHealthStatusController {
 	}
 	
 	@RequestMapping(
-			value = "/{nodeID}/",
+			value = "/{nodeID}",
 			method = RequestMethod.PATCH)
 	@ResponseBody
 	public Boolean setAnnotatedHealthState(@PathVariable("nodeID") Long nodeID, 
