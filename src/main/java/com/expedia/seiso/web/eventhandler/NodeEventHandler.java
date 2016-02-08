@@ -66,13 +66,13 @@ public class NodeEventHandler {
 	@HandleBeforeCreate
 	public void handleBeforeCreate(Node node) {
 		replaceNullStatusesWithUnknown(node);
-		mqMessenger.sendMessage("Node has been created.");
+		mqMessenger.nodeCreated(node);
 	}
 	
 	@HandleBeforeDelete
 	public void handleBeforeDelete(Node node) {
 		replaceNullStatusesWithUnknown(node);
-		mqMessenger.sendMessage("Node has been deleted.");
+		mqMessenger.nodeDeleted(node);
 	}
 	
 	/**
@@ -93,7 +93,7 @@ public class NodeEventHandler {
 	public void handleBeforeSave(Node node) {
 		replaceNullStatusesWithUnknown(node);
 		handleDetailsVsStatusUpdates(node);
-		mqMessenger.sendMessage("Node has been updated.");
+		mqMessenger.nodeUpdated(node);
 	}
 	
 	private void replaceNullStatusesWithUnknown(Node node) {

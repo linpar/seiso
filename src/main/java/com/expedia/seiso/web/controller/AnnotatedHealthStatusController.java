@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.expedia.seiso.web.assembler.AnnotatedHealthStateService;
 import com.expedia.seiso.web.resource.AnnotatedHealthStateResource;
 
+import lombok.extern.slf4j.Slf4j;
+
 @BasePathAwareController
 @RequestMapping("/annotatedHealthStatus")
+@Slf4j
 public class AnnotatedHealthStatusController {
 	
 	@Autowired
@@ -32,6 +35,10 @@ public class AnnotatedHealthStatusController {
 	@ResponseBody
 	public Boolean setAnnotatedHealthState(@PathVariable("nodeID") Long nodeID, 
 			@RequestBody AnnotatedHealthStateResource ahs) {
+		if (ahs.getHealthStateID() == null){
+			log.warn("Unable to set health status details without a health status type ID.");
+			return false;
+		}
 		return healthStateService.setAnnotatedHealthState(nodeID, ahs);
 	}
 }

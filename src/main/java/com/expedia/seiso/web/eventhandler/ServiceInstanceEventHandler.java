@@ -51,13 +51,13 @@ public class ServiceInstanceEventHandler {
 	 *            node to create
 	 */
 	@HandleBeforeCreate
-	public void handleBeforeCreate(Node node) {
-		mqMessenger.sendMessage("Service-Instance has been created.");
+	public void handleBeforeCreate(ServiceInstance si) {
+		mqMessenger.serviceInstanceCreated(si);
 	}
 	
 	@HandleBeforeDelete
-	public void handleBeforeDelete(Node node) {
-		mqMessenger.sendMessage("Service-Instance has been deleted.");
+	public void handleBeforeDelete(ServiceInstance si) {
+		mqMessenger.serviceInstanceDeleted(si);
 	}
 	
 	/**
@@ -75,8 +75,8 @@ public class ServiceInstanceEventHandler {
 	 *            node to save
 	 */
 	@HandleBeforeSave
-	public void handleBeforeSave(Node node) {
-		mqMessenger.sendMessage("Service-Instance has been updated.");
+	public void handleBeforeSave(ServiceInstance si) {
+		mqMessenger.serviceInstanceUpdated(si);
 	}
 	
 }
