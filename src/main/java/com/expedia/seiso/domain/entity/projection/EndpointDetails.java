@@ -9,7 +9,7 @@ import com.expedia.seiso.domain.entity.ServiceInstancePort;
 
 @Projection(name = "endpointDetails", types = Endpoint.class)
 public interface EndpointDetails {
-	NodeIpAddress getNodeIpAddress();
+	NodeIpAddress getIpAddress();
 	RotationStatus getRotationStatus();
-	ServiceInstancePort getServiceInstancePort();
+	ServiceInstancePort getPort();
 }

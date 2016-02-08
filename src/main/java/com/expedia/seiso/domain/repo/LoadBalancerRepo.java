@@ -22,11 +22,12 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.expedia.seiso.domain.entity.LoadBalancer;
+import com.expedia.seiso.domain.repo.custom.LoadBalancerRepoCustom;
 
 /**
  * @author Willie Wheeler
  */
-public interface LoadBalancerRepo extends PagingAndSortingRepository<LoadBalancer, Long> {
+public interface LoadBalancerRepo extends PagingAndSortingRepository<LoadBalancer, Long>, LoadBalancerRepoCustom {
 	
 	LoadBalancer findByName(@Param("name") String name);
 	

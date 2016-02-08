@@ -1,5 +1,5 @@
 /* 
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,11 @@
  */
 package com.expedia.seiso.domain.repo.custom;
 
-import java.util.List;
-
-import com.expedia.seiso.domain.entity.ServiceInstance;
-import com.expedia.seiso.web.resource.BreakdownItem;
-import com.expedia.seiso.web.resource.NodeSummary;
+import com.expedia.seiso.domain.entity.Service;
 
 /**
- * @author Willie Wheeler
+ * @author Ken Van Eyk
  */
-public interface ServiceInstanceRepoCustom extends SearchableRepository<ServiceInstance>{
-	
-	NodeSummary getServiceInstanceNodeSummary(Long id);
-	
-	List<BreakdownItem> getServiceInstanceHealthBreakdown(Long id);
-	
-	List<BreakdownItem> getServiceInstanceRotationBreakdown(Long id);
+public interface ServiceRepoCustom extends SearchableRepository<Service> {
+
 }

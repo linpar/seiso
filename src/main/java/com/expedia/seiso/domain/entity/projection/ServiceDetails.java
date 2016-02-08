@@ -24,6 +24,8 @@ public interface ServiceDetails {
 	
 	String getName();
 	
+	String getDescription();
+	
 	ServiceType getType();
 	
 	ServiceGroup getGroup();
