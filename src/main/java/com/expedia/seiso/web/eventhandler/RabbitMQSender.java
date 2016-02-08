@@ -43,10 +43,12 @@ public class RabbitMQSender {
 	public static final String EXCHANGE = "";
 	
 	@Autowired
-	public RabbitMQSender(@Value("localhost") String mqServerAddress) throws IOException {
+	public RabbitMQSender(@Value("kombi-dev.test.expedia.com") String mqServerAddress,
+			@Value("15672") Integer port) throws IOException {
 		factory = new ConnectionFactory();
 		try {
 			this.factory.setHost(mqServerAddress);
+			this.factory.setPort(port);
 			this.connection = factory.newConnection();
 			this.channel = connection.createChannel();
 			// Declare the node change queues
