@@ -32,32 +32,39 @@ import com.expedia.seiso.domain.repo.HealthStatusRepo;
 import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
 
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Willie Wheeler
  */
 @RepositoryEventHandler(Node.class)
 @Component
+@Slf4j
 public class NodeEventHandler {
-	@Autowired private HealthStatusRepo healthStatusRepo;
-	@Autowired private RotationStatusRepo rotationStatusRepo;
-	@Autowired private NodeRepo nodeRepo;
-	
+	@Autowired
+	private HealthStatusRepo healthStatusRepo;
+	@Autowired
+	private RotationStatusRepo rotationStatusRepo;
+	@Autowired
+	private NodeRepo nodeRepo;
+
 	private HealthStatus unknownHealthStatus;
 	private RotationStatus unknownRotationStatus;
-	
-	@Autowired private RabbitMQSender mqMessenger;
-	
+
+	@Autowired
+	private RabbitMQSender mqMessenger;
+
 	@PostConstruct
 	public void postConstruct() {
 		// Assume these don't change over time.
 		this.unknownHealthStatus = healthStatusRepo.findByKey(Domain.UNKNOWN_HEALTH_STATUS_KEY);
 		this.unknownRotationStatus = rotationStatusRepo.findByKey(Domain.UNKNOWN_ROTATION_STATUS_KEY);
 	}
-	
+
 	/**
-	 * If the health or aggregate rotation status is {@code null}, we initialize it to the corresponding "unknown"
-	 * status entity instead of leaving it null. This allows the UI to render missing/unknown statuses without doing
+	 * If the health or aggregate rotation status is {@code null}, we initialize
+	 * it to the corresponding "unknown" status entity instead of leaving it
+	 * null. This allows the UI to render missing/unknown statuses without doing
 	 * explicit null checks.
 	 * 
 	 * @param node
@@ -66,24 +73,33 @@ public class NodeEventHandler {
 	@HandleBeforeCreate
 	public void handleBeforeCreate(Node node) {
 		replaceNullStatusesWithUnknown(node);
-		mqMessenger.nodeCreated(node);
+		try {
+			mqMessenger.nodeCreated(node);
+		} catch (Exception e) {
+			log.error("Unable to announce node creation.", e);
+		}
 	}
-	
+
 	@HandleBeforeDelete
 	public void handleBeforeDelete(Node node) {
 		replaceNullStatusesWithUnknown(node);
-		mqMessenger.nodeDeleted(node);
+		try {
+			mqMessenger.nodeDeleted(node);
+		} catch (Exception e) {
+			log.error("Unable to announce node deletion.", e);
+		}
 	}
-	
+
 	/**
 	 * <p>
-	 * If the health or aggregate rotation status is {@code null}, we initialize it to the corresponding "unknown"
-	 * status entity instead of leaving it null. This allows the UI to render missing/unknown statuses without doing
+	 * If the health or aggregate rotation status is {@code null}, we initialize
+	 * it to the corresponding "unknown" status entity instead of leaving it
+	 * null. This allows the UI to render missing/unknown statuses without doing
 	 * explicit null checks.
 	 * </p>
 	 * <p>
-	 * Generally we shouldn't have to do this, since we try to prevent nodes from having {@code null} statuses, but
-	 * we're just being paranoid.
+	 * Generally we shouldn't have to do this, since we try to prevent nodes
+	 * from having {@code null} statuses, but we're just being paranoid.
 	 * </p>
 	 * 
 	 * @param node
@@ -92,10 +108,14 @@ public class NodeEventHandler {
 	@HandleBeforeSave
 	public void handleBeforeSave(Node node) {
 		replaceNullStatusesWithUnknown(node);
-		handleDetailsVsStatusUpdates(node);
-		mqMessenger.nodeUpdated(node);
+		try {
+			handleDetailsVsStatusUpdates(node);
+			mqMessenger.nodeUpdated(node);
+		} catch (Exception e) {
+			log.error("Unable to announce node updates.", e);
+		}
 	}
-	
+
 	private void replaceNullStatusesWithUnknown(Node node) {
 		if (node.getHealthStatus() == null) {
 			node.setHealthStatus(unknownHealthStatus);
@@ -104,21 +124,22 @@ public class NodeEventHandler {
 			node.setAggregateRotationStatus(unknownRotationStatus);
 		}
 	}
-	
-	private void handleDetailsVsStatusUpdates(Node node){
+
+	private void handleDetailsVsStatusUpdates(Node node) {
 		Node oldNode = nodeRepo.findOne(node.getId());
 		// If the update concerns the health status details
-		if (!oldNode.getDetails().equals(node.getDetails())){
+		if (!oldNode.getDetails().equals(node.getDetails())) {
 			// Then make certain that the health status is also updated
-			if (oldNode.getHealthStatus().equals(node.getHealthStatus())){
-				// Take action and cancel the transaction, telling the user that 
+			if (oldNode.getHealthStatus().equals(node.getHealthStatus())) {
+				// Take action and cancel the transaction, telling the user that
 				// the health status must ALSO be updated
 			}
 		}
-		// If the update concerns the health status, and the details are not being 
+		// If the update concerns the health status, and the details are not
+		// being
 		// updated, set the details to null
-		if (!oldNode.getHealthStatus().equals(node.getHealthStatus())){
-			if (oldNode.getDetails().equals(node.getDetails())){
+		if (!oldNode.getHealthStatus().equals(node.getHealthStatus())) {
+			if (oldNode.getDetails().equals(node.getDetails())) {
 				node.setDetails(null);
 			}
 		}

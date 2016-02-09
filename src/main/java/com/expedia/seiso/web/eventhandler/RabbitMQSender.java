@@ -42,13 +42,19 @@ public class RabbitMQSender {
 	
 	public static final String EXCHANGE = "";
 	
+	private static final String LOCAL_RABBITMQ_ADDRESS = "localhost";
+	
+	private static final String DEV_RABBITMQ_ADDRESS = "kombi-dev.test.expedia.com";
+	
+	
 	@Autowired
-	public RabbitMQSender(@Value("kombi-dev.test.expedia.com") String mqServerAddress,
-			@Value("15672") Integer port) throws IOException {
+	public RabbitMQSender(@Value(LOCAL_RABBITMQ_ADDRESS) String mqServerAddress) throws IOException {
 		factory = new ConnectionFactory();
 		try {
-			this.factory.setHost(mqServerAddress);
-			this.factory.setPort(port);
+			this.factory.setHost(LOCAL_RABBITMQ_ADDRESS);
+			//this.factory.setPort(15672);
+			this.factory.setUsername("guest");
+			this.factory.setPassword("guest");
 			this.connection = factory.newConnection();
 			this.channel = connection.createChannel();
 			// Declare the node change queues
