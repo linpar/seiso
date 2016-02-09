@@ -2,10 +2,14 @@ package com.expedia.seiso.web.eventhandler;
 
 import java.io.IOException;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
+import com.expedia.seiso.MQConnectionProperties;
 import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.rabbitmq.client.Channel;
@@ -16,9 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@EnableConfigurationProperties
 public class RabbitMQSender {
+
+	private MQConnectionProperties mqProps;
 	
-	private final ConnectionFactory factory;
+	private ConnectionFactory factory;
 	
 	private Channel channel;
 	
@@ -40,36 +47,12 @@ public class RabbitMQSender {
 	
 	public static final String NODE_DELETE_QUEUE_NAME = "node.delete";
 	
-	public static final String EXCHANGE = "";
+	private String exchange = "";
 	
-	private static final String LOCAL_RABBITMQ_ADDRESS = "localhost";
+	private boolean initialized = false;
 	
-	private static final String DEV_RABBITMQ_ADDRESS = "kombi-dev.test.expedia.com";
-	
-	
-	@Autowired
-	public RabbitMQSender(@Value(LOCAL_RABBITMQ_ADDRESS) String mqServerAddress) throws IOException {
-		factory = new ConnectionFactory();
-		try {
-			this.factory.setHost(LOCAL_RABBITMQ_ADDRESS);
-			//this.factory.setPort(15672);
-			this.factory.setUsername("guest");
-			this.factory.setPassword("guest");
-			this.connection = factory.newConnection();
-			this.channel = connection.createChannel();
-			// Declare the node change queues
-			this.channel.queueDeclare(NODE_CREATE_QUEUE_NAME, false, false, false, null);
-			this.channel.queueDeclare(NODE_UPDATE_QUEUE_NAME, false, false, false, null);
-			this.channel.queueDeclare(NODE_DELETE_QUEUE_NAME, false, false, false, null);
-			// Declare the service instance queues
-			this.channel.queueDeclare(SI_CREATE_QUEUE_NAME, false, false, false, null);
-			this.channel.queueDeclare(SI_UPDATE_QUEUE_NAME, false, false, false, null);
-			this.channel.queueDeclare(SI_DELETE_QUEUE_NAME, false, false, false, null);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw e;
-		}
+	public RabbitMQSender() throws IOException {
+		
 	}
 	
 	public boolean nodeCreated(Node node){
@@ -82,8 +65,38 @@ public class RabbitMQSender {
 		}
 	}
 	
+	private void init(){
+		factory = new ConnectionFactory();
+		try {
+			
+			this.factory.setHost(mqProps.getHost());
+			this.factory.setPort(mqProps.getPort());
+			this.factory.setUsername(mqProps.getUsername());
+			this.factory.setPassword(mqProps.getPassword());
+			this.exchange = "";
+			
+			this.connection = factory.newConnection();
+			this.channel = connection.createChannel();
+			// Declare the node change queues
+			this.channel.queueDeclare(NODE_CREATE_QUEUE_NAME, false, false, false, null);
+			this.channel.queueDeclare(NODE_UPDATE_QUEUE_NAME, false, false, false, null);
+			this.channel.queueDeclare(NODE_DELETE_QUEUE_NAME, false, false, false, null);
+			// Declare the service instance queues
+			this.channel.queueDeclare(SI_CREATE_QUEUE_NAME, false, false, false, null);
+			this.channel.queueDeclare(SI_UPDATE_QUEUE_NAME, false, false, false, null);
+			this.channel.queueDeclare(SI_DELETE_QUEUE_NAME, false, false, false, null);
+			this.initialized = true;
+			
+		} catch (IOException e) {
+			log.error("Unable to initialize Rabbit MQ messaging", e);
+		}
+	}
+	
 	public boolean nodeUpdated(Node node){
 		try {
+			if (!this.initialized){
+				this.init();
+			}
 			String message = "{\r\n  \"itemType\":\"Node\"\r\n  \"itemKey\":\"" + node.getId() + "\"\r\n  \"operation\":\"update\"}";
 			return sendMessage(message, NODE_UPDATE_QUEUE_NAME);
 		}
@@ -94,6 +107,9 @@ public class RabbitMQSender {
 	
 	public boolean nodeDeleted(Node node){
 		try {
+			if (!this.initialized){
+				this.init();
+			}
 			String message = "{\r\n  \"itemType\":\"Node\"\r\n  \"itemKey\":\"" + node.getId() + "\"\r\n  \"operation\":\"delete\"}";
 			return sendMessage(message, NODE_DELETE_QUEUE_NAME);
 		}
@@ -104,6 +120,9 @@ public class RabbitMQSender {
 	
 	public boolean serviceInstanceCreated(ServiceInstance si){
 		try {
+			if (!this.initialized){
+				this.init();
+			}
 			String message = "{\r\n  \"itemType\":\"ServiceInstance\"\r\n  \"itemKey\":\"" + si.getId() + "\"\r\n  \"operation\":\"create\"}";
 			return sendMessage(message, SI_CREATE_QUEUE_NAME);
 		}
@@ -114,6 +133,9 @@ public class RabbitMQSender {
 	
 	public boolean serviceInstanceUpdated(ServiceInstance si){
 		try {
+			if (!this.initialized){
+				this.init();
+			}
 			String message = "{\r\n  \"itemType\":\"ServiceInstance\"\r\n  \"itemKey\":\"" + si.getId() + "\"\r\n  \"operation\":\"update\"}";
 			return sendMessage(message, SI_UPDATE_QUEUE_NAME);
 		}
@@ -124,6 +146,9 @@ public class RabbitMQSender {
 	
 	public boolean serviceInstanceDeleted(ServiceInstance si){
 		try {
+			if (!this.initialized){
+				this.init();
+			}
 			String message = "{\r\n  \"itemType\":\"ServiceInstance\"\r\n  \"itemKey\":\"" + si.getId() + "\"\r\n  \"operation\":\"delete\"}";
 			return sendMessage(message, SI_DELETE_QUEUE_NAME);
 		}
@@ -134,7 +159,7 @@ public class RabbitMQSender {
 	
 	private boolean sendMessage(String message, String queueName){
 	    try {
-			channel.basicPublish(EXCHANGE, queueName, null, message.getBytes());
+			channel.basicPublish(this.exchange, queueName, null, message.getBytes());
 			log.info("MQ message Sent :: QUEUE :: " + queueName + " :: '"  + message + "'");
 			return true;
 		} catch (IOException e) {
