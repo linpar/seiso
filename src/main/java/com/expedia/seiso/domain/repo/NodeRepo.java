@@ -51,6 +51,13 @@ public interface NodeRepo extends PagingAndSortingRepository<Node, Long>, NodeRe
 	
 	Page<Node> findByServiceInstanceKey(@Param("key") String key, Pageable pageable);
 	
+	// Filed on behalf of Chris Brown:
+	// https://github.com/ExpediaDotCom/seiso/issues/202
+	Page<Node> findByServiceInstanceKeyAndHealthStatusKey(
+			@Param("siKey") String siKey,
+			@Param("hsKey") String hsKey,
+			Pageable pageable);
+	
 	@Query(FIND_NODE_ALERTS_JPQL)
 	Page<Node> findNodeAlertsByServiceInstance(@Param("key") String key, Pageable pageable);
 	
