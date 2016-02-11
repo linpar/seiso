@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import com.expedia.seiso.domain.entity.Endpoint;
 import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
 import com.expedia.seiso.domain.repo.NodeRepo;
-import com.expedia.seiso.web.assembler.ServiceInstanceService;
+import com.expedia.seiso.domain.service.RotationService;
 
 /**
  * @author Willie Wheeler
@@ -35,15 +35,15 @@ import com.expedia.seiso.web.assembler.ServiceInstanceService;
 public class EndpointEventHandler {
 	@Autowired private NodeRepo nodeRepo;
 	@Autowired private NodeIpAddressRepo nodeIpAddressRepo;
-	@Autowired private ServiceInstanceService serviceInstanceService;
+	@Autowired private RotationService rotationService;
 	
 	@HandleAfterSave
 	public void handleAfterSave(Endpoint endpoint) {
 		val nip = endpoint.getIpAddress();
 		val node = nip.getNode();
-		serviceInstanceService.recalculateAggregateRotationStatus(nip);
+		rotationService.recalculateAggregateRotationStatus(nip);
 		nodeIpAddressRepo.save(nip);
-		serviceInstanceService.recalculateAggregateRotationStatus(node);
+		rotationService.recalculateAggregateRotationStatus(node);
 		nodeRepo.save(node);
 	}
 }

@@ -36,7 +36,7 @@ import com.expedia.seiso.domain.repo.EndpointRepo;
 import com.expedia.seiso.domain.repo.NodeIpAddressRepo;
 import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
-import com.expedia.seiso.web.assembler.ServiceInstanceService;
+import com.expedia.seiso.domain.service.RotationService;
 
 /**
  * @author Willie Wheeler
@@ -49,7 +49,7 @@ public class NodeIpAddressEventHandler {
 	@Autowired private NodeIpAddressRepo nodeIpAddressRepo;
 	@Autowired private EndpointRepo endpointRepo;
 	@Autowired private RotationStatusRepo rotationStatusRepo;
-	@Autowired private ServiceInstanceService serviceInstanceService;
+	@Autowired private RotationService rotationService;
 	
 	private RotationStatus unknownRotationStatus;
 	
@@ -98,11 +98,11 @@ public class NodeIpAddressEventHandler {
 	
 	@HandleAfterSave
 	public void handleAfterSave(NodeIpAddress nip) {
-		serviceInstanceService.recalculateAggregateRotationStatus(nip);
+		rotationService.recalculateAggregateRotationStatus(nip);
 		nodeIpAddressRepo.save(nip);
 		
 		val node = nip.getNode();
-		serviceInstanceService.recalculateAggregateRotationStatus(node);
+		rotationService.recalculateAggregateRotationStatus(node);
 		nodeRepo.save(node);
 	}
 	
@@ -146,10 +146,10 @@ public class NodeIpAddressEventHandler {
 			endpointRepo.save(endpoint);
 		});
 
-		serviceInstanceService.recalculateAggregateRotationStatus(nip);
+		rotationService.recalculateAggregateRotationStatus(nip);
 		nodeIpAddressRepo.save(nip);
 		
-		serviceInstanceService.recalculateAggregateRotationStatus(node);
+		rotationService.recalculateAggregateRotationStatus(node);
 		nodeRepo.save(node);
 	}
 }
