@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expedia.seiso.web.assembler;
+package com.expedia.seiso.domain.service;
 
-import org.springframework.hateoas.Resources;
-
-import com.expedia.seiso.web.resource.BreakdownItem;
-import com.expedia.seiso.web.resource.NodeSummary;
-
-// FIXME Resources don't really belong here. They belong in the web tier.
+import com.expedia.seiso.domain.entity.Node;
+import com.expedia.seiso.domain.entity.NodeIpAddress;
 
 /**
  * @author Willie Wheeler
  */
-public interface ServiceInstanceService {
+public interface RotationService {
 	
-	NodeSummary getNodeSummary(Long id);
+	void recalculateAggregateRotationStatus(Node node);
 	
-	Resources<BreakdownItem> getHealthBreakdown(Long id);
-	
-	Resources<BreakdownItem> getRotationBreakdown(Long id);
+	void recalculateAggregateRotationStatus(NodeIpAddress nip);
 }
