@@ -58,7 +58,7 @@ public class ServiceInstance extends AbstractItem {
 	
 	// TODO Lock this down to lowercase, but let people update first. [WLW]
 	@Pattern(regexp = "[A-Za-z0-9-]+")
-	@Size(min = 1, max = 40)
+	@Size(min = 1, max = 120)
 	@Column(name = "ukey")
 	private String key;
 	
