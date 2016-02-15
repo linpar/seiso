@@ -60,24 +60,43 @@ public class NodeIpAddressEventHandler {
 	}
 	
 	/**
+	 * <p>
+	 * Pre-processes HTTP POST events.
+	 * </p>
+	 * <p>
 	 * If the rotation status or aggregate rotation status is {@code null}, we initialize it to the corresponding
 	 * "unknown" status entity instead of leaving it null. This allows the UI to render missing/unknown statuses without
 	 * doing explicit null checks.
+	 * </p>
 	 * 
 	 * @param nip
 	 *            node IP address to create
 	 */
 	@HandleBeforeCreate
 	public void handleBeforeCreate(NodeIpAddress nip) {
+		log.trace("NodeIpAddressEventHandler.handleBeforeCreate(): entered");
 		replaceNullStatusesWithUnknown(nip);
-	}
-	
-	@HandleAfterCreate
-	public void handleAfterCreate(NodeIpAddress nip) {
-		createEndpointsForNodeIpAddress(nip);
+		log.trace("NodeIpAddressEventHandler.handleBeforeCreate(): exiting");
 	}
 	
 	/**
+	 * <p>
+	 * Post-processes HTTP POST events.
+	 * </p>
+	 * 
+	 * @param nip
+	 */
+	@HandleAfterCreate
+	public void handleAfterCreate(NodeIpAddress nip) {
+		log.trace("NodeIpAddressEventHandler.handleAfterCreate(): entered");
+		createEndpointsForNodeIpAddress(nip);
+		log.trace("NodeIpAddressEventHandler.handleAfterCreate(): exiting");
+	}
+	
+	/**
+	 * <p>
+	 * Pre-processes HTTP PUT and PATCH requests.
+	 * </p>
 	 * <p>
 	 * If the rotation status or aggregate rotation status is {@code null}, we initialize it to the corresponding
 	 * "unknown" status entity instead of leaving it null. This allows the UI to render missing/unknown statuses without
@@ -93,17 +112,28 @@ public class NodeIpAddressEventHandler {
 	 */
 	@HandleBeforeSave
 	public void handleBeforeSave(NodeIpAddress nip) {
+		log.trace("NodeIpAddressEventHandler.handleBeforeSave(): entered");
 		replaceNullStatusesWithUnknown(nip);
+		log.trace("NodeIpAddressEventHandler.handleBeforeSave(): exiting");
 	}
 	
+	/**
+	 * <p>
+	 * Post-processes HTTP PUT and PATCH requests.
+	 * </p>
+	 * 
+	 * @param nip
+	 */
 	@HandleAfterSave
 	public void handleAfterSave(NodeIpAddress nip) {
+		log.trace("NodeIpAddressEventHandler.handleAfterSave(): entered");
 		rotationService.recalculateAggregateRotationStatus(nip);
 		nodeIpAddressRepo.save(nip);
 		
 		val node = nip.getNode();
 		rotationService.recalculateAggregateRotationStatus(node);
 		nodeRepo.save(node);
+		log.trace("NodeIpAddressEventHandler.handleAfterSave(): exiting");
 	}
 	
 	private void replaceNullStatusesWithUnknown(NodeIpAddress nip) {
@@ -134,6 +164,7 @@ public class NodeIpAddressEventHandler {
 			
 			// For some reason, gradle assemble (and hence Travis CI) craps out when I use a val here. I assume it has
 			// something to do with the lambda. So use Endpoint. [WLW]
+			log.trace("nip={} has {} endpoints", ipAddress, nip.getEndpoints().size());
 			log.info("Creating endpoint: nip={}, port={}", ipAddress, sip.getNumber());
 			// @formatter:off
 			Endpoint endpoint = new Endpoint()
@@ -141,11 +172,13 @@ public class NodeIpAddressEventHandler {
 					.setIpAddress(nip)
 					.setPort(sip);
 			// @formatter:on
-
-			log.trace("nip={} has {} endpoints", ipAddress, nip.getEndpoints().size());
+			
 			endpointRepo.save(endpoint);
+			
+			// Do this so the recalc below can actually see the endpoint.
+			nip.getEndpoints().add(endpoint);
 		});
-
+		
 		rotationService.recalculateAggregateRotationStatus(nip);
 		nodeIpAddressRepo.save(nip);
 		
