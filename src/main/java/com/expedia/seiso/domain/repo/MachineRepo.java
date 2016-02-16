@@ -36,6 +36,8 @@ public interface MachineRepo extends PagingAndSortingRepository<Machine, Long>, 
 	Iterable<Machine> findAll();
 
 	Machine findByName(@Param("name") String name);
+
+	Page<Machine> findByNameContainingIgnoreCaseOrderByName(@Param("name") String name, Pageable pageable);
 	
 	Machine findBySerialNumber(@Param("sn") String serialNumber);
 
