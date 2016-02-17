@@ -38,7 +38,7 @@ public interface MachineRepo extends PagingAndSortingRepository<Machine, Long>, 
 
 	Machine findByName(@Param("name") String name);
 
-	@RestResource(path = "findByNameLike")
+	@RestResource(rel = "findByNameLike", path = "findByNameLike")
 	Page<Machine> findByNameContainingIgnoreCaseOrderByName(@Param("name") String name, Pageable pageable);
 	
 	Machine findBySerialNumber(@Param("sn") String serialNumber);
