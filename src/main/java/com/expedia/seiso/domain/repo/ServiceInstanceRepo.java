@@ -23,6 +23,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.ServiceInstance;
 import com.expedia.seiso.domain.repo.custom.ServiceInstanceRepoCustom;
 

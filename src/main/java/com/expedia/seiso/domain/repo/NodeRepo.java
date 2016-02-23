@@ -56,4 +56,9 @@ public interface NodeRepo extends PagingAndSortingRepository<Node, Long> {
 	// FIXME Shouldn't this return a unique result?
 	@Query("select n from Node n join n.ipAddresses nip join nip.endpoints e where nip.ipAddress = :ipAddress and e.port.number = :port")
 	List<Node> findByIpAddressAndPort(@Param("ipAddress") String ipAddress, @Param("port") Integer port);
+
+	@Query("select * from node where service_instance_id = :serviceInstanceID")
+	List<Node> findByServiceInstanceID(@Param("serviceInstanceID") Long serviceInstanceID);
+	
+
 }

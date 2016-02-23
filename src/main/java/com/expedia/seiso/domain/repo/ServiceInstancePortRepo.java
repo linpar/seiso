@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.domain.repo;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -43,4 +45,8 @@ public interface ServiceInstancePortRepo extends PagingAndSortingRepository<Serv
 	void deleteByServiceInstanceKeyAndNumber(
 			@Param("si") String serviceInstanceKey,
 			@Param("number") Integer number);
+	
+	@Query("select * from service_instance_port where service_instance_id = :serviceInstanceID")
+	List<ServiceInstancePort> findByServiceInstanceID(@Param("serviceInstanceID") Long serviceInstanceID);
+
 }
