@@ -83,9 +83,17 @@ public class Node extends AbstractItem {
 	@JoinColumn(name = "health_status_id")
 	private HealthStatus healthStatus;
 	
+	/**
+	 * Link to diagnostic page around health status transitions.
+	 */
 	@Size(max = 250)
-	@Column(name = "details")
-	private String details;
+	private String healthStatusLink;
+	
+	/**
+	 * Short reason for a health status transition.
+	 */
+	@Size(max = 250)
+	private String healthStatusReason;
 	
 	// We use this primarily to find node alerts. See NodeRepo.
 	@ManyToOne
