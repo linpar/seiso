@@ -15,7 +15,6 @@
  */
 package com.expedia.seiso;
 
-
 import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
