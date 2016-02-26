@@ -15,19 +15,29 @@
  */
 package com.expedia.seiso;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 @Data
 @NoArgsConstructor
 @Component
-@ConfigurationProperties(prefix = "custom")
-public class CustomProperties {
+@ConfigurationProperties(prefix = "seiso")
+public class SeisoProperties {
 	
+	// =================================================================================================================
+	// Integration
+	// =================================================================================================================
+	
+	/** RabbitMQ change notification exchange */
+	private String changeNotificationExchange;
+	
+	
+	// =================================================================================================================
 	// Security
+	// =================================================================================================================
 	
 	/** Active Directory domain */
 	private String adDomain;

@@ -17,6 +17,11 @@ spring:
   data:
     rest:
       base-path: /api
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: seiso
+    password: seiso
 
 management:
   context-path: /admin
@@ -32,3 +37,6 @@ logging:
 endpoints:
   health:
     sensitive: false
+
+seiso:
+  change-notification-exchange: seiso.notifications.v3
