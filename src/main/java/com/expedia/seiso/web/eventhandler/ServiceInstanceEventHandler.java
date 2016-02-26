@@ -15,68 +15,43 @@
  */
 package com.expedia.seiso.web.eventhandler;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
-import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
-import org.springframework.data.rest.core.annotation.HandleBeforeSave;
+import org.springframework.data.rest.core.annotation.HandleAfterCreate;
+import org.springframework.data.rest.core.annotation.HandleAfterDelete;
+import org.springframework.data.rest.core.annotation.HandleAfterSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
-import com.expedia.seiso.domain.entity.Node;
 import com.expedia.seiso.domain.entity.ServiceInstance;
-
+import com.expedia.seiso.gateway.NotificationGateway;
 
 /**
  * @author Wayne Warren
+ * @author Willie Wheeler
  */
 @RepositoryEventHandler(ServiceInstance.class)
 @Component
 public class ServiceInstanceEventHandler {
 	
-	@Autowired private RabbitMQSender mqMessenger;
+	@Autowired
+	private NotificationGateway notificationGateway;
 	
-	@PostConstruct
-	public void postConstruct() {
-
+	@HandleAfterCreate
+	public void handleAfterCreate(ServiceInstance si) {
+		notify(si, NotificationGateway.OP_CREATE);
 	}
 	
-	/**
-	 * If the health or aggregate rotation status is {@code null}, we initialize it to the corresponding "unknown"
-	 * status entity instead of leaving it null. This allows the UI to render missing/unknown statuses without doing
-	 * explicit null checks.
-	 * 
-	 * @param node
-	 *            node to create
-	 */
-	@HandleBeforeCreate
-	public void handleBeforeCreate(ServiceInstance si) {
-		mqMessenger.serviceInstanceCreated(si);
+	@HandleAfterSave
+	public void handleAfterSave(ServiceInstance si) {
+		notify(si, NotificationGateway.OP_UPDATE);
 	}
 	
-	@HandleBeforeDelete
-	public void handleBeforeDelete(ServiceInstance si) {
-		mqMessenger.serviceInstanceDeleted(si);
+	@HandleAfterDelete
+	public void handleAfterDelete(ServiceInstance si) {
+		notify(si, NotificationGateway.OP_DELETE);
 	}
 	
-	/**
-	 * <p>
-	 * If the health or aggregate rotation status is {@code null}, we initialize it to the corresponding "unknown"
-	 * status entity instead of leaving it null. This allows the UI to render missing/unknown statuses without doing
-	 * explicit null checks.
-	 * </p>
-	 * <p>
-	 * Generally we shouldn't have to do this, since we try to prevent nodes from having {@code null} statuses, but
-	 * we're just being paranoid.
-	 * </p>
-	 * 
-	 * @param node
-	 *            node to save
-	 */
-	@HandleBeforeSave
-	public void handleBeforeSave(ServiceInstance si) {
-		mqMessenger.serviceInstanceUpdated(si);
+	private void notify(ServiceInstance si, String op) {
+		notificationGateway.notify(si, si.getKey(), op);
 	}
-	
 }

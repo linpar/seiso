@@ -18,8 +18,10 @@ package com.expedia.seiso.web.eventhandler;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.core.annotation.HandleAfterCreate;
+import org.springframework.data.rest.core.annotation.HandleAfterDelete;
+import org.springframework.data.rest.core.annotation.HandleAfterSave;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
-import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
@@ -31,29 +33,30 @@ import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.repo.HealthStatusRepo;
 import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
-
-import lombok.extern.slf4j.Slf4j;
+import com.expedia.seiso.gateway.NotificationGateway;
 
 /**
  * @author Willie Wheeler
  */
 @RepositoryEventHandler(Node.class)
 @Component
-@Slf4j
 public class NodeEventHandler {
+	
 	@Autowired
 	private HealthStatusRepo healthStatusRepo;
+	
 	@Autowired
 	private RotationStatusRepo rotationStatusRepo;
+	
 	@Autowired
 	private NodeRepo nodeRepo;
 
+	@Autowired
+	private NotificationGateway notificationGateway;
+	
 	private HealthStatus unknownHealthStatus;
 	private RotationStatus unknownRotationStatus;
-
-	@Autowired
-	private RabbitMQSender mqMessenger;
-
+	
 	@PostConstruct
 	public void postConstruct() {
 		// Assume these don't change over time.
@@ -73,21 +76,11 @@ public class NodeEventHandler {
 	@HandleBeforeCreate
 	public void handleBeforeCreate(Node node) {
 		replaceNullStatusesWithUnknown(node);
-		try {
-			mqMessenger.nodeCreated(node);
-		} catch (Exception e) {
-			log.error("Unable to announce node creation.", e);
-		}
 	}
-
-	@HandleBeforeDelete
-	public void handleBeforeDelete(Node node) {
-		replaceNullStatusesWithUnknown(node);
-		try {
-			mqMessenger.nodeDeleted(node);
-		} catch (Exception e) {
-			log.error("Unable to announce node deletion.", e);
-		}
+	
+	@HandleAfterCreate
+	public void handleAfterCreate(Node node) {
+		notify(node, NotificationGateway.OP_CREATE);
 	}
 
 	/**
@@ -108,14 +101,19 @@ public class NodeEventHandler {
 	@HandleBeforeSave
 	public void handleBeforeSave(Node node) {
 		replaceNullStatusesWithUnknown(node);
-		try {
-			handleDetailsVsStatusUpdates(node);
-			mqMessenger.nodeUpdated(node);
-		} catch (Exception e) {
-			log.error("Unable to announce node updates.", e);
-		}
+	}
+	
+	@HandleAfterSave
+	public void handleAfterSave(Node node) {
+		notify(node, NotificationGateway.OP_UPDATE);
 	}
 
+	@HandleAfterDelete
+	public void handleAfterDelete(Node node) {
+		notify(node, NotificationGateway.OP_DELETE);
+	}
+	
+	// TODO Move this somewhere else. It doesn't belong here. [WLW]
 	private void replaceNullStatusesWithUnknown(Node node) {
 		if (node.getHealthStatus() == null) {
 			node.setHealthStatus(unknownHealthStatus);
@@ -124,24 +122,8 @@ public class NodeEventHandler {
 			node.setAggregateRotationStatus(unknownRotationStatus);
 		}
 	}
-
-	private void handleDetailsVsStatusUpdates(Node node) {
-		Node oldNode = nodeRepo.findOne(node.getId());
-		// If the update concerns the health status details
-		if (!oldNode.getDetails().equals(node.getDetails())) {
-			// Then make certain that the health status is also updated
-			if (oldNode.getHealthStatus().equals(node.getHealthStatus())) {
-				// Take action and cancel the transaction, telling the user that
-				// the health status must ALSO be updated
-			}
-		}
-		// If the update concerns the health status, and the details are not
-		// being
-		// updated, set the details to null
-		if (!oldNode.getHealthStatus().equals(node.getHealthStatus())) {
-			if (oldNode.getDetails().equals(node.getDetails())) {
-				node.setDetails(null);
-			}
-		}
+	
+	private void notify(Node node, String op) {
+		notificationGateway.notify(node, node.getName(), op);
 	}
 }

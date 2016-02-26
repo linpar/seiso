@@ -60,7 +60,7 @@ import com.expedia.seiso.security.UserDetailsServiceImpl;
 public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private CustomProperties customProperties;
+	private SeisoProperties seisoProperties;
 	
 	@Override
 	protected UserDetailsService userDetailsService() {
@@ -116,7 +116,7 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// FIXME How do we specify an order here?
 		// http://stackoverflow.com/questions/31302262/provider-order-using-authenticationmanagerbuilder
 //		configureTestLdap(auth);
-		if (customProperties.getEnableActiveDirectory()) {
+		if (seisoProperties.getEnableActiveDirectory()) {
 			configureActiveDirectory(auth);
 		}
 		configureUserDetailsService(auth);
@@ -143,8 +143,8 @@ public class SeisoWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	// }
 	
 	private void configureActiveDirectory(AuthenticationManagerBuilder auth) throws Exception {
-		String domain = customProperties.getAdDomain();
-		String url = customProperties.getAdUrl();
+		String domain = seisoProperties.getAdDomain();
+		String url = seisoProperties.getAdUrl();
 		if (domain != null) {
 			ActiveDirectoryLdapAuthenticationProvider provider =
 					new ActiveDirectoryLdapAuthenticationProvider(domain, url);
