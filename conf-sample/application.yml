@@ -24,6 +24,12 @@ spring:
     username: seiso
     password: seiso
 
+# IMPORTANT: This is a potential security risk, so use discretion.
+# The admin panel currently assumes that endpoints.health.sensitive is false.
+endpoints:
+  health:
+    sensitive: false
+
 management:
   context-path: /admin
 
@@ -33,11 +39,10 @@ logging:
     com.expedia.seiso: TRACE
     org.springframework: INFO
 
-# IMPORTANT: This is a potential security risk, so use discretion.
-# The admin panel currently assumes that endpoints.health.sensitive is false.
-endpoints:
-  health:
-    sensitive: false
+server:
+  tomcat:
+    accesslog:
+      enabled: false
 
 seiso:
   change-notification-exchange: seiso.notifications.v3
