@@ -63,7 +63,7 @@ public class Node extends AbstractItem {
 	@Size(max = 250)
 	private String description;
 
-	@Column(name = "version")
+	@Column(name = "build_version")
 	@Size(max = 128)
 	private String buildVersion;
 	
