@@ -65,6 +65,12 @@ public class Node extends AbstractItem {
 	@Size(max = 250)
 	private String description;
 
+	/**
+	 * Version identifier for latest health status
+	 */
+	@Version
+	private Long version = 1L;
+
 	@Column(name = "build_version")
 	@Size(max = 128)
 	private String buildVersion;
@@ -80,13 +86,6 @@ public class Node extends AbstractItem {
 
 	@OneToMany(mappedBy = "node", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<NodeIpAddress> ipAddresses = new ArrayList<>();
-
-	/**
-	 * Version identifier for latest health status
-	 */
-	@Version
-	@Column(name = "health_status_version")
-	private Long healthStatusVersion = 1L;
 
 	@ManyToOne
 	@JoinColumn(name = "health_status_id")
