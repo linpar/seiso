@@ -35,6 +35,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import org.springframework.data.annotation.Version;
+
 /**
  * @author Willie Wheeler
  */
@@ -78,6 +80,13 @@ public class Node extends AbstractItem {
 
 	@OneToMany(mappedBy = "node", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<NodeIpAddress> ipAddresses = new ArrayList<>();
+
+	/**
+	 * Version identifier for latest health status
+	 */
+	@Version
+	@Column(name = "health_status_version")
+	private Long healthStatusVersion = 1L;
 
 	@ManyToOne
 	@JoinColumn(name = "health_status_id")
