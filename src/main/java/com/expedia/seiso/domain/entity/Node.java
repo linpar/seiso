@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -62,6 +63,12 @@ public class Node extends AbstractItem {
 	 */
 	@Size(max = 250)
 	private String description;
+
+	/**
+	 * Version identifier for latest health status
+	 */
+	@Version
+	private Long version = 1L;
 
 	@Column(name = "build_version")
 	@Size(max = 128)
