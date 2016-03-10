@@ -6,3 +6,4 @@
 /.vagrant
 /bin
 /build
+.DS_Store

@@ -39,6 +39,7 @@ var enrichNodeStats = function(nodeStats) {
 
 // Supports the service instance details page.
 var nodePageToNodeRows = function(nodePage) {
+	console.log(nodePage);
 	var nodes = nodePage._embedded.items;
 	
 	// Build the node table, which is really a list of IP addresses grouped by node. [WLW]
@@ -63,7 +64,7 @@ var nodePageToNodeRows = function(nodePage) {
 			var nodeRow = {
 				"name" : node.name,
 				"displayName" : node.name,
-				"version" : node.version,
+				"version" : node.buildVersion,
 				"healthStatus" : node._embedded.healthStatus,
 				"showActions" : true
 			}
@@ -82,7 +83,7 @@ var nodePageToNodeRows = function(nodePage) {
 				if (j == 0) {
 					// Distinguish name from display name. We want to filter by name, but display by displayName.
 					nodeRow.displayName = node.name;
-					nodeRow.version = node.version,
+					nodeRow.version = node.buildVersion,
 					nodeRow.healthStatus = node._embedded.healthStatus;
 					nodeRow.nodeAggregateRotationStatus = node._embedded.aggregateRotationStatus;
 				}

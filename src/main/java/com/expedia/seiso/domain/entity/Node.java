@@ -127,10 +127,10 @@ public class Node extends AbstractItem {
 	 */
 	@Size(max = 250)
 	private String description;
-	
+
 	@Size(max = 128)
-	private String version;
-	
+	private String buildVersion;
+
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "service_instance_id")
