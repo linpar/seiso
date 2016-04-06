@@ -12,7 +12,7 @@ import com.expedia.seiso.web.assembler.EnvironmentService;
 import com.expedia.seiso.web.resource.ServiceInstanceResource;
 
 @BasePathAwareController
-@RequestMapping("/environments")
+@RequestMapping(value = "/environments", produces="application/json")
 public class EnvironmentController {
 	
 	@Autowired

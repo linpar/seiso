@@ -12,7 +12,7 @@ import com.expedia.seiso.web.assembler.ServiceService;
 import com.expedia.seiso.web.resource.ServiceInstanceResource;
 
 @BasePathAwareController
-@RequestMapping("/services")
+@RequestMapping(value = "/services", produces="application/json")
 public class ServiceController {
 	
 	@Autowired
