@@ -49,7 +49,7 @@ import lombok.val;
 //@BasePathAwareController
 @RestController
 //@RequestMapping(value = "/serviceInstances")
-@RequestMapping(value = "/api/serviceInstances", produces="application/json")
+@RequestMapping(value = "/api/serviceInstances")
 public class ServiceInstanceController {
 	@Autowired private ServiceInstanceService serviceInstanceService;
 	
