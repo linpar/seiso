@@ -17,7 +17,7 @@ public class MessageConverterConfig extends WebMvcAutoConfiguration.WebMvcAutoCo
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         // It appears some other dependency is adding Jax2bRootElementHttpMessageConverter, this
         // will override that behavior.
-        List<HttpMessageConverter<?>> baseConverters = new ArrayList<HttpMessageConverter<?>>();
+        List<HttpMessageConverter<?>> baseConverters = new ArrayList<>();
         super.configureMessageConverters(baseConverters);
 
         for(HttpMessageConverter<?> c : baseConverters){
@@ -28,11 +28,11 @@ public class MessageConverterConfig extends WebMvcAutoConfiguration.WebMvcAutoCo
     }
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.favorPathExtension(true).
-                favorParameter(false).
-                ignoreAcceptHeader(false).
-                defaultContentType(MediaType.APPLICATION_JSON).
-                mediaType("json", MediaType.APPLICATION_JSON);
+        configurer.favorPathExtension(true)
+                .favorParameter(false)
+                .ignoreAcceptHeader(false)
+                .defaultContentType(MediaType.APPLICATION_JSON)
+                .mediaType("application/json", MediaType.APPLICATION_JSON);
     }
 
 }
