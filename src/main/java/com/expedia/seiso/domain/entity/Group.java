@@ -15,7 +15,10 @@
  */
 package com.expedia.seiso.domain.entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -28,7 +31,13 @@ import lombok.experimental.Accessors;
 // TODO Support group description
 
 /**
+ * <p>
  * Represents a group of people.
+ * </p>
+ * <p>
+ * The table name "person_group" kind of sucks, but "group" is a SQL reserved word, and I didn't want to use "team"
+ * since we're essentially modeling AD distribution groups.
+ * </p>
  * 
  * @author Willie Wheeler
  */
@@ -46,4 +55,13 @@ public class Group extends AbstractItem {
 	
 	@Size(min = 1, max = 80)
 	private String alias;
+	
+	/**
+	 * Using a link table here since a group can have multiple owners and vice versa.
+	 */
+	@ManyToMany(mappedBy = "groupsOwned")
+	private List<Person> owners;
+	
+	@ManyToMany(mappedBy = "groupsMemberOf")
+	private List<Person> members;
 }
