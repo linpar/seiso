@@ -28,6 +28,12 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+// http://docs.spring.io/spring-data/rest/docs/current/reference/html/
+// The SDR docs say to use this instead of JPA @Version, but the Etag header doesn't show up if we use SD @Version.
+// Not sure what's up.
+// See http://stackoverflow.com/questions/31882180/why-is-the-version-property-not-set-with-spring-data-jpa
+//import org.springframework.data.annotation.Version;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -68,7 +74,7 @@ public class Node extends AbstractItem {
 	 * Version identifier for latest health status
 	 */
 	@Version
-	private Long version = 1L;
+	private Long version;
 
 	@Column(name = "build_version")
 	@Size(max = 128)
