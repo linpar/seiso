@@ -1,7 +1,3 @@
--
--- Table structure for table `membership`
---
-
 DROP TABLE IF EXISTS `membership`;
 
 CREATE TABLE `membership` (
