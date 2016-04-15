@@ -19,8 +19,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
@@ -28,9 +28,9 @@ import lombok.experimental.Accessors;
  * @author Wayne Warren
  */
 @Data
-@AllArgsConstructor
 @Accessors(chain = true)
-@ToString(callSuper = true, of = { "machine", "person" })
+@EqualsAndHashCode(callSuper = false, of = { "group", "person", "role" })
+@ToString(callSuper = false, of = { "group", "person", "role" })
 @Entity
 public class Membership extends AbstractItem {
 
