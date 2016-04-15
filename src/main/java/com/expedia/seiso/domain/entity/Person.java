@@ -19,18 +19,20 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.Email;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-
-import org.hibernate.validator.constraints.Email;
 
 /**
  * @author Willie Wheeler
@@ -102,4 +104,18 @@ public class Person extends AbstractItem {
 	@OrderBy("firstName, lastName, id")
 	@OneToMany(mappedBy = "manager")
 	private List<Person> directReports;
+	
+	@ManyToMany
+	@JoinTable(
+			name = "group_owner",
+			joinColumns = @JoinColumn(name = "person_id"),
+			inverseJoinColumns = @JoinColumn(name = "group_id"))
+	private List<Group> groupsOwned;
+	
+	@ManyToMany
+	@JoinTable(
+			name = "group_member",
+			joinColumns = @JoinColumn(name = "person_id"),
+			inverseJoinColumns = @JoinColumn(name = "group_id"))
+	private List<Group> groupsMemberOf;
 }
