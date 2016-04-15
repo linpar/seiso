@@ -28,7 +28,6 @@ import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -37,7 +36,6 @@ import lombok.experimental.Accessors;
  * @author Willie Wheeler
  */
 @Data
-@NoArgsConstructor
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false, of = { "name" })
 @ToString(callSuper = true, of = { "name", "fqdn", "ipAddress", "dataCenter" })
