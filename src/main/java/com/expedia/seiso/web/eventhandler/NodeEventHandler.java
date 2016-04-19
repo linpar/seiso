@@ -152,24 +152,24 @@ public class NodeEventHandler {
 		
 		content.append("  Health Status Link:" + node.getHealthStatusLink() + "\r\n");
 		content.append("  Health Status Reason:" + node.getHealthStatusReason() + "\r\n");
-		try {
+		if (node.getHealthStatus() != null){
 			content.append("  Health Status Id:" + node.getHealthStatus().getId() + "\r\n");
-		} catch (NullPointerException ex){
+		} else {
 			content.append("  Health Status Id: Null\r\n");
 		}
-		try {
+		if (node.getMachine() != null) {
 			content.append("  Machine Id:" + node.getMachine().getId() + "\r\n");
-		} catch (NullPointerException ex){
+		} else {
 			content.append("  Machine Id: Null\r\n");
 		}
-		try { 
+		if (node.getAggregateRotationStatus() != null) { 
 			content.append("  Aggregation Rotation Status Id:" + node.getAggregateRotationStatus().getId() + "\r\n");
-		} catch (NullPointerException ex){
+		} else {
 			content.append("  Aggregation Rotation Status Id: Null\r\n");
 		}
-		try {
+		if (node.getServiceInstance() != null) {
 			content.append("  Service Instance Id:" + node.getServiceInstance().getId() + "\r\n");
-		} catch (NullPointerException ex){
+		} else {
 			content.append("  Service Instance Id: Null\r\n");
 		}
 		content.append("  Ip Addresses:\r\n");
