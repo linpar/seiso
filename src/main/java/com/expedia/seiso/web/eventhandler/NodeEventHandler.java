@@ -15,6 +15,8 @@
  */
 package com.expedia.seiso.web.eventhandler;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,17 +31,22 @@ import org.springframework.stereotype.Component;
 import com.expedia.seiso.domain.Domain;
 import com.expedia.seiso.domain.entity.HealthStatus;
 import com.expedia.seiso.domain.entity.Node;
+import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.repo.HealthStatusRepo;
 import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
 import com.expedia.seiso.gateway.NotificationGateway;
+import com.expedia.seiso.web.controller.internal.GlobalSearchController;
+
+import lombok.extern.slf4j.XSlf4j;
 
 /**
  * @author Willie Wheeler
  */
 @RepositoryEventHandler(Node.class)
 @Component
+@XSlf4j
 public class NodeEventHandler {
 	
 	@Autowired
@@ -76,6 +83,8 @@ public class NodeEventHandler {
 	@HandleBeforeCreate
 	public void handleBeforeCreate(Node node) {
 		replaceNullStatusesWithUnknown(node);
+		log.info("Node created.");
+		log.info(getNodeInfo(node));
 	}
 	
 	@HandleAfterCreate
@@ -101,15 +110,20 @@ public class NodeEventHandler {
 	@HandleBeforeSave
 	public void handleBeforeSave(Node node) {
 		replaceNullStatusesWithUnknown(node);
+		log.info("Node saved/updated.");
+		log.info(getNodeInfo(node));
 	}
 	
 	@HandleAfterSave
 	public void handleAfterSave(Node node) {
 		notify(node, NotificationGateway.OP_UPDATE);
+		
+		
 	}
 
 	@HandleAfterDelete
 	public void handleAfterDelete(Node node) {
+		log.info("Node deleted: " + node.getId());
 		notify(node, NotificationGateway.OP_DELETE);
 	}
 	
@@ -125,5 +139,44 @@ public class NodeEventHandler {
 	
 	private void notify(Node node, String op) {
 		notificationGateway.notify(node, node.getName(), op);
+	}
+	
+	private String getNodeInfo(Node node){
+		StringBuilder content = new StringBuilder();
+		content.append("Node attributes: \r\n");
+		content.append("  Id:" + node.getId() + "\r\n");
+		content.append("  Name: " + node.getName() + "\r\n");
+		content.append("  Description: " + node.getDescription() + "\r\n");
+		content.append("  Version:" + node.getVersion() + "\r\n");
+		content.append("  Build Version:" + node.getBuildVersion() + "\r\n");
+		
+		content.append("  Health Status Link:" + node.getHealthStatusLink() + "\r\n");
+		content.append("  Health Status Reason:" + node.getHealthStatusReason() + "\r\n");
+		try {
+			content.append("  Health Status Id:" + node.getHealthStatus().getId() + "\r\n");
+		} catch (NullPointerException ex){
+			content.append("  Health Status Id: Null\r\n");
+		}
+		try {
+			content.append("  Machine Id:" + node.getMachine().getId() + "\r\n");
+		} catch (NullPointerException ex){
+			content.append("  Machine Id: Null\r\n");
+		}
+		try { 
+			content.append("  Aggregation Rotation Status Id:" + node.getAggregateRotationStatus().getId() + "\r\n");
+		} catch (NullPointerException ex){
+			content.append("  Aggregation Rotation Status Id: Null\r\n");
+		}
+		try {
+			content.append("  Service Instance Id:" + node.getServiceInstance().getId() + "\r\n");
+		} catch (NullPointerException ex){
+			content.append("  Service Instance Id: Null\r\n");
+		}
+		content.append("  Ip Addresses:\r\n");
+		List<NodeIpAddress> addresses = node.getIpAddresses();
+		for (NodeIpAddress address : addresses){
+			content.append("    " + address.getIpAddress() + "\r\n");
+		}
+		return content.toString();
 	}
 }
