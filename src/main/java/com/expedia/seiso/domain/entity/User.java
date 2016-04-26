@@ -23,6 +23,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -44,10 +46,7 @@ import lombok.experimental.Accessors;
 public class User extends AbstractItem implements Serializable {
 	private String username;
 
-	// FIXME Need to suppress this field from the JSON serialized view!! [WLW]
-	// @JsonIgnore doesn't work. Need to avoid pulling it into the LegacyResource. Probably want something like this:
-	// FIXME Also need to suppress this from the Tomcat HTTP serialization. Can't use transient here because that
-	// prevents Spring Data from saving it. [WLW]
+	@JsonIgnore
 	private String password;
 
 	private Boolean enabled;
