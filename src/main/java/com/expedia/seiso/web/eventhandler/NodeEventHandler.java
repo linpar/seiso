@@ -83,8 +83,6 @@ public class NodeEventHandler {
 	@HandleBeforeCreate
 	public void handleBeforeCreate(Node node) {
 		replaceNullStatusesWithUnknown(node);
-		log.info("Node created.");
-		log.info(getNodeInfo(node));
 	}
 	
 	@HandleAfterCreate
@@ -110,20 +108,15 @@ public class NodeEventHandler {
 	@HandleBeforeSave
 	public void handleBeforeSave(Node node) {
 		replaceNullStatusesWithUnknown(node);
-		log.info("Node saved/updated.");
-		log.info(getNodeInfo(node));
 	}
 	
 	@HandleAfterSave
 	public void handleAfterSave(Node node) {
 		notify(node, NotificationGateway.OP_UPDATE);
-		
-		
 	}
 
 	@HandleAfterDelete
 	public void handleAfterDelete(Node node) {
-		log.info("Node deleted: " + node.getId());
 		notify(node, NotificationGateway.OP_DELETE);
 	}
 	
@@ -141,42 +134,4 @@ public class NodeEventHandler {
 		notificationGateway.notify(node, node.getName(), op);
 	}
 	
-	private String getNodeInfo(Node node){
-		StringBuilder content = new StringBuilder();
-		content.append("Node attributes: \r\n");
-		content.append("  Id:" + node.getId() + "\r\n");
-		content.append("  Name: " + node.getName() + "\r\n");
-		content.append("  Description: " + node.getDescription() + "\r\n");
-		content.append("  Version:" + node.getVersion() + "\r\n");
-		content.append("  Build Version:" + node.getBuildVersion() + "\r\n");
-		
-		content.append("  Health Status Link:" + node.getHealthStatusLink() + "\r\n");
-		content.append("  Health Status Reason:" + node.getHealthStatusReason() + "\r\n");
-		if (node.getHealthStatus() != null){
-			content.append("  Health Status Id:" + node.getHealthStatus().getId() + "\r\n");
-		} else {
-			content.append("  Health Status Id: Null\r\n");
-		}
-		if (node.getMachine() != null) {
-			content.append("  Machine Id:" + node.getMachine().getId() + "\r\n");
-		} else {
-			content.append("  Machine Id: Null\r\n");
-		}
-		if (node.getAggregateRotationStatus() != null) { 
-			content.append("  Aggregation Rotation Status Id:" + node.getAggregateRotationStatus().getId() + "\r\n");
-		} else {
-			content.append("  Aggregation Rotation Status Id: Null\r\n");
-		}
-		if (node.getServiceInstance() != null) {
-			content.append("  Service Instance Id:" + node.getServiceInstance().getId() + "\r\n");
-		} else {
-			content.append("  Service Instance Id: Null\r\n");
-		}
-		content.append("  Ip Addresses:\r\n");
-		List<NodeIpAddress> addresses = node.getIpAddresses();
-		for (NodeIpAddress address : addresses){
-			content.append("    " + address.getIpAddress() + "\r\n");
-		}
-		return content.toString();
-	}
 }
