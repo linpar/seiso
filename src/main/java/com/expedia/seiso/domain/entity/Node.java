@@ -71,10 +71,10 @@ public class Node extends AbstractItem {
 	private String description;
 
 	/**
-	 * Version identifier for latest health status
+	 * Version identifier for latest health status. Default value is 1.
 	 */
 	@Version
-	private Long version;
+	private Long version = 1L;
 
 	@Column(name = "build_version")
 	@Size(max = 128)

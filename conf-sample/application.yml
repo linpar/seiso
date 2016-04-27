@@ -45,4 +45,5 @@ server:
       enabled: false
 
 seiso:
+  # RabbitMQ exchange for publishing change notifications.
   change-notification-exchange: seiso.notifications.v3
