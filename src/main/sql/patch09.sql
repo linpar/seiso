@@ -1,0 +1,1 @@
+alter table load_balancer modify column ip_address varchar(255);

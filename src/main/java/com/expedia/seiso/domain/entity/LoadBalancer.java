@@ -61,7 +61,7 @@ public class LoadBalancer extends AbstractItem {
 	@Size(min = 1, max = 80)
 	private String type;
 	
-	@Size(max = 20)
+	@Size(max = 255)
 	private String ipAddress;
 
 	@Size(max = 250)
