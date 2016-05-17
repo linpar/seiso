@@ -6,7 +6,6 @@
 /.vagrant
 /.idea
 /*.iml
-/application.yml
 /bin
 /build
 **/.DS_Store
