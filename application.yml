@@ -1,0 +1,52 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/seiso?autoReconnect=true
+    username: seiso
+    password: seiso
+    maximum-pool-size: 8
+    minimum-idle: 0
+    # TODO Add other data source settings here
+  jpa:
+    openInView: true
+    database: MYSQL
+    show-sql: false
+    generate-ddl: false
+    hibernate:
+      naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      current_session_context_class: thread
+      ejb:
+        interceptor:
+          session_scoped: com.expedia.seiso.hbn.NodeAttributeChangeLogger
+  data:
+    rest:
+      base-path: /api
+  rabbitmq:
+    # INFO: The rabbitmq host must not have a trailing slash.
+    host: 127.0.0.1
+    port: 5672
+    username: seiso
+    password: seiso
+
+# IMPORTANT: This is a potential security risk, so use discretion.
+# The admin panel currently assumes that endpoints.health.sensitive is false.
+endpoints:
+  health:
+    sensitive: false
+
+management:
+  context-path: /admin
+
+logging:
+#  file: /var/log/seiso/seiso.log
+  level:
+    com.expedia.seiso: TRACE
+    org.springframework: INFO
+
+server:
+  tomcat:
+    accesslog:
+      enabled: false
+
+seiso:
+  change-notification-exchange: seiso.notifications.v3

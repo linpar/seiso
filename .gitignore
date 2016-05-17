@@ -9,7 +9,6 @@
 /bin
 /build
 **/.DS_Store
-/application.yml
 pom.xml
 target/classes/application.yml
 *.MF
