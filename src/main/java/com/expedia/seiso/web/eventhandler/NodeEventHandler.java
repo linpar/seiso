@@ -127,5 +127,4 @@ public class NodeEventHandler {
 	private void notify(Node node, String op) {
 		notificationGateway.notify(node, node.getName(), op);
 	}
-	
 }
