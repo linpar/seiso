@@ -26,7 +26,7 @@ public class NodeAttributeChangeLogger extends EmptyInterceptor {
     	if (entity instanceof Node){
     		for ( int i=0; i < propertyNames.length  && !updated; i++ ) {
     			if (currentState[i] != null){
-	                if ( !currentState[i].equals(previousState[i]) && !propertyNames[i].equals("healthState")) {
+	                if ( !currentState[i].equals(previousState[i])) {
 	                	if (!updated){
 	                		content.append("Node changed:\r\n");
 	                		updated = true;
@@ -37,7 +37,7 @@ public class NodeAttributeChangeLogger extends EmptyInterceptor {
     			}
             }
         	if (updated){
-        		log.debug(content.toString());
+        		log.info(content.toString());
         	}
     	}
         return false;

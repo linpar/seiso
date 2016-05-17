@@ -15,8 +15,6 @@
  */
 package com.expedia.seiso.web.eventhandler;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,22 +29,18 @@ import org.springframework.stereotype.Component;
 import com.expedia.seiso.domain.Domain;
 import com.expedia.seiso.domain.entity.HealthStatus;
 import com.expedia.seiso.domain.entity.Node;
-import com.expedia.seiso.domain.entity.NodeIpAddress;
 import com.expedia.seiso.domain.entity.RotationStatus;
 import com.expedia.seiso.domain.repo.HealthStatusRepo;
 import com.expedia.seiso.domain.repo.NodeRepo;
 import com.expedia.seiso.domain.repo.RotationStatusRepo;
 import com.expedia.seiso.gateway.NotificationGateway;
-import com.expedia.seiso.web.controller.internal.GlobalSearchController;
 
-import lombok.extern.slf4j.XSlf4j;
 
 /**
  * @author Willie Wheeler
  */
 @RepositoryEventHandler(Node.class)
 @Component
-@XSlf4j
 public class NodeEventHandler {
 	
 	@Autowired
