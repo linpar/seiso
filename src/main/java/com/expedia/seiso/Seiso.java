@@ -37,8 +37,6 @@ import com.zaxxer.hikari.HikariDataSource;
  */
 @SpringBootApplication
 @EnableConfigurationProperties
-//@EnableJpaRepositories("com.expedia.seiso.domain.repo")
-//@EntityScan("com.expedia.seiso.domain.entity")   
 public class Seiso {
 	
 	@Autowired
