@@ -31,9 +31,22 @@ public class NodeAttributeChangeLogger extends EmptyInterceptor {
 	                		content.append("Node changed:\r\n");
 	                		updated = true;
 	                	} 
+	                	String previousLogValue = "Null";
+	                	if (previousState[i] != null){
+	                		previousLogValue = previousState[i].toString();
+	                	}
 	                	content.append("   Attribute: " + propertyNames[i] + "," + " previous value: " + 
-	                			previousState[i].toString() + ", current value: " + currentState[i]);
+	                			previousLogValue + ", current value: " + currentState[i]);
 	                }
+    			} else {
+    				if (previousState[i] != null){
+    					if (!updated){
+	                		content.append("Node changed:\r\n");
+	                		updated = true;
+	                	} 
+    					content.append("   Attribute: " + propertyNames[i] + "," + " previous value: " + 
+	                			previousState[i].toString() + ", current value: Null");
+    				}
     			}
             }
         	if (updated){
