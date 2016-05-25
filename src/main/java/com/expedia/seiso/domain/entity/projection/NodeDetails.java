@@ -19,4 +19,6 @@ public interface NodeDetails {
 	List<NodeIpAddress> getIpAddresses();
 	HealthStatus getHealthStatus();
 	RotationStatus getAggregateRotationStatus();
+	String getHealthStatusReason();
+	String getHealthStatusLink();
 }
